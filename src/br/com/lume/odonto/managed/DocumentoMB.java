@@ -180,32 +180,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         if(this.getEntity().getModelo().contains("page-break-after")) {
             this.getEntity().setModelo(this.getEntity().getModelo().replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
                     "<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\">|new-page|</hr>"));
-            //m = m.replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
-            //        "|new-page|");
         }
     }
-    
-//    private void pageBreak(FileReader in) {
-//        String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
-//        StringBuilder novoModelo = new StringBuilder();
-//        try(BufferedReader breader = new BufferedReader(in)){
-//            
-//            String value = null;
-//            while(breader.ready()) {
-//                value = breader.readLine();
-//                if(value.contains("page-break-after")) {
-//                    novoModelo.append("<hr style=\"border-color:#aaa;box-sizing:border-box;width:100%;\">|new-page|</hr>");
-//                }else {
-//                    novoModelo.append(value);
-//                }
-//                novoModelo.append("\n");
-//            }
-//            BufferedWriter bwriter = new BufferedWriter(new FileWriter(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath()));
-//        } catch (IOException e) {
-//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao processar quebra de página.");
-//            e.printStackTrace();
-//        }
-//    }
     
     @Override
     public void actionPersist(ActionEvent event) {

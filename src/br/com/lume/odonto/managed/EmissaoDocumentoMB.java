@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -84,8 +86,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     //Filtros
     private Date dataInicio;
     private Date dataFim;
-    private Profissional emitidoPor;
     private Paciente emitidoPara;
+    private String filtroPeriodo;
     
     private StreamedContent arqTemp;
     private StreamedContent arqEmitido;
@@ -98,8 +100,22 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     }
 
     public void pesquisar() {
-        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), getEmitidoPor(), getEmitidoPara(), 
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+        Date dataInicial = null, dataFinal = null;
+        
+        if (getDataInicio() != null && getDataFim() != null) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(getDataInicio());
+            c.add(Calendar.DAY_OF_MONTH, -1);
+            dataInicial = c.getTime();
+
+            c.setTime(getDataFim());
+            c.add(Calendar.DAY_OF_MONTH, +1);
+            dataFinal = c.getTime();
+        }
+        
+        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroProfissionalEmissao, getEmitidoPara(),
+                filtroTipoDocumento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+        
     }
 
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -224,6 +240,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             out.flush();
             out.close();
             
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Emissão do documento realizada com sucesso.");
+            
+            this.setEntity(doc);
             this.pesquisar();
 
         } catch (Exception e) {
@@ -232,6 +251,26 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
     }
 
+    public StreamedContent getArquivo(DocumentoEmitido doc) {
+        
+        StreamedContent arquivo = null;
+        if (doc.getPathDocumento() != null) {
+            try {                
+                File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
+                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");                
+                arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
+            } catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar o documento.");
+                e.printStackTrace();
+            }
+        }
+        return arquivo;
+    }
+    
+    public StreamedContent getArquivo() {
+        return this.getArquivo(this.getEntity());
+    }
+    
     public void carregarDocumentoModelo() {
         if (modeloSelecionado != null) {
             List<TagDocumentoModelo> tags = modeloSelecionado.getTags();
@@ -331,7 +370,6 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public List<CID> geraSugestoesCID(String query) {
         List<CID> suggestions = new ArrayList<>();
         try {
-            //cids = CidSingleton.getInstance().getBo().listAll();
             suggestions = CidSingleton.getInstance().getBo().listSugestoesComplete(query, false);
         } catch (Exception e) {
             this.addError("Erro", "Falha ao carregar os CID");
@@ -459,27 +497,78 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         return null;
     }
 
-    public void atualizarTags() {
-        if (modeloSelecionado != null) {
-            List<TagDocumentoModelo> tags = modeloSelecionado.getTags();
-            List<TagDocumentoModelo> tagsProcessadas = new ArrayList<>();
-            String textoDocumento = modeloSelecionado.getModelo();
+    public void actionTrocaDatasCriacao() {
+        try {
 
-            for (TagDocumentoModelo tag : tags) {
-                if (tag.getTagEntidade().getInserirDado().equals(Status.NAO)) {
-                    if (tag.getTagEntidade().getEntidade().getEntidade().equals("Paciente")) {
-                        if (this.pacienteSelecionado != null) {
-                            this.processarTag(tag.getTagEntidade(), textoDocumento);
-                        }
-                    } else {
-                        this.processarTag(tag.getTagEntidade(), textoDocumento);
-                        tagsProcessadas.add(tag);
-                    }
-                } else if (tag.getTagEntidade().getInserirDado().equals(Status.SIM)) {
+            this.dataInicio = getDataInicio(getFiltroPeriodo());
+            this.dataFim = getDataFim(getFiltroPeriodo());
 
-                }
-            }
+            PrimeFaces.current().ajax().update(":lume:dataInicial");
+            PrimeFaces.current().ajax().update(":lume:dataFinal");
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    private boolean validarIntervaloDatas() {
+
+        if ((dataInicio != null && dataFim != null) && dataInicio.getTime() > dataFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        return true;
     }
 
 //  public void construirModeloPDF() {
@@ -680,20 +769,20 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         this.dataFim = dataFim;
     }
 
-    public Profissional getEmitidoPor() {
-        return emitidoPor;
-    }
-
-    public void setEmitidoPor(Profissional emitidoPor) {
-        this.emitidoPor = emitidoPor;
-    }
-
     public Paciente getEmitidoPara() {
         return emitidoPara;
     }
 
     public void setEmitidoPara(Paciente emitidoPara) {
         this.emitidoPara = emitidoPara;
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
     }
 
 }

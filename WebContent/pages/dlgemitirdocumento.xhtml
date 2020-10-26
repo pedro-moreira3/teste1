@@ -99,8 +99,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
 						<p:autoComplete id="filtroDinamicoPaciente"
-							style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 							value="#{emissaoDocumentoMB.pacienteSelecionado}"
+							style="margin-bottom:20px;"
 							completeMethod="#{emissaoDocumentoMB.sugestoesPacientes}" var="p"
 							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 							converter="paciente" forceSelection="true" scrollHeight="400"
@@ -130,7 +130,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 						<p:autoComplete queryDelay="1000"
 							value="#{emissaoDocumentoMB.cid}" id="cid"
-							style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+							style="margin-bottom:20px;"
 							completeMethod="#{emissaoDocumentoMB.geraSugestoesCID}" var="c"
 							itemLabel="#{c.label}" itemValue="#{c}" converter="cid"
 							forceSelection="true" scrollHeight="500" minQueryLength="3"
@@ -143,7 +143,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</h:panelGroup>
 
 					<ui:repeat var="tag" value="#{emissaoDocumentoMB.tagsDinamicas}">
-						<h:panelGroup style="margin-bottom:10px;"
+						<h:panelGroup style="margin-top:10px;margin-bottom:20px;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'texto'}">
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
@@ -152,12 +152,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:inputText>
 						</h:panelGroup>
 
-						<h:panelGroup style="margin-bottom:10px;"
+						<h:panelGroup style="margin-top:10px !important;margin-bottom:20px !important;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
-							<h:outputLabel value="#{tag.descricaoCampo}:" />
+							<h:outputLabel value="#{tag.descricaoCampo}:"/>
 							<p:calendar value="#{tag.respTagData}" autocomplete="false"
-								timeInput="true"
-								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
+								timeInput="true">
 								<p:ajax event="dateSelect" process="@this" />
 							</p:calendar>
 						</h:panelGroup>
@@ -169,13 +168,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<p:panelGrid id="viewDoc" columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
-
 				<p:fieldset legend="Pré-visualização" toggleable="true" style="max-height:500px;">
 					<h:outputText id="documentoImprimir"
 							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
 							escape="false" />
 				</p:fieldset>
-
 			</p:panelGrid>
 
 		</p:panelGrid>

@@ -16,8 +16,39 @@
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset>
-							<p:panelGrid columns="3" layout="grid"
+							<p:panelGrid id="pnFiltrosDoc" columns="3" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo" value="Período de emissão:" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{emissaoDocumentoMB.filtroPeriodo}">
+
+										<p:ajax process="@this"
+											listener="#{emissaoDocumentoMB.actionTrocaDatasCriacao}" />
+
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataInicial" value="Data de emissão de:" />
+									<p:calendar id="dataInicial"
+										value="#{emissaoDocumentoMB.dataInicio}" autocomplete="false" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataFinal" value="Data de emissao até:" />
+									<p:calendar id="dataFinal"
+										value="#{emissaoDocumentoMB.dataFim}" autocomplete="false" />
+								</h:panelGroup>
 
 								<h:panelGroup>
 									<p:outputLabel style="margin:0px;" for="filtroTipoDocumento"
@@ -38,8 +69,34 @@
 								</h:panelGroup>
 
 								<h:panelGroup>
-									<h:outputText for="filtroProfissional"
-										value="Emitido por:" />
+
+									<h:outputText for="filtroDocPaciente" value="Paciente:" />
+									<p:autoComplete id="filtroDocPaciente" style="min-width:0px;"
+										value="#{emissaoDocumentoMB.emitidoPara}"
+										completeMethod="#{emissaoDocumentoMB.sugestoesPacientes}"
+										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="paciente" forceSelection="true" scrollHeight="400"
+										minQueryLength="3" queryDelay="1000" dropdown="true">
+
+										<p:column headerText="Código" style="text-align: center;">
+											<h:outputText value="#{p.codigo}" />
+										</p:column>
+										<p:column headerText="Nome">
+											<h:outputText value="#{p.dadosBasico.nome}" />
+										</p:column>
+										<p:column headerText="Celular">
+											<h:outputText value="#{p.dadosBasico.celular}" />
+										</p:column>
+										<p:column headerText="Nome da Mãe">
+											<h:outputText value="#{p.nomeMae}" />
+										</p:column>
+
+										<p:ajax event="itemSelect" process="@this" />
+									</p:autoComplete>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="filtroProfissional" value="Emitido por:" />
 									<p:autoComplete id="filtroProfissional"
 										value="#{emissaoDocumentoMB.filtroProfissionalEmissao}"
 										completeMethod="#{emissaoDocumentoMB.sugestoesProfissionais}"
@@ -61,7 +118,7 @@
 								<p:commandButton value="Pesquisar" styleClass="OrangeButton"
 									icon="White fa fa-search"
 									actionListener="#{emissaoDocumentoMB.pesquisar()}"
-									update="dtDocumentos" process="@this" />
+									update="dtDocumentos" process="@this,pnFiltrosDoc" />
 
 								<p:commandButton value="Emitir documento"
 									styleClass="NavyButton" icon="fa fa-file White"
@@ -78,6 +135,13 @@
 							selection="#{emissaoDocumentoMB.entity}" selectionMode="single">
 
 							<f:facet name="header">Documentos emitidos</f:facet>
+
+							<p:column headerText="Ações">
+								<p:commandButton ajax="false" icon="White fa fa-download">
+									<p:fileDownload
+										value="#{emissaoDocumentoMB.getArquivo(documento)}" />
+								</p:commandButton>
+							</p:column>
 
 							<p:column headerText="Tipo do documento">
 								<h:outputText value="#{documento.documentoModelo.tipo.nome}" />
@@ -105,6 +169,12 @@
 			</div>
 		</div>
 
+		<h:inputHidden>
+			<p:commandLink id="donwloadArq" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+				<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
+			</p:commandLink>
+		</h:inputHidden>
+
 		<p:dialog id="dlgEmitirDocumento" widgetVar="dlgEmitirDocumento"
 			header="Emitir documento" responsive="true" modal="true"
 			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
@@ -115,14 +185,23 @@
 				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-					<p:commandButton value="Cancelar"
+					<p:commandButton value="Fechar" icon="fa fa-close"
 						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
-					<p:commandButton value="Imprimir documento" process="@this">
-						<p:printer target="documentoImprimir" />
-					</p:commandButton>
-					<p:commandButton value="Emitir documento"
+
+
+					<h:panelGroup></h:panelGroup>
+					<ui:remove>
+						<p:commandButton value="Imprimir documento" process="@this">
+							<p:printer target="documentoImprimir" />
+						</p:commandButton>
+					</ui:remove>
+
+					<p:commandButton value="Emitir documento" icon="fa fa-save"
+						styleClass="GreenButton"
 						actionListener="#{emissaoDocumentoMB.emitirDocumento()}"
-						process="@this, viewDoc" update="viewDoc" />
+						oncomplete="PF('dlgEmitirDocumento').hide();"
+						process="@this, viewDoc, dtDocumentos" update="viewDoc">
+					</p:commandButton>
 
 				</p:panelGrid>
 			</p:outputPanel>
