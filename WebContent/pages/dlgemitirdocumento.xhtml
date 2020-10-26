@@ -125,7 +125,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</h:panelGroup>
 
 					<h:panelGroup
-						rendered="#{emissaoDocumentoMB.tag != null and emissaoDocumentoMB.filtroTipoDocumentoEmitir.nome eq 'Atestado'}">
+						rendered="#{emissaoDocumentoMB.filtroTipoDocumentoEmitir.nome eq 'Atestado'}">
 						<p:outputLabel for="cid" value="CID:" />
 
 						<p:autoComplete queryDelay="1000"
@@ -147,7 +147,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'texto'}">
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
-								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
+								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
 								<p:ajax process="@this" />
 							</p:inputText>
 						</h:panelGroup>
@@ -170,19 +170,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
 
-				<ui:remove>
-					<p:fieldset legend="Documento" toggleable="true">
-						<h:outputText id="documentoImprimir"
+				<p:fieldset legend="Pré-visualização" toggleable="true" style="max-height:500px;">
+					<h:outputText id="documentoImprimir"
 							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
 							escape="false" />
-					</p:fieldset>
-				</ui:remove>
-
-
-				<p:media cache="disabled" id="documentoView"
-					value="/app/odonto/documentos/Facial-Clin/teste PDF 3.pdf"
-					player="pdf" />
-
+				</p:fieldset>
 
 			</p:panelGrid>
 

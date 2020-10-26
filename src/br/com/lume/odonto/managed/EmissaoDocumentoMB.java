@@ -26,6 +26,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
@@ -53,6 +54,7 @@ import br.com.lume.odonto.entity.Tag;
 import br.com.lume.odonto.entity.TagDocumentoModelo;
 import br.com.lume.odonto.entity.TagEntidade;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.tag.TagSingleton;
 import br.com.lume.tagEntidade.TagEntidadeSingleton;
@@ -79,6 +81,12 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private boolean teste = false;
     private StringBuilder modeloHtml = new StringBuilder("");
     
+    //Filtros
+    private Date dataInicio;
+    private Date dataFim;
+    private Profissional emitidoPor;
+    private Paciente emitidoPara;
+    
     private StreamedContent arqTemp;
     private StreamedContent arqEmitido;
 
@@ -90,9 +98,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     }
 
     public void pesquisar() {
-        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), getEmitidoPor(), getEmitidoPara(), 
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
     }
 
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+    }
+    
     public void carregarDocumentoHtmlModelo() {
         BufferedReader reader = null;
         
@@ -162,7 +175,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo() != null && this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png"));
+                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\"+
+                        UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo()));
                 
                 float w = img.getWidth();
                 float h = img.getHeight();
@@ -177,11 +191,20 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                 }
                 
                 img.scaleAbsolute(w*w1, h*h1);
+                img.setAlignment(Element.PARAGRAPH);
                 documento.add(img);
                 documento.addHeader(UtilsFrontEnd.getEmpresaLogada().getEmpStrNme(), "Telefone para contato: "+UtilsFrontEnd.getEmpresaLogada().getEmpChaFone());
             }
             
-            documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
+            if(this.modeloSelecionado.getModelo().contains("|new-page|")) {
+                String buf[] = this.modeloSelecionado.getModelo().split("\\|(.*?)\\|");
+                for(int i = 0; i<buf.length; i++){
+                    documento.add(new Paragraph(buf[i]));
+                    documento.newPage();
+                }
+            }else {
+                documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
+            }
 
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.docEmitido = doc;
@@ -190,10 +213,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             file.mkdirs();
 
             documento.close();
-            
-            this.arqEmitido = new DefaultStreamedContent(new ByteArrayInputStream(outputData.toByteArray()));
 
-            FileOutputStream out = new FileOutputStream(file + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
+            FileOutputStream out = new FileOutputStream(file + "/" + this.modeloSelecionado.getDescricao()+
+                    (this.pacienteSelecionado != null ? "-" + this.pacienteSelecionado.getId() : "") + ".pdf");
             out.write(outputData.toByteArray());
 
             outputData.flush();
@@ -287,8 +309,25 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                 }
             }
         }
+        
+        if(this.tag == null && this.validaRecebedor()) {
+            this.tag = TagSingleton.getInstance().getBo().listByEntidade("Paciente");
+        }
+        
     }
 
+    public boolean validaRecebedor() {
+        if(this.modeloSelecionado.getTipo().getNome().equals("Faturamento") || this.modeloSelecionado.getTipo().getNome().equals("Contrato Profissional"))
+            return false;
+        return true;
+    }
+    
+    public void preview() {
+        if(this.modeloHtml.toString().contains("|new-page|")) {
+            this.modeloHtml = new StringBuilder(this.modeloHtml.toString().replaceAll("\\|new-page\\|", "\n\n<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\"></hr>\n"));
+        }
+    }
+    
     public List<CID> geraSugestoesCID(String query) {
         List<CID> suggestions = new ArrayList<>();
         try {
@@ -400,6 +439,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         for(TagEntidade tag : this.tagsDinamicas) {
             this.processarTag(tag, this.modeloSelecionado.getModelo());
         }
+        
+        preview();
     }
     
     public void processarCID() {
@@ -621,6 +662,38 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void setModeloHtml(StringBuilder modeloHtml) {
         this.modeloHtml = modeloHtml;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public Profissional getEmitidoPor() {
+        return emitidoPor;
+    }
+
+    public void setEmitidoPor(Profissional emitidoPor) {
+        this.emitidoPor = emitidoPor;
+    }
+
+    public Paciente getEmitidoPara() {
+        return emitidoPara;
+    }
+
+    public void setEmitidoPara(Paciente emitidoPara) {
+        this.emitidoPara = emitidoPara;
     }
 
 }

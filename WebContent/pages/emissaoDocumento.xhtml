@@ -38,21 +38,19 @@
 								</h:panelGroup>
 
 								<h:panelGroup>
-									<p:outputLabel style="margin:0px;" for="filtroProfissional"
-										value="Emitido por" />
-									<p:selectOneMenu id="filtroProfissional"
-										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									<h:outputText for="filtroProfissional"
+										value="Emitido por:" />
+									<p:autoComplete id="filtroProfissional"
 										value="#{emissaoDocumentoMB.filtroProfissionalEmissao}"
-										converter="dominio">
-										<f:selectItem itemLabel="Selecione um tipo"
-											itemValue="#{null}" />
-										<f:selectItems
-											value="#{emissaoDocumentoMB.listaTiposDocumentos}" var="tipo"
-											itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
+										completeMethod="#{emissaoDocumentoMB.sugestoesProfissionais}"
+										var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+										itemValue="#{p}" converter="profissional"
+										forceSelection="true" scrollHeight="400" queryDelay="1000"
+										dropdown="true">
 
-										<p:ajax process="@this" />
+										<p:ajax event="itemSelect" process="@this" />
 
-									</p:selectOneMenu>
+									</p:autoComplete>
 								</h:panelGroup>
 
 							</p:panelGrid>
@@ -74,32 +72,31 @@
 						</p:fieldset>
 
 						<p:dataTable id="dtDocumentos" widgetVar="dtDocumentos"
-							value="#{emissaoDocumentoMB.entityList}"
-							var="documento" rowKey="#{documento}"
-							rows="10" paginator="true"
+							value="#{emissaoDocumentoMB.entityList}" var="documento"
+							rowKey="#{documento}" rows="10" paginator="true"
 							paginatorPosition="bottom" reflow="true"
 							selection="#{emissaoDocumentoMB.entity}" selectionMode="single">
-							
+
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Tipo do documento">
-								<h:outputText value="#{documento.documentoModelo.tipo.nome}"/>
+								<h:outputText value="#{documento.documentoModelo.tipo.nome}" />
 							</p:column>
-							
+
 							<p:column headerText="Descrição">
-								<h:outputText value="#{documento.documentoModelo.descricao}"/>
+								<h:outputText value="#{documento.documentoModelo.descricao}" />
 							</p:column>
-							
+
 							<p:column headerText="Emitido para">
-								<h:outputText value="#{documento.emitidoPara.dadosBasico.nome}"/>
+								<h:outputText value="#{documento.emitidoPara.dadosBasico.nome}" />
 							</p:column>
-							
+
 							<p:column headerText="Emitido por">
-								<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}"/>
+								<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}" />
 							</p:column>
-							
+
 							<p:column headerText="Data de emissão">
-								<h:outputText value="#{documento.dataEmissaoStr}"/>
+								<h:outputText value="#{documento.dataEmissaoStr}" />
 							</p:column>
 						</p:dataTable>
 
@@ -112,18 +109,20 @@
 			header="Emitir documento" responsive="true" modal="true"
 			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
 			onShow="PF('dlgEmitirDocumento').toggleMaximize();">
-			
+
 			<p:outputPanel>
 				<ui:include src="dlgemitirdocumento.xhtml" />
 				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-					<p:commandButton value="Cancelar" oncomplete="PF('dlgEmitirDocumento').hide();"
-						process="@this"/>
-					<p:commandButton value="Imprimir documento" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
+					<p:commandButton value="Imprimir documento" process="@this">
+						<p:printer target="documentoImprimir" />
+					</p:commandButton>
 					<p:commandButton value="Emitir documento"
 						actionListener="#{emissaoDocumentoMB.emitirDocumento()}"
-						process="@this, viewDoc" update="viewDoc"/>
+						process="@this, viewDoc" update="viewDoc" />
 
 				</p:panelGrid>
 			</p:outputPanel>

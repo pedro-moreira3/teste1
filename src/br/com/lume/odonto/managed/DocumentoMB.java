@@ -1,13 +1,12 @@
 package br.com.lume.odonto.managed;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.extensions.component.ckeditor.CKEditor;
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -67,6 +65,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     //FILTROS
     private Dominio filtroTipoDocumento;
     private List<Dominio> listaTiposDocumentos;
+    private String status;
 
     private DataTable tabelaDocumentos;
     
@@ -81,7 +80,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     }
 
     public void pesquisar() {
-        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(filtroTipoDocumento, null, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(filtroTipoDocumento, null, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void carregarTiposDocumento() {
@@ -100,6 +99,20 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         }
     }
 
+    public void actionAtivar(Documento doc) {
+        doc.setAtivo(true);
+        doc.setDataAlteracaoStatus(new Date());
+        doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+        this.pesquisar();
+    }
+    
+    public void actionInativar(Documento doc) {
+        doc.setAtivo(false);
+        doc.setDataAlteracaoStatus(new Date());
+        doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+        this.pesquisar();
+    }
+    
     public void carregarPaleta() {
 
         this.carregarTags();
@@ -133,6 +146,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         FileReader reader = null;
         try {
             HtmlToText parser = new HtmlToText();
+            //String modelo = this.getEntity().getModelo();
+            this.pageBreak();
             
             String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
 
@@ -143,12 +158,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             writer.write(this.getEntity().getModelo());
             writer.flush();
             
-            reader = new FileReader(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath());
+            reader = new FileReader(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath());            
             parser.parse(reader);
             
             this.getEntity().setModelo(parser.getText());
             this.getEntity().setPathModelo(path+this.getEntity().getDescricao()+".html");
-            
         }catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro no parser do documento.");
             e.printStackTrace();
@@ -162,6 +176,37 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         }
     }
     
+    private void pageBreak() {
+        if(this.getEntity().getModelo().contains("page-break-after")) {
+            this.getEntity().setModelo(this.getEntity().getModelo().replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
+                    "<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\">|new-page|</hr>"));
+            //m = m.replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
+            //        "|new-page|");
+        }
+    }
+    
+//    private void pageBreak(FileReader in) {
+//        String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
+//        StringBuilder novoModelo = new StringBuilder();
+//        try(BufferedReader breader = new BufferedReader(in)){
+//            
+//            String value = null;
+//            while(breader.ready()) {
+//                value = breader.readLine();
+//                if(value.contains("page-break-after")) {
+//                    novoModelo.append("<hr style=\"border-color:#aaa;box-sizing:border-box;width:100%;\">|new-page|</hr>");
+//                }else {
+//                    novoModelo.append(value);
+//                }
+//                novoModelo.append("\n");
+//            }
+//            BufferedWriter bwriter = new BufferedWriter(new FileWriter(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath()));
+//        } catch (IOException e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao processar quebra de página.");
+//            e.printStackTrace();
+//        }
+//    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
         try {
@@ -171,8 +216,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.getEntity().setDataCriacao(new Date());
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-
-                //this.getEntity().setTags(montarTags());
                 
                 parserDocumento();
 
@@ -397,6 +440,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setMostrarCabecalho(boolean mostrarCabecalho) {
         this.mostrarCabecalho = mostrarCabecalho;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

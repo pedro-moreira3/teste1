@@ -39,6 +39,16 @@
 									</p:selectOneMenu>
 								</h:panelGroup>
 
+								<h:panelGroup>
+									<p:outputLabel for="status" value="Status dos Documentos: " />
+									<p:selectOneMenu id="status" value="#{documentoMB.status}">
+										<f:selectItem itemLabel="Todos" itemValue="#{null}" />
+										<f:selectItem itemLabel="Ativos" itemValue="A" />
+										<f:selectItem itemLabel="Inativos" itemValue="I" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
 							</p:panelGrid>
 
 							<p:panelGrid columns="3" layout="grid"
@@ -73,11 +83,20 @@
 									icon="White fa fa-eye"
 									actionListener="#{documentoMB.carregarDocumento(documento)}"
 									oncomplete="PF('dlgNovoDocumento').show();"
-									update=":lume:dlgNovoDocumento,:lume:editor"
-									process="@this" />
+									update=":lume:dlgNovoDocumento,:lume:editor" process="@this" />
 
-								<p:commandButton id="btnRemove" styleClass="RedButton"
-									icon="fa fa-trash" process="@this" />
+								<h:panelGroup rendered="#{documento.ativo != null and documento.ativo eq 'S'}">
+									<p:commandButton id="persistInativar"
+										icon="White fa fa-chain-broken" title="Inativar"
+										actionListener="#{documentoMB.actionInativar(documento)}"
+										update="dtDocumentos" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{documento.ativo != null and documento.ativo eq 'N'}">
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Ativar"
+										actionListener="#{documentoMB.actionAtivar(documento)}"
+										update="dtDocumentos" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>
 							</p:column>
 
 							<p:column filterBy="#{documento.tipo.nome}"
@@ -112,13 +131,13 @@
 		</div>
 
 		<p:dialog id="dlgNovoDocumento" widgetVar="dlgNovoDocumento"
-			header="Novo documento" responsive="true" modal="true" appendTo=":lume"
-			onHide="PF('dlgNovoDocumento').toggleMaximize();"
+			header="Novo documento" responsive="true" modal="true"
+			appendTo=":lume" onHide="PF('dlgNovoDocumento').toggleMaximize();"
 			onShow="PF('dlgNovoDocumento').toggleMaximize();">
 
 			<p:panel>
 				<ui:include src="dlgdocumento.xhtml" />
-				
+
 				<p:panelGrid columns="4" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
 
@@ -134,6 +153,6 @@
 				</p:panelGrid>
 			</p:panel>
 		</p:dialog>
-		
+
 	</ui:define>
 </ui:composition>
