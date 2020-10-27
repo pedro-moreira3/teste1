@@ -254,12 +254,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         
         StreamedContent arquivo = null;
         if (doc.getPathDocumento() != null) {
-            try {
-                
-                byte buff[] = {};
-                
+            try {              
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
-                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + ".pdf");                
+                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");                
                 arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
             } catch (Exception e) {
                 e.printStackTrace();
