@@ -279,15 +279,19 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         return tagsDocumento;
     }
 
-    public void controiModeloDocsAntigos() {
-        
+    public void controiModeloDocsAntigos(Documento doc) {
+        if(doc.getPathModelo() == null || doc.getPathModelo().isEmpty()) {
+            this.setEntity(doc);
+            parserDocumento();
+            carregarDocumento(doc);
+        }
     }
     
     public void carregarDocumento(Documento doc) {
         setEntity(doc);
-        this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
         
         if(doc.getPathModelo() != null && !doc.getPathModelo().isEmpty()) {
+            this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
             this.documento = "";
             carregarPaleta();
             
@@ -300,7 +304,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 e.printStackTrace();
             }
         }else {
-            this.controiModeloDocsAntigos();
+            this.controiModeloDocsAntigos(doc);
         }
     }
     
