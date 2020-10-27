@@ -137,7 +137,8 @@
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Ações">
-								<p:commandButton ajax="false" icon="White fa fa-download">
+								<p:commandButton ajax="false" icon="White fa fa-print" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload
 										value="#{emissaoDocumentoMB.getArquivo(documento)}" />
 								</p:commandButton>
@@ -170,7 +171,8 @@
 		</div>
 
 		<h:inputHidden>
-			<p:commandLink id="donwloadArq" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+			<p:commandLink id="donwloadArq" ajax="false" immediate="true" 
+				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 				<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
 			</p:commandLink>
 		</h:inputHidden>

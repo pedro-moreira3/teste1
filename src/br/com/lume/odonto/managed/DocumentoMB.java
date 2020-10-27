@@ -1,13 +1,12 @@
 package br.com.lume.odonto.managed;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,6 +17,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.extensions.component.ckeditor.CKEditor;
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -38,6 +38,7 @@ import br.com.lume.dominio.DominioSingleton;
 // import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Tag;
 import br.com.lume.odonto.entity.TagDocumentoModelo;
 import br.com.lume.odonto.entity.TagEntidade;
@@ -63,9 +64,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private String novaTag;
 
     //FILTROS
+    private Date dataInicio;
+    private Date dataFim;
+    private String filtroPeriodo;
     private Dominio filtroTipoDocumento;
     private List<Dominio> listaTiposDocumentos;
     private String status;
+    private List<Documento> listaDocumentosModelos;
+    private Documento modeloSelecionado;
 
     private DataTable tabelaDocumentos;
     
@@ -80,7 +86,22 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     }
 
     public void pesquisar() {
-        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(filtroTipoDocumento, null, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        Date dataInicial = null, dataFinal = null;
+        
+        Calendar c = Calendar.getInstance();
+        if(dataFim != null) {
+            c.setTime(this.dataFim);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            dataFinal = c.getTime();
+        }
+        if(dataInicio != null) {
+            c.setTime(this.dataInicio);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            dataInicial = c.getTime();
+        }
+        
+        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroTipoDocumento, modeloSelecionado,
+                this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void carregarTiposDocumento() {
@@ -90,6 +111,17 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             this.addError("Erro ao carregar tipos de documentos", "");
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro ao carregar documentos.");
             e.printStackTrace();
+        }
+    }
+    
+    public void carregarDocumentos() {
+        try {
+            if (this.filtroTipoDocumento != null) {
+                this.listaDocumentosModelos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(filtroTipoDocumento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.addError("Erro", "Não foi possível carregar os documentos");
         }
     }
 
@@ -247,6 +279,10 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         return tagsDocumento;
     }
 
+    public void controiModeloDocsAntigos() {
+        
+    }
+    
     public void carregarDocumento(Documento doc) {
         setEntity(doc);
         this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
@@ -263,6 +299,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Falha ao carregar o documento");
                 e.printStackTrace();
             }
+        }else {
+            this.controiModeloDocsAntigos();
         }
     }
     
@@ -270,6 +308,80 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         if(this.mostrarCabecalho) {
             this.getEntity().setMostrarLogo("S");
         }
+    }
+    
+    public void actionTrocaDatasCriacao() {
+        try {
+
+            this.dataInicio = getDataInicio(getFiltroPeriodo());
+            this.dataFim = getDataFim(getFiltroPeriodo());
+
+            PrimeFaces.current().ajax().update(":lume:dataInicial");
+            PrimeFaces.current().ajax().update(":lume:dataFinal");
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    private boolean validarIntervaloDatas() {
+
+        if ((dataInicio != null && dataFim != null) && dataInicio.getTime() > dataFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        return true;
     }
     
     @Override
@@ -424,6 +536,46 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public List<Documento> getListaDocumentosModelos() {
+        return listaDocumentosModelos;
+    }
+
+    public void setListaDocumentosModelos(List<Documento> listaDocumentosModelos) {
+        this.listaDocumentosModelos = listaDocumentosModelos;
+    }
+
+    public Documento getModeloSelecionado() {
+        return modeloSelecionado;
+    }
+
+    public void setModeloSelecionado(Documento modeloSelecionado) {
+        this.modeloSelecionado = modeloSelecionado;
     }
 
 }

@@ -20,8 +20,39 @@
 						<div class="SeparatorFull"></div>
 
 						<p:panel>
-							<p:panelGrid columns="3" layout="grid"
+							<p:panelGrid id="pnFiltrosDoc" columns="3" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo" value="Período de criação" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{documentoMB.filtroPeriodo}">
+
+										<p:ajax process="@this"
+											listener="#{documentoMB.actionTrocaDatasCriacao}" />
+
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataInicial" value="Data de criação de:" />
+									<p:calendar id="dataInicial" value="#{documentoMB.dataInicio}"
+										autocomplete="false" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataFinal" value="Data de criação até:" />
+									<p:calendar id="dataFinal" value="#{documentoMB.dataFim}"
+										autocomplete="false" />
+								</h:panelGroup>
 
 								<h:panelGroup>
 									<p:outputLabel style="margin:0px;" for="filtroTipoDocumento"
@@ -33,6 +64,25 @@
 											itemValue="#{null}" />
 										<f:selectItems value="#{documentoMB.listaTiposDocumentos}"
 											var="tipo" itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
+
+										<p:ajax listener="#{documentoMB.carregarDocumentos()}" update="filtroModeloDocumento" process="@this" />
+
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;"
+										for="filtroModeloDocumento" value="Modelo do documento" />
+									<p:selectOneMenu id="filtroModeloDocumento"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{documentoMB.modeloSelecionado}"
+										converter="documento">
+
+										<f:selectItem itemLabel="Selecione um modelo"
+											itemValue="#{null}" />
+										<f:selectItems
+											value="#{documentoMB.listaDocumentosModelos}"
+											var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
 
 										<p:ajax process="@this" />
 
@@ -57,7 +107,7 @@
 								<p:commandButton value="Pesquisar" styleClass="OrangeButton"
 									icon="White fa fa-search"
 									actionListener="#{documentoMB.pesquisar()}"
-									update="dtDocumentos" process="@this" />
+									update="dtDocumentos" process="@this,pnFiltrosDoc" />
 
 								<p:commandButton value="Novo documento" styleClass="NavyButton"
 									icon="fa fa-file White"
@@ -85,13 +135,13 @@
 									oncomplete="PF('dlgNovoDocumento').show();"
 									update=":lume:dlgNovoDocumento,:lume:editor" process="@this" />
 
-								<h:panelGroup rendered="#{documento.ativo != null and documento.ativo eq 'S'}">
+								<h:panelGroup rendered="#{documento.isAtivo()}">
 									<p:commandButton id="persistInativar"
 										icon="White fa fa-chain-broken" title="Inativar"
 										actionListener="#{documentoMB.actionInativar(documento)}"
 										update="dtDocumentos" process="@this" styleClass="NavyButton" />
 								</h:panelGroup>
-								<h:panelGroup rendered="#{documento.ativo != null and documento.ativo eq 'N'}">
+								<h:panelGroup rendered="#{!documento.isAtivo()}">
 									<p:commandButton id="persistAtivar"
 										icon="White fa fa-chain White" title="Ativar"
 										actionListener="#{documentoMB.actionAtivar(documento)}"
