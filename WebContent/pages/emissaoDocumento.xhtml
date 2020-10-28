@@ -19,37 +19,6 @@
 							<p:panelGrid id="pnFiltrosDoc" columns="3" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-								<h:panelGroup styleClass="md-combo">
-									<h:outputText for="filtroPeriodo" value="Período de emissão:" />
-									<p:selectOneMenu id="filtroPeriodo"
-										value="#{emissaoDocumentoMB.filtroPeriodo}">
-
-										<p:ajax process="@this"
-											listener="#{emissaoDocumentoMB.actionTrocaDatasCriacao}" />
-
-										<f:selectItem itemValue="" itemLabel="Selecione" />
-										<f:selectItem itemValue="O" itemLabel="Ontem" />
-										<f:selectItem itemValue="H" itemLabel="Hoje" />
-										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
-										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-									</p:selectOneMenu>
-								</h:panelGroup>
-
-								<h:panelGroup>
-									<h:outputText for="dataInicial" value="Data de emissão de:" />
-									<p:calendar id="dataInicial"
-										value="#{emissaoDocumentoMB.dataInicio}" autocomplete="false" />
-								</h:panelGroup>
-
-								<h:panelGroup>
-									<h:outputText for="dataFinal" value="Data de emissao até:" />
-									<p:calendar id="dataFinal"
-										value="#{emissaoDocumentoMB.dataFim}" autocomplete="false" />
-								</h:panelGroup>
-
 								<h:panelGroup>
 									<p:outputLabel style="margin:0px;" for="filtroTipoDocumento"
 										value="Tipo de documento" />
@@ -110,6 +79,36 @@
 									</p:autoComplete>
 								</h:panelGroup>
 
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo" value="Período de emissão:" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{emissaoDocumentoMB.filtroPeriodo}">
+
+										<p:ajax process="@this"
+											listener="#{emissaoDocumentoMB.actionTrocaDatasCriacao}" />
+
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataInicial" value="Data de emissão de:" />
+									<p:calendar id="dataInicial"
+										value="#{emissaoDocumentoMB.dataInicio}" autocomplete="false" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="dataFinal" value="Data de emissao até:" />
+									<p:calendar id="dataFinal"
+										value="#{emissaoDocumentoMB.dataFim}" autocomplete="false" />
+								</h:panelGroup>
 							</p:panelGrid>
 
 							<p:panelGrid columns="3" layout="grid"
@@ -137,30 +136,41 @@
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Ações">
-								<p:commandButton ajax="false" icon="White fa fa-print" immediate="true"
+								<p:commandButton ajax="false" icon="White fa fa-print"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload
 										value="#{emissaoDocumentoMB.getArquivo(documento)}" />
 								</p:commandButton>
 							</p:column>
 
-							<p:column headerText="Tipo do documento">
+							<p:column filterBy="#{documento.documentoModelo.tipo.nome}"
+								sortBy="#{documento.documentoModelo.tipo.nome}"
+								filterMatchMode="contains" headerText="Tipo do documento">
 								<h:outputText value="#{documento.documentoModelo.tipo.nome}" />
 							</p:column>
 
-							<p:column headerText="Descrição">
+							<p:column filterBy="#{documento.documentoModelo.descricao}"
+								sortBy="#{documento.documentoModelo.descricao}"
+								filterMatchMode="contains" headerText="Descrição">
 								<h:outputText value="#{documento.documentoModelo.descricao}" />
 							</p:column>
 
-							<p:column headerText="Emitido para">
+							<p:column filterBy="#{documento.emitidoPara.dadosBasico.nome}"
+								sortBy="#{documento.emitidoPara.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Emitido para">
 								<h:outputText value="#{documento.emitidoPara.dadosBasico.nome}" />
 							</p:column>
 
-							<p:column headerText="Emitido por">
+							<p:column filterBy="#{documento.emitidoPor.dadosBasico.nome}"
+								sortBy="#{documento.emitidoPor.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Emitido por">
 								<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}" />
 							</p:column>
 
-							<p:column headerText="Data de emissão">
+							<p:column filterBy="#{documento.dataEmissaoStr}"
+								sortBy="#{documento.dataEmissaoStr}" filterMatchMode="contains"
+								headerText="Data de emissão">
 								<h:outputText value="#{documento.dataEmissaoStr}" />
 							</p:column>
 						</p:dataTable>
@@ -171,7 +181,7 @@
 		</div>
 
 		<h:inputHidden>
-			<p:commandLink id="donwloadArq" ajax="false" immediate="true" 
+			<p:commandLink id="donwloadArq" ajax="false" immediate="true"
 				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 				<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
 			</p:commandLink>

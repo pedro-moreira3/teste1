@@ -165,7 +165,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                     menuItem.setId(tag.getAtributo());
                     menuItem.setTitle(tag.getDescricaoCampo());
                     menuItem.setValue(tag.getDescricaoCampo());
-                    menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
+                    if(!tag.getDescricaoCampo().equals("Logo empresa")) {
+                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
+                    }else {
+                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
+                    }
 
                     submenu.addElement(menuItem);
                 }
@@ -291,7 +295,9 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         setEntity(doc);
         
         if(doc.getPathModelo() != null && !doc.getPathModelo().isEmpty()) {
-            this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
+            if(doc.getMostrarLogo() != null)
+                this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
+
             this.documento = "";
             carregarPaleta();
             

@@ -119,7 +119,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{p.nomeMae}" />
 							</p:column>
 
-							<p:ajax event="itemSelect" process="@this"
+							<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
 								update="pnTags,viewDoc" />
 						</p:autoComplete>
 					</h:panelGroup>
@@ -137,7 +137,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							dropdown="true">
 
 							<p:ajax event="itemSelect"
-								listener="#{emissaoDocumentoMB.processarCID}" />
+								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc"/>
 
 						</p:autoComplete>
 					</h:panelGroup>
@@ -148,7 +148,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
 								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
-								<p:ajax process="@this" />
+								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this" update=":lume:viewDoc"/>
 							</p:inputText>
 						</h:panelGroup>
 
@@ -157,7 +157,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:outputLabel value="#{tag.descricaoCampo}:"/>
 							<p:calendar value="#{tag.respTagData}" autocomplete="false"
 								timeInput="true">
-								<p:ajax event="dateSelect" process="@this" />
+								<p:ajax event="dateSelect" process="@this"  listener="#{emissaoDocumentoMB.atualizarTag()}" update=":lume:viewDoc" />
 							</p:calendar>
 						</h:panelGroup>
 					</ui:repeat>

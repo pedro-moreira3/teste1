@@ -21,6 +21,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.swing.text.html.parser.ParserDelegator;
 
 import org.primefaces.PrimeFaces;
@@ -397,6 +398,28 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
     }
 
+    public void atualizarTag() {
+        for(TagEntidade tag : this.tags) {
+            if(tag.getEntidade().getEntidade().equals("Paciente") || tag.getEntidade().getEntidade().equals("Atestado")) {
+                if(tag.getEntidade().getEntidade().equals("Paciente") && this.pacienteSelecionado != null)
+                    this.processarTag(tag, this.modeloSelecionado.getModelo());
+                else if(tag.getEntidade().getEntidade().equals("Atestado") && this.cid != null)
+                    this.processarTag(tag, this.modeloSelecionado.getModelo());
+            }else {
+                this.processarTag(tag, this.modeloSelecionado.getModelo());
+            }
+            
+        }
+        
+        for(TagEntidade tag : this.tagsDinamicas) {
+            if(tag.getRespTag() != null || tag.getRespTagData() != null || (tag.getDescricaoCampo().equals("CID") && this.cid != null)) {
+                this.processarTag(tag, this.modeloSelecionado.getModelo());
+            }
+        }
+        
+        preview();
+    }
+    
     private void processarTag(TagEntidade tag, String modelo) {
         try {
             Class<?> c = null;
@@ -410,7 +433,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                     Object obj = campo.get(emp);
 
                     if (obj instanceof String) {
-                        modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
+                        modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (obj != null ? (String) obj : ""));
                     }else if (obj == null) {
                         modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", "");
                     }
@@ -424,7 +447,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                     Object obj = campo.get(this.pacienteSelecionado.getDadosBasico());
 
                     if (obj instanceof String) {
-                        modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
+                        modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (obj != null ? (String) obj : ""));
                     }else if (obj instanceof Date) {
                         Date data = (Date) obj;
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -469,6 +492,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
     }
     
+    @Override
+    public void actionNew(ActionEvent event) {
+        super.actionNew(event);
+        this.setEntity(null);
+        this.setCid(null);
+        this.setPacienteSelecionado(null);
+        this.setFiltroTipoDocumentoEmitir(null);
+        this.setModeloSelecionado(null);
+    }
+    
     public void processarDocumento() {
         for(TagEntidade tag : this.tags) {
             this.processarTag(tag, this.modeloSelecionado.getModelo());
@@ -484,6 +517,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void processarCID() {
         if (this.cid != null) {
             this.modeloSelecionado.getModelo().replaceAll("\\{Atestado-cid\\}", (String) this.cid.getDescricao());
+            this.atualizarTag();
         }
     }
 
