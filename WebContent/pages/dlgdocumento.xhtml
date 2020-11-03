@@ -92,23 +92,35 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				</p:selectOneMenu>
 			</h:panelGroup>
 
-			<ui:remove>
 			<h:panelGroup>
-				<p:outputLabel style="margin:0px;" for="orientacaoDocumento"
-					value="Orientação" />
-				<p:selectOneMenu id="orientacaoDocumento"
-					style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-					value="#{documentoMB.entity.orientacao}">
-
-					<f:selectItem itemLabel="Selecione a orientação"
-						itemValue="#{null}" />
-					<f:selectItem itemLabel="Retrato" itemValue="R" />
-					<f:selectItem itemLabel="Paisagem" itemValue="P" />
-
-					<p:ajax process="@this" />
-				</p:selectOneMenu>
+				<p:selectBooleanCheckbox value="#{documentoMB.mostrarCabecalho}"
+					style="min-width:0px;margin-top:10px;margin-bottom:10px;">
+					<p:ajax listener="#{documentoMB.inserirCabecalho()}"
+						process="@this" />
+				</p:selectBooleanCheckbox>
+				<p:outputLabel style="margin:0px;" for="layoutDocumento"
+					value="Mostrar cabeçalho" />
 			</h:panelGroup>
+
+			<ui:remove>
+				<h:panelGroup>
+					<p:outputLabel style="margin:0px;" for="orientacaoDocumento"
+						value="Orientação" />
+					<p:selectOneMenu id="orientacaoDocumento"
+						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+						value="#{documentoMB.entity.orientacao}">
+
+						<f:selectItem itemLabel="Selecione a orientação"
+							itemValue="#{null}" />
+						<f:selectItem itemLabel="Retrato" itemValue="R" />
+						<f:selectItem itemLabel="Paisagem" itemValue="P" />
+
+						<p:ajax process="@this" />
+					</p:selectOneMenu>
+				</h:panelGroup>
 			</ui:remove>
+
+			<br />
 
 		</p:panelGrid>
 
@@ -129,19 +141,60 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 			<p:panel id="paleta"
 				style="border:1px solid #bdbdbd;display:inline-block;margin-left:50px;vertical-align:top;
-					width:20%;height:300px;">
+					width:20%;height:400px;">
 
-				<div class="layout-paleta">
-					<div class="nano">
-						<div class="nano-content menu-scroll-content">
-							<po:menu model="#{documentoMB.menuModel}" />
+				<h:form style="height:90%;">
+					<div class="layout-paleta" style="height: 100%;">
+						<div class="nano-pane">
+							<div class="nano-content menu-scroll-content">
+								<po:menu model="#{documentoMB.menuModel}" />
+							</div>
 						</div>
 					</div>
-				</div>
+				</h:form>
+
+				<h:panelGroup style="height:100%;">
+					<p:commandButton value="Tag customizada" styleClass="NavyButton"
+						rendered="#{documentoMB.entity.tipo != null}"
+						oncomplete="PF('dlgNovaTag').show();" update="dlgNovaTag"
+						process="@this">
+					</p:commandButton>
+				</h:panelGroup>
 			</p:panel>
 
 		</h:panelGroup>
-
 	</p:panel>
+
+	<p:remoteCommand name="novaTag"
+		onstart="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
+		process="@this,editor" update="editor">
+	</p:remoteCommand>
+
+	<p:dialog id="dlgNovaTag" widgetVar="dlgNovaTag" header="Nova tag">
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+			<h:panelGroup>
+				<p:outputLabel value="Informe o nome da tag:" />
+				<p:inputText id="inputTag" value="#{documentoMB.novaTag}">
+					<p:ajax process="@this" update="btnNewTag" />
+				</p:inputText>
+			</h:panelGroup>
+		</p:panelGrid>
+
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+			<p:commandButton value="Cancelar"
+				actionListener="#{documentoMB.setNovaTag(null)}"
+				styleClass="RedButton" oncomplete="PF('dlgNovaTag').hide();"
+				process="@this" />
+			<h:panelGroup></h:panelGroup>
+			<p:commandButton id="btnNewTag" value="Salvar"
+				styleClass="GreenButton"
+				onstart="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
+				process="@this,editor" update="editor"
+				oncomplete="PF('dlgNovaTag').hide();" />
+		</p:panelGrid>
+	</p:dialog>
 
 </ui:composition>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<!-- wColorPicker -->
+	<div class="ui-g ui-fluid">
+		<div class="ui-g-12 ui-lg-12">
+
+			<p:outputPanel id="viewDocumentos"
+				style="width:720px;vertical-align:center;">
+
+			</p:outputPanel>
+
+			<p:dataTable id="dtDocumentosPaciente"
+				widgetVar="dtDocumentosPaciente"
+				value="#{pacienteMB.listaDocumentos}" var="documento"
+				rowKey="#{documento}" rows="10" paginator="true"
+				paginatorPosition="bottom" reflow="true"
+				emptyMessage="Nenhum registro encontrado" filterDelay="1000">
+
+				<f:facet name="header">Documentos emitidos</f:facet>
+
+				<p:column headerText="Ações">
+					<p:commandButton ajax="false" icon="White fa fa-download">
+						<p:fileDownload value="#{pacienteMB.getArquivo(documento)}" />
+					</p:commandButton>
+				</p:column>
+
+				<p:column headerText="Tipo do documento">
+					<h:outputText value="#{documento.documentoModelo.tipo.nome}" />
+				</p:column>
+
+				<p:column headerText="Descrição">
+					<h:outputText value="#{documento.documentoModelo.descricao}" />
+				</p:column>
+
+				<p:column headerText="Emitido para">
+					<h:outputText value="#{documento.emitidoPara.dadosBasico.nome}" />
+				</p:column>
+
+				<p:column headerText="Emitido por">
+					<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}" />
+				</p:column>
+
+				<p:column headerText="Data de emissão">
+					<h:outputText value="#{documento.dataEmissaoStr}" />
+				</p:column>
+			</p:dataTable>
+
+		</div>
+	</div>
+
+	<p:dialog header="Importação de documento">
+		<p:panel>
+			<ui:remove>
+				<p:panelGrid columns="3" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+					<h:panelGroup>
+						<p:outputLabel style="margin:0px;" for="tipoDocumento"
+							value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocumento" converter="dominio"
+							style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+							value="#{pacienteMB.tipoDocumentoImportacao.tipo}">
+
+							<f:selectItem itemLabel="Selecione um tipo" itemValue="#{null}" />
+							<f:selectItems value="#{documentoMB.listaTiposDocumentos}"
+								var="t" itemLabel="#{t.nome}" itemValue="#{t}" />
+							<p:ajax process="@this" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<p:outputLabel for="descricaoDocumento" value="Descrição" />
+						<p:inputText id="descricaoDocumento"
+							value="#{pacienteMB.descricaoDocumentoImportacao}">
+							<p:ajax process="@this" />
+						</p:inputText>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<p:fileUpload id="documentoUpload"
+							fileUploadListener="#{pacienteMB.carregarArquivo()}"
+							multiple="false" mode="advanced" auto="true"
+							allowTypes="/(\.|\/)(txt|xls|csv|xlsx|pdf)$/"
+							label="Selecione o arquivo" style="display:block;" />
+					</h:panelGroup>
+				</p:panelGrid>
+
+				<p:panelGrid columns="3" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+					<p:commandButton value="Cancelar" />
+
+					<p:commandButton value="Salvar arquivo"
+						actionListener="#{pacienteMB.salvarArquivoImportacao()}"
+						styleClass="GreenButton" icon="fa fa-save" />
+				</p:panelGrid>
+			</ui:remove>
+		</p:panel>
+	</p:dialog>
+
+
+</ui:composition>

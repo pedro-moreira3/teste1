@@ -1,0 +1,181 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:po="http://primefaces.org/ultima"
+	xmlns:ckeditor="http://ckeditor.com">
+
+	<br />
+
+	<style>
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.4px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+
+.layout-paleta {
+	z-index: 99;
+	position: relative;
+	overflow: scroll;
+	overflow-x: hidden;
+	height: 70%;
+	background-color: #ffffff;
+	-moz-transition: margin-left 0.3s;
+	-o-transition: margin-left 0.3s;
+	-webkit-transition: margin-left 0.3s;
+	transition: margin-left 0.3s;
+}
+
+.layout-paleta .layout-menu-tooltip {
+	display: none;
+}
+</style>
+
+	<p:scrollPanel mode="native"
+		style="position: relative; width: 100%; height: 100%;">
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank ui-fluid form-group"
+				style="width:100%;">
+
+				<h:panelGroup>
+					<p:outputLabel style="margin:0px;" for="filtroTipoDocumentoEmitir"
+						value="Tipo de documento" />
+					<p:selectOneMenu id="filtroTipoDocumentoEmitir"
+						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+						value="#{emissaoDocumentoMB.filtroTipoDocumentoEmitir}"
+						converter="dominio">
+						<f:selectItem itemLabel="Selecione um tipo" itemValue="#{null}" />
+						<f:selectItems value="#{emissaoDocumentoMB.listaTiposDocumentos}"
+							var="tipo" itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
+
+						<p:ajax listener="#{emissaoDocumentoMB.carregarDocumentos}"
+							update="filtroModeloDocumentoEmitir" process="@this" />
+
+					</p:selectOneMenu>
+				</h:panelGroup>
+
+				<h:panelGroup>
+					<p:outputLabel style="margin:0px;"
+						for="filtroModeloDocumentoEmitir" value="Modelo do documento" />
+					<p:selectOneMenu id="filtroModeloDocumentoEmitir"
+						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+						value="#{emissaoDocumentoMB.modeloSelecionado}"
+						converter="documento">
+
+						<f:selectItem itemLabel="Selecione um modelo" itemValue="#{null}" />
+						<f:selectItems
+							value="#{emissaoDocumentoMB.listaDocumentosModelos}" var="tipo"
+							itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+
+						<p:ajax listener="#{emissaoDocumentoMB.montarTags}"
+							update="pnTags,viewDoc" process="@this" />
+
+					</p:selectOneMenu>
+				</h:panelGroup>
+
+				<p:outputPanel id="pnTags">
+					<h:panelGroup
+						rendered="#{emissaoDocumentoMB.tag != null and emissaoDocumentoMB.tag.entidade eq 'Paciente'}">
+
+						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
+						<p:autoComplete id="filtroDinamicoPaciente"
+							value="#{emissaoDocumentoMB.pacienteSelecionado}"
+							style="margin-bottom:20px;"
+							completeMethod="#{emissaoDocumentoMB.sugestoesPacientes}" var="p"
+							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+							converter="paciente" forceSelection="true" scrollHeight="400"
+							minQueryLength="3" queryDelay="1000" dropdown="true">
+
+							<p:column headerText="Código" style="text-align: center;">
+								<h:outputText value="#{p.codigo}" />
+							</p:column>
+							<p:column headerText="Nome">
+								<h:outputText value="#{p.dadosBasico.nome}" />
+							</p:column>
+							<p:column headerText="Celular">
+								<h:outputText value="#{p.dadosBasico.celular}" />
+							</p:column>
+							<p:column headerText="Nome da Mãe">
+								<h:outputText value="#{p.nomeMae}" />
+							</p:column>
+
+							<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
+								update="pnTags,viewDoc" />
+						</p:autoComplete>
+					</h:panelGroup>
+
+					<h:panelGroup
+						rendered="#{emissaoDocumentoMB.filtroTipoDocumentoEmitir.nome eq 'Atestado'}">
+						<p:outputLabel for="cid" value="CID:" />
+
+						<p:autoComplete queryDelay="1000"
+							value="#{emissaoDocumentoMB.cid}" id="cid"
+							style="margin-bottom:20px;"
+							completeMethod="#{emissaoDocumentoMB.geraSugestoesCID}" var="c"
+							itemLabel="#{c.label}" itemValue="#{c}" converter="cid"
+							forceSelection="true" scrollHeight="500" minQueryLength="3"
+							dropdown="true">
+
+							<p:ajax event="itemSelect"
+								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc"/>
+
+						</p:autoComplete>
+					</h:panelGroup>
+
+					<ui:repeat var="tag" value="#{emissaoDocumentoMB.tagsDinamicas}">
+						<h:panelGroup style="margin-top:10px;margin-bottom:20px;"
+							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'texto'}">
+							<h:outputLabel value="#{tag.descricaoCampo}:" />
+							<p:inputText value="#{tag.respTag}"
+								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
+								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this" update=":lume:viewDoc"/>
+							</p:inputText>
+						</h:panelGroup>
+
+						<h:panelGroup style="margin-top:10px !important;margin-bottom:20px !important;"
+							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
+							<h:outputLabel value="#{tag.descricaoCampo}:"/>
+							<p:calendar value="#{tag.respTagData}" autocomplete="false"
+								timeInput="true">
+								<p:ajax event="dateSelect" process="@this"  listener="#{emissaoDocumentoMB.atualizarTag()}" update=":lume:viewDoc" />
+							</p:calendar>
+						</h:panelGroup>
+					</ui:repeat>
+
+				</p:outputPanel>
+			</p:panelGrid>
+
+			<p:panelGrid id="viewDoc" columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank ui-fluid form-group"
+				style="width:100%;">
+				<p:fieldset legend="Pré-visualização" toggleable="true" style="max-height:500px;">
+					<h:outputText id="documentoImprimir"
+							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
+							escape="false" />
+				</p:fieldset>
+			</p:panelGrid>
+
+		</p:panelGrid>
+	</p:scrollPanel>
+
+</ui:composition>

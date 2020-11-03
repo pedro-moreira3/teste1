@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -63,6 +65,8 @@ import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
+import br.com.lume.documentoEmitido.bo.DocumentoEmitidoBO;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
@@ -71,8 +75,11 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Anamnese;
 import br.com.lume.odonto.entity.ConfiguracaoAnamnese;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.Documento;
+import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
+import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
@@ -165,6 +172,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private String metodoImagem = "U";
     private UploadedFile uploadedFile;
     private List<Dominio> listaEstadoCivil;
+    
+    //DOCUMENTOS
+    private Documento tipoDocumentoImportacao;
+    private String descricaoDocumentoImportacao;
+    private DocumentoEmitido documentoDownload;
+    private StreamedContent fileDownload;
+    private List<DocumentoEmitido> listaDocumentos;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -173,7 +187,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
-
+        
         try {
             indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
         } catch (Exception e1) {
@@ -225,6 +239,30 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             }
         }
+    }
+    
+    public void salvarArquivoImportacao() {
+        
+    }
+    
+    public void carregarDocumentosPaciente() {
+        this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), 
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public StreamedContent getArquivo(DocumentoEmitido doc) {
+        
+        StreamedContent arquivo = null;
+        if (doc.getPathDocumento() != null) {
+            try {              
+                File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
+                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");                
+                arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return arquivo;
     }
     
     public void mostrarPerguntasAnamnese() {
@@ -1307,6 +1345,46 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setConfiguracoesAnamneses(List<ConfiguracaoAnamnese> configuracoesAnamneses) {
         this.configuracoesAnamneses = configuracoesAnamneses;
+    }
+
+    public Documento getTipoDocumentoImportacao() {
+        return tipoDocumentoImportacao;
+    }
+
+    public void setTipoDocumentoImportacao(Documento tipoDocumentoImportacao) {
+        this.tipoDocumentoImportacao = tipoDocumentoImportacao;
+    }
+
+    public String getDescricaoDocumentoImportacao() {
+        return descricaoDocumentoImportacao;
+    }
+
+    public void setDescricaoDocumentoImportacao(String descricaoDocumentoImportacao) {
+        this.descricaoDocumentoImportacao = descricaoDocumentoImportacao;
+    }
+
+    public DocumentoEmitido getDocumentoDownload() {
+        return documentoDownload;
+    }
+
+    public void setDocumentoDownload(DocumentoEmitido documentoDownload) {
+        this.documentoDownload = documentoDownload;
+    }
+
+    public List<DocumentoEmitido> getListaDocumentos() {
+        return listaDocumentos;
+    }
+
+    public void setListaDocumentos(List<DocumentoEmitido> listaDocumentos) {
+        this.listaDocumentos = listaDocumentos;
+    }
+
+    public StreamedContent getFileDownload() {
+        return fileDownload;
+    }
+
+    public void setFileDownload(StreamedContent fileDownload) {
+        this.fileDownload = fileDownload;
     }
 
 }
