@@ -19,130 +19,188 @@
 						<h1>Configuração de Documentos</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="1" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group"
-							style="border:0px none; background-color:transparent;">
+						<p:panel>
+							<p:panelGrid id="pnFiltrosDoc" columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-							<h:panelGroup>
-								<p:outputLabel for="tipo" value="Tipo de Documento: " />
-								<p:selectOneRadio id="tipo" required="true"
-									value="#{documentoMB.entity.tipo}" converter="dominio"
-									layout="grid" columns="3">
-									<p:ajax update="pnPrincipal"
-										listener="#{documentoMB.addLegendas}" process="@this" />
-									<f:selectItems value="#{documentoMB.dominios}" var="tp"
-										itemValue="#{tp}" itemLabel="#{tp.nome}" />
-								</p:selectOneRadio>
-							</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroTipoDocumento"
+										value="Tipo de documento" />
+									<p:selectOneMenu id="filtroTipoDocumento"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{documentoMB.filtroTipoDocumento}" converter="dominio">
+										<f:selectItem itemLabel="Selecione um tipo"
+											itemValue="#{null}" />
+										<f:selectItems value="#{documentoMB.listaTiposDocumentos}"
+											var="tipo" itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
 
-							<h:panelGroup style="vertical-align:top;">
-								<h:panelGroup style="display:inline-block;margin-right:50px;vertical-align:top;">
-									<p:outputLabel value="Legendas: " />
-									<p:dataList value="#{documentoMB.legendas}" var="lg"
-										itemType="disc">
-										<h:outputText value="#{lg}" />
-									</p:dataList>
+										<p:ajax listener="#{documentoMB.carregarDocumentos()}"
+											update="filtroModeloDocumento" process="@this" />
+
+									</p:selectOneMenu>
 								</h:panelGroup>
 
-								<h:panelGroup id="paiModelo" style="display:inline-block;vertical-align:top;">
-									<p:outputLabel value="Modelo: " />
-									<pe:ckEditor id="modelo" value="#{documentoMB.entity.modelo}"
-										toolbar="[[ 'Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl' ,'Image','Table','HorizontalRule','SpecialChar','PageBreak','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
-										styleClass="BordNone" binding="#{documentoMB.ckEditor}">
-										
-										<p:ajax process="@this"/>
-										
-									</pe:ckEditor>
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroModeloDocumento"
+										value="Modelo do documento" />
+									<p:selectOneMenu id="filtroModeloDocumento"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{documentoMB.modeloSelecionado}" converter="documento">
+
+										<f:selectItem itemLabel="Selecione um modelo"
+											itemValue="#{null}" />
+										<f:selectItems value="#{documentoMB.listaDocumentosModelos}"
+											var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+
+										<p:ajax process="@this" />
+
+									</p:selectOneMenu>
 								</h:panelGroup>
-							</h:panelGroup>
 
-							<h:panelGroup>
-								<p:outputLabel for="descricao" value="Nome do documento: " />
-								<p:inputTextarea id="descricao"
-									value="#{documentoMB.entity.descricao}" maxlength="100"
-									required="true">
-								
-									<p:ajax process="@this"/>
-								
-								</p:inputTextarea>
-							</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel for="status" value="Status dos Documentos: " />
+									<p:selectOneMenu id="status" value="#{documentoMB.status}">
+										<f:selectItem itemLabel="Todos" itemValue="#{null}" />
+										<f:selectItem itemLabel="Ativos" itemValue="A" />
+										<f:selectItem itemLabel="Inativos" itemValue="I" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+								</h:panelGroup>
 
-						</p:panelGrid>
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo" value="Período de criação" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{documentoMB.filtroPeriodo}">
 
-						<div class="SeparatorFull"></div>
+										<p:ajax process="@this"
+											listener="#{documentoMB.actionTrocaDatasCriacao}" />
 
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new" icon="White fa fa-file-o"
-								value="Nova Configuração de Documentos"
-								actionListener="#{documentoMB.actionNew}"
-								update=":lume:pnPrincipal" immediate="true" tabindex="1" />
-							<p:commandButton id="persist" icon="White fa fa-save"
-								value="Salvar" actionListener="#{documentoMB.actionPersist}"
-								update=":lume:pnPrincipal, :lume:dtPrincipal"
-								process="@this, :lume:modelo" styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o"
-								value="Excluir" actionListener="#{documentoMB.actionRemove}"
-								update=":lume:pnPrincipal, :lume:dtPrincipal" process="@this"
-								disabled="#{documentoMB.entity.id == 0}" styleClass="RedButton" />
-							<h:panelGroup>
-								<p:splitButton icon="White fa fa fa-file-excel-o"
-									value="Exportar tabela para Excel"
-									styleClass="GreenSplitButton"
-									actionListener="#{documentoMB.exportarTabela('xls')}"
-									ajax="false" process="dtPrincipal,@this" update="@this"
-									immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
 
-									<p:fileDownload value="#{documentoMB.arquivoDownload}" />
+								<h:panelGroup>
+									<h:outputText for="dataInicial" value="Data de criação de:" />
+									<p:calendar id="dataInicial" value="#{documentoMB.dataInicio}"
+										autocomplete="false" />
+								</h:panelGroup>
 
-									<p:menuitem value="Exportar tabela para PDF"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{documentoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{documentoMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{documentoMB.exportarTabela('csv')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{documentoMB.arquivoDownload}" />
-									</p:menuitem>
-								</p:splitButton>
-							</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="dataFinal" value="Data de criação até:" />
+									<p:calendar id="dataFinal" value="#{documentoMB.dataFim}"
+										autocomplete="false" />
+								</h:panelGroup>
+							</p:panelGrid>
 
-						</p:panelGrid>
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-						<div class="EmptyBox20"></div>
+								<p:commandButton value="Pesquisar" styleClass="OrangeButton"
+									icon="White fa fa-search"
+									actionListener="#{documentoMB.pesquisar()}"
+									update="dtDocumentos" process="@this,pnFiltrosDoc" />
 
-						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtPrincipal" value="#{documentoMB.documentos}" var="doc"
-							rows="7" paginator="true" selection="#{documentoMB.entity}"
-							selectionMode="single" rowKey="#{doc}" paginatorPosition="bottom">
-							
-							<p:ajax event="rowSelect" update=":lume:pnPrincipal"
-								listener="#{documentoMB.addLegendas}" />
-							
-							<f:facet name="header">Documentos</f:facet>
-							
-							<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}"
-								filterMatchMode="contains" headerText="Descrição"
-								filterFunction="#{documentoMB.filtroSemAcento}">
-								<h:outputText value="#{doc.descricao}" title="#{doc.id}" />
+								<p:commandButton value="Novo documento" styleClass="NavyButton"
+									icon="fa fa-file White"
+									actionListener="#{documentoMB.actionNew}"
+									oncomplete="PF('dlgNovoDocumento').show();"
+									update="pnPrincipalDocumento" process="@this" />
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<p:dataTable id="dtDocumentos" widgetVar="dtDocumentos"
+							value="#{documentoMB.documentos}" var="documento"
+							rowKey="#{documento}" rows="10" paginator="true"
+							paginatorPosition="bottom" reflow="true"
+							emptyMessage="Nenhum registro encontrado"
+							binding="#{documentoMB.tabelaDocumentos}" filterDelay="1000">
+
+							<f:facet name="header">Modelos de documentos</f:facet>
+
+							<p:column headerText="Ações">
+								<p:commandButton id="btnView" styleClass="NavyButton"
+									icon="White fa fa-eye"
+									actionListener="#{documentoMB.carregarDocumento(documento)}"
+									oncomplete="PF('dlgNovoDocumento').show();"
+									update=":lume:dlgNovoDocumento,:lume:editor" process="@this" />
+
+								<h:panelGroup rendered="#{documento.isAtivo()}">
+									<p:commandButton id="persistInativar"
+										icon="White fa fa-chain-broken" title="Inativar"
+										actionListener="#{documentoMB.actionInativar(documento)}"
+										update="dtDocumentos" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{!documento.isAtivo()}">
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Ativar"
+										actionListener="#{documentoMB.actionAtivar(documento)}"
+										update="dtDocumentos" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>
 							</p:column>
-							<p:column sortBy="#{doc.tipo.nome}" filterBy="#{doc.tipo.nome}"
-								filterMatchMode="contains" headerText="Tipo"
-								filterFunction="#{documentoMB.filtroSemAcento}">
-								<h:outputText value="#{doc.tipo.nome}" />
+
+							<p:column filterBy="#{documento.tipo.nome}"
+								sortBy="#{documento.tipo.nome}" filterMatchMode="contains"
+								headerText="Tipo de documento">
+								<h:outputText value="#{documento.tipo.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{documento.descricao}"
+								sortBy="#{documento.descricao}" filterMatchMode="contains"
+								headerText="Descrição">
+								<h:outputText value="#{documento.descricao}" />
+							</p:column>
+
+							<p:column filterBy="#{documento.dataCriacaoStr}"
+								sortBy="#{documento.dataCriacaoStr}" filterMatchMode="contains"
+								headerText="Data de criação">
+								<h:outputText value="#{documento.dataCriacaoStr}" />
+							</p:column>
+
+							<p:column filterBy="#{documento.criadoPor.dadosBasico.nome}"
+								sortBy="#{documento.criadoPor.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Criado por">
+								<h:outputText value="#{documento.criadoPor.dadosBasico.nome}" />
 							</p:column>
 
 						</p:dataTable>
-
 					</p:outputPanel>
+
 				</div>
 			</div>
 		</div>
+
+		<p:dialog id="dlgNovoDocumento" widgetVar="dlgNovoDocumento"
+			header="Novo documento" responsive="true" modal="true"
+			appendTo=":lume" onHide="PF('dlgNovoDocumento').toggleMaximize();"
+			onShow="PF('dlgNovoDocumento').toggleMaximize();">
+
+			<p:panel>
+				<ui:include src="dlgdocumento.xhtml" />
+
+				<p:panelGrid columns="4" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+					<p:commandButton value="Fechar" styleClass="NavyButton"
+						icon="fa fa-close" oncomplete="PF('dlgNovoDocumento').hide()" />
+
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup></h:panelGroup>
+
+					<p:commandButton value="Salvar" styleClass="GreenButton"
+						icon="fa fa-save" actionListener="#{documentoMB.actionPersist}"
+						update="dtDocumentos" process="@this, editor" />
+				</p:panelGrid>
+			</p:panel>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>
