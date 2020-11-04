@@ -82,11 +82,13 @@ body div.ui-widget-content.ui-tabs {
 				<ui:include src="exame.xhtml" />
 			</p:tab>
 			
+			<ui:remove>
 			<p:tab id="tab13" title="Documentos"
 				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
 				disabled="#{pacienteMB.entity.id == null}">
 				<ui:include src="documentosPaciente.xhtml" />
 			</p:tab>
+			</ui:remove>
 
 			<p:tab id="tab10" title="Frequência"
 				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"

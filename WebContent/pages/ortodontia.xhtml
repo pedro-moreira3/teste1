@@ -840,6 +840,7 @@ li.orcamento-li {
 															message="Deseja cancelar o orçamento?"
 															icon="ui-icon-alert" />
 													</p:commandButton>
+													<ui:remove>
 													<p:commandButton icon="fa fa-trash" process="@this"
 														actionListener="#{ortodontiaMB.desfazerOrcamentoPorPTP(o)}"
 														update=":lume:tabViewPaciente:dtOrcamentosOrtodontia, :lume:tabViewPaciente:fsProcedimentosEValores"
@@ -848,6 +849,7 @@ li.orcamento-li {
 															message="Deseja desfazer o orçamento?"
 															icon="ui-icon-alert" />
 													</p:commandButton>
+													</ui:remove>
 
 												</p:column>
 												<p:column filterBy="#{o.dataAprovacaoStr}"

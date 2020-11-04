@@ -99,10 +99,10 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
         }else if("Anotações".equals(event.getTab().getTitle())) {
-            pacienteMB.carregarAnotacoes();
-        }else if("Documentos".equals(event.getTab().getTitle())) {
-            pacienteMB.carregarDocumentosPaciente();
-        }
+            pacienteMB.carregarAnotacoes();}
+//        }else if("Documentos".equals(event.getTab().getTitle())) {
+//            pacienteMB.carregarDocumentosPaciente();
+//        }
     }
 
 //    public void refreshDadosPaciente() {

@@ -1362,7 +1362,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }"
 														update=":lume:pnCalculoRepasse" />
-													
+													<ui:remove>
 														<p:commandButton icon="fa fa-dollar"
 															styleClass="NavyButton" title="Recalcular Repasse"
 															rendered="#{repasseProfissionalComReciboMB.admin}"
@@ -1375,7 +1375,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 																message="Cofirma o recálculo de repasse de profissional?">
 															</p:confirm>
 														</p:commandButton>
-	
+	</ui:remove>
 													<p:commandButton icon="fa fa-dollar"
 														styleClass="NavyButton" title="Ajuste Manual"
 														rendered="#{repasseProfissionalComReciboMB.admin}"
