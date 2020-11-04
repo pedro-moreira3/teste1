@@ -32,6 +32,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.documento.bo.DocumentoBO;
 import br.com.lume.dominio.DominioSingleton;
 // import br.com.lume.odonto.bo.DocumentoBO;
 // import br.com.lume.odonto.bo.DominioBO;
