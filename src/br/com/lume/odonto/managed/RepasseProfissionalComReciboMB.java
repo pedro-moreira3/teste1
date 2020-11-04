@@ -100,7 +100,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private List<Lancamento> lancamentosDeOrigem;
 
     private BigDecimal valorRepassar = new BigDecimal(0);
-    
+
     private boolean agendarParaData = false;
 
     private Date dataValorRestante;
@@ -348,7 +348,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                         if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
-                            ptp.setFatura(repasseFaturas.getFaturaRepasse());                           
+                            ptp.setFatura(repasseFaturas.getFaturaRepasse());
                         }
                     } else {
                         //repasse antigo, quando ainda nao tinha ptp no repasse fatura
@@ -367,8 +367,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             }
                         }
 
-                        if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) ||
-                                (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
+                        if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) || (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
                             removerPtp.add(ptp);
                             continue;
                         }
@@ -413,9 +412,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         } else {
                             ptpsValidosComLancamentos.put(ptp, new ArrayList<Lancamento>());
                             for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {
-                                ptpsValidosComLancamentos.get(ptp).add(lancamento);                               
+                                ptpsValidosComLancamentos.get(ptp).add(lancamento);
                             }
-                            ptp.setValorDisponivel(FaturaSingleton.getInstance().getTotalNaoPago(ptp.getFatura()));                            
+                            ptp.setValorDisponivel(FaturaSingleton.getInstance().getTotalNaoPago(ptp.getFatura()));
                         }
                     }
                     if (ptp.getValorTotal() == null) {
@@ -424,20 +423,18 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (ptp.getValorDisponivel() == null) {
                         ptp.setValorDisponivel(new BigDecimal(0));
                     }
-                    if (ptp.getFatura() != null
-                            && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL 
-                            && (ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0)
-                            && ptp.getFatura().isValorRestanteIgnoradoAjusteManual() ) {
+                    if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && (ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(
+                            new BigDecimal(0)) == 0) && ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
                         removerPtp.add(ptp);
                         continue;
-                    }else if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
+                    } else if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
                         //nesse caso provavelmente de problema no valor do calculo, entao estou mostrando pra nao perder informacao
-                        if(ptp.getValorTotal().compareTo(new BigDecimal(0)) != 0) {
+                        if (ptp.getValorTotal().compareTo(new BigDecimal(0)) != 0) {
                             removerPtp.add(ptp);
                         }
                         continue;
                     }
-                    
+
                     novaLista.add(ptp);
                 }
 
@@ -501,12 +498,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setEntity(ptp);
 
             ignorarRestante = false;
-            if(ptp.getFatura() != null && ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
+            if (ptp.getFatura() != null && ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
                 ignorarRestante = true;
             }
-            
-          
-            agendarParaData = false;         
+
+            agendarParaData = false;
             dataValorRestante = null;
             justificativa = null;
             Fatura fatura = ptp.getFatura();
@@ -514,23 +510,20 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             //  faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensFromPTP(ptp);
 
-            
             //se a fatura ainda nao tem lancamentos, mas o profissional recebe por procedimento, ja sabemos o valor de repasse base.
             if (fatura == null || fatura.getLancamentos() == null || fatura.getLancamentos().size() == 0) {
                 if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                     setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
                 }
             }
-            
-         
-            
+
             RepasseFaturasLancamento repasse = null;
             lancamentosDeOrigem = null;
             repasseFatura = null;
-            if(fatura != null) {                
-               
+            if (fatura != null) {
+
                 RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-                
+
                 if (fatura.getLancamentos() != null)
                     fatura.getLancamentos().sort(new Comparator<Lancamento>() {
 
@@ -542,36 +535,35 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 int cont = 0;
                 for (Lancamento lancamento : fatura.getLancamentos()) {
                     repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
-                    if (repasse == null) {                       
+                    if (repasse == null) {
                         repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseFromRepasseFaturas(repasseFaturas);
-                    }    
+                    }
                     if (repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
                         lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
-                    } 
-                    
+                    }
+
                     valorTotalFatura = new BigDecimal(0);
                     if (repasse != null && repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
-                       valorTotalFatura = FaturaSingleton.getInstance().getTotal(repasseFaturas.getFaturaOrigem());                  
-                    }else if (repasseFaturas.getFaturaOrigem() == null) {
+                        valorTotalFatura = FaturaSingleton.getInstance().getTotal(repasseFaturas.getFaturaOrigem());
+                    } else if (repasseFaturas.getFaturaOrigem() == null) {
                         valorTotalFatura = ptp.getPlanoTratamento().getValor();
-                    }else {
+                    } else {
                         valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
                     }
-                    
-                   if(repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null ) {
-                       valorProcedimento = repasse.getFaturaItem().getValorComDesconto();   
-                   }else {
-                       valorProcedimento = ptp.getProcedimento().getValor();
-                   }
-                    
-                    
+
+                    if (repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null) {
+                        valorProcedimento = repasse.getFaturaItem().getValorComDesconto();
+                    } else {
+                        valorProcedimento = ptp.getProcedimento().getValor();
+                    }
+
                     repasseFatura = repasse.getRepasseFaturas();
-                    if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {                      
+                    if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                         setValorBaseRepasse(repasse.getRepasseFaturas().getValorCalculo());
-                    } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {                      
+                    } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                         setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
-                    }                    
-                    
+                    }
+
                     if (lancamentosDeOrigem != null)
                         lancamentosDeOrigem.sort(new Comparator<Lancamento>() {
 
@@ -580,75 +572,60 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 return Long.compare(o1.getId(), o2.getId());
                             }
                         });
-                       
-                        if(lancamentosDeOrigem != null && cont < lancamentosDeOrigem.size()) {   
-                                                 
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor()); 
-                         
-                            
-                            
-                            
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(new BigDecimal(0));
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(new BigDecimal(0));
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(new BigDecimal(0));
-                            
-                            lancamentosDeOrigem.get(cont).setDadosCalculoPercTaxa(
-                                    (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTaxa() != null ?
-                                            lancamentosDeOrigem.get(cont).getTarifa().getTaxa().divide(
-                                            BigDecimal.valueOf(100)) : BigDecimal.ZERO)
-                             );
-                          //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(                                    
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor())
-                            );
-                            if(lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
-                                lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
-                            }                          
-                            lancamentosDeOrigem.get(cont).setDadosCalculoPercTributo(lancamentosDeOrigem.get(cont).getTributoPerc());
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(
-                                    lancamentosDeOrigem.get(cont).getTributoPerc().multiply(lancamentosDeOrigem.get(cont).getValor()).setScale(2, BigDecimal.ROUND_HALF_UP)
-                            );
-                            
-                            lancamentosDeOrigem.get(cont).setDadosTabelaValorTotalCustosDiretos(ptp.getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
-                         
-                            if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
-                                lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
-                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP)        
-                                );
-                                lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(
-                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                                lancamentosDeOrigem.get(cont).getValor())
-                                );                   
-                            }else {
-                                lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(new BigDecimal(0));
-                                lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
-                            }                            
-                            
-                          
-                            
-                            lancamentosDeOrigem.get(cont).setDadosCalculoTotalReducao(
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoValorTaxa()
-                                    .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTarifa())
-                                    .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTributo())
-                                    .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado())
-                            );
-                            
-                            lancamentosDeOrigem.get(cont).setDadosCalculoRecebidoMenosReducao(lancamentosDeOrigem.get(cont).getValor().subtract(lancamentosDeOrigem.get(cont).getDadosCalculoTotalReducao()));
-                          
 
+                    if (lancamentosDeOrigem != null && cont < lancamentosDeOrigem.size()) {
+
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor());
+
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(new BigDecimal(0));
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(new BigDecimal(0));
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(new BigDecimal(0));
+
+                        lancamentosDeOrigem.get(cont).setDadosCalculoPercTaxa(
+                                (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTaxa() != null ? lancamentosDeOrigem.get(
+                                        cont).getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
+                        //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor()));
+                        if (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
                         }
-                        cont++;
-                  
+                        lancamentosDeOrigem.get(cont).setDadosCalculoPercTributo(lancamentosDeOrigem.get(cont).getTributoPerc());
+                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(
+                                lancamentosDeOrigem.get(cont).getTributoPerc().multiply(lancamentosDeOrigem.get(cont).getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
+
+                        lancamentosDeOrigem.get(cont).setDadosTabelaValorTotalCustosDiretos(ptp.getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
+
+                        if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(
+                                new BigDecimal(0)) != 0) {
+                            lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
+                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP));
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(
+                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP).multiply(
+                                            lancamentosDeOrigem.get(cont).getValor()));
+                        } else {
+                            lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(new BigDecimal(0));
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
+                        }
+
+                        lancamentosDeOrigem.get(cont).setDadosCalculoTotalReducao(
+                                lancamentosDeOrigem.get(cont).getDadosCalculoValorTaxa().add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTarifa()).add(
+                                        lancamentosDeOrigem.get(cont).getDadosCalculoValorTributo()).add(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado()));
+
+                        lancamentosDeOrigem.get(cont).setDadosCalculoRecebidoMenosReducao(
+                                lancamentosDeOrigem.get(cont).getValor().subtract(lancamentosDeOrigem.get(cont).getDadosCalculoTotalReducao()));
+
+                    }
+                    cont++;
+
                 }
             }
-            if(lancamentosDeOrigem != null) {              
+            if (lancamentosDeOrigem != null) {
                 for (Lancamento lancamento : lancamentosDeOrigem) {
-                        lancamento.setDadosCalculoPercPagtoFaturaStr(String.format("R$ %.2f", lancamento.getValor()) + " (" + String.format("%.2f%%",
-                                lancamento.getValor().divide(valorTotalFatura, 2).multiply(
-                                        BigDecimal.valueOf(100))) + ")");
+                    lancamento.setDadosCalculoPercPagtoFaturaStr(String.format("R$ %.2f", lancamento.getValor()) + " (" + String.format("%.2f%%",
+                            lancamento.getValor().divide(valorTotalFatura, 2).multiply(BigDecimal.valueOf(100))) + ")");
                 }
             }
-            
+
             setValorRepassar(ptp.getValorDisponivel());
             PrimeFaces.current().executeScript("PF('dlgAjusteManual').show();");
         } catch (Exception e) {
@@ -657,7 +634,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
     }
-    
+
     public void loadDeducoes(Lancamento lancamento) {
         this.lancamentoDeducoes = lancamento;
     }
@@ -668,11 +645,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         } else if (agendarParaData && dataValorRestante == null) {
             this.addError("Erro", "Informe a data do valor restante", true);
         } else {
-            
+
             //TODO aqui criar a fatura manual quando essa nao existir
-          //  criaRepasseManual
-            
-            if(getEntity().getFatura() == null) {
+            //  criaRepasseManual
+
+            if (getEntity().getFatura() == null) {
                 Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), getEntity().getDentistaExecutor(), profissional);
                 getEntity().setFatura(novaFatura);
                 try {
@@ -680,16 +657,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                }                
-            }            
-           
+                }
+            }
+
             try {
-                if(ignorarRestante) {
+                if (ignorarRestante) {
                     getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(true);
-                }else {
+                } else {
                     getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(false);
                 }
-                
+
                 FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity(), getEntity().getFatura(), valorRepassar, new Date(), agendarParaData, dataValorRestante, ignorarRestante,
                         justificativa, UtilsFrontEnd.getProfissionalLogado());
                 addInfo("Sucesso", "Ajuste manual executado!");
@@ -841,12 +818,22 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosCalculoRecebidoMenosReducao(
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        lancamentoCalculado.setDadosCalculoPercItemSemCusto(
-                                lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 6, BigDecimal.ROUND_HALF_UP));
-                        lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
-                        lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
-                                lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        if (lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() == null || !(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0)) {
 
+                            lancamentoCalculado.setDadosCalculoPercItemSemCusto(new BigDecimal(0));
+                            lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(new BigDecimal(0));
+                            lancamentoCalculado.setDadosCalculoReducaoCustoDireto(new BigDecimal(0));
+
+                        }else {
+                            lancamentoCalculado.setDadosCalculoPercItemSemCusto(
+                                    lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 6, BigDecimal.ROUND_HALF_UP));
+                            
+                            lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
+
+                            lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
+                                    lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        }
+                        
                         lancamentoCalculado.setDadosCalculoValorARepassarSemCusto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().subtract(lancamentoCalculado.getDadosCalculoReducaoCustoDireto()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
@@ -931,7 +918,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         // }
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-            if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
+            if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(
+                    new BigDecimal(0)) == 0) && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
             } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Procedimento com valor de repasse zerado;");
@@ -1230,7 +1218,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void setValorRepassar(BigDecimal valorRepassar) {
         this.valorRepassar = valorRepassar;
-    }  
+    }
 
     public boolean isAgendarParaData() {
         return agendarParaData;
@@ -1272,22 +1260,18 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         this.repasseFatura = repasseFatura;
     }
 
-    
     public BigDecimal getValorProcedimento() {
         return valorProcedimento;
     }
 
-    
     public void setValorProcedimento(BigDecimal valorProcedimento) {
         this.valorProcedimento = valorProcedimento;
     }
 
-    
     public Lancamento getLancamentoDeducoes() {
         return lancamentoDeducoes;
     }
 
-    
     public void setLancamentoDeducoes(Lancamento lancamentoDeducoes) {
         this.lancamentoDeducoes = lancamentoDeducoes;
     }
