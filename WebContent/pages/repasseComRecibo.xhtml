@@ -201,7 +201,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										Data de Crédito</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										Status</th>
-									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
+									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'POR'}">
 										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  >
 											Valor com as Deduções</th>
 									</p:outputPanel>			
@@ -233,7 +233,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											#{lancamento.statusCompleto}</th>
 											
-										<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">	
+										<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'POR'}">	
 											<th 
 												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 												<p:commandLink
