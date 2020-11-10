@@ -201,7 +201,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										Data de Crédito</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										Status</th>
-									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
+									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'POR'}">
 										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  >
 											Valor com as Deduções</th>
 									</p:outputPanel>			
@@ -233,7 +233,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											#{lancamento.statusCompleto}</th>
 											
-										<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">	
+										<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'POR'}">	
 											<th 
 												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 												<p:commandLink
@@ -1362,8 +1362,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }"
 														update=":lume:pnCalculoRepasse" />
-													<ui:remove>
-														<p:commandButton icon="fa fa-dollar"
+														
+														<p:commandButton icon="fa fa-repeat"
 															styleClass="NavyButton" title="Recalcular Repasse"
 															rendered="#{repasseProfissionalComReciboMB.admin}"
 															actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
@@ -1375,7 +1375,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 																message="Cofirma o recálculo de repasse de profissional?">
 															</p:confirm>
 														</p:commandButton>
-	</ui:remove>
+														
 													<p:commandButton icon="fa fa-dollar"
 														styleClass="NavyButton" title="Ajuste Manual"
 														rendered="#{repasseProfissionalComReciboMB.admin}"

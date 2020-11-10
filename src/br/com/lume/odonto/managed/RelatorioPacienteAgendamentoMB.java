@@ -92,7 +92,14 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();        
-        this.sugestoesConvenios("todos");      
+        this.sugestoesConvenios("todos");
+        
+        this.filtroAniversariantes = "A";
+        this.setDataInicio(new Date());
+        this.setDataFim(new Date());
+        actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
+        this.carregarAniversariantes();
+        
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
@@ -127,7 +134,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     }
     
     public void carregarAniversariantes() {
-        try {            
+        try {
+            
             this.aniversariantes = PacienteSingleton.getInstance().getBo().listAniversariantes(dataInicio, dataFim, 
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
