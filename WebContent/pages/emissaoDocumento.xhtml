@@ -146,6 +146,7 @@
 								</ui:remove>
 								<p:commandButton styleClass="NavyButton" icon="White fa fa-print"
 									actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
+									immediate="true"
 									process="@this, dtDocumentos" update=":lume:impressaoDoc">
 									<p:printer target=":lume:impressaoDoc" />
 								</p:commandButton>
