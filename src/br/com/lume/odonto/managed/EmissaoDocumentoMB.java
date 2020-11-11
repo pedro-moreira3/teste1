@@ -147,6 +147,19 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
     }
     
+    public void emitirNovoDocumento() {
+        try {
+            DocumentoEmitido doc = new DocumentoEmitido();
+            doc.setDataEmissao(new Date());
+            doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
+            
+            DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
+            this.docEmitido = doc;
+        }catch (Exception e) {
+            
+        }
+    }
+    
     public void emitirDocumento() {
         Document documento = null;
 
@@ -298,6 +311,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
     }
     
+    public void loadDoc(DocumentoEmitido doc) {
+        this.modeloHtml = new StringBuilder(doc.getModelo());
+    }
+    
     public void montarTags() {
         String regex = "\\{(.*?)\\}";
         String retorno = "";
@@ -305,7 +322,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher comparator = pattern.matcher(this.modeloSelecionado.getModelo());
         
-        carregarDocumentoHtmlModelo();
+        this.modeloHtml = new StringBuilder(this.modeloSelecionado.getModelo());
+        //carregarDocumentoHtmlModelo();
 
         while (comparator.find()) {
             retorno = comparator.group();

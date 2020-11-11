@@ -230,7 +230,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 
-                parserDocumento();
+                //parserDocumento();
 
                 DocumentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao criar documento.");
