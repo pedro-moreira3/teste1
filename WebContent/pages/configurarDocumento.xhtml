@@ -60,8 +60,8 @@
 								<h:panelGroup>
 									<p:outputLabel for="status" value="Status dos Documentos: " />
 									<p:selectOneMenu id="status" value="#{documentoMB.status}">
-										<f:selectItem itemLabel="Todos" itemValue="#{null}" />
 										<f:selectItem itemLabel="Ativos" itemValue="A" />
+										<f:selectItem itemLabel="Todos" itemValue="#{null}" />
 										<f:selectItem itemLabel="Inativos" itemValue="I" />
 										<p:ajax process="@this" />
 									</p:selectOneMenu>
