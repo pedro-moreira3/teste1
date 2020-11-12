@@ -161,7 +161,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);
-            
+
             this.docEmitido = doc;
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível emitir o documento");
@@ -361,7 +361,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                                 if (tag.getEntidade().getEntidade().equals("Paciente")) {
                                     this.tag = tag.getEntidade();
                                     this.tags.add(tag);
-                                } else if (tag.getEntidade().getEntidade().equals("Empresa")) {
+                                }else if (tag.getEntidade().getEntidade().equals("Empresa") || tag.getEntidade().getEntidade().equals("Sistema")) {
                                     this.tags.add(tag);
                                 } else if (tag.getEntidade().getEntidade().equals("PlanoTratamento")) {
                                     this.tagPlano = tag.getEntidade();
