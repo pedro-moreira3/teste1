@@ -153,13 +153,18 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void emitirNovoDocumento() {
         try {
             DocumentoEmitido doc = new DocumentoEmitido();
+            doc.setId(0l);
             doc.setDataEmissao(new Date());
             doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
+            doc.setDocumentoModelo(modeloSelecionado);
+            doc.setModelo(this.modeloSelecionado.getModelo());
 
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
+            this.setEntity(doc);
+            
             this.docEmitido = doc;
         } catch (Exception e) {
-
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível emitir o documento");
         }
     }
 
@@ -530,7 +535,6 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             case "profissionalLogado":
                 return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
         }
-
         return "";
     }
 
