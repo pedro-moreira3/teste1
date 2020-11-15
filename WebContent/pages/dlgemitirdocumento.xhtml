@@ -77,20 +77,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				<h:panelGroup>
 					<p:outputLabel style="margin:0px;"
 						for="filtroModeloDocumentoEmitir" value="Modelo do documento" />
-					<p:selectOneMenu id="filtroModeloDocumentoEmitir"
-						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+
+					<p:autoComplete id="filtroModeloDocumentoEmitir"
 						value="#{emissaoDocumentoMB.modeloSelecionado}"
-						converter="documento">
+						style="margin-bottom:20px;"
+						completeMethod="#{emissaoDocumentoMB.sugestoesModelos}" var="tipo"
+						itemLabel="#{tipo.descricao}" itemValue="#{tipo}"
+						converter="documento" forceSelection="true" scrollHeight="400"
+						minQueryLength="3" queryDelay="1000" dropdown="true">
+						
+						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags()}"
+								update="pnTags,viewDoc" process="@this" />
+						
+					</p:autoComplete>
 
-						<f:selectItem itemLabel="Selecione um modelo" itemValue="#{null}" />
-						<f:selectItems
-							value="#{emissaoDocumentoMB.listaDocumentosModelos}" var="tipo"
-							itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
-
-						<p:ajax listener="#{emissaoDocumentoMB.montarTags}"
-							update="pnTags,viewDoc" process="@this" />
-
-					</p:selectOneMenu>
 				</h:panelGroup>
 
 				<p:outputPanel id="pnTags">
@@ -119,7 +119,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{p.nomeMae}" />
 							</p:column>
 
-							<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
+							<p:ajax event="itemSelect"
+								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
 								update="pnTags,viewDoc" />
 						</p:autoComplete>
 					</h:panelGroup>
@@ -137,7 +138,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							dropdown="true">
 
 							<p:ajax event="itemSelect"
-								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc"/>
+								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc" />
 
 						</p:autoComplete>
 					</h:panelGroup>
@@ -148,16 +149,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
 								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
-								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this" update=":lume:viewDoc"/>
+								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}"
+									process="@this" update=":lume:viewDoc" />
 							</p:inputText>
 						</h:panelGroup>
 
-						<h:panelGroup style="margin-top:10px !important;margin-bottom:20px !important;"
+						<h:panelGroup
+							style="margin-top:10px !important;margin-bottom:20px !important;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
-							<h:outputLabel value="#{tag.descricaoCampo}:"/>
+							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:calendar value="#{tag.respTagData}" autocomplete="false"
 								timeInput="true">
-								<p:ajax event="dateSelect" process="@this"  listener="#{emissaoDocumentoMB.atualizarTag()}" update=":lume:viewDoc" />
+								<p:ajax event="dateSelect" process="@this"
+									listener="#{emissaoDocumentoMB.atualizarTag()}"
+									update=":lume:viewDoc" />
 							</p:calendar>
 						</h:panelGroup>
 					</ui:repeat>
@@ -168,10 +173,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<p:panelGrid id="viewDoc" columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
-				<p:fieldset legend="Pré-visualização" toggleable="true" style="max-height:500px;">
+				<p:fieldset legend="Pré-visualização" toggleable="true"
+					style="max-height:500px;">
 					<h:outputText id="documentoImprimir"
-							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
-							escape="false" />
+						value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 				</p:fieldset>
 			</p:panelGrid>
 

@@ -122,7 +122,9 @@
 								<p:commandButton value="Emitir documento"
 									styleClass="NavyButton" icon="fa fa-file White"
 									actionListener="#{emissaoDocumentoMB.actionNew}"
-									oncomplete="PF('dlgEmitirDocumento').show();" process="@this" />
+									oncomplete="PF('dlgEmitirDocumento').show();"
+									update="dlgEmitirDocumento, dlgEmissao, filtroTipoDocumentoEmitir"
+									process="@this,filtroTipoDocumentoEmitir,filtroModeloDocumentoEmitir" />
 
 							</p:panelGrid>
 						</p:fieldset>
@@ -144,11 +146,12 @@
 											value="#{emissaoDocumentoMB.getArquivo(documento)}" />
 									</p:commandButton>
 								</ui:remove>
-								<p:commandButton styleClass="NavyButton" icon="White fa fa-print"
+								<p:commandButton styleClass="NavyButton"
+									icon="White fa fa-print"
 									actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
-									process="@this, dtDocumentos" 
+									process="@this, dtDocumentos"
 									update=":lume:impressaoDoc"
-									oncomplete="document.getElementById('btnImp').click()">
+									oncomplete="imprimir();">
 								</p:commandButton>
 							</p:column>
 
@@ -195,9 +198,10 @@
 					<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
 				</p:commandLink>
 			</ui:remove>
-			
+
 			<h:outputText id="impressaoDoc"
 				value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
+
 		</h:inputHidden>
 
 		<p:dialog id="dlgEmitirDocumento" widgetVar="dlgEmitirDocumento"
@@ -205,7 +209,7 @@
 			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
 			onShow="PF('dlgEmitirDocumento').toggleMaximize();">
 
-			<p:outputPanel>
+			<p:outputPanel id="dlgEmissao">
 				<ui:include src="dlgemitirdocumento.xhtml" />
 				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
@@ -213,10 +217,11 @@
 					<p:commandButton value="Fechar" icon="fa fa-close"
 						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
 
-					<p:commandButton value="Emitir documento"
-						styleClass="GreenButton" icon="fa fa-save"
+					<p:commandButton value="Gerar documento" styleClass="GreenButton"
+						icon="fa fa-save"
 						actionListener="#{emissaoDocumentoMB.emitirNovoDocumento()}"
-						process="@this, viewDoc, dtDocumentos" update="viewDoc,impDoc">
+						disabled="#{emissaoDocumentoMB.entity.id > 0}"
+						process="@this, viewDoc" update="dtDocumentos, viewDoc,impDoc,dlgEmissao">
 					</p:commandButton>
 
 					<p:commandButton id="impDoc" value="Imprimir documento"
@@ -238,5 +243,16 @@
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
+
+		<script>
+			function imp() {
+				var conteudo = document.getElementById(':lume:impressaoDoc');
+				tela_impressao = window.open('about:blank');
+				tela_impressao.document.write(conteudo);
+				tela_impressao.window.print();
+				tela_impressao.window.close();
+			}
+		</script>
+
 	</ui:define>
 </ui:composition>

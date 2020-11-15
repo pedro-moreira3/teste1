@@ -70,7 +70,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private String filtroPeriodo;
     private Dominio filtroTipoDocumento;
     private List<Dominio> listaTiposDocumentos;
-    private String status;
+    private String status = "A";
     private List<Documento> listaDocumentosModelos;
     private Documento modeloSelecionado;
 
@@ -128,22 +128,34 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void carregarTags() {
         if (this.getEntity().getTipo() != null) {
-            this.classificacaoTag = TagSingleton.getInstance().getBo().listTags();
+            this.classificacaoTag = TagSingleton.getInstance().getBo().listByTipoDocumento(this.getEntity().getTipo());
         }
     }
 
     public void actionAtivar(Documento doc) {
-        doc.setAtivo(true);
-        doc.setDataAlteracaoStatus(new Date());
-        doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
-        this.pesquisar();
+        try {
+            doc.setAtivo(true);
+            doc.setDataAlteracaoStatus(new Date());
+            doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+            DocumentoSingleton.getInstance().getBo().persist(doc);
+            this.pesquisar();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro ativado.");
+        }catch (Exception e) {
+            this.addError("Erro", "Erro ao ativar registro");
+        }
     }
     
     public void actionInativar(Documento doc) {
-        doc.setAtivo(false);
-        doc.setDataAlteracaoStatus(new Date());
-        doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
-        this.pesquisar();
+        try {
+            doc.setAtivo(false);
+            doc.setDataAlteracaoStatus(new Date());
+            doc.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+            DocumentoSingleton.getInstance().getBo().persist(doc);
+            this.pesquisar();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro inativado.");
+        }catch (Exception e) {
+            this.addError("Erro", "Erro ao inativar registro");
+        }
     }
     
     public void carregarPaleta() {
@@ -167,7 +179,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                     menuItem.setTitle(tag.getDescricaoCampo());
                     menuItem.setValue(tag.getDescricaoCampo());
                     if(!tag.getDescricaoCampo().equals("Logo empresa")) {
-                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
+                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "#{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
                     }else {
                         menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
                     }
@@ -223,10 +235,39 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            //this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if(this.getEntity().getDescricao() != null && !this.getEntity().getDescricao().isEmpty()) {
                 this.getEntity().setCriadoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataCriacao(new Date());
+                
+                String layout = "<style type=\"text/css\" media=\"print\">" + 
+                        "    @page " + 
+                        "    {" + 
+                        "        size:"+ (this.getEntity().getLayout() != null && !this.getEntity().getLayout().isEmpty() 
+                                    ? this.getEntity().getLayout() : "A4") +";" +
+                        "        margin: 1.5cm 1cm 1.2cm;" + 
+                        "    }" +
+                        
+                        "#rodape::after { content: 'Página ' counter(page); }" + 
+                        "      #rodape {" + 
+                        "        /* string-set: footing content(); */" + 
+                        "        running: footer;" + 
+                        "        position: fixed;" + 
+                        "        bottom: -10px;" + 
+                        "        left: 0;" + 
+                        "        right: 10px;" + 
+                        "        height: 12px; font-size:8px;" + 
+                        "" + 
+                        "        /** Extra personal styles **/" + 
+                        "        color: black;" + 
+                        "        text-align: right;" + 
+                        "        line-height: 12px;" + 
+                        "        padding: 2em auto 0;" + 
+                        "        max-width: 767px;" + 
+                        "      }"+
+                        "</style>" + this.documento + "<div id=\"rodape\"></div>";
+                this.documento = layout;
+                
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 
@@ -397,8 +438,12 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     
     @Override
     public void actionNew(ActionEvent event) {
-        super.actionNew(event);
+        //super.actionNew(event);
         this.setEntity(new Documento());
+        if(this.getFiltroTipoDocumento() != null) {
+            this.getEntity().setTipo(getFiltroTipoDocumento());
+            carregarPaleta();
+        }
     }
 
     public List<Documento> getDocumentos() {
