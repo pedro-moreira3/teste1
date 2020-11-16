@@ -179,7 +179,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                     menuItem.setTitle(tag.getDescricaoCampo());
                     menuItem.setValue(tag.getDescricaoCampo());
                     if(!tag.getDescricaoCampo().equals("Logo empresa")) {
-                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "#{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
+                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
                     }else {
                         menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
                     }
@@ -239,34 +239,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             if(this.getEntity().getDescricao() != null && !this.getEntity().getDescricao().isEmpty()) {
                 this.getEntity().setCriadoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataCriacao(new Date());
-                
-                String layout = "<style type=\"text/css\" media=\"print\">" + 
-                        "    @page " + 
-                        "    {" + 
-                        "        size:"+ (this.getEntity().getLayout() != null && !this.getEntity().getLayout().isEmpty() 
-                                    ? this.getEntity().getLayout() : "A4") +";" +
-                        "        margin: 1.5cm 1cm 1.2cm;" + 
-                        "    }" +
-                        
-                        "#rodape::after { content: 'Página ' counter(page); }" + 
-                        "      #rodape {" + 
-                        "        /* string-set: footing content(); */" + 
-                        "        running: footer;" + 
-                        "        position: fixed;" + 
-                        "        bottom: -10px;" + 
-                        "        left: 0;" + 
-                        "        right: 10px;" + 
-                        "        height: 12px; font-size:8px;" + 
-                        "" + 
-                        "        /** Extra personal styles **/" + 
-                        "        color: black;" + 
-                        "        text-align: right;" + 
-                        "        line-height: 12px;" + 
-                        "        padding: 2em auto 0;" + 
-                        "        max-width: 767px;" + 
-                        "      }"+
-                        "</style>" + this.documento + "<div id=\"rodape\"></div>";
-                this.documento = layout;
                 
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
