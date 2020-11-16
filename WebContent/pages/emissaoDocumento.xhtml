@@ -122,7 +122,9 @@
 								<p:commandButton value="Emitir documento"
 									styleClass="NavyButton" icon="fa fa-file White"
 									actionListener="#{emissaoDocumentoMB.actionNew}"
-									oncomplete="PF('dlgEmitirDocumento').show();" process="@this" />
+									oncomplete="PF('dlgEmitirDocumento').show();"
+									update="dlgEmitirDocumento, dlgEmissao, filtroTipoDocumentoEmitir"
+									process="@this,filtroTipoDocumentoEmitir,filtroModeloDocumentoEmitir" />
 
 							</p:panelGrid>
 						</p:fieldset>
@@ -136,11 +138,20 @@
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Ações">
-								<p:commandButton ajax="false" icon="White fa fa-print"
-									immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload
-										value="#{emissaoDocumentoMB.getArquivo(documento)}" />
+								<ui:remove>
+									<p:commandButton ajax="false" icon="White fa fa-print"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emissaoDocumentoMB.getArquivo(documento)}" />
+									</p:commandButton>
+								</ui:remove>
+								<p:commandButton styleClass="NavyButton"
+									icon="White fa fa-print"
+									actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
+									process="@this, dtDocumentos"
+									update=":lume:impressaoDoc"
+									oncomplete="imprimir();">
 								</p:commandButton>
 							</p:column>
 
@@ -181,10 +192,16 @@
 		</div>
 
 		<h:inputHidden>
-			<p:commandLink id="donwloadArq" ajax="false" immediate="true"
-				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-				<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
-			</p:commandLink>
+			<ui:remove>
+				<p:commandLink id="donwloadArq" ajax="false" immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+					<p:fileDownload value="#{emissaoDocumentoMB.getArquivo()}" />
+				</p:commandLink>
+			</ui:remove>
+
+			<h:outputText id="impressaoDoc"
+				value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
+
 		</h:inputHidden>
 
 		<p:dialog id="dlgEmitirDocumento" widgetVar="dlgEmitirDocumento"
@@ -192,7 +209,7 @@
 			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
 			onShow="PF('dlgEmitirDocumento').toggleMaximize();">
 
-			<p:outputPanel>
+			<p:outputPanel id="dlgEmissao">
 				<ui:include src="dlgemitirdocumento.xhtml" />
 				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
@@ -200,23 +217,42 @@
 					<p:commandButton value="Fechar" icon="fa fa-close"
 						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
 
+					<p:commandButton value="Gerar documento" styleClass="GreenButton"
+						icon="fa fa-save"
+						actionListener="#{emissaoDocumentoMB.emitirNovoDocumento()}"
+						disabled="#{emissaoDocumentoMB.entity.id > 0}"
+						process="@this, viewDoc" update="dtDocumentos, viewDoc,impDoc,dlgEmissao">
+					</p:commandButton>
 
-					<h:panelGroup></h:panelGroup>
+					<p:commandButton id="impDoc" value="Imprimir documento"
+						styleClass="NavyButton" icon="fa fa-print"
+						process="@this, viewDoc, dtDocumentos" update="viewDoc"
+						disabled="#{emissaoDocumentoMB.entity.id eq 0}">
+						<p:printer target="documentoImprimir" />
+					</p:commandButton>
+
 					<ui:remove>
-						<p:commandButton value="Imprimir documento" process="@this">
-							<p:printer target="documentoImprimir" />
+						<p:commandButton value="Emitir documento" icon="fa fa-save"
+							styleClass="GreenButton"
+							actionListener="#{emissaoDocumentoMB.emitirDocumento()}"
+							oncomplete="PF('dlgEmitirDocumento').hide();"
+							process="@this, viewDoc, dtDocumentos" update="viewDoc">
 						</p:commandButton>
 					</ui:remove>
-
-					<p:commandButton value="Emitir documento" icon="fa fa-save"
-						styleClass="GreenButton"
-						actionListener="#{emissaoDocumentoMB.emitirDocumento()}"
-						oncomplete="PF('dlgEmitirDocumento').hide();"
-						process="@this, viewDoc, dtDocumentos" update="viewDoc">
-					</p:commandButton>
 
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
+
+		<script>
+			function imp() {
+				var conteudo = document.getElementById(':lume:impressaoDoc');
+				tela_impressao = window.open('about:blank');
+				tela_impressao.document.write(conteudo);
+				tela_impressao.window.print();
+				tela_impressao.window.close();
+			}
+		</script>
+
 	</ui:define>
 </ui:composition>
