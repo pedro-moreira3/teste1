@@ -135,7 +135,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
             doc.setEmitidoPara(pacienteSelecionado);
             doc.setDocumentoModelo(modeloSelecionado);
-            doc.setModelo(this.modeloSelecionado.getModelo());
+            doc.setModelo(modeloHtml.toString());
 
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);
@@ -389,10 +389,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void montaCabecalho() {
 
-        StringBuilder cabecalho = new StringBuilder("<div id='content'>");
+        StringBuilder cabecalho = new StringBuilder("<div>");
         if (mostraLogo) {            
-            cabecalho.append("<div style='width: 150px;float:left;'>");          
-            cabecalho.append("<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}' stream='false' />");
+            cabecalho.append("<div style='width: 150px;float:left;'>");            
+            cabecalho.append("<img src='imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
+            cabecalho.append("-----");
+            cabecalho.append("<img src='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
+            cabecalho.append("-------");
+            cabecalho.append("<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache() + "' stream='false' />");           
             cabecalho.append("</div>");
         }
         if (mostraCabecalho) {
