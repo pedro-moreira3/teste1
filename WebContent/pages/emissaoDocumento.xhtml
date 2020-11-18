@@ -216,9 +216,54 @@
 		</f:facet>
 		<p:scrollPanel mode="native" id="impressaoDocPai"
 		style="position: relative; width: 100%; height: 90%;">		
-		<p:graphicImage styleClass="Fleft" id="foto" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+		
+		<div>
+			<div style='float:left;' rendered="#{emissaoDocumentoMB.mostraLogo}">
+				<p:graphicImage styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+			</div>
+			<div style='margin-left:200px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+			</div>
+			<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}">
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
+				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>
+			</div>
+		</div>		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 		</p:scrollPanel>
+			<h:panelGroup style="display:block;margin-left:3px;">
+					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
+						value="#{emissaoDocumentoMB.mostraCabecalho}">
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
+							listener="#{emissaoDocumentoMB.montaCabecalho}" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="logoCabecalho"
+						value="#{emissaoDocumentoMB.mostraLogo}">
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
+							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							/>
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />
+					<ui:remove>
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="rodape"
+						value="#{emissaoDocumentoMB.mostraRodape}">
+						<p:ajax event="change" process="@this"
+							update="preVisualizar"
+							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							/>
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="rodape" value="Incluir número de página" />	
+					</ui:remove>
+				</h:panelGroup>
+		
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">

@@ -92,6 +92,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private boolean mostraCabecalho = false;
     private boolean mostraLogo = false;
    // private boolean mostraRodape = false;
+  //  private String cabecalho = "";
 
     public EmissaoDocumentoMB() {
         super(DocumentoEmitidoSingleton.getInstance().getBo());
@@ -389,38 +390,39 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void montaCabecalho() {
 
-        StringBuilder cabecalho = new StringBuilder("<div>");
-        if (mostraLogo) {            
-            cabecalho.append("<div style='width: 150px;float:left;'>");            
-            cabecalho.append("<img src='imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
-            cabecalho.append("-----");
-            cabecalho.append("<img src='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
-            cabecalho.append("-------");
-            cabecalho.append("<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache() + "' stream='false' />");           
-            cabecalho.append("</div>");
-        }
-        if (mostraCabecalho) {
-            if (mostraLogo) {
-                cabecalho.append("<div style='margin-left:170px'>");
-            } else {
-                cabecalho.append("<div style='margin-left:20px'>");
-            }
+      //  StringBuilder cabecalho = new StringBuilder("<div>");
+//        if (mostraLogo) {            
+//            cabecalho.append("<div style='width: 150px;float:left;'>");            
+//            cabecalho.append("<img src='imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
+//            cabecalho.append("-----");
+//            cabecalho.append("<img src='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
+//            cabecalho.append("-------");
+//            cabecalho.append("<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache() + "' stream='false' />");           
+//            cabecalho.append("</div>");
+//  //      }
+   //     cabecalho = "";
+     //   if (mostraCabecalho) {
+           // if (mostraLogo) {
+              //  cabecalho.append("<div style='margin-left:170px'>");
+           // } else {
+            //    cabecalho.append("<div style='margin-left:20px'>");
+          //  }
 
-            cabecalho.append("<b>" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "</b>");
-            cabecalho.append("<br/>");
-            cabecalho.append("<br/>");
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() + " " : ""));
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() + " " : ""));
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() + " " : ""));
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() + " " : ""));
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() + " " : ""));
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() + " " : ""));
-            cabecalho.append("<br/>");
-            cabecalho.append((UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() + " " : ""));
-            cabecalho.append("<br/>");
-            cabecalho.append("</div>");
-        }
-        cabecalho.append("</div>");
+//            cabecalho = ("<b>" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "</b>");
+//            cabecalho += ("<br/>");
+//            cabecalho += ("<br/>");
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() + " " : ""));
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() + " " : ""));
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() + " " : ""));
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() + " " : ""));
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() + " " : ""));
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() + " " : ""));
+//            cabecalho += ("<br/>");
+//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() + " " : ""));
+//            cabecalho += ("<br/>");
+//            cabecalho += ("</div>");
+       // }
+     //   cabecalho.append("</div>");
 //        if (mostraCabecalho || mostraLogo) {
 //            cabecalho.append("<br/>");
 //            cabecalho.append("<br/>");
@@ -428,10 +430,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 //            cabecalho.append("<br/>");
 //            cabecalho.append("<br/>");
 //        }
-        cabecalhoHtml = cabecalho;
-        modeloHtml = new StringBuilder();
-        modeloHtml.insert(0, cabecalhoHtml);
-        modeloHtml.append(modeloHtmlSemCabecalho);
+    //    cabecalhoHtml = cabecalho;
+      //  modeloHtml = new StringBuilder();
+      //  modeloHtml.insert(0, cabecalhoHtml);
+     //   modeloHtml.append(modeloHtmlSemCabecalho);
      //   if(mostraRodape) {
         //    modeloHtml.append("<style>#content { display: table; } #pageFooter { display: table-footer-group; } #pageFooter:after { counter-increment: page; content: counter(page);  }</style>");
        //     modeloHtml.append("<div id='pageFooter'>Página </div>");    
@@ -585,7 +587,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
             modeloHtmlSemCabecalho = new StringBuilder("");
             modeloHtmlSemCabecalho.append(modelo);
-            montaCabecalho();
+            modeloHtml = modeloHtmlSemCabecalho;
         } catch (Exception e) {
             this.addError("Erro na emissão", "Falha ao processar as tags do documento.");
             e.printStackTrace();
@@ -994,6 +996,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void setRodapeHtml(StringBuilder rodapeHtml) {
         this.rodapeHtml = rodapeHtml;
     }
+
+    
+//    public String getCabecalho() {
+//        return cabecalho;
+//    }
+//
+//    
+//    public void setCabecalho(String cabecalho) {
+//        this.cabecalho = cabecalho;
+//    }
 
     
 //    public boolean isMostraRodape() {
