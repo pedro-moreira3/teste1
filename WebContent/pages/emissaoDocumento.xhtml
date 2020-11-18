@@ -219,9 +219,9 @@
 		
 		<div>
 			<div style='float:left;' rendered="#{emissaoDocumentoMB.mostraLogo}">
-				<p:graphicImage styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+				<p:graphicImage rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
 			</div>
-			<div style='margin-left:150px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
+			<div style='margin-left:180px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
 				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
