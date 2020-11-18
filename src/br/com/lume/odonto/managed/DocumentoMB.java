@@ -32,14 +32,12 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
-import br.com.lume.documento.bo.DocumentoBO;
 import br.com.lume.dominio.DominioSingleton;
 // import br.com.lume.odonto.bo.DocumentoBO;
 // import br.com.lume.odonto.bo.DominioBO;
 // import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Tag;
 import br.com.lume.odonto.entity.TagDocumentoModelo;
 import br.com.lume.odonto.entity.TagEntidade;
@@ -60,6 +58,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private List<Tag> classificacaoTag;
     private String documento;
     private CKEditor ckEditor;
+    private CKEditor ckEditorEmissao;
     private MenuModel menuModel;
 
     private String novaTag;
@@ -84,6 +83,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         super(DocumentoSingleton.getInstance().getBo());
         this.setClazz(Documento.class);
         carregarTiposDocumento();
+        pesquisar();
     }
 
     public void pesquisar() {
@@ -179,7 +179,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                     menuItem.setTitle(tag.getDescricaoCampo());
                     menuItem.setValue(tag.getDescricaoCampo());
                     if(!tag.getDescricaoCampo().equals("Logo empresa")) {
-                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "}" + "');");
+                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "#" + tag.getAtributo() + "" + "');");
                     }else {
                         menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
                     }
@@ -190,41 +190,41 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         }
     }
 
-    public void parserDocumento() {
-        FileWriter writer = null;
-        FileReader reader = null;
-        try {
-            HtmlToText parser = new HtmlToText();
-            //String modelo = this.getEntity().getModelo();
-            this.pageBreak();
-            
-            String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
-
-            File file = new File(path);
-            file.mkdirs();
-            
-            writer = new FileWriter(file+"/"+this.getEntity().getDescricao()+".html");
-            writer.write(this.getEntity().getModelo());
-            writer.flush();
-            
-            reader = new FileReader(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath());            
-            parser.parse(reader);
-            
-            this.getEntity().setModelo(parser.getText());
-            this.getEntity().setPathModelo(path+this.getEntity().getDescricao()+".html");
-        }catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro no parser do documento.");
-            e.printStackTrace();
-        }finally {
-            try {
-                writer.close();
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
+//    public void parserDocumento() {
+//        FileWriter writer = null;
+//        FileReader reader = null;
+//        try {
+//            HtmlToText parser = new HtmlToText();
+//            //String modelo = this.getEntity().getModelo();
+//            this.pageBreak();
+//            
+//            String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
+//
+//            File file = new File(path);
+//            file.mkdirs();
+//            
+//            writer = new FileWriter(file+"/"+this.getEntity().getDescricao()+".html");
+//            writer.write(this.getEntity().getModelo());
+//            writer.flush();
+//            
+//            reader = new FileReader(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath());            
+//            parser.parse(reader);
+//            
+//            this.getEntity().setModelo(parser.getText());
+//            this.getEntity().setPathModelo(path+this.getEntity().getDescricao()+".html");
+//        }catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro no parser do documento.");
+//            e.printStackTrace();
+//        }finally {
+//            try {
+//                writer.close();
+//                reader.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    
     private void pageBreak() {
         if(this.getEntity().getModelo().contains("page-break-after")) {
             this.getEntity().setModelo(this.getEntity().getModelo().replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
@@ -247,6 +247,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
                 DocumentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao criar documento.");
+                pesquisar();
             }else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "é necessário informar a descrição do documento.");
             }
@@ -298,9 +299,9 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     }
 
     public void controiModeloDocsAntigos(Documento doc) {
-        if(doc.getPathModelo() == null || doc.getPathModelo().isEmpty()) {
+        if(doc.getModelo() == null || doc.getModelo().isEmpty()) {
             this.setEntity(doc);
-            parserDocumento();
+            //parserDocumento();
             carregarDocumento(doc);
         }
     }
@@ -308,21 +309,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     public void carregarDocumento(Documento doc) {
         setEntity(doc);
         
-        if(doc.getPathModelo() != null && !doc.getPathModelo().isEmpty()) {
+        if(doc.getModelo() != null && !doc.getModelo().isEmpty()) {
             if(doc.getMostrarLogo() != null)
                 this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
 
-            this.documento = "";
+            this.documento = doc.getModelo();
             carregarPaleta();
             
-            try(BufferedReader reader = new BufferedReader(new FileReader(doc.getPathModelo()))){
-                while(reader.ready()) {
-                    this.documento = this.documento.concat(reader.readLine());
-                }
-            }catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Falha ao carregar o documento");
-                e.printStackTrace();
-            }
+            
         }else {
             this.controiModeloDocsAntigos(doc);
         }
@@ -604,6 +598,16 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setModeloSelecionado(Documento modeloSelecionado) {
         this.modeloSelecionado = modeloSelecionado;
+    }
+
+    
+    public CKEditor getCkEditorEmissao() {
+        return ckEditorEmissao;
+    }
+
+    
+    public void setCkEditorEmissao(CKEditor ckEditorEmissao) {
+        this.ckEditorEmissao = ckEditorEmissao;
     }
 
 }

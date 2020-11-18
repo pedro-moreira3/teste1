@@ -111,7 +111,7 @@
 									icon="fa fa-file White"
 									actionListener="#{documentoMB.actionNew}"
 									oncomplete="PF('dlgNovoDocumento').show();"
-									update="pnPrincipalDocumento" process="@this" />
+									update="pnPrincipalDocumento" process="@this,pnPrincipalDocumento" />
 
 							</p:panelGrid>
 
@@ -189,15 +189,15 @@
 				<p:panelGrid columns="4" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-					<p:commandButton value="Fechar" styleClass="NavyButton"
-						icon="fa fa-close" oncomplete="PF('dlgNovoDocumento').hide()" />
-
-					<h:panelGroup></h:panelGroup>
-					<h:panelGroup></h:panelGroup>
-
-					<p:commandButton value="Salvar" styleClass="GreenButton"
+				<p:commandButton value="Salvar" styleClass="GreenButton"
 						icon="fa fa-save" actionListener="#{documentoMB.actionPersist}"
 						update="dtDocumentos,editor" process="@this, editor" />
+
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup></h:panelGroup>
+	<p:commandButton value="Fechar" styleClass="NavyButton" actionListener="#{documentoMB.pesquisar()}"
+						icon="fa fa-close" oncomplete="PF('dlgNovoDocumento').hide()" />
+					
 				</p:panelGrid>
 			</p:panel>
 		</p:dialog>

@@ -173,10 +173,47 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<p:panelGrid id="viewDoc" columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
-				<p:fieldset legend="Pré-visualização" toggleable="true"
-					style="max-height:500px;">
-					<h:outputText id="documentoImprimir"
-						value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
+				<h:panelGroup style="display:block;margin-left:3px;">
+					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
+						value="#{emissaoDocumentoMB.mostraCabecalho}">
+						<p:ajax event="change" process="@this"
+							update="preVisualizar"
+							listener="#{emissaoDocumentoMB.montaCabecalho}" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="logoCabecalho"
+						value="#{emissaoDocumentoMB.mostraLogo}">
+						<p:ajax event="change" process="@this"
+							update="preVisualizar"
+							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							/>
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />
+					<ui:remove>
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="rodape"
+						value="#{emissaoDocumentoMB.mostraRodape}">
+						<p:ajax event="change" process="@this"
+							update="preVisualizar"
+							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							/>
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="rodape" value="Incluir número de página" />	
+					</ui:remove>
+				</h:panelGroup>
+				<p:fieldset legend="Pré-visualização" toggleable="false" id="preVisualizar"
+					style="max-height:500px;">			
+							
+						
+					<pe:ckEditor id="documentoImprimir" widgetVar="documentoImprimir" width="100%"
+					value="#{emissaoDocumentoMB.modeloHtml}" escape="false" height="300px"
+					toolbar="[[ 'PageBreak','Print','Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl','Table','HorizontalRule','SpecialChar','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
+					styleClass="BordNone" binding="#{documentoMB.ckEditorEmissao}">
+					<p:ajax process="@this" />
+				</pe:ckEditor>	
+						
+						
 				</p:fieldset>
 			</p:panelGrid>
 
