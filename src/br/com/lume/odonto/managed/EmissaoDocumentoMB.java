@@ -390,9 +390,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void montaCabecalho() {
 
         StringBuilder cabecalho = new StringBuilder("<div id='content'>");
-        if (mostraLogo) {
+        if (mostraLogo) {            
             cabecalho.append("<div style='width: 150px;float:left;'>");
-            cabecalho.append("<img src='/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
+            cabecalho.append("<img src='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
             cabecalho.append("</div>");
         }
         if (mostraCabecalho) {
