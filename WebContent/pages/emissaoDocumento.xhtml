@@ -214,8 +214,9 @@
 			<h:outputText id="headerPrint"
 				value="Imprimir" />				
 		</f:facet>
-		<p:scrollPanel mode="native"
+		<p:scrollPanel mode="native" id="impressaoDocPai"
 		style="position: relative; width: 100%; height: 90%;">
+		<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache() + "' stream='false' />
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 		</p:scrollPanel>
 		<p:panelGrid columns="2" layout="grid"
