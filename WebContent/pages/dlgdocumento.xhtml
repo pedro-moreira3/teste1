@@ -54,12 +54,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 			<h:panelGroup>
 				<p:outputLabel style="margin:0px;" for="tipoDocumento"
-					value="Tipo de documento" />
+					value="Selecione o tipo de documento:" />
 				<p:selectOneMenu id="tipoDocumento" converter="dominio"
 					style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 					value="#{documentoMB.entity.tipo}">
 
-					<f:selectItem itemLabel="Selecione um tipo" itemValue="#{null}" />
+					<f:selectItem itemLabel="Selecione" itemValue="#{null}" />
 					<f:selectItems value="#{documentoMB.listaTiposDocumentos}" var="t"
 						itemLabel="#{t.nome}" itemValue="#{t}" />
 
@@ -70,7 +70,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			</h:panelGroup>
 
 			<h:panelGroup>
-				<p:outputLabel for="descricao" value="Descrição" />
+				<p:outputLabel for="descricao" value="Digite a descrição desse documento:" />
 				<p:inputText id="descricao" value="#{documentoMB.entity.descricao}">
 					<p:ajax process="@this" />
 				</p:inputText>
@@ -125,11 +125,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		</p:panelGrid>
 
 		<h:panelGroup
-			style="display:block;vertical-align:top;margin-top:20px;text-align:center;">
+			style="display:block;vertical-align:top;margin-top:10px;text-align:center;">
 
 			<h:panelGroup id="pnEditor"
 				style="display:inline-block;vertical-align:top;width:70%;">
-
+			<p:outputLabel><b>Configure nesse editor o seu documento:</b></p:outputLabel>
+<br/><br/>
 				<pe:ckEditor id="editor" widgetVar="editor" width="100%"
 					value="#{documentoMB.documento}" escape="false" height="370px"
 					toolbar="[[ 'PageBreak','Print','Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl','Table','HorizontalRule','SpecialChar','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
@@ -147,7 +148,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<p:panel id="paleta"
 				style="border:1px solid #bdbdbd;display:inline-block;margin-left:50px;vertical-align:top;
 					width:20%;height:440px;">
-				<h:form style="height:90%;">
+				<p:outputLabel><b>Clique nos campos abaixo para inserir os dados no documento:</b></p:outputLabel>
+									<h:outputLabel rendered="#{documentoMB.entity.tipo != null}" class="fa fa-question" id="tooltipTag2" style="font-size:16px; margin-left:10px;" onclick="PF('tTag2').show()"/>
+								<p:tooltip for="tooltipTag2" id="tTag2" widgetVar="tTipo2" position="bottom" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'tagExistente')}" />
+								
+<br/><br/>	
+				<h:form style="height:80%;">
 					<div class="layout-paleta" style="height: 100%;">
 						<div class="nano-pane">
 							<div class="nano-content menu-scroll-content">
@@ -159,11 +165,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 				<h:panelGroup style="height:50%;">
 					<p:commandButton value="Tag customizada" styleClass="NavyButton"
-						rendered="#{documentoMB.entity.tipo != null}" title="Caso você queira incluir uma informação no seu documento que
-						deva ser preenchida durante a emissão, basta clicar aqui e criar sua tag. Na emissão será solicitado o preenchimento dessa informação"
+						rendered="#{documentoMB.entity.tipo != null}" title="Caso você queira incluir uma informação no seu documento que deva ser preenchida durante a emissão, basta clicar aqui e criar sua tag. Na emissão será solicitado o preenchimento dessa informação"
 						oncomplete="PF('dlgNovaTag').show();" update="dlgNovaTag"
 						process="@this">
-					</p:commandButton>
+					</p:commandButton> 
+					<h:outputLabel rendered="#{documentoMB.entity.tipo != null}" class="fa fa-question" id="tooltipTag1" style="font-size:16px; margin-left:10px;" onclick="PF('tTag1').show()"/>
+								<p:tooltip for="tooltipTag1" id="tTag1" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'tag')}" />
 				</h:panelGroup>
 			</p:panel>
 
@@ -182,11 +189,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<h:panelGroup>
 				<p:outputLabel value="Informe o nome da tag:" />
 				<h:outputLabel class="fa fa-question" id="tooltipTag" style="font-size:16px; margin-left:10px;" onclick="PF('tTag').show()"/>
-								<p:tooltip for="tooltipTag" id="tTag" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'tag')}" />
+								<p:tooltip for="tooltipTag" id="tTag" widgetVar="tTipo3" position="bottom" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'tag')}" />
 				
 				<p:inputText id="inputTag" value="#{documentoMB.novaTag}">
 					<p:ajax process="@this" update="btnNewTag" />
 				</p:inputText>
+			</h:panelGroup>
+			<h:panelGroup>
+			<p:outputLabel><b>Observação</b>: Não utilizar espaços.</p:outputLabel>
 			</h:panelGroup>
 		</p:panelGrid>
 

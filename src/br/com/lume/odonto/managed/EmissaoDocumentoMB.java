@@ -98,6 +98,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     
     private CKEditor ckEditorEmissao;
 
+private boolean mostrarProf;
+
     public EmissaoDocumentoMB() {
         super(DocumentoEmitidoSingleton.getInstance().getBo());
         this.setClazz(DocumentoEmitido.class);
@@ -263,6 +265,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             List<TagDocumentoModelo> tagsProcessadas = new ArrayList<>();
             String textoDocumento = modeloSelecionado.getModelo();
 
+         
+             
+            
             for (TagDocumentoModelo tag : tags) {
                 if (tag.getTagEntidade().getEntidade().getEntidade().equals("Paciente")) {
                     this.tag = TagSingleton.getInstance().getBo().listByEntidade("Paciente");
@@ -338,6 +343,12 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }else {
             this.modeloSelecionado.setModelo(textoEditor);
         }
+        
+        mostrarProf = false;
+        if(textoEditor.contains("#registroConselho") || textoEditor.contains("#nomeProfissional")) {
+            mostrarProf = true;
+        }
+        
         String regex = "#(\\w+|\\W+)";
         String retorno = "";
 
@@ -651,9 +662,13 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             this.filtroTipoDocumentoEmitir = this.filtroTipoDocumento;
             this.carregarDocumentos();
         }
-
-        this.setCid(null);
         this.setPacienteSelecionado(null);
+        if(emitidoPara != null) {
+            this.setPacienteSelecionado(emitidoPara);
+        }
+        
+        this.setCid(null);
+      
         this.setProfissionalSelecionado(null);
         this.setModeloSelecionado(null);
         this.modeloHtml = "";
@@ -1055,6 +1070,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     
     public void setModeloHtml(String modeloHtml) {
         this.modeloHtml = modeloHtml;
+    }
+
+    
+    public boolean isMostrarProf() {
+        return mostrarProf;
+    }
+
+    
+    public void setMostrarProf(boolean mostrarProf) {
+        this.mostrarProf = mostrarProf;
     }
 
     

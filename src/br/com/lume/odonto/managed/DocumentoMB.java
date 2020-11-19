@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -177,7 +178,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 submenu.setLabel(entidade.getDescricao());
 
                 menuModel.addElement(submenu);
-
+                Collections.sort(entidade.getTags());
                 for (TagEntidade tag : entidade.getTags()) {
                     DefaultMenuItem menuItem = new DefaultMenuItem();
                     menuItem.setId(tag.getAtributo());
