@@ -74,28 +74,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</p:selectOneMenu>
 				</h:panelGroup>
 
-				<h:panelGroup>
-					<p:outputLabel style="margin:0px;"
-						for="filtroModeloDocumentoEmitir" value="Modelo do documento" />
 
-					<p:autoComplete id="filtroModeloDocumentoEmitir"
-						value="#{emissaoDocumentoMB.modeloSelecionado}"
-						style="margin-bottom:20px;"
-						completeMethod="#{emissaoDocumentoMB.sugestoesModelos}" var="tipo"
-						itemLabel="#{tipo.descricao}" itemValue="#{tipo}"
-						converter="documento" forceSelection="true" scrollHeight="400"
-						minQueryLength="3" queryDelay="1000" dropdown="true">
-						
-						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags(null)}"
-								update="pnTags,viewDoc" process="@this" />
-						
-					</p:autoComplete>
-
-				</h:panelGroup>
-
-				<p:outputPanel id="pnTags">
-					<h:panelGroup
-						rendered="#{emissaoDocumentoMB.tag != null}">
+<h:panelGroup id="painelPaciente"
+						rendered="#{emissaoDocumentoMB.pacienteSelecionado != null or emissaoDocumentoMB.tag != null}">
 
 						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
 						<p:autoComplete id="filtroDinamicoPaciente"
@@ -121,9 +102,30 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<p:ajax event="itemSelect"
 								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
-								update="pnTags,viewDoc,:lume:documentoImprimir" />
+								update="pnTags,painelPaciente,viewDoc,:lume:documentoImprimir" />
 						</p:autoComplete>
 					</h:panelGroup>
+
+				<h:panelGroup>
+					<p:outputLabel style="margin:0px;"
+						for="filtroModeloDocumentoEmitir" value="Modelo do documento" />
+
+					<p:autoComplete id="filtroModeloDocumentoEmitir"
+						value="#{emissaoDocumentoMB.modeloSelecionado}"
+						style="margin-bottom:20px;"
+						completeMethod="#{emissaoDocumentoMB.sugestoesModelos}" var="tipo"
+						itemLabel="#{tipo.descricao}" itemValue="#{tipo}"
+						converter="documento" forceSelection="true" scrollHeight="400"
+						minQueryLength="3" queryDelay="1000" dropdown="true">
+						
+						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags(null)}"
+								update="pnTags,painelPaciente,viewDoc" process="@this" />
+						
+					</p:autoComplete>
+
+				</h:panelGroup>
+				<p:outputPanel id="pnTags">
+					
 
 					<h:panelGroup
 						rendered="#{emissaoDocumentoMB.mostrarProf}">
@@ -141,7 +143,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 							<p:ajax event="itemSelect"
 								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
-								update="pnTags,viewDoc,:lume:documentoImprimir" />
+								update="pnTags,painelPaciente,viewDoc,:lume:documentoImprimir" />
 						</p:autoComplete>
 					</h:panelGroup>
 
