@@ -128,7 +128,12 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void carregarTags() {
         if (this.getEntity().getTipo() != null) {
-            this.classificacaoTag = TagSingleton.getInstance().getBo().listByTipoDocumento(this.getEntity().getTipo());
+            try {
+                this.classificacaoTag = TagSingleton.getInstance().getBo().listAll();
+            } catch (Exception e) {
+                this.addError("Erro", "Erro ao buscar tags");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -141,6 +146,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             this.pesquisar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro ativado.");
         }catch (Exception e) {
+            e.printStackTrace();
             this.addError("Erro", "Erro ao ativar registro");
         }
     }

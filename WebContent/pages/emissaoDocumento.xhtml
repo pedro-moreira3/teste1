@@ -12,7 +12,10 @@
 				<div class="card card-w-title">
 
 					<p:outputPanel id="pnEmissaoPrincipal" styleClass="BordNone">
-						<h1>Emissão de documentos</h1>
+						<h1>Emissão de documentos
+						<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
+				<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('emissaoDocumento', 'titulo')}" position="bottom" />
+						</h1>
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset>
@@ -214,9 +217,7 @@
 			<h:outputText id="headerPrint"
 				value="Imprimir" />				
 		</f:facet>
-		<p:scrollPanel mode="native" id="impressaoDocPai"
-		style="position: relative; width: 100%; height: 90%;border:0px">		
-		
+		<p:panel  id="impressaoDocPai" style="border:0px">
 		<div>
 			<div style='float:left;' rendered="#{emissaoDocumentoMB.mostraLogo}">
 				<p:graphicImage rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
@@ -233,7 +234,7 @@
 			</div>
 		</div>		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
-		</p:scrollPanel>
+		</p:panel>
 			<h:panelGroup style="display:block;margin-left:3px;">
 					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
 						value="#{emissaoDocumentoMB.mostraCabecalho}">
@@ -282,11 +283,8 @@
 			<p:ajax event="close" resetValues="true" update="dtDocumentos" listener="#{emissaoDocumentoMB.pesquisar()}"/>
 			<p:outputPanel id="dlgEmissao">
 				<ui:include src="dlgemitirdocumento.xhtml" />
-				<p:panelGrid columns="3" layout="grid"
+				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid form-group">
-
-					<p:commandButton value="Fechar" icon="fa fa-close"
-						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
 
 					<p:commandButton value="Gerar documento" styleClass="GreenButton"
 						icon="fa fa-save"
@@ -294,14 +292,16 @@
 						disabled="#{emissaoDocumentoMB.entity.id > 0}"
 						process="@this" update="dlgEmissao">
 					</p:commandButton>
-
+					<p:commandButton value="Fechar" icon="fa fa-close"
+						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
+					
+<ui:remove>
 					<p:commandButton id="impDoc" value="Imprimir documento"
 						styleClass="NavyButton" icon="fa fa-print" oncomplete="PF('dlgPrint').show()"
 						process="@this" update=":lume:impressaoDoc"
-						actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
-						disabled="#{emissaoDocumentoMB.entity.id eq 0}">						
+						actionListener="#{emissaoDocumentoMB.loadDoc(documento)}">						
 					</p:commandButton>				
-
+</ui:remove>
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>

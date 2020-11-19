@@ -360,17 +360,22 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                             } else {
                                 this.tagsDinamicas.add(tag);
                             }
-                        } else {
-                            TagEntidade tagNova = new TagEntidade();
-                            Tag tagPai = new Tag();
-                            tagPai.setEntidade("Custom");
+                        } else {                           
+                            //tags docs antigos
+                            if(!retorno.contains("rg") && !retorno.contains("endereco_completo") && !retorno.contains("datahoje") && !retorno.contains("profissional") 
+                                    && !retorno.contains("sexo") && !retorno.contains("idade") && !retorno.contains("datanascimento") && !retorno.contains("documento") 
+                                    && !retorno.contains("telefone") && !retorno.contains("email") && !retorno.contains("paciente") ) {
+                                TagEntidade tagNova = new TagEntidade();
+                                Tag tagPai = new Tag();
+                                tagPai.setEntidade("Custom");
 
-                            tagNova.setDescricaoCampo(retorno);
-                            tagNova.setInserirDado("S");
-                            tagNova.setTipoAtributo("texto");
-                            tagNova.setEntidade(tagPai);
+                                tagNova.setDescricaoCampo(retorno);
+                                tagNova.setInserirDado("S");
+                                tagNova.setTipoAtributo("texto");
+                                tagNova.setEntidade(tagPai);
 
-                            this.tagsDinamicas.add(tagNova);
+                                this.tagsDinamicas.add(tagNova);  
+                            }
                         }
 
                     } catch (Exception e) {
@@ -582,7 +587,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                     }
                 }
             }
-
+            //tags dos documentos antigos
+            if(pacienteSelecionado != null && pacienteSelecionado.getDadosBasico() != null) {
+                modelo = DocumentoSingleton.getInstance().getBo().replaceDocumento(pacienteSelecionado.getDadosBasico(), modelo, UtilsFrontEnd.getProfissionalLogado());
+            }
             this.modeloSelecionado.setModelo(modelo);
 
             modeloHtmlSemCabecalho = new StringBuilder("");
