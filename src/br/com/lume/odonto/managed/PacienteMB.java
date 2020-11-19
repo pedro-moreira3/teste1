@@ -179,6 +179,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private DocumentoEmitido documentoDownload;
     private StreamedContent fileDownload;
     private List<DocumentoEmitido> listaDocumentos;
+    
+    private String modeloHtml;
+    private boolean mostraCabecalho = false;
+    private boolean mostraLogo = false;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -249,6 +253,17 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), 
                 UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
+    
+    public void loadDoc(DocumentoEmitido doc) {
+        if (doc != null) {
+            this.modeloHtml = doc.getModelo();
+        }
+        PrimeFaces.current().ajax().update("lume:tabViewPaciente:impressaoDoc");
+    }
+        
+        
+        
+
     
     public StreamedContent getArquivo(DocumentoEmitido doc) {
         
@@ -1385,6 +1400,36 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setFileDownload(StreamedContent fileDownload) {
         this.fileDownload = fileDownload;
+    }
+
+    
+    public String getModeloHtml() {
+        return modeloHtml;
+    }
+
+    
+    public void setModeloHtml(String modeloHtml) {
+        this.modeloHtml = modeloHtml;
+    }
+
+    
+    public boolean isMostraCabecalho() {
+        return mostraCabecalho;
+    }
+
+    
+    public void setMostraCabecalho(boolean mostraCabecalho) {
+        this.mostraCabecalho = mostraCabecalho;
+    }
+
+    
+    public boolean isMostraLogo() {
+        return mostraLogo;
+    }
+
+    
+    public void setMostraLogo(boolean mostraLogo) {
+        this.mostraLogo = mostraLogo;
     }
 
 }

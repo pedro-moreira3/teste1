@@ -23,9 +23,16 @@
 				<f:facet name="header">Documentos emitidos</f:facet>
 
 				<p:column headerText="Ações">
+				<ui:remove>
 					<p:commandButton ajax="false" icon="White fa fa-download">
 						<p:fileDownload value="#{pacienteMB.getArquivo(documento)}" />
 					</p:commandButton>
+					</ui:remove>
+					<p:commandButton icon="White fa fa-print" process="@this" styleClass="NavyButton"
+								update="lume:tabViewPaciente:impressaoDoc" title="Imprimir"
+								actionListener="#{pacienteMB.loadDoc(documento)}"
+								oncomplete="PF('dlgPrint').show()"
+								 />
 				</p:column>
 
 				<p:column headerText="Tipo do documento">
@@ -51,6 +58,68 @@
 
 		</div>
 	</div>
+	
+	<p:dialog widgetVar="dlgPrint" responsive="true" modal="true"
+		appendTo=":lume" resizable="false"
+		onHide="PF('dlgPrint').toggleMaximize();"
+		onShow="PF('dlgPrint').toggleMaximize();">
+		<f:facet name="header">
+			<h:outputText id="headerPrint"
+				value="Imprimir" />				
+		</f:facet>
+		<p:panel  id="impressaoDocPai" style="border:0px">
+		<div style="">
+			<div style='float:left;' rendered="#{pacienteMB.mostraLogo}">
+				<p:graphicImage style='margin-bottom: 150px' rendered="#{pacienteMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+			</div>
+			<div style='margin-left:180px;margin-top: 20px;font-weight: bold;' rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}">
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>				
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>				
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>
+			</div>
+			<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}">
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>				
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>				
+				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>
+			</div>
+		</div>		
+		<h:outputText id="impressaoDoc" value="#{pacienteMB.modeloHtml.toString()}" escape="false" />
+		</p:panel>
+			<h:panelGroup style="display:block;margin-left:3px;">
+					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
+						value="#{pacienteMB.mostraCabecalho}">
+						<p:ajax event="change" process="@this"
+							update="lume:tabViewPaciente:impressaoDocPai"
+							 />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="logoCabecalho"
+						value="#{pacienteMB.mostraLogo}">
+					<p:ajax event="change" process="@this"
+							update="lume:tabViewPaciente:impressaoDocPai"
+							 />	
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />
+					<ui:remove>
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="rodape"
+						value="#{pacienteMB.mostraRodape}">
+						
+					</p:selectBooleanCheckbox>	
+					<p:outputLabel for="rodape" value="Incluir número de página" />	
+					</ui:remove>
+				</h:panelGroup>
+		
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
+				<p:printer target="lume:tabViewPaciente:impressaoDocPai" />
+			</p:commandButton>
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgPrint').hide()"/>
+		</p:panelGrid>				
+	</p:dialog>
 
 	<p:dialog header="Importação de documento">
 		<p:panel>
