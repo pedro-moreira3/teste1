@@ -17,6 +17,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import org.primefaces.PrimeFaces;
+import org.primefaces.extensions.component.ckeditor.CKEditor;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -69,10 +70,11 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private List<Documento> documentos;
     private Profissional filtroProfissionalEmissao;
     private Paciente pacienteSelecionado;
+    private Profissional profissionalSelecionado;
     private CID cid;
     private DocumentoEmitido docEmitido;
     private boolean teste = false;
-    private StringBuilder modeloHtml = new StringBuilder("");
+    private String modeloHtml = "";
     private StringBuilder cabecalhoHtml = new StringBuilder("");
     private StringBuilder modeloHtmlSemCabecalho = new StringBuilder("");
     private StringBuilder rodapeHtml = new StringBuilder("");
@@ -93,6 +95,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private boolean mostraLogo = false;
    // private boolean mostraRodape = false;
   //  private String cabecalho = "";
+    
+    private CKEditor ckEditorEmissao;
 
     public EmissaoDocumentoMB() {
         super(DocumentoEmitidoSingleton.getInstance().getBo());
@@ -135,9 +139,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             doc.setDataEmissao(new Date());
             doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
             doc.setEmitidoPara(pacienteSelecionado);
+            doc.setProfissionalSelecionado(profissionalSelecionado);
             doc.setDocumentoModelo(modeloSelecionado);
-            doc.setModelo(modeloHtml.toString());
-
+            doc.setModelo(modeloHtml);
+            ckEditorEmissao.getValue();
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);
 
@@ -152,12 +157,12 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void emitirDocumento() {
         Document documento = null;
 
-        this.processarDocumento();
+       // this.processarDocumento();
 
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-
+        doc.setProfissionalSelecionado(profissionalSelecionado);
         if (this.pacienteSelecionado != null) {
             doc.setEmitidoPara(this.pacienteSelecionado);
             doc.setPathDocumento(
@@ -280,7 +285,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void loadDoc(DocumentoEmitido doc) {
         if (doc != null) {
-            this.modeloHtml = new StringBuilder(doc.getModelo());
+            this.modeloHtml = doc.getModelo();
         }
         PrimeFaces.current().ajax().update("lume:impressaoDoc");
 //        modeloHtml.append("<div id='pageFooter'>Página </div>"); 
@@ -315,8 +320,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             novo.setEmitidoPor(doc.getEmitidoPor());
             novo.setModelo(doc.getModelo());
             this.setEntity(novo);
+            pacienteSelecionado = null;
+            profissionalSelecionado = null;
             modeloSelecionado = doc.getDocumentoModelo();
-            montarTags();
+            montarTags(doc.getModelo());
         }
 
     }
@@ -325,14 +332,19 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         //DocumentoSingleton.getInstance().getBo().replaceDocumentoAntigo(tagDinamicas, dadosBasico, documento, profissionalLogado);
     }
 
-    public void montarTags() {
+    public void montarTags(String textoEditor) {
+        if(textoEditor == null || textoEditor.equals("")) {
+            textoEditor = this.modeloSelecionado.getModelo();
+        }else {
+            this.modeloSelecionado.setModelo(textoEditor);
+        }
         String regex = "#(\\w+|\\W+)";
         String retorno = "";
 
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        Matcher comparator = pattern.matcher(this.modeloSelecionado.getModelo());
+        Matcher comparator = pattern.matcher(textoEditor);
 
-        this.modeloHtmlSemCabecalho = new StringBuilder(this.modeloSelecionado.getModelo());
+        this.modeloHtmlSemCabecalho = new StringBuilder(textoEditor);
         //carregarDocumentoHtmlModelo();
 
         while (comparator.find()) {
@@ -460,7 +472,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void preview() {
         if (this.modeloHtml.toString().contains("|new-page|")) {
-            this.modeloHtml = new StringBuilder(this.modeloHtml.toString().replaceAll("\\|new-page\\|", "\n\n<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\"></hr>\n"));
+            this.modeloHtml = this.modeloHtml.toString().replaceAll("\\|new-page\\|", "\n\n<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\"></hr>\n");
         }
     }
 
@@ -508,9 +520,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         }
 
         for (TagEntidade tag : this.tagsDinamicas) {
-            if (tag.getRespTag() != null || tag.getRespTagData() != null || (tag.getDescricaoCampo().equals("CID") && this.cid != null)) {
+            if (tag.getRespTag() != null || tag.getRespTagData() != null || (tag.getDescricaoCampo().equals("CID") && this.cid != null)                    
+                    ) {            
                 this.processarTag(tag, this.modeloSelecionado.getModelo());
             }
+            if( tag.getAtributo() != null && (tag.getAtributo().equals("registroConselho") || tag.getAtributo().equals("nomeProfissional"))) {
+                this.processarTag(tag, this.modeloSelecionado.getModelo());
+            }
+            
         }
 
         preview();
@@ -557,7 +574,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
                 }
                     break;
+                case "Profissional": {
+                    if (this.profissionalSelecionado != null) {
+                        c = this.profissionalSelecionado.getDadosBasico().getClass();
+                        modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
+                        modelo = modelo.replaceAll("\\#nomeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
+                    }
 
+                }
+                    break;
+                    
                 case "Sistema": {
                     modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.moduloSistema(tag.getAtributo()));
                 }
@@ -595,7 +621,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
             modeloHtmlSemCabecalho = new StringBuilder("");
             modeloHtmlSemCabecalho.append(modelo);
-            modeloHtml = modeloHtmlSemCabecalho;
+            modeloHtml = modeloHtmlSemCabecalho.toString();
         } catch (Exception e) {
             this.addError("Erro na emissão", "Falha ao processar as tags do documento.");
             e.printStackTrace();
@@ -628,8 +654,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
         this.setCid(null);
         this.setPacienteSelecionado(null);
+        this.setProfissionalSelecionado(null);
         this.setModeloSelecionado(null);
-        this.modeloHtml = new StringBuilder();
+        this.modeloHtml = "";
         this.tags = new ArrayList<TagEntidade>();
         this.tagsDinamicas = new ArrayList<TagEntidade>();
         this.tag = null;
@@ -919,9 +946,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         return modeloHtml.toString();
     }
 
-    public void setModeloHtml(StringBuilder modeloHtml) {
-        this.modeloHtml = modeloHtml;
-    }
+//    public void setModeloHtml(String modeloHtml) {
+//        this.modeloHtml = modeloHtml;
+//    }
 
     public Date getDataInicio() {
         return dataInicio;
@@ -1003,6 +1030,31 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     
     public void setRodapeHtml(StringBuilder rodapeHtml) {
         this.rodapeHtml = rodapeHtml;
+    }
+
+    
+    public Profissional getProfissionalSelecionado() {
+        return profissionalSelecionado;
+    }
+
+    
+    public void setProfissionalSelecionado(Profissional profissionalSelecionado) {
+        this.profissionalSelecionado = profissionalSelecionado;
+    }
+
+    
+    public CKEditor getCkEditorEmissao() {
+        return ckEditorEmissao;
+    }
+
+    
+    public void setCkEditorEmissao(CKEditor ckEditorEmissao) {
+        this.ckEditorEmissao = ckEditorEmissao;
+    }
+
+    
+    public void setModeloHtml(String modeloHtml) {
+        this.modeloHtml = modeloHtml;
     }
 
     

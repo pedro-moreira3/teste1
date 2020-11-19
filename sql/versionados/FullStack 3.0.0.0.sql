@@ -216,3 +216,21 @@ FROM OBJETO_PROFISSIONAL OP
 LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES = 'Paciente';
+
+-----ARIEL-----
+
+delete from TAG_entidade where atributo = 'logo'
+
+---TAG PROFISSIONAL
+
+insert into tag (entidade,descricao)
+  values ('Profissional','Profissional');
+  
+insert into tag_entidade (atributo,descricao_campo,entidade_id)
+	values ('registroConselho','Registro Conselho (CRO)',5);  
+	
+	insert into tag_entidade (atributo,descricao_campo,entidade_id)
+	values ('nomeProfissional','Nome',5);  
+	
+	
+alter table documento_emitido add column profissional_selecionado bigint references Profissional(id);	

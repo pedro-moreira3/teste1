@@ -148,13 +148,13 @@
 								actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
 								oncomplete="PF('dlgPrint').show()"
 								 />
-								 
+								<ui:remove> 
 								<p:commandButton icon="White fa fa-copy" process="@this" styleClass="NavyButton"
 								update=":lume:dlgEmitirDocumento, :lume:dlgEmissao" title="Copiar para um novo documento "
 								actionListener="#{emissaoDocumentoMB.copiar(documento)}"
 								oncomplete="PF('dlgEmitirDocumento').show()"
 								 /> 
-								
+								</ui:remove>
 								 
 								
 								
@@ -218,14 +218,14 @@
 				value="Imprimir" />				
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
-		<div>
+		<div style="">
 			<div style='float:left;' rendered="#{emissaoDocumentoMB.mostraLogo}">
-				<p:graphicImage rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+				<p:graphicImage style='margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
 			</div>
 			<div style='margin-left:180px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
 			</div>
 			<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}">
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
@@ -290,7 +290,7 @@
 						icon="fa fa-save"
 						actionListener="#{emissaoDocumentoMB.emitirNovoDocumento()}"
 						disabled="#{emissaoDocumentoMB.entity.id > 0}"
-						process="@this" update="dlgEmissao">
+						process="@this,:lume:documentoImprimir" update=":lume:documentoImprimir,dlgEmissao">
 					</p:commandButton>
 					<p:commandButton value="Fechar" icon="fa fa-close"
 						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />

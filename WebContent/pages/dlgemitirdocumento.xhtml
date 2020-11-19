@@ -86,7 +86,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						converter="documento" forceSelection="true" scrollHeight="400"
 						minQueryLength="3" queryDelay="1000" dropdown="true">
 						
-						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags()}"
+						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags(null)}"
 								update="pnTags,viewDoc" process="@this" />
 						
 					</p:autoComplete>
@@ -95,7 +95,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 				<p:outputPanel id="pnTags">
 					<h:panelGroup
-						rendered="#{emissaoDocumentoMB.tag != null and emissaoDocumentoMB.tag.entidade eq 'Paciente'}">
+						rendered="#{emissaoDocumentoMB.tag != null}">
 
 						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
 						<p:autoComplete id="filtroDinamicoPaciente"
@@ -121,7 +121,27 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<p:ajax event="itemSelect"
 								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
-								update="pnTags,viewDoc" />
+								update="pnTags,viewDoc,:lume:documentoImprimir" />
+						</p:autoComplete>
+					</h:panelGroup>
+
+					<h:panelGroup
+						rendered="#{emissaoDocumentoMB.tag != null}">
+
+						<h:outputText for="filtroDinamicoProfissional" value="Profissional:" />
+						<p:autoComplete id="filtroDinamicoProfissional"
+							value="#{emissaoDocumentoMB.profissionalSelecionado}"
+							style="margin-bottom:20px;"
+							completeMethod="#{emissaoDocumentoMB.sugestoesProfissionais}" var="p"
+							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+							converter="profissional" forceSelection="true" scrollHeight="400"
+							minQueryLength="3" queryDelay="1000" dropdown="true">							
+							<p:column headerText="Nome">
+								<h:outputText value="#{p.dadosBasico.nome}" />
+							</p:column>
+							<p:ajax event="itemSelect"
+								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
+								update="pnTags,viewDoc,:lume:documentoImprimir" />
 						</p:autoComplete>
 					</h:panelGroup>
 
@@ -150,7 +170,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:inputText value="#{tag.respTag}"
 								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
 								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}"
-									process="@this" update=":lume:viewDoc" />
+									process="@this" update=":lume:viewDoc,:lume:documentoImprimir" />
 							</p:inputText>
 						</h:panelGroup>
 
@@ -181,7 +201,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					<pe:ckEditor id="documentoImprimir" widgetVar="documentoImprimir" width="100%"
 					value="#{emissaoDocumentoMB.modeloHtml}" escape="false" height="300px"
 					toolbar="[[ 'PageBreak','Print','Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl','Table','HorizontalRule','SpecialChar','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
-					styleClass="BordNone" binding="#{documentoMB.ckEditorEmissao}">
+					styleClass="BordNone" binding="#{emissaoDocumentoMB.ckEditorEmissao}">
 					<p:ajax process="@this" />
 				</pe:ckEditor>	
 						

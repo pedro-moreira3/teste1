@@ -57,8 +57,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private List<Dominio> dominios;
     private List<Tag> classificacaoTag;
     private String documento;
-    private CKEditor ckEditor;
-    private CKEditor ckEditorEmissao;
+    private CKEditor ckEditor;    
     private MenuModel menuModel;
 
     private String novaTag;
@@ -604,16 +603,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setModeloSelecionado(Documento modeloSelecionado) {
         this.modeloSelecionado = modeloSelecionado;
-    }
-
-    
-    public CKEditor getCkEditorEmissao() {
-        return ckEditorEmissao;
-    }
-
-    
-    public void setCkEditorEmissao(CKEditor ckEditorEmissao) {
-        this.ckEditorEmissao = ckEditorEmissao;
-    }
-
+    }    
+  
 }
