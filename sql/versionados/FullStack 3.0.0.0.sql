@@ -230,7 +230,7 @@ insert into tag_entidade (atributo,descricao_campo,entidade_id)
 	values ('registroConselho','Registro Conselho (CRO)',5);  
 	
 	insert into tag_entidade (atributo,descricao_campo,entidade_id)
-	values ('nomeProfissional','Nome',5);  
+	values ('nmeProfissional','Nome',5);  
 	
 	
 alter table documento_emitido add column profissional_selecionado bigint references Profissional(id);	

@@ -345,7 +345,7 @@ private boolean mostrarProf;
         }
         
         mostrarProf = false;
-        if(textoEditor.contains("#registroConselho") || textoEditor.contains("#nomeProfissional")) {
+        if(textoEditor.contains("#registroConselho") || textoEditor.contains("#nmeProfissional")) {
             mostrarProf = true;
         }
         
@@ -535,7 +535,7 @@ private boolean mostrarProf;
                     ) {            
                 this.processarTag(tag, this.modeloSelecionado.getModelo());
             }
-            if( tag.getAtributo() != null && (tag.getAtributo().equals("registroConselho") || tag.getAtributo().equals("nomeProfissional"))) {
+            if( tag.getAtributo() != null && (tag.getAtributo().equals("registroConselho") || tag.getAtributo().equals("nmeProfissional"))) {
                 this.processarTag(tag, this.modeloSelecionado.getModelo());
             }
             
@@ -567,7 +567,7 @@ private boolean mostrarProf;
                     if (this.profissionalSelecionado != null) {
                         c = this.profissionalSelecionado.getDadosBasico().getClass();
                         modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
-                        modelo = modelo.replaceAll("\\#nomeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
+                        modelo = modelo.replaceAll("\\#nmeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
                     }
 
                 }
@@ -605,7 +605,10 @@ private boolean mostrarProf;
 
                     } else {
                         if (tag.getAtributo() != null && tag.getAtributo().equals("cid")) {
-                            modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getDescricao());
+                            if(this.cid != null) {
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getDescricao());    
+                            }
+                            
                         } else if (tag.getEntidade().getEntidade().equals("Custom")) {
                             if (tag.getRespTag() != null) {
                                

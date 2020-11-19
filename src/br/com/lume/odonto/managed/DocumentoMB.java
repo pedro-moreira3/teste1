@@ -411,6 +411,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     @Override
     public void actionNew(ActionEvent event) {
         //super.actionNew(event);
+       this.documento = ""; 
+       menuModel = new DefaultMenuModel();
         this.setEntity(new Documento());
         if(this.getFiltroTipoDocumento() != null) {
             this.getEntity().setTipo(getFiltroTipoDocumento());
