@@ -563,6 +563,15 @@ private boolean mostrarProf;
                     }
                 }
                     break;
+                case "Profissional": {
+                    if (this.profissionalSelecionado != null) {
+                        c = this.profissionalSelecionado.getDadosBasico().getClass();
+                        modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
+                        modelo = modelo.replaceAll("\\#nomeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
+                    }
+
+                }
+                    break;    
                 case "Paciente": {
                     if (this.pacienteSelecionado != null) {
                         c = this.pacienteSelecionado.getDadosBasico().getClass();
@@ -585,15 +594,7 @@ private boolean mostrarProf;
 
                 }
                     break;
-                case "Profissional": {
-                    if (this.profissionalSelecionado != null) {
-                        c = this.profissionalSelecionado.getDadosBasico().getClass();
-                        modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
-                        modelo = modelo.replaceAll("\\#nomeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
-                    }
-
-                }
-                    break;
+              
                     
                 case "Sistema": {
                     modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.moduloSistema(tag.getAtributo()));
