@@ -218,21 +218,25 @@
 				value="Imprimir" />				
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
-		<div style="">
-			<div style='float:left;height:20px;margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}">
-				<p:graphicImage style='' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
-			</div>
-			<div style='margin-left:200px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
-			</div>
-			<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}">
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
-				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>
-			</div>
-		</div>		
+		
+			<div  rendered="#{emissaoDocumentoMB.mostraLogo or emissaoDocumentoMB.mostraCabecalho}">
+				<div style='margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}">
+					<div style='float:left;height:20px;' rendered="#{emissaoDocumentoMB.mostraLogo}">
+						<p:graphicImage style='' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+					</div>
+				</div>	
+				<div style='margin-left:200px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+				</div>
+				<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}">
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>				
+					<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho and !emissaoDocumentoMB.mostraLogo}"></p:outputLabel>
+				</div>
+			</div>	
+		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 		</p:panel>
 			<h:panelGroup style="display:block;margin-left:3px;">
