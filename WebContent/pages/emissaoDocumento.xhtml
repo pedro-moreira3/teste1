@@ -219,8 +219,8 @@
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
 		<div style="">
-			<div style='height:20px' rendered="#{emissaoDocumentoMB.mostraLogo}">
-				<p:graphicImage style='margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
+			<div style='height:20px;margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}">
+				<p:graphicImage style='' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
 			</div>
 			<div style='margin-left:200px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
