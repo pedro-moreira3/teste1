@@ -219,7 +219,8 @@
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
 		
-		<table style="width: 100%; border-collapse: collapse;">
+				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogo}">
+						<table style="width: 100%; border-collapse: collapse;">
 							<thead>
 								<tr>
 									<th style="border:0px; padding: 5px; width: 10%">
@@ -235,8 +236,22 @@
 									
 								</tr>
 								</thead>
-		</table>		
-		
+						</table>	
+				</p:outputPanel>	
+				<p:outputPanel rendered="#{!emissaoDocumentoMB.mostraLogo}">	
+						<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>									
+									<th style="border: 0px; padding: 5px; width: 100%;text-align:left">
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									
+									</th>
+								</tr>
+								</thead>
+						</table>			
+			</p:outputPanel>
 		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 		</p:panel>
