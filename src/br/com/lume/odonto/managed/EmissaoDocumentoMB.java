@@ -566,7 +566,10 @@ private boolean mostrarProf;
                 case "Profissional": {
                     if (this.profissionalSelecionado != null) {
                         c = this.profissionalSelecionado.getDadosBasico().getClass();
-                        modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
+                        if(this.profissionalSelecionado.getRegistroConselhoStr() != null && !this.profissionalSelecionado.getRegistroConselhoStr().isEmpty()) {
+                            modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());    
+                        }
+                        
                         modelo = modelo.replaceAll("\\#nmeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
                     }
 

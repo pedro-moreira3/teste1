@@ -219,10 +219,10 @@
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
 		<div style="">
-			<div style='float:left;height:20px' rendered="#{emissaoDocumentoMB.mostraLogo}">
+			<div style='height:20px' rendered="#{emissaoDocumentoMB.mostraLogo}">
 				<p:graphicImage style='margin-bottom: 150px' rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
 			</div>
-			<div style='margin-left:180px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
+			<div style='margin-left:200px;margin-top: 20px;font-weight: bold;' rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}">
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
 				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraLogo and emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>

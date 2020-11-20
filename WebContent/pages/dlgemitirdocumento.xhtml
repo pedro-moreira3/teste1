@@ -76,10 +76,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 
 <h:panelGroup id="painelPaciente"
-						rendered="#{emissaoDocumentoMB.pacienteSelecionado != null or emissaoDocumentoMB.tag != null}">
+						>
 
 						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
-						<p:autoComplete id="filtroDinamicoPaciente"
+						<p:autoComplete id="filtroDinamicoPaciente" 
 							value="#{emissaoDocumentoMB.pacienteSelecionado}"
 							style="margin-bottom:20px;"
 							completeMethod="#{emissaoDocumentoMB.sugestoesPacientes}" var="p"
