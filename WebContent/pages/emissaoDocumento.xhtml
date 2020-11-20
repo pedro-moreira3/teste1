@@ -254,6 +254,17 @@
 			</p:outputPanel>
 		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
+		<p:outputPanel rendered="#{emissaoDocumentoMB.mostraRodape}">	
+						<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>									
+									<th style="border: 0px; padding: 5px; width: 100%;text-align:center">											
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} - #{cadastroEmpresaMB.entity.enderecoCompletoFormatado} - #{cadastroEmpresaMB.entity.empChaFone}&lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraRodape}"></p:outputLabel>										
+									</th>
+								</tr>
+								</thead>
+						</table>			
+			</p:outputPanel>
 		</p:panel>
 			<h:panelGroup style="display:block;margin-left:3px;">
 					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
@@ -271,18 +282,17 @@
 							listener="#{emissaoDocumentoMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="logoCabecalho" value="Incluir logo" />
-					<ui:remove>
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />					
 					<p:spacer width="20" height="0" />
 					<p:selectBooleanCheckbox id="rodape"
 						value="#{emissaoDocumentoMB.mostraRodape}">
 						<p:ajax event="change" process="@this"
-							update="preVisualizar"
+							update="impressaoDocPai"
 							listener="#{emissaoDocumentoMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="rodape" value="Incluir número de página" />	
-					</ui:remove>
+					<p:outputLabel for="rodape" value="Incluir  rodapé" />	
+					
 				</h:panelGroup>
 		
 		<p:panelGrid columns="2" layout="grid"
