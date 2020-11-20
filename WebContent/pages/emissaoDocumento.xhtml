@@ -219,17 +219,24 @@
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
 		
+		<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>
+									<th style="border:0px; padding: 5px; width: 10%">
+										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+									</th>
+									<th style="border: 0px; padding: 5px; width: 90%;text-align:left">
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									
+									</th>	
+								
+									
+								</tr>
+								</thead>
+		</table>		
 		
-		<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group" columnClasses="ui-grid-col-2,ui-grid-col-10">
-			<h:panelGroup>
-				<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
-			</h:panelGroup>
-			<h:panelGroup style="font-weight: bold;">
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
-			</h:panelGroup>
-		</p:panelGrid> 
 		
 		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
 		</p:panel>
