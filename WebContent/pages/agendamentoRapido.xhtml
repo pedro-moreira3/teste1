@@ -166,6 +166,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 }
 
 </style>
+
+		<p:outputPanel id="viewMarcacaoPonto">
+			<ui:include src="marcacaoponto.xhtml" />
+		</p:outputPanel>
 		
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -273,7 +277,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</p:outputPanel>
 										</p:outputPanel>
 									</p:panelGrid>
-									<p:panelGrid columns="4" layout="grid" id="painelBotao" 
+									<p:panelGrid columns="6" layout="grid" id="painelBotao" 
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 										<p:outputPanel>	</p:outputPanel>
 										<p:outputPanel>	</p:outputPanel>								
@@ -285,8 +289,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:commandButton id="bloqueio" icon="White fa fa-calendar White"
 										value="Bloqueio"
 										update=":lume:dtAfastamento" tabindex="1" process="@this" actionListener="#{agendamentoMB.agendamentoRapidoBloqueio(agendamentoRapidoMB.filtroPorProfissional)}"
-										styleClass="RedButton" />	
-										
+										styleClass="RedButton" />
+										<p:commandButton id="ponto" icon="White fa fa-calendar White"
+										value="Ponto" process="@this" update=":lume:viewMarcacaoPonto, :lume:pnlPonto, :lume:pnlPontoHeader"
+										actionListener="#{marcacaoPontoMB.carregaProfissional(agendamentoRapidoMB.filtroPorProfissional)}"
+										styleClass="NavyButton" oncomplete="PF('dlgMarcacaoPonto').show();" 
+										rendered="#{agendamentoRapidoMB.filtroPorProfissional.tipoRemuneracao == 'DIA'}" />	
 																	
 									</p:panelGrid>			
 								</p:outputPanel>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<p:dialog width="500px" appendTo=":lume:" maximizable="false"
+		modal="true" minimizable="false" resizable="false" responsive="true"
+		widgetVar="dlgMarcacaoPonto">
+		<f:facet name="header">
+			<p:outputPanel id="pnlPontoHeader">
+				<p:outputLabel
+					value="Ponto Diário para Profissional #{marcacaoPontoMB.entity.profissional.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel id="pnlPonto">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+
+					<p:outputPanel id="pnlPontoDados" style="margin-top: 20px">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="nome" readonly="true"
+								value="#{marcacaoPontoMB.entity.profissional.dadosBasico.nome}" />
+							<p:outputLabel for="nome" value="Profissional: " />
+							<p:message for="nome" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield" style="margin-top: 10px">
+							<p:calendar id="dataPonto"
+								value="#{marcacaoPontoMB.entity.dataPonto}" pattern="dd/MM/yyyy"
+								showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" />
+							<p:outputLabel for="dataPonto" value="Data da Diária:" />
+							<p:message for="dataPonto" styleClass="msg" />
+						</h:panelGroup>
+
+						<p:selectOneRadio id="tipoPonto" required="false"
+							value="#{marcacaoPontoMB.entity.tipoPonto}" layout="responsive"
+							columns="1" converter="enumTipoPonto">
+							<p:ajax process="@this" listener="#{marcacaoPontoMB.updateRemuneracao}" 
+								update="valorRemuneracao" />
+							<f:selectItems value="#{marcacaoPontoMB.listTiposPonto()}"
+								var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+						</p:selectOneRadio>
+						
+						<h:panelGroup styleClass="md-inputfield" style="margin-top: 30px">
+							<p:inputNumber id="valorRemuneracao"
+								value="#{marcacaoPontoMB.valorRemuneracao}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator="." readonly="true" />
+							<p:outputLabel for="valorRemuneracao"
+								value="Valor Remuneração: " />
+							<p:message for="valorRemuneracao" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:outputPanel>
+
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton icon="fa fa-save" value="Salvar"
+							process="@this, :lume:pnlPontoDados" styleClass="GreenButton"
+							actionListener="#{marcacaoPontoMB.salvar}" />
+						<p:commandButton icon="fa fa-close" value="Cancelar"
+							process="@this" oncomplete="PF('dlgMarcacaoPonto').hide()" />
+					</p:panelGrid>
+
+				</div>
+			</div>
+		</p:outputPanel>
+	</p:dialog>
+
+</ui:composition>
