@@ -44,6 +44,7 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.profissional.ProfissionalDiariaSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.ReciboRepasseProfissionalDiariaSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
@@ -101,6 +102,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private List<ReciboRepasseProfissional> listaRecibos;
 
     private List<Lancamento> lancamentoParaRecibo;
+    private List<ProfissionalDiaria> diariaParaRecibo;
     private BigDecimal valorTotalFatura = new BigDecimal(0);
     private BigDecimal valorProcedimento = new BigDecimal(0);
     private BigDecimal valorBaseRepasse = new BigDecimal(0);
@@ -152,6 +154,35 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         //System.out.println("RepasseProfissionalComReciboMB" + new Timestamp(System.currentTimeMillis()));
     }
+    
+    public void prepararReciboDiaria() {
+        this.descricao = null;
+        this.observacao = null;
+
+        this.profissionaisReciboLancamentos = new HashMap<>();
+        this.profissionaisReciboValores = new HashMap<>();
+        this.profissionaisRecibo = new ArrayList<>();
+//
+        if (diariasSelecionadas == null || diariasSelecionadas.size() == 0) {
+            addError("Erro", "É necessário escolher ao menos uma diária.");
+            return;
+        }
+        diariaParaRecibo = new ArrayList<>();
+        for (ProfissionalDiaria diaria : diariasSelecionadas) {
+            Profissional dentista = diaria.getProfissional();
+            if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentista) < 0) {
+                this.profissionaisReciboLancamentos.put(dentista, new Integer(1));
+                this.profissionaisReciboValores.put(dentista, diaria.getValorDiaria().doubleValue());
+                this.profissionaisRecibo.add(dentista);
+            } else {
+                this.profissionaisReciboLancamentos.put(dentista, this.profissionaisReciboLancamentos.get(dentista) + 1);
+                this.profissionaisReciboValores.put(dentista, this.profissionaisReciboValores.get(dentista) + diaria.getValorDiaria().doubleValue());
+            }
+            diariaParaRecibo.add(diaria);
+        }
+
+        PrimeFaces.current().executeScript("PF('dlgGerarRecibo').show()");
+    }
 
     public void prepararRecibo() {
         this.descricao = null;
@@ -196,10 +227,36 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void cancelarRecibo() {
         setPtpsSelecionados(null);
-        PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
+        setLancamentoParaRecibo(null);
+        setDiariaParaRecibo(null);
+    }
+    
+    public void gerarRecibo() {
+        if(getLancamentoParaRecibo() != null)
+            gerarReciboLancamento();
+        else if(getDiariaParaRecibo() != null)
+            gerarReciboDiaria();
     }
 
-    public void gerarRecibo() {
+    private void gerarReciboDiaria() {
+        try {
+            for(ProfissionalDiaria diaria: diariaParaRecibo) {
+                if (ReciboRepasseProfissionalDiariaSingleton.getInstance().getBo().findReciboValidoForDiaria(diaria) != null) {
+                    addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
+                    return;
+                }
+            }
+            if (!ReciboRepasseProfissionalSingleton.getInstance().gerarReciboForDiaria(diariaParaRecibo, this.descricao, this.observacao, UtilsFrontEnd.getProfissionalLogado()))
+                throw new Exception();
+            setDiariasSelecionadas(null);
+            PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
+            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (Exception e) {
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+        }
+    }
+    
+    private void gerarReciboLancamento() {
         try {
             List<Lancamento> lancamentosParaGerarRecibo = new ArrayList<Lancamento>();
             String mensagem = "sem lancamentos válidos para repasse";
@@ -1388,6 +1445,14 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
    
     public void setDiariasSelecionadas(List<ProfissionalDiaria> diariasSelecionadas) {
         this.diariasSelecionadas = diariasSelecionadas;
+    }
+    
+    public List<ProfissionalDiaria> getDiariaParaRecibo() {
+        return diariaParaRecibo;
+    }
+   
+    public void setDiariaParaRecibo(List<ProfissionalDiaria> diariaParaRecibo) {
+        this.diariaParaRecibo = diariaParaRecibo;
     }
             
 }
