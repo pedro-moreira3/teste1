@@ -168,7 +168,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 </style>
 
 		<p:outputPanel id="viewMarcacaoPonto">
-			<ui:include src="marcacaoponto.xhtml" />
+			<ui:include src="marcacaoponto.xhtml">
+				<ui:param name="permiteEditarData" value="S" />
+				<ui:param name="permiteEditarValor" value="N" />
+			</ui:include>
+			<p:remoteCommand name="onCloseMarcacaoPonto" />
 		</p:outputPanel>
 		
 		<div class="ui-g ui-fluid">

@@ -67,6 +67,17 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
+		
+		<p:outputPanel id="viewMarcacaoPonto">
+			<ui:include src="marcacaoponto.xhtml">
+				<ui:param name="permiteEditarData" value="N" />
+				<ui:param name="permiteEditarValor" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseMarcacaoPonto" actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
+				process="@this, :lume:tabViewRepasseProfissional:filtrosDiaria"
+				update=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+				oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
+		</p:outputPanel>
 
 
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
@@ -1485,7 +1496,167 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 
 
+						<p:tab title="Repasse por Diária">
+							<div class="ui-g ui-fluid">
+								<div class="ui-g-12 ui-lg-12">
+									<div class="card card-w-title">
+										<h1>Repasse dos Profissionais por Diária</h1>
+										<p:fieldset legend="Filtros">
+											<p:outputPanel id="filtrosDiaria">
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup styleClass="md-combo" style="margin-top:8px">
+														<p:selectOneMenu id="filtroPeriodoRepassesDiaria"
+															value="#{repasseProfissionalComReciboMB.filtroPeriodo}"
+															converter="enumPeriodoBusca">
+															<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+																var="periodo" itemValue="#{periodo}"
+																itemLabel="#{periodo.descricao}" />
+															<p:ajax process="@this" update="dataInicioDiaria dataFimDiaria"
+																listener="#{repasseProfissionalComReciboMB.actionTrocaDatasDiaria}" />
+														</p:selectOneMenu>
+														<p:outputLabel for="filtroPeriodoRepassesDiaria"
+															value="Período de Marcação do Ponto:" />
+													</h:panelGroup>
+													<h:panelGroup>
+														<p:outputLabel for="dataInicioDiaria"
+															value="Data Inicial do Ponto:" />
+														<p:calendar id="dataInicioDiaria"
+															value="#{repasseProfissionalComReciboMB.dataInicioDiaria}"
+															autocomplete="false" />
+													</h:panelGroup>
 
+													<h:panelGroup>
+														<p:outputLabel for="dataFimDiaria"
+															value="Data Final do Ponto:" />
+														<p:calendar id="dataFimDiaria"
+															value="#{repasseProfissionalComReciboMB.dataFimDiaria}"
+															autocomplete="false" />
+													</h:panelGroup>
+												</p:panelGrid>
+												<p:panelGrid columns="2" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup>
+														<p:outputLabel for="fitroProfissionalDiaria"
+															value="Profissional:" />
+														<p:autoComplete dropdown="true" queryDelay="1000"
+															size="35"
+															value="#{repasseProfissionalComReciboMB.profissionalDiaria}"
+															id="fitroProfissionalDiaria" minQueryLength="3"
+															completeMethod="#{repasseProfissionalComReciboMB.geraSugestoesProfissionalDiaria}"
+															var="profissional"
+															itemLabel="#{profissional.dadosBasico.prefixoNome}"
+															itemValue="#{profissional}" converter="profissional"
+															forceSelection="true">
+														</p:autoComplete>
+													</h:panelGroup>
+												</p:panelGrid>
+												
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+													<p:commandButton id="pesquisarRepasseDiaria"
+														icon="White fa fa-search" value="Pesquisar"
+														styleClass="OrangeButton"
+														actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
+														process="@this, :lume:tabViewRepasseProfissional:filtrosDiaria"
+														update=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+														oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
+
+													<h:panelGroup>
+														<p:splitButton icon="White fa fa fa-file-excel-o"
+															value="Exportar tabela para Excel"
+															styleClass="GreenSplitButton"
+															actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('xls')}"
+															ajax="false"
+															process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+															update="@this" immediate="true"
+															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+															<p:fileDownload
+																value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+
+															<p:menuitem value="Exportar tabela para PDF"
+																icon="fa fa fa-file-pdf-o"
+																actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('pdf')}"
+																ajax="false"
+																process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+																immediate="true"
+																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+																<p:fileDownload
+																	value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+															</p:menuitem>
+														</p:splitButton>
+													</h:panelGroup>
+												</p:panelGrid>
+											</p:outputPanel>
+
+											
+
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtPrincipalRepasseDiaria"
+												value="#{repasseProfissionalComReciboMB.diarias}"
+												var="diaria" paginator="false" rowKey="#{diaria}"
+												paginatorPosition="bottom" widgetVar="dtPrincipalRepasseDiaria"
+												binding="#{repasseProfissionalComReciboMB.tabelaRepasseDiaria}"
+												selection="#{repasseProfissionalComReciboMB.diariasSelecionadas}">
+												<f:facet name="header">Diárias</f:facet>
+												<p:column selectionMode="multiple" style="width:16px;" />
+												<p:column width="80" headerText="Ações">
+													<p:commandButton icon="fa fa-eye"
+														process="@this" title="Editar Diária" 
+														update=":lume:viewMarcacaoPonto, :lume:pnlPonto, :lume:pnlPontoHeader"
+														actionListener="#{marcacaoPontoMB.carregaDiaria(diaria)}"
+														styleClass="NavyButton" oncomplete="PF('dlgMarcacaoPonto').show();" />
+												</p:column>
+												<p:column width="15%"
+													filterBy="#{diaria.profissional.dadosBasico.prefixoNome}"
+													sortBy="#{diaria.profissional.dadosBasico.prefixoNome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Dentista Executor" />
+													</f:facet>
+													<h:outputText
+														value="#{diaria.profissional.dadosBasico.prefixoNome}" />
+												</p:column>
+												<p:column
+													filterBy="#{diaria.allPTPsDiaria}"
+													sortBy="#{diaria.allPTPsDiaria}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimentos" />
+													</f:facet>
+													<h:outputText
+														value="#{diaria.allPTPsDiaria}" />
+												</p:column>
+												<p:column filterBy="#{diaria.dataPontoStr}" width="120"
+													headerText="Data do Ponto" filterMatchMode="contains"
+													sortBy="#{diaria.dataPontoStr}">
+													<h:outputText value="#{diaria.dataPontoStr}" />
+												</p:column>
+												<p:column filterBy="#{diaria.tipoPonto.descricao}" width="120"
+													headerText="Tipo da Diária" filterMatchMode="contains"
+													sortBy="#{diaria.tipoPonto.descricao}">
+													<h:outputText value="#{diaria.tipoPonto.descricao}" />
+												</p:column>
+												<p:column filterBy="#{diaria.valorDiaria}" width="120"
+													headerText="Valor Diária" filterMatchMode="contains"
+													sortBy="#{diaria.valorDiaria}">
+													<h:outputText value="#{diaria.valorDiaria}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+											</p:dataTable>
+										</p:fieldset>
+									</div>
+								</div>
+							</div>
+						</p:tab>
 
 
 

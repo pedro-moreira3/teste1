@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -25,34 +26,38 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
-import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.ProfissionalDiaria;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
-import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
+import br.com.lume.profissional.ProfissionalDiariaSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
-import br.com.lume.repasse.RepasseSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
 /**
  * @author ariel.pires
+ */
+/**
+ * @author ricardo.poncio
+ *
  */
 @ManagedBean
 @ViewScoped
@@ -64,11 +69,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private boolean semPendencias = false, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
-    private Date dataInicio;
-    private Date dataFim;
-    private Profissional profissional;
+    private Date dataInicio, dataInicioDiaria;
+    private Date dataFim, dataFimDiaria;
+    private Profissional profissional, profissionalDiaria;
 
-    private String filtroPeriodo = "MA";
+    private String filtroPeriodo = "MA", filtroPeriodoDiaria = "MA";
 
     private List<String> pendencias = new ArrayList<String>();
 
@@ -78,11 +83,13 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private boolean validaExecucaoProcedimento;
 
     private List<PlanoTratamentoProcedimento> ptpsSelecionados;
+    
+    private List<ProfissionalDiaria> diarias, diariasSelecionadas;
 
     private String descricao, observacao;
 
     //EXPORTAÇÃO TABELA
-    private DataTable tabelaRepasse;
+    private DataTable tabelaRepasse, tabelaRepasseDiaria;
 
     private List<Profissional> profissionaisRecibo;
     private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
@@ -320,7 +327,30 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
+    
+    public void actionTrocaDatasDiaria(AjaxBehaviorEvent event) {
+        try {
+            this.dataInicioDiaria = getDataInicio(filtroPeriodoDiaria);
+            this.dataFimDiaria = getDataFim(filtroPeriodoDiaria);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
+        }
+    }
 
+    public void pesquisarDiaria() {
+        try {
+            setDiarias(ProfissionalDiariaSingleton.getInstance()
+                    .getBo().listByFields(UtilsFrontEnd.getEmpresaLogada(), 
+                            profissionalDiaria, dataInicioDiaria, dataFimDiaria));
+            getDiarias().stream().forEach(diaria -> diaria.loadPTPsDiaria());
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
+        }
+    }
+    
     public void pesquisar() {
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
@@ -987,9 +1017,37 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         return sugestoes;
     }
+    
+    public List<Profissional> geraSugestoesProfissionalDiaria(String query) {
+        try {
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance()
+                    .getBo().listProfissionaisByRemuneracaoDiaria(UtilsFrontEnd.getEmpresaLogada());
+            if(query == null || query.trim().isEmpty())
+                return profissionais;
+            return profissionais.stream()
+                .filter(profissional -> 
+                        Normalizer.normalize(profissional.getDadosBasico().getPrefixoNome(), Normalizer.Form.NFD)
+                            .replaceAll("[^\\p{ASCII}]", "")
+                            .toLowerCase().contains(
+                                    Normalizer.normalize(query, Normalizer.Form.NFD)
+                                        .replaceAll("[^\\p{ASCII}]", "")
+                                        .toLowerCase())
+                )
+                .sorted()
+                .collect(Collectors.toList());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
+            return null;
+        }
+    }
 
     public void exportarTabela(String type) {
         exportarTabela("Repasse dos profissionais", tabelaRepasse, type);
+    }
+    
+    public void exportarTabelaDiaria(String type) {
+        exportarTabela("Repasse dos profissionais por Diária", tabelaRepasseDiaria, type);
     }
 
     public Profissional getProfissional() {
@@ -1275,5 +1333,61 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void setLancamentoDeducoes(Lancamento lancamentoDeducoes) {
         this.lancamentoDeducoes = lancamentoDeducoes;
     }
+    
+    public Date getDataInicioDiaria() {
+        return dataInicioDiaria;
+    }
 
+    public void setDataInicioDiaria(Date dataInicioDiaria) {
+        this.dataInicioDiaria = dataInicioDiaria;
+    }    
+    
+    public Date getDataFimDiaria() {
+        return dataFimDiaria;
+    }
+    
+    public void setDataFimDiaria(Date dataFimDiaria) {
+        this.dataFimDiaria = dataFimDiaria;
+    }
+
+    public String getFiltroPeriodoDiaria() {
+        return filtroPeriodoDiaria;
+    }
+
+    public void setFiltroPeriodoDiaria(String filtroPeriodoDiaria) {
+        this.filtroPeriodoDiaria = filtroPeriodoDiaria;
+    }
+    
+    public Profissional getProfissionalDiaria() {
+        return profissionalDiaria;
+    }
+   
+    public void setProfissionalDiaria(Profissional profissionalDiaria) {
+        this.profissionalDiaria = profissionalDiaria;
+    }
+    
+    public DataTable getTabelaRepasseDiaria() {
+        return tabelaRepasseDiaria;
+    }
+   
+    public void setTabelaRepasseDiaria(DataTable tabelaRepasseDiaria) {
+        this.tabelaRepasseDiaria = tabelaRepasseDiaria;
+    }
+    
+    public List<ProfissionalDiaria> getDiarias() {
+        return diarias;
+    }
+    
+    public void setDiarias(List<ProfissionalDiaria> diarias) {
+        this.diarias = diarias;
+    }
+    
+    public List<ProfissionalDiaria> getDiariasSelecionadas() {
+        return diariasSelecionadas;
+    }
+   
+    public void setDiariasSelecionadas(List<ProfissionalDiaria> diariasSelecionadas) {
+        this.diariasSelecionadas = diariasSelecionadas;
+    }
+            
 }

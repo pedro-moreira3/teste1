@@ -25,8 +25,6 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
     private static final long serialVersionUID = 1L;
     private Logger log = Logger.getLogger(MarcacaoPontoMB.class);
 
-    private BigDecimal valorRemuneracao;
-
     public MarcacaoPontoMB() {
         super(ProfissionalDiariaSingleton.getInstance().getBo());
     }
@@ -37,7 +35,11 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
         getEntity().setProfissional(profissional);
         getEntity().setValorDiariaIntegral(profissional.getValorRemuneracao());
         getEntity().setValorDiariaReduzida(profissional.getValorRemuneracaoReduzida());
-        setValorRemuneracao(BigDecimal.ZERO);
+        getEntity().setValorDiaria(getEntity().calculaValorDiaria());
+    }
+    
+    public void carregaDiaria(ProfissionalDiaria diaria) {
+        setEntity(diaria);
     }
 
     public void salvar() {
@@ -50,12 +52,22 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
                 addError("Erro", "Escolha um tipo de diária!");
                 return;
             }
+            if(getEntity().getValorDiaria() == null) {
+                addError("Erro", "É necessário um valor para a diária!");
+                return;
+            }
             
-            getEntity().setDataMarcacao(new Date());
-            getEntity().setProfissionalMarcacao(UtilsFrontEnd.getProfissionalLogado());
-            getEntity().setEmpresa(UtilsFrontEnd.getEmpresaLogada());
+            if(getEntity().getId() == null || getEntity().getId() == 0) {
+                getEntity().setDataMarcacao(new Date());
+                getEntity().setProfissionalMarcacao(UtilsFrontEnd.getProfissionalLogado());
+                getEntity().setEmpresa(UtilsFrontEnd.getEmpresaLogada());
+            } else {
+                getEntity().setDataAlteracao(new Date());
+                getEntity().setProfissionalAlteracao(UtilsFrontEnd.getProfissionalLogado());
+            }
+            
             ProfissionalDiariaSingleton.getInstance().getBo().persist(getEntity());
-            actionNew(null);
+            setEntity(null);
             addInfo("Sucesso", "Registro salvo com sucesso!");
             PrimeFaces.current().executeScript("PF('dlgMarcacaoPonto').hide()");
         } catch (Exception e) {
@@ -64,22 +76,11 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
     }
     
     public void updateRemuneracao() {
-        if(getEntity().getTipoPonto() == TipoPonto.INTEGRAL)
-            this.valorRemuneracao = getEntity().getValorDiariaIntegral();
-        else if(getEntity().getTipoPonto() == TipoPonto.REDUZIDA)
-            this.valorRemuneracao = getEntity().getValorDiariaReduzida();
+        getEntity().setValorDiaria(getEntity().calculaValorDiaria());
     }
 
     public List<ProfissionalDiaria.TipoPonto> listTiposPonto() {
         return Arrays.asList(ProfissionalDiaria.TipoPonto.values());
     }
-
-    public BigDecimal getValorRemuneracao() {
-        return valorRemuneracao;
-    }
-
-    public void setValorRemuneracao(BigDecimal valorRemuneracao) {
-        this.valorRemuneracao = valorRemuneracao;
-    }
-
+    
 }

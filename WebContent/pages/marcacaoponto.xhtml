@@ -7,7 +7,8 @@
 
 	<p:dialog width="500px" appendTo=":lume:" maximizable="false"
 		modal="true" minimizable="false" resizable="false" responsive="true"
-		widgetVar="dlgMarcacaoPonto">
+		widgetVar="dlgMarcacaoPonto"
+		onHide="onCloseMarcacaoPonto();">
 		<f:facet name="header">
 			<p:outputPanel id="pnlPontoHeader">
 				<p:outputLabel
@@ -32,7 +33,8 @@
 								value="#{marcacaoPontoMB.entity.dataPonto}" pattern="dd/MM/yyyy"
 								showWeeksBar="false" locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-10:+10" />
+								yearRange="-10:+10"
+								disabled="#{permiteEditarData == null or permiteEditarData != 'S'}" />
 							<p:outputLabel for="dataPonto" value="Data da Diária:" />
 							<p:message for="dataPonto" styleClass="msg" />
 						</h:panelGroup>
@@ -48,9 +50,11 @@
 						
 						<h:panelGroup styleClass="md-inputfield" style="margin-top: 30px">
 							<p:inputNumber id="valorRemuneracao"
-								value="#{marcacaoPontoMB.valorRemuneracao}" maxlength="13"
+								value="#{marcacaoPontoMB.entity.valorDiaria}" maxlength="13"
 								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-								thousandSeparator="." readonly="true" />
+								thousandSeparator="."
+								rendered="#{marcacaoPontoMB.entity != null}"
+								readonly="#{permiteEditarValor == null or permiteEditarValor != 'S'}" />
 							<p:outputLabel for="valorRemuneracao"
 								value="Valor Remuneração: " />
 							<p:message for="valorRemuneracao" styleClass="msg" />
