@@ -197,15 +197,16 @@
 			ga('send', 'pageview');
 
 			function startTimer() {
-				PF('loading').show();
-				//var open = PF('loading').isVisible();	
-				//	if(!open){				
-				//	t = setTimeout("PF('loading').show();", 200);						
-				//	}				
+				//PF('loading').show();
+				  ajaxInProgress = setTimeout(function () {
+		                PF('loading').show();
+		            }, 500);
 			}
-			function stopTimer() {
-				PF('loading').hide();
-				//	x = setTimeout("PF('loading').hide();", 500);			
+			function stopTimer() {			
+			//	PF('loading').hide();
+				  clearTimeout(ajaxInProgress);
+		            PF('loading').hide();
+		            ajaxInProgress = null;			
 			}
 			//]]>
 		</script>
@@ -262,8 +263,7 @@
 					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="startTimer();" onsuccess="stopTimer();"
-					onerror="stopTimer();" oncomplete="stopTimer();" />
+				<p:ajaxStatus onstart="startTimer();" oncomplete="stopTimer();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

@@ -237,7 +237,18 @@
 								</tr>
 								</thead>
 						</table>	
-				</p:outputPanel>	
+				</p:outputPanel>
+				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogoCentral}">
+					<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>
+									<th style="border:0px; padding: 5px; width: 100%;>
+										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogoCentral}" id="logoCentral" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+									</th>
+								</tr>
+							</thead>
+						</table>	
+				</p:outputPanel>		
 				<p:outputPanel rendered="#{!emissaoDocumentoMB.mostraLogo}">	
 						<table style="width: 100%; border-collapse: collapse;">
 							<thead>
@@ -274,7 +285,9 @@
 							listener="#{emissaoDocumentoMB.montaCabecalho}" />
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+					
 					<p:spacer width="20" height="0" />
+					
 					<p:selectBooleanCheckbox id="logoCabecalho"
 						value="#{emissaoDocumentoMB.mostraLogo}">
 						<p:ajax event="change" process="@this"
@@ -282,7 +295,18 @@
 							listener="#{emissaoDocumentoMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="logoCabecalho" value="Incluir logo" />					
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />	
+						
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="mostraLogoCentral"
+						value="#{emissaoDocumentoMB.mostraLogoCentral}">
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
+							listener="#{emissaoDocumentoMB.mostraLogoCentral}"
+							/>
+					</p:selectBooleanCheckbox>						
+					<p:outputLabel for="mostraLogoCentral" value="Incluir logo centralizada" />	
+								
 					<p:spacer width="20" height="0" />
 					<p:selectBooleanCheckbox id="rodape"
 						value="#{emissaoDocumentoMB.mostraRodape}">
@@ -291,7 +315,7 @@
 							listener="#{emissaoDocumentoMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="rodape" value="Incluir  rodapé" />	
+					<p:outputLabel for="rodape" value="Incluir rodapé" />	
 					
 				</h:panelGroup>
 		

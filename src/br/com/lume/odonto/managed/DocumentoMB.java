@@ -419,6 +419,10 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             carregarPaleta();
         }
     }
+    
+    public void limpaCampoTag() {
+        novaTag = "";
+    }
 
     public List<Documento> getDocumentos() {
         return documentos;

@@ -94,6 +94,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private boolean mostraCabecalho = false;
     private boolean mostraLogo = false;
     private boolean mostraRodape = false;
+    private boolean mostraLogoCentral = false;
   //  private String cabecalho = "";
     
     private CKEditor ckEditorEmissao;
@@ -1097,6 +1098,16 @@ private boolean mostrarProf;
     
     public void setMostraRodape(boolean mostraRodape) {
         this.mostraRodape = mostraRodape;
+    }
+
+    
+    public boolean isMostraLogoCentral() {
+        return mostraLogoCentral;
+    }
+
+    
+    public void setMostraLogoCentral(boolean mostraLogoCentral) {
+        this.mostraLogoCentral = mostraLogoCentral;
     }
 
     
