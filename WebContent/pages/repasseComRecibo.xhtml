@@ -1195,7 +1195,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:tabView id="tabViewRepasseProfissional">
-						<p:tab title="Repasse Com Recibo">
+						<p:tab title="Repasse por Procedimento ou Porcentagem">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 									<div class="card card-w-title">
@@ -1676,12 +1676,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							
 						</p:tab>
 
-						<p:tab title="Repasse Antigo">
-
-							<ui:include src="faturamento.xhtml"></ui:include>
-
-						</p:tab>
-
+						<ui:remove>
+							<p:tab title="Repasse Antigo">
+								<ui:include src="faturamento.xhtml"></ui:include>
+							</p:tab>
+						</ui:remove>
 
 
 
