@@ -372,11 +372,19 @@ body .ui-selectoneradio td label {
 						<f:validateLongRange minimum="1" maximum="31" />
 					</p:inputText>
 					
-					<p:outputLabel for="valorRemuneracaoDia" value="Valor Remuneração : "
+					<p:outputLabel for="valorRemuneracaoDia" value="Valor Remuneração Integral : "
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
 					<p:inputNumber id="valorRemuneracaoDia"
 						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
 						value="#{profissionalMB.entity.valorRemuneracao}" maxlength="13"
+						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+						thousandSeparator="."
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
+					<p:outputLabel for="valorRemuneracaoReduzidaDia" value="Valor Remuneração Reduzida : "
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
+					<p:inputNumber id="valorRemuneracaoReduzidaDia"
+						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
+						value="#{profissionalMB.entity.valorRemuneracaoReduzida}" maxlength="13"
 						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
 						thousandSeparator="."
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
