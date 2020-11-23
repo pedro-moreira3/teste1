@@ -183,6 +183,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private String modeloHtml;
     private boolean mostraCabecalho = false;
     private boolean mostraLogo = false;
+    private boolean mostraRodape = false;
+    private boolean mostraLogoCentral = false;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -1430,6 +1432,26 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setMostraLogo(boolean mostraLogo) {
         this.mostraLogo = mostraLogo;
+    }
+
+    
+    public boolean isMostraRodape() {
+        return mostraRodape;
+    }
+
+    
+    public void setMostraRodape(boolean mostraRodape) {
+        this.mostraRodape = mostraRodape;
+    }
+
+    
+    public boolean isMostraLogoCentral() {
+        return mostraLogoCentral;
+    }
+
+    
+    public void setMostraLogoCentral(boolean mostraLogoCentral) {
+        this.mostraLogoCentral = mostraLogoCentral;
     }
 
 }

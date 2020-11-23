@@ -64,53 +64,111 @@
 				value="Imprimir" />				
 		</f:facet>
 		<p:panel  id="impressaoDocPai" style="border:0px">
-		<div style="">
-			<div style='float:left;height:20px' rendered="#{pacienteMB.mostraLogo}">
-				<p:graphicImage style='margin-bottom: 150px' rendered="#{pacienteMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />
-			</div>
-			<div style='margin-left:180px;margin-top: 20px;font-weight: bold;' rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}">
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraLogo and pacienteMB.mostraCabecalho}"></p:outputLabel>
-			</div>
-			<div style='margin-left:20px;margin-top: 20px;font-weight: bold;' rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}">
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>				
-				<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>				
-				<p:outputLabel style='margin-bottom: 150px' escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho and !pacienteMB.mostraLogo}"></p:outputLabel>
-			</div>
-		</div>		
+		
+				<p:outputPanel rendered="#{pacienteMB.mostraLogo}">
+						<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>
+									<th style="border:0px; padding: 5px; width: 10%">
+										<p:graphicImage  rendered="#{pacienteMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+									</th>
+									<th style="border: 0px; padding: 5px; width: 90%;text-align:left">
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>
+									
+									</th>	
+								
+									
+								</tr>
+								</thead>
+						</table>	
+				</p:outputPanel>
+				<p:outputPanel rendered="#{pacienteMB.mostraLogoCentral}">
+					<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>
+									<th style="border:0px; padding: 5px; width: 100%;">
+										<p:graphicImage  rendered="#{pacienteMB.mostraLogoCentral}" id="logoCentral" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+									</th>
+								</tr>
+							</thead>
+						</table>	
+				</p:outputPanel>		
+				<p:outputPanel rendered="#{!pacienteMB.mostraLogo}">	
+						<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>									
+									<th style="border: 0px; padding: 5px; width: 100%;text-align:left">
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>
+									
+									</th>
+								</tr>
+								</thead>
+						</table>			
+			</p:outputPanel>
+		
 		<h:outputText id="impressaoDoc" value="#{pacienteMB.modeloHtml.toString()}" escape="false" />
+		<p:outputPanel rendered="#{pacienteMB.mostraRodape}">	
+						<table style="width: 100%; border-collapse: collapse;">
+							<thead>
+								<tr>									
+									<th style="border: 0px; padding: 5px; width: 100%;text-align:center">											
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} - #{cadastroEmpresaMB.entity.enderecoCompletoFormatado} - #{cadastroEmpresaMB.entity.empChaFone}&lt;br /&gt;" rendered="#{pacienteMB.mostraRodape}"></p:outputLabel>										
+									</th>
+								</tr>
+								</thead>
+						</table>			
+			</p:outputPanel>
 		</p:panel>
 			<h:panelGroup style="display:block;margin-left:3px;">
 					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
 						value="#{pacienteMB.mostraCabecalho}">
 						<p:ajax event="change" process="@this"
-							update="lume:tabViewPaciente:impressaoDocPai"
+							update="impressaoDocPai"
 							 />
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+					
 					<p:spacer width="20" height="0" />
+					
 					<p:selectBooleanCheckbox id="logoCabecalho"
 						value="#{pacienteMB.mostraLogo}">
-					<p:ajax event="change" process="@this"
-							update="lume:tabViewPaciente:impressaoDocPai"
-							 />	
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
+							
+							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="logoCabecalho" value="Incluir logo" />
-					<ui:remove>
+					<p:outputLabel for="logoCabecalho" value="Incluir logo" />	
+						
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="mostraLogoCentral"
+						value="#{pacienteMB.mostraLogoCentral}">
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
+							
+							/>
+					</p:selectBooleanCheckbox>						
+					<p:outputLabel for="mostraLogoCentral" value="Incluir logo centralizada" />	
+								
 					<p:spacer width="20" height="0" />
 					<p:selectBooleanCheckbox id="rodape"
 						value="#{pacienteMB.mostraRodape}">
+						<p:ajax event="change" process="@this"
+							update="impressaoDocPai"
 						
+							/>
 					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="rodape" value="Incluir número de página" />	
-					</ui:remove>
+					<p:outputLabel for="rodape" value="Incluir rodapé" />	
+					
 				</h:panelGroup>
 		
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
-				<p:printer target="lume:tabViewPaciente:impressaoDocPai" />
+				<p:printer target=":lume:tabViewPaciente:impressaoDocPai" />
 			</p:commandButton>
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgPrint').hide()"/>
