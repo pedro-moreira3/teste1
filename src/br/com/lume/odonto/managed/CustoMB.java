@@ -100,23 +100,27 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setDataFaturamento(Calendar.getInstance().getTime());
-            super.actionPersist(event);
-            if (this.getEntity().getPlanoTratamentoProcedimento().isFinalizado()) {
-                this.getEntity().getPlanoTratamentoProcedimento().setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(
-                        this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
-                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(this.getEntity().getPlanoTratamentoProcedimento());
-            }           
-            if(this.getEntity().getPlanoTratamentoProcedimento() != null &&
-                    this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor() != null &&
-                            this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao() != null &&
-                    this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
-                RepasseFaturasSingleton.getInstance().recalculaRepasse(this.getEntity().getPlanoTratamentoProcedimento(), 
-                        this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
-                        this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
+            if(this.getEntity().getDataRegistro() != null) {
+                this.getEntity().setDataFaturamento(Calendar.getInstance().getTime());
+                super.actionPersist(event);
+                if (this.getEntity().getPlanoTratamentoProcedimento().isFinalizado()) {
+                    this.getEntity().getPlanoTratamentoProcedimento().setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(
+                            this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(this.getEntity().getPlanoTratamentoProcedimento());
+                }           
+                if(this.getEntity().getPlanoTratamentoProcedimento() != null &&
+                        this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor() != null &&
+                                this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao() != null &&
+                        this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
+                    RepasseFaturasSingleton.getInstance().recalculaRepasse(this.getEntity().getPlanoTratamentoProcedimento(), 
+                            this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
+                            this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
+                }
+                
+                carregaListaCusto();
+            }else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário informar a data do registro.");
             }
-            
-            carregaListaCusto();
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
