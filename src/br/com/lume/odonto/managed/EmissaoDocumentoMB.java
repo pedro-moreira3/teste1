@@ -358,7 +358,8 @@ private boolean mostrarProf;
 
         this.modeloHtmlSemCabecalho = new StringBuilder(textoEditor);
         //carregarDocumentoHtmlModelo();
-
+        this.tagsDinamicas = new ArrayList<TagEntidade>();
+        List<String> listaTagsExistentes = new ArrayList<String>();
         while (comparator.find()) {
             retorno = comparator.group();
 
@@ -381,9 +382,12 @@ private boolean mostrarProf;
                             } else if (tag.getEntidade().getEntidade().equals("PlanoTratamento")) {
                                 this.tagPlano = tag.getEntidade();
                                 this.tags.add(tag);
-                            } else {
-                                this.tagsDinamicas.add(tag);
+                            } else {                          
+                                if(!listaTagsExistentes.contains(retorno)) {
+                                    this.tagsDinamicas.add(tag);  
+                                }
                             }
+                            listaTagsExistentes.add(retorno);
                         } else {                           
                             //tags docs antigos
                             if(!retorno.contains("rg") && !retorno.contains("endereco_completo") && !retorno.contains("datahoje") && !retorno.contains("profissional") 
@@ -391,14 +395,15 @@ private boolean mostrarProf;
                                     && !retorno.contains("telefone") && !retorno.contains("email") && !retorno.contains("paciente") ) {
                                 TagEntidade tagNova = new TagEntidade();
                                 Tag tagPai = new Tag();
-                                tagPai.setEntidade("Custom");
-
+                                tagPai.setEntidade("Custom");                               
                                 tagNova.setDescricaoCampo(retorno);
                                 tagNova.setInserirDado("S");
                                 tagNova.setTipoAtributo("texto");
                                 tagNova.setEntidade(tagPai);
-
-                                this.tagsDinamicas.add(tagNova);  
+                                if(!listaTagsExistentes.contains(retorno)) {
+                                    this.tagsDinamicas.add(tagNova);  
+                                }
+                                listaTagsExistentes.add(retorno);
                             }
                         }
 
@@ -409,7 +414,7 @@ private boolean mostrarProf;
                 }
             }
         }
-
+       
         if (this.tag == null && this.validaRecebedor()) {
             this.tag = TagSingleton.getInstance().getBo().listByEntidade("Paciente");
         }
@@ -610,7 +615,7 @@ private boolean mostrarProf;
                     } else {
                         if (tag.getAtributo() != null && tag.getAtributo().equals("cid")) {
                             if(this.cid != null) {
-                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getDescricao());    
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getId());    
                             }
                             
                         } else if (tag.getEntidade().getEntidade().equals("Custom")) {
