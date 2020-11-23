@@ -66,7 +66,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:panelGroup>
 									<p:outputLabel for="inicio" value="Inicio: " />
 									<p:calendar id="inicio" value="#{relatorioRepasseMB.inicio}"
-										pattern="dd/MM/yyyy" mask="true">
+										pattern="dd/MM/yyyy" mask="true" autocomplete="false">
 										<p:ajax  process="@this" />
 									</p:calendar>
 								</h:panelGroup>
@@ -74,7 +74,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:panelGroup>
 									<p:outputLabel for="fim" value="Fim: " />
 									<p:calendar id="fim" value="#{relatorioRepasseMB.fim}"
-										pattern="dd/MM/yyyy" mask="true">
+										pattern="dd/MM/yyyy" mask="true" autocomplete="false">
 										<p:ajax  process="@this" />
 									</p:calendar>
 								</h:panelGroup>
@@ -102,7 +102,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:panelGroup>
 									<p:outputLabel for="inicioPagamento" value="Inicio: " />
 									<p:calendar id="inicioPagamento" value="#{relatorioRepasseMB.inicioPagamento}"
-										pattern="dd/MM/yyyy" mask="true">
+										pattern="dd/MM/yyyy" mask="true" autocomplete="false">
 										<p:ajax  process="@this" />
 									</p:calendar>
 								</h:panelGroup>
@@ -110,7 +110,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:panelGroup>
 									<p:outputLabel for="fimPagamento" value="Fim: " />
 									<p:calendar id="fimPagamento" value="#{relatorioRepasseMB.fimPagamento}"
-										pattern="dd/MM/yyyy" mask="true">
+										pattern="dd/MM/yyyy" mask="true" autocomplete="false">
 										<p:ajax  process="@this" />
 									</p:calendar>
 								</h:panelGroup>

@@ -13,9 +13,10 @@
 		<p:dialog widgetVar="dlgNovaMag" modal="true" responsive="true"
 			header="Cadastro de Mensagem" width="850">
 
-			<p:ajax event="close" resetValues="true"
-				update="@this"
-				listener="#{mensagemMB.closeDlg}" />
+			<ui:remove>
+				<p:ajax event="close" resetValues="true" update="@this"
+					listener="#{mensagemMB.closeDlg}" />
+			</ui:remove>
 
 			<br />
 
@@ -23,33 +24,33 @@
 				<p:scrollPanel mode="native"
 					style="height:600px; padding: 0px; border: none">
 					<p:fieldset legend="Configurações">
-						
+
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<h:panelGroup>
-							<p:outputLabel for="titulo" value="Titulo da Mensagem" />
+								<p:outputLabel for="titulo" value="Titulo da Mensagem" />
 								<p:inputText id="titulo" value="#{mensagemMB.entity.titulo}"
 									required="true" />
 								<p:message styleClass="msg" for="titulo" />
 							</h:panelGroup>
 						</p:panelGrid>
-						
+
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							
+
 							<ui:remove>
-							<h:panelGroup>
-								<p:outputLabel for="criticidade" value="Criticidade" />
-								<p:selectOneMenu id="criticidade" required="true"
-									value="#{mensagemMB.entity.criticidade}"
-									converter="criticidade" filter="true">
-									<f:selectItems value="#{mensagemMB.criticidades}" var="obj"
-										itemValue="#{obj}" itemLabel="#{obj.descricao}" />
-								</p:selectOneMenu>
-								<p:message styleClass="msg" for="criticidade" />
-							</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel for="criticidade" value="Criticidade" />
+									<p:selectOneMenu id="criticidade" required="true"
+										value="#{mensagemMB.entity.criticidade}"
+										converter="criticidade" filter="true">
+										<f:selectItems value="#{mensagemMB.criticidades}" var="obj"
+											itemValue="#{obj}" itemLabel="#{obj.descricao}" />
+									</p:selectOneMenu>
+									<p:message styleClass="msg" for="criticidade" />
+								</h:panelGroup>
 							</ui:remove>
-							
+
 							<h:panelGroup>
 								<p:outputLabel for="dataexpira" value="Válida até" />
 								<p:calendar id="dataexpira"
@@ -59,7 +60,7 @@
 								<p:message styleClass="msg" for="dataexpira" />
 							</h:panelGroup>
 						</p:panelGrid>
-						
+
 						<p:panelGrid columns="2"
 							styleClass="ui-panelgrid-blank form-group">
 							<p:inputSwitch id="switchMostraPopup"
@@ -69,28 +70,28 @@
 							</p:inputSwitch>
 							<h:outputText value="Mostrar mensagem como Pop-Up" />
 						</p:panelGrid>
-						
+
 						<br />
 					</p:fieldset>
 
-					<p:fieldset legend="Filtros">
+					<p:fieldset id="filtros" legend="Filtros">
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<ui:remove>
-							<h:panelGroup>
-								<p:outputLabel for="tipos" value="Tipo de usuário destinatário" />
-								<p:selectCheckboxMenu id="tipos"
-									value="#{mensagemMB.tiposSelected}" multiple="true"
-									filter="true" filterMatchMode="contains"
-									converter="profissional">
-									<f:selectItems value="#{mensagemMB.tipos}" var="tipo"
-										itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
-								</p:selectCheckboxMenu>
-								<p:message styleClass="msg" for="tipos" />
-							</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel for="tipos" value="Tipo de usuário destinatário" />
+									<p:selectCheckboxMenu id="tipos"
+										value="#{mensagemMB.tiposSelected}" multiple="true"
+										filter="true" filterMatchMode="contains"
+										converter="profissional">
+										<f:selectItems value="#{mensagemMB.tipos}" var="tipo"
+											itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+									</p:selectCheckboxMenu>
+									<p:message styleClass="msg" for="tipos" />
+								</h:panelGroup>
 							</ui:remove>
 						</p:panelGrid>
-						
+
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<h:panelGroup>
@@ -104,7 +105,7 @@
 								<p:message styleClass="msg" for="perfis" />
 							</h:panelGroup>
 						</p:panelGrid>
-						
+
 						<p:panelGrid columns="2"
 							styleClass="ui-panelgrid-blank form-group">
 							<p:inputSwitch id="switchAllPatrocinadores"
@@ -116,10 +117,10 @@
 							</p:inputSwitch>
 							<h:outputText value="Escolher todos os patrocinadores" />
 						</p:panelGrid>
-						
+
 						<br />
 						<br />
-						
+
 						<p:outputPanel id="selectPatro">
 							<p:outputPanel rendered="#{!mensagemMB.switchAllPatro}">
 								<p:panelGrid columns="1" layout="grid"
@@ -129,17 +130,20 @@
 										<p:selectCheckboxMenu id="patro"
 											value="#{mensagemMB.patrocinadoresSelected}" multiple="true"
 											filter="true" filterMatchMode="contains"
-											converter="empresa">
+											converter="afiliacao">
 											<f:selectItems value="#{mensagemMB.patrocinadores}"
-												var="patrocinador" itemLabel="#{patrocinador.descricao}"
+												var="patrocinador" itemLabel="#{patrocinador.nome}"
 												itemValue="#{patrocinador}" />
+
+											<p:ajax process="@this" update="filtros"/>
+
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="patro" />
 									</h:panelGroup>
 								</p:panelGrid>
 							</p:outputPanel>
 						</p:outputPanel>
-						
+
 						<p:panelGrid columns="2"
 							styleClass="ui-panelgrid-blank form-group">
 							<p:inputSwitch id="switchAllClientes"
@@ -153,10 +157,10 @@
 							</p:inputSwitch>
 							<h:outputText value="Escolher todos os clientes" />
 						</p:panelGrid>
-						
+
 						<br />
 						<br />
-						
+
 						<p:outputPanel id="selectClientes">
 							<p:outputPanel rendered="#{!mensagemMB.switchAllClientes}">
 								<p:panelGrid columns="1" layout="grid"
@@ -165,17 +169,19 @@
 										<p:outputLabel for="cliente" value="Cliente destinatário" />
 										<p:selectCheckboxMenu id="cliente"
 											value="#{mensagemMB.clientesSelected}" multiple="true"
-											filter="true" filterMatchMode="contains"
-											converter="empresa">
+											filter="true" filterMatchMode="contains" converter="empresa">
 											<f:selectItems value="#{mensagemMB.clientes}" var="cliente"
-												itemLabel="#{cliente.razaoSocial}" itemValue="#{cliente}" />
+												itemLabel="#{cliente.empStrNme}" itemValue="#{cliente}" />
+
+											<p:ajax process="@this" update="filtros"/>
+
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="cliente" />
 									</h:panelGroup>
 								</p:panelGrid>
 							</p:outputPanel>
 						</p:outputPanel>
-						
+
 						<p:panelGrid columns="2"
 							styleClass="ui-panelgrid-blank form-group">
 							<p:inputSwitch id="switchAllUsuarios"
@@ -189,10 +195,10 @@
 							</p:inputSwitch>
 							<h:outputText value="Escolher todos os usuários" />
 						</p:panelGrid>
-						
+
 						<br />
 						<br />
-						
+
 						<p:outputPanel id="selectUsuarios">
 							<p:outputPanel rendered="#{!mensagemMB.switchAllUsuarios}">
 								<p:panelGrid columns="1" layout="grid"
@@ -204,7 +210,8 @@
 											filter="true" filterMatchMode="contains"
 											converter="profissional">
 											<f:selectItems value="#{mensagemMB.usuarios}" var="usuario"
-												itemLabel="#{usuario.nome}" itemValue="#{usuario}" />
+												itemLabel="#{usuario.dadosBasico.nome}" itemValue="#{usuario}" />
+											<p:ajax process="@this" update="filtros"/>
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="usuario" />
 									</h:panelGroup>
@@ -232,8 +239,8 @@
 					process="@this,:lume:pnlCrudMensagem" styleClass="lime-btn"
 					oncomplete="PF('loading').hide();" />
 				<p:commandButton id="fecharMensagem" icon="ui-icon-close"
-					value="Fechar" oncomplete="PF('dlgNovaMsg').hide()" styleClass="grey-btn"
-					resetValues="true" process="@this" />
+					value="Fechar" oncomplete="PF('dlgNovaMsg').hide()"
+					styleClass="grey-btn" resetValues="true" process="@this" />
 			</p:panelGrid>
 
 		</p:dialog>
@@ -253,6 +260,13 @@
 								<p:commandButton id="btnMensagem" styleClass="GreenButton"
 									icon="ui-icon-add" value="Nova mensagem"
 									oncomplete="PF('dlgNovaMag').show();" />
+							</h:panelGroup>
+							
+							<h:panelGroup>
+								<p:commandButton styleClass="GreenButton"
+									icon="ui-icon-add" value="teste mensagem"
+									actionListener="#{mensagemMB.testeSendQuick}"
+									process="@this"/>
 							</h:panelGroup>
 
 						</p:panelGrid>

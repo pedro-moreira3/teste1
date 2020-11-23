@@ -1,6 +1,12 @@
 package br.com.lume.odonto.managed;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,19 +18,23 @@ import javax.inject.Named;
 import org.apache.log4j.Logger;
 import org.apache.poi.hpsf.Array;
 import org.primefaces.PrimeFaces;
+import org.primefaces.json.JSONObject;
 import org.primefaces.model.chart.PieChartModel;
 
+import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.bo.BO;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.log.LogUtils;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.mensagem.MensagemSingleton;
 import br.com.lume.mensagem.bo.MensagemBO;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Mensagem;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.PerfilSingleton;
 import br.com.lume.security.UsuarioSingleton;
@@ -64,27 +74,104 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
             this.perfis.add("Orçamentista");
             this.perfis.add("Cirurgião Dentista");
             this.perfis.add("Auxiliar de Cirurgião Dentista");
-            
-            this.setClientes(EmpresaSingleton.getInstance().getBo().getAllEmpresas());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
+    public void sendPost(String url, String req) throws IOException {
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        con.setDoOutput(true);
+        BufferedWriter in = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), Charset.forName("UTF-8")));
+        in.write(req);
+        in.close();
+
+        int responseCode = con.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
+    }
+
+    public void testeSendQuick() {
+        try {
+            JSONObject obj = new JSONObject().put("Entry", new JSONObject().put("tar_num", "5541999473590")
+                    .append("tar_msg", "TESTE ENVIO SENDQUICK").append("tar_mode", "text"));
+
+            sendPost("http://18.230.76.168/api/sendsms_json.php", obj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
+        try {
+            MensagemSingleton.getInstance().getBo().persist(this.getEntity());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro ao salvar a mensagem");
+            e.printStackTrace();
+        }
     }
 
     public void changeAllPatro() {
-        this.patrocinadoresSelected = new ArrayList<>();
+        if(this.switchAllPatro) {
+            this.patrocinadoresSelected = new ArrayList<>();
+        }else {
+            this.patrocinadoresSelected = new ArrayList<>();
+            this.patrocinadores = AfiliacaoSingleton.getInstance().getBo().listByFiltrosMsg(
+                    this.clientesSelected, this.usuariosSelected);
+            
+            if(!this.switchAllClientes && (this.clientesSelected != null && this.clientesSelected.isEmpty()) )
+                this.clientes = EmpresaSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.patrocinadoresSelected, this.usuariosSelected);
+            
+            //TODO - A listagem de usuários por profissional é realizada porquê não há pacientes que acessam 
+            //o sistema, e é necessário refatorar a a entidade Usuario para permitir melhor relação com a empresa
+            if(!this.switchAllUsuarios && (this.usuariosSelected != null && this.usuariosSelected.isEmpty()) )
+                this.usuarios = ProfissionalSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.patrocinadoresSelected, this.clientesSelected);
+        }
     }
 
     public void changeAllClientes() {
-        this.clientesSelected = new ArrayList<>();
+        if(this.switchAllClientes) {
+            this.clientesSelected = new ArrayList<>();
+        }else {
+            this.clientesSelected = new ArrayList<>();
+            this.clientes = EmpresaSingleton.getInstance().getBo().listByFiltrosMsg(
+                    this.patrocinadoresSelected, this.usuariosSelected);
+            
+            
+            if(!this.switchAllPatro && (this.patrocinadoresSelected != null && this.patrocinadoresSelected.isEmpty()) )
+                this.patrocinadores = AfiliacaoSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.clientesSelected, this.usuariosSelected);
+            
+            //TODO - A listagem de usuários por profissional é realizada porquê não há pacientes que acessam 
+            //o sistema, e é necessário refatorar a a entidade Usuario para permitir melhor relação com a empresa
+            if(!this.switchAllUsuarios && (this.usuariosSelected != null && this.usuariosSelected.isEmpty()) )
+                this.usuarios = ProfissionalSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.patrocinadoresSelected, this.clientesSelected);
+        }
     }
 
     public void changeAllUsuarios() {
-        this.usuariosSelected = new ArrayList<>();
+        if(!this.switchAllUsuarios) {
+            this.usuariosSelected = new ArrayList<>();
+            //TODO - A listagem de usuários por profissional é realizada porquê não há pacientes que acessam 
+            //o sistema, e é necessário refatorar a a entidade Usuario para permitir melhor relação com a empresa
+            this.usuarios = ProfissionalSingleton.getInstance().getBo().listByFiltrosMsg(
+                    this.patrocinadoresSelected, this.clientesSelected);
+            
+            if(!this.switchAllPatro && (this.patrocinadoresSelected != null && this.patrocinadoresSelected.isEmpty()) )
+                this.patrocinadores = AfiliacaoSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.clientesSelected, this.usuariosSelected);
+            
+            if(!this.switchAllClientes && (this.clientesSelected != null && this.clientesSelected.isEmpty()) )
+                this.clientes = EmpresaSingleton.getInstance().getBo().listByFiltrosMsg(
+                        this.patrocinadoresSelected, this.usuariosSelected);
+        }
     }
     
     @Override
