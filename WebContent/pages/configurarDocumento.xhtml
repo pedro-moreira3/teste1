@@ -134,7 +134,7 @@
 									icon="White fa fa-eye"
 									actionListener="#{documentoMB.carregarDocumento(documento)}"
 									oncomplete="PF('dlgNovoDocumento').show();"
-									update=":lume:dlgNovoDocumento,:lume:editor" process="@this" />
+									update=":lume:dlgNovoDocumento,:lume:editor,:lume:pnPrincipalDocumento" process="@this" />
 
 								<h:panelGroup rendered="#{documento.isAtivo()}">
 									<p:commandButton id="persistInativar"

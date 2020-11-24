@@ -78,7 +78,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private StringBuilder cabecalhoHtml = new StringBuilder("");
     private StringBuilder modeloHtmlSemCabecalho = new StringBuilder("");
     private StringBuilder rodapeHtml = new StringBuilder("");
-    
+
     private Tag tag;
     private Tag tagPlano;
 
@@ -95,11 +95,11 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private boolean mostraLogo = false;
     private boolean mostraRodape = false;
     private boolean mostraLogoCentral = false;
-  //  private String cabecalho = "";
-    
+    //  private String cabecalho = "";
+
     private CKEditor ckEditorEmissao;
 
-private boolean mostrarProf;
+    private boolean mostrarProf;
 
     public EmissaoDocumentoMB() {
         super(DocumentoEmitidoSingleton.getInstance().getBo());
@@ -160,7 +160,7 @@ private boolean mostrarProf;
     public void emitirDocumento() {
         Document documento = null;
 
-       // this.processarDocumento();
+        // this.processarDocumento();
 
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
@@ -266,9 +266,6 @@ private boolean mostrarProf;
             List<TagDocumentoModelo> tagsProcessadas = new ArrayList<>();
             String textoDocumento = modeloSelecionado.getModelo();
 
-         
-             
-            
             for (TagDocumentoModelo tag : tags) {
                 if (tag.getTagEntidade().getEntidade().getEntidade().equals("Paciente")) {
                     this.tag = TagSingleton.getInstance().getBo().listByEntidade("Paciente");
@@ -301,12 +298,7 @@ private boolean mostrarProf;
 //            modeloHtml.append("<style>@media screen { .pageFooter {display: none;} } @media print { .pageFooter {display: block;}}"
 //                    + "#content { display: table; } #pageFooter { display: table-footer-group; } #pageFooter:after { counter-increment: page; content: counter(page);  }</style>");
 //             
-       // modeloHtml.insert(0,"<style>@page { @bottom-right {    content: \"Página \" counter(page) \" de \" counter(pages);}}</style>");
-        
-    
-        
-        
-        
+        // modeloHtml.insert(0,"<style>@page { @bottom-right {    content: \"Página \" counter(page) \" de \" counter(pages);}}</style>");
 
     }
 
@@ -317,9 +309,9 @@ private boolean mostrarProf;
             this.carregarDocumentos();
 
             carregarTiposDocumento();
-            
+
             this.filtroTipoDocumentoEmitir = doc.getDocumentoModelo().getTipo();
-       
+
             novo.setDataEmissao(doc.getDataEmissao());
             novo.setDocumentoModelo(doc.getDocumentoModelo());
             novo.setEmitidoPara(doc.getEmitidoPara());
@@ -339,17 +331,17 @@ private boolean mostrarProf;
     }
 
     public void montarTags(String textoEditor) {
-        if(textoEditor == null || textoEditor.equals("")) {
+        if (textoEditor == null || textoEditor.equals("")) {
             textoEditor = this.modeloSelecionado.getModelo();
-        }else {
+        } else {
             this.modeloSelecionado.setModelo(textoEditor);
         }
-        
+
         mostrarProf = false;
-        if(textoEditor.contains("#registroConselho") || textoEditor.contains("#nmeProfissional")) {
+        if (textoEditor.contains("#registroConselho") || textoEditor.contains("#nmeProfissional")) {
             mostrarProf = true;
         }
-        
+
         String regex = "#(\\w+|\\W+)";
         String retorno = "";
 
@@ -382,26 +374,26 @@ private boolean mostrarProf;
                             } else if (tag.getEntidade().getEntidade().equals("PlanoTratamento")) {
                                 this.tagPlano = tag.getEntidade();
                                 this.tags.add(tag);
-                            } else {                          
-                                if(!listaTagsExistentes.contains(retorno)) {
-                                    this.tagsDinamicas.add(tag);  
+                            } else {
+                                if (!listaTagsExistentes.contains(retorno)) {
+                                    this.tagsDinamicas.add(tag);
                                 }
                             }
                             listaTagsExistentes.add(retorno);
-                        } else {                           
+                        } else {
                             //tags docs antigos
-                            if(!retorno.contains("rg") && !retorno.contains("endereco_completo") && !retorno.contains("datahoje") && !retorno.contains("profissional") 
-                                    && !retorno.contains("sexo") && !retorno.contains("idade") && !retorno.contains("datanascimento") && !retorno.contains("documento") 
-                                    && !retorno.contains("telefone") && !retorno.contains("email") && !retorno.contains("paciente") ) {
+                            if (!retorno.contains("rg") && !retorno.contains("endereco_completo") && !retorno.contains("datahoje") && !retorno.contains("profissional") && !retorno.contains(
+                                    "sexo") && !retorno.contains("idade") && !retorno.contains(
+                                            "datanascimento") && !retorno.contains("documento") && !retorno.contains("telefone") && !retorno.contains("email") && !retorno.contains("paciente")) {
                                 TagEntidade tagNova = new TagEntidade();
                                 Tag tagPai = new Tag();
-                                tagPai.setEntidade("Custom");                               
+                                tagPai.setEntidade("Custom");
                                 tagNova.setDescricaoCampo(retorno);
                                 tagNova.setInserirDado("S");
                                 tagNova.setTipoAtributo("texto");
                                 tagNova.setEntidade(tagPai);
-                                if(!listaTagsExistentes.contains(retorno)) {
-                                    this.tagsDinamicas.add(tagNova);  
+                                if (!listaTagsExistentes.contains(retorno)) {
+                                    this.tagsDinamicas.add(tagNova);
                                 }
                                 listaTagsExistentes.add(retorno);
                             }
@@ -414,7 +406,7 @@ private boolean mostrarProf;
                 }
             }
         }
-       
+
         if (this.tag == null && this.validaRecebedor()) {
             this.tag = TagSingleton.getInstance().getBo().listByEntidade("Paciente");
         }
@@ -423,61 +415,6 @@ private boolean mostrarProf;
     }
 
     public void montaCabecalho() {
-
-      //  StringBuilder cabecalho = new StringBuilder("<div>");
-//        if (mostraLogo) {            
-//            cabecalho.append("<div style='width: 150px;float:left;'>");            
-//            cabecalho.append("<img src='imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
-//            cabecalho.append("-----");
-//            cabecalho.append("<img src='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "' height='150' width='150' />");
-//            cabecalho.append("-------");
-//            cabecalho.append("<p:graphicImage styleClass='Fleft' id='foto' value='../../imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache() + "' stream='false' />");           
-//            cabecalho.append("</div>");
-//  //      }
-   //     cabecalho = "";
-     //   if (mostraCabecalho) {
-           // if (mostraLogo) {
-              //  cabecalho.append("<div style='margin-left:170px'>");
-           // } else {
-            //    cabecalho.append("<div style='margin-left:20px'>");
-          //  }
-
-//            cabecalho = ("<b>" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "</b>");
-//            cabecalho += ("<br/>");
-//            cabecalho += ("<br/>");
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpStrEndereco() + " " : ""));
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpChaNumEndereco() + " " : ""));
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrBairro() + " " : ""));
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() != null ? ", " + UtilsFrontEnd.getEmpresaLogada().getEmpStrCidade() + " " : ""));
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaUf() + " " : ""));
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() != null ? " - " + UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() + " " : ""));
-//            cabecalho += ("<br/>");
-//            cabecalho += ((UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() != null ? UtilsFrontEnd.getEmpresaLogada().getEmpChaFone() + " " : ""));
-//            cabecalho += ("<br/>");
-//            cabecalho += ("</div>");
-       // }
-     //   cabecalho.append("</div>");
-//        if (mostraCabecalho || mostraLogo) {
-//            cabecalho.append("<br/>");
-//            cabecalho.append("<br/>");
-//            cabecalho.append("<br/>");
-//            cabecalho.append("<br/>");
-//            cabecalho.append("<br/>");
-//        }
-    //    cabecalhoHtml = cabecalho;
-      //  modeloHtml = new StringBuilder();
-      //  modeloHtml.insert(0, cabecalhoHtml);
-     //   modeloHtml.append(modeloHtmlSemCabecalho);
-     //   if(mostraRodape) {
-        //    modeloHtml.append("<style>#content { display: table; } #pageFooter { display: table-footer-group; } #pageFooter:after { counter-increment: page; content: counter(page);  }</style>");
-       //     modeloHtml.append("<div id='pageFooter'>Página </div>");    
-    //    }
-        //this.modeloSelecionado.setModelo(modeloHtml.toString());
-        
-        
-        // if(this.modeloSelecionado != null) {
-        //    carregarDocumentoHtmlModelo();         
-        //  }
 
     }
 
@@ -537,14 +474,13 @@ private boolean mostrarProf;
         }
 
         for (TagEntidade tag : this.tagsDinamicas) {
-            if (tag.getRespTag() != null || tag.getRespTagData() != null || (tag.getDescricaoCampo().equals("CID") && this.cid != null)                    
-                    ) {            
+            if (tag.getRespTag() != null || tag.getRespTagData() != null || (tag.getDescricaoCampo().equals("CID") && this.cid != null)) {
                 this.processarTag(tag, this.modeloSelecionado.getModelo());
             }
-            if( tag.getAtributo() != null && (tag.getAtributo().equals("registroConselho") || tag.getAtributo().equals("nmeProfissional"))) {
+            if (tag.getAtributo() != null && (tag.getAtributo().equals("registroConselho") || tag.getAtributo().equals("nmeProfissional"))) {
                 this.processarTag(tag, this.modeloSelecionado.getModelo());
             }
-            
+
         }
 
         preview();
@@ -572,39 +508,56 @@ private boolean mostrarProf;
                 case "Profissional": {
                     if (this.profissionalSelecionado != null) {
                         c = this.profissionalSelecionado.getDadosBasico().getClass();
-                        if(this.profissionalSelecionado.getRegistroConselhoStr() != null && !this.profissionalSelecionado.getRegistroConselhoStr().isEmpty()) {
-                            modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());    
+                        if (this.profissionalSelecionado.getRegistroConselhoStr() != null && !this.profissionalSelecionado.getRegistroConselhoStr().isEmpty()) {
+                            modelo = modelo.replaceAll("\\#registroConselho", this.profissionalSelecionado.getRegistroConselhoStr());
                         }
-                        
+
                         modelo = modelo.replaceAll("\\#nmeProfissional", this.profissionalSelecionado.getDadosBasico().getNome());
                     }
 
                 }
-                    break;    
+                    break;
                 case "Paciente": {
                     if (this.pacienteSelecionado != null) {
                         c = this.pacienteSelecionado.getDadosBasico().getClass();
 
-                        Field campo = c.getDeclaredField(tag.getAtributo());
-                        campo.setAccessible(true);
-                        Object obj = campo.get(this.pacienteSelecionado.getDadosBasico());
+                        //tags q nao sao por reflexao
+                        if (tag.getAtributo().contains("empresaOndeTrabalha") || tag.getAtributo().contains("profissaoPaciente") || tag.getAtributo().contains(
+                                "idadePaciente") || tag.getAtributo().contains("convenioPaciente")) {
+                            if (this.pacienteSelecionado.getDadosBasico().getEmpresaOndeTrabalha() != null && !this.pacienteSelecionado.getDadosBasico().getEmpresaOndeTrabalha().equals("")) {
+                                modelo = modelo.replaceAll("\\#empresaOndeTrabalha", this.pacienteSelecionado.getDadosBasico().getEmpresaOndeTrabalha());
+                            }
+                            if (this.pacienteSelecionado.getDadosBasico().getProfissao() != null && !this.pacienteSelecionado.getDadosBasico().getProfissao().equals("")) {
+                                modelo = modelo.replaceAll("\\#profissaoPaciente", this.pacienteSelecionado.getDadosBasico().getProfissao());
+                            }
+                            if (!Utils.getIdadePaciente(this.pacienteSelecionado).equals("")) {
+                                modelo = modelo.replaceAll("\\#idadePaciente", Utils.getIdadePaciente(this.pacienteSelecionado));
+                            }
+                            if (this.pacienteSelecionado.getDadosBasico().getNome() != null && !this.pacienteSelecionado.getDadosBasico().getNome().equals("")) {
+                                modelo = modelo.replaceAll("\\#convenioPaciente", this.pacienteSelecionado.getConvenio().getDadosBasico().getNome());
+                            }
+                        } else {
+                            Field campo = c.getDeclaredField(tag.getAtributo());
+                            campo.setAccessible(true);
+                            Object obj = campo.get(this.pacienteSelecionado.getDadosBasico());
 
-                        if (obj instanceof String) {
-                            modelo = modelo.replaceAll("\\#" + tag.getAtributo(), (obj != null ? (String) obj : ""));
-                        } else if (obj instanceof Date) {
-                            Date data = (Date) obj;
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                            if (obj instanceof String) {
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), (obj != null ? (String) obj : ""));
+                            } else if (obj instanceof Date) {
+                                Date data = (Date) obj;
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-                            modelo = modelo.replaceAll("\\#" + tag.getAtributo(), sdf.format(data));
-                        } else if (obj == null) {
-                            modelo = modelo.replaceAll("\\#" + tag.getAtributo(), (obj != null ? (String) obj : ""));
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), sdf.format(data));
+                            } else if (obj == null) {
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), (obj != null ? (String) obj : ""));
+                            }
                         }
+
                     }
 
                 }
                     break;
-              
-                    
+
                 case "Sistema": {
                     modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.moduloSistema(tag.getAtributo()));
                 }
@@ -614,17 +567,17 @@ private boolean mostrarProf;
 
                     } else {
                         if (tag.getAtributo() != null && tag.getAtributo().equals("cid")) {
-                            if(this.cid != null) {
-                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getId());    
+                            if (this.cid != null) {
+                                modelo = modelo.replaceAll("\\#" + tag.getAtributo(), this.cid.getId());
                             }
-                            
+
                         } else if (tag.getEntidade().getEntidade().equals("Custom")) {
                             if (tag.getRespTag() != null) {
-                               
+
                                 modelo = modelo.replaceAll("\\#" + tag.getDescricaoCampo(), tag.getRespTag());
 
-                              //  modelo = modelo.replaceAll(Pattern.quote("#(\\w+|\\W+)"),tag.getRespTag());
-                                
+                                //  modelo = modelo.replaceAll(Pattern.quote("#(\\w+|\\W+)"),tag.getRespTag());
+
                             }
                         } else {
                             if (tag.getRespTagData() != null) {
@@ -638,7 +591,7 @@ private boolean mostrarProf;
                 }
             }
             //tags dos documentos antigos
-            if(pacienteSelecionado != null && pacienteSelecionado.getDadosBasico() != null) {
+            if (pacienteSelecionado != null && pacienteSelecionado.getDadosBasico() != null) {
                 modelo = DocumentoSingleton.getInstance().getBo().replaceDocumento(pacienteSelecionado.getDadosBasico(), modelo, UtilsFrontEnd.getProfissionalLogado());
             }
             this.modeloSelecionado.setModelo(modelo);
@@ -676,12 +629,12 @@ private boolean mostrarProf;
             this.carregarDocumentos();
         }
         this.setPacienteSelecionado(null);
-        if(emitidoPara != null) {
+        if (emitidoPara != null) {
             this.setPacienteSelecionado(emitidoPara);
         }
-        
+
         this.setCid(null);
-      
+
         this.setProfissionalSelecionado(null);
         this.setModeloSelecionado(null);
         this.modeloHtml = "";
@@ -690,7 +643,7 @@ private boolean mostrarProf;
         this.tag = null;
         mostraCabecalho = false;
         mostraLogo = false;
-      //  mostraRodape = false;
+        //  mostraRodape = false;
     }
 
     public void processarDocumento() {
@@ -1050,89 +1003,56 @@ private boolean mostrarProf;
         this.modeloHtmlSemCabecalho = modeloHtmlSemCabecalho;
     }
 
-    
     public StringBuilder getRodapeHtml() {
         return rodapeHtml;
     }
 
-    
     public void setRodapeHtml(StringBuilder rodapeHtml) {
         this.rodapeHtml = rodapeHtml;
     }
 
-    
     public Profissional getProfissionalSelecionado() {
         return profissionalSelecionado;
     }
 
-    
     public void setProfissionalSelecionado(Profissional profissionalSelecionado) {
         this.profissionalSelecionado = profissionalSelecionado;
     }
 
-    
     public CKEditor getCkEditorEmissao() {
         return ckEditorEmissao;
     }
 
-    
     public void setCkEditorEmissao(CKEditor ckEditorEmissao) {
         this.ckEditorEmissao = ckEditorEmissao;
     }
 
-    
     public void setModeloHtml(String modeloHtml) {
         this.modeloHtml = modeloHtml;
     }
 
-    
     public boolean isMostrarProf() {
         return mostrarProf;
     }
 
-    
     public void setMostrarProf(boolean mostrarProf) {
         this.mostrarProf = mostrarProf;
     }
 
-    
     public boolean isMostraRodape() {
         return mostraRodape;
     }
 
-    
     public void setMostraRodape(boolean mostraRodape) {
         this.mostraRodape = mostraRodape;
     }
 
-    
     public boolean isMostraLogoCentral() {
         return mostraLogoCentral;
     }
 
-    
     public void setMostraLogoCentral(boolean mostraLogoCentral) {
         this.mostraLogoCentral = mostraLogoCentral;
     }
-
-    
-//    public String getCabecalho() {
-//        return cabecalho;
-//    }
-//
-//    
-//    public void setCabecalho(String cabecalho) {
-//        this.cabecalho = cabecalho;
-//    }
-
-    
-//    public boolean isMostraRodape() {
-//        return mostraRodape;
-//    }
-//
-//    
-//    public void setMostraRodape(boolean mostraRodape) {
-//        this.mostraRodape = mostraRodape;
-//    }
 
 }

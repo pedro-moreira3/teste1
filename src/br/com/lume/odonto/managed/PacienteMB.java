@@ -330,30 +330,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public String idadeDoPaciente() {
-        if(this.getEntity().getDadosBasico().getDataNascimento() != null) {
-            Calendar c = Calendar.getInstance();
-            int mesAtual = c.get(Calendar.MONTH);
-            int diaAtual = c.get(Calendar.DAY_OF_MONTH);
-            int anoAtual = c.get(Calendar.YEAR);
+        String idade = Utils.getIdadePaciente(this.getEntity());
+        if(!idade.equals("")) {
+            return "Idade: " + Utils.getIdadePaciente(this.getEntity()) + " anos";
+        }
+       return "";
             
-            c.setTime(this.getEntity().getDadosBasico().getDataNascimento());
-            int mes = c.get(Calendar.MONTH);
-            int dia = c.get(Calendar.DAY_OF_MONTH);
-            int ano = c.get(Calendar.YEAR);
-            
-            int idade = anoAtual - ano;
-            
-            if(mesAtual == mes) {
-                if(diaAtual < dia) {
-                    idade--;
-                }
-            }else if(mesAtual < mes) {
-                idade--;
-            }
-                        
-            return "Idade: " + idade + " anos";
-        }        
-        return "";
+      
     }
     
     public boolean showPaciente() {
