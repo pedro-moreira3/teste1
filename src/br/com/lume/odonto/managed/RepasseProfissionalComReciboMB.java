@@ -23,6 +23,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
@@ -74,7 +75,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private Date dataFim, dataFimDiaria;
     private Profissional profissional, profissionalDiaria;
 
-    private String filtroPeriodo = "MA", filtroPeriodoDiaria = "MA";
+    private String filtroPeriodo = "MA";
+    private PeriodoBusca filtroPeriodoDiaria = PeriodoBusca.MES_ATUAL;
 
     private List<String> pendencias = new ArrayList<String>();
 
@@ -140,6 +142,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             validaExecucaoProcedimento = empresa.getValidarRepasseProcedimentoFinalizadoBool();
 
             actionTrocaDatas(null);
+            actionTrocaDatasDiaria(null);
 
             ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
             //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
@@ -387,8 +390,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     
     public void actionTrocaDatasDiaria(AjaxBehaviorEvent event) {
         try {
-            this.dataInicioDiaria = getDataInicio(filtroPeriodoDiaria);
-            this.dataFimDiaria = getDataFim(filtroPeriodoDiaria);
+            this.dataInicioDiaria = getDataInicio(filtroPeriodoDiaria.getRotulo());
+            this.dataFimDiaria = getDataFim(filtroPeriodoDiaria.getRotulo());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
@@ -1058,7 +1061,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo()
+                    .listDentistasByEmpresaERemuneracao(UtilsFrontEnd.getEmpresaLogada(), new String[] { Profissional.PORCENTAGEM, Profissional.PROCEDIMENTO });
             for (Profissional p : profissionais) {
                 if (!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
                     if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
@@ -1406,15 +1410,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void setDataFimDiaria(Date dataFimDiaria) {
         this.dataFimDiaria = dataFimDiaria;
     }
-
-    public String getFiltroPeriodoDiaria() {
+       
+    public PeriodoBusca getFiltroPeriodoDiaria() {
         return filtroPeriodoDiaria;
     }
-
-    public void setFiltroPeriodoDiaria(String filtroPeriodoDiaria) {
+    
+    public void setFiltroPeriodoDiaria(PeriodoBusca filtroPeriodoDiaria) {
         this.filtroPeriodoDiaria = filtroPeriodoDiaria;
     }
-    
+
     public Profissional getProfissionalDiaria() {
         return profissionalDiaria;
     }
