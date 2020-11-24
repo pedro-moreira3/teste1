@@ -276,6 +276,26 @@
 		</div>
 
 	</div>
+	
+		
+	
+	
+	
+	
+		<p:dialog widgetVar="dlgVideo" responsive="true" modal="true"
+		appendTo=":lume" resizable="false">
+		   <p:ajax event="close" update="painelVideo" />
+		<f:facet name="header">
+			<h:outputText id="headerVideoTutorial"
+				value="Video Tutorial" />				
+		</f:facet>
+		<p:panel id="painelVideo">
+			<object 
+		  		style="width: 600px; height: 461.25px; float: none; clear: both; margin: 2px auto;"
+		  		data="#{filaAtendimentoMB.videoLink}">
+			</object>
+		</p:panel>		
+	</p:dialog>
 
 	<p:confirmDialog global="true">
 		<p:commandButton value="Sim" type="button"

@@ -169,8 +169,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<h1>Agendamento Por Profissional</h1>
+				<div class="card card-w-title">					
+					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>
+										<h1>Agendamento Por Profissional</h1>									
+									</h:panelGroup>
+									<h:panelGroup>
+									<p:commandButton value="Video tutorial"
+											icon="White fa fa-youtube-play White"
+											oncomplete="PF('dlgVideo').show()"
+											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/nOzX4wIxlvQ?autoplay=1')}"
+											process="@this,painelVideo" update="painelVideo"/>
+									</h:panelGroup>
+	
+						</p:panelGrid>	
+					
 					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
 						toggleSpeed="500">
 						<p:outputPanel>
