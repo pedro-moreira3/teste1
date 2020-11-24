@@ -71,7 +71,8 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
 
     public void carregarAvisos() {
         try {
-            this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada()));            
+            this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada(), 
+                    UtilsFrontEnd.getProfissionalLogado()));            
             final Empresa emp = UtilsFrontEnd.getEmpresaLogada();
           //  final Empresa emp2 = emp;
             Thread th = new Thread(new Runnable() {                  

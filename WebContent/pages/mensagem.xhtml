@@ -224,9 +224,16 @@
 					<p:fieldset legend="Mensagem">
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							
+							<p:inputTextarea widgetVar="edtMensagem" rows="10" cols="50" 
+								value="#{mensagemMB.entity.mensagem}"/>
+							
+							<ui:remove>
 							<p:textEditor widgetVar="edtMensagem"
 								value="#{mensagemMB.entity.mensagem}" height="300"
 								style="margin-bottom:10px" />
+							</ui:remove>
+							
 						</p:panelGrid>
 					</p:fieldset>
 				</p:scrollPanel>
