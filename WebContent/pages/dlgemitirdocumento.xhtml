@@ -59,7 +59,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 				<h:panelGroup>
 					<p:outputLabel style="margin:0px;" for="filtroTipoDocumentoEmitir"
-						value="Tipo de documento" />
+						value="Tipo de documento:" />
 					<p:selectOneMenu id="filtroTipoDocumentoEmitir"
 						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 						value="#{emissaoDocumentoMB.filtroTipoDocumentoEmitir}"
@@ -74,33 +74,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</p:selectOneMenu>
 				</h:panelGroup>
 
-				<h:panelGroup>
-					<p:outputLabel style="margin:0px;"
-						for="filtroModeloDocumentoEmitir" value="Modelo do documento" />
-					<p:selectOneMenu id="filtroModeloDocumentoEmitir"
-						style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-						value="#{emissaoDocumentoMB.modeloSelecionado}"
-						converter="documento">
 
-						<f:selectItem itemLabel="Selecione um modelo" itemValue="#{null}" />
-						<f:selectItems
-							value="#{emissaoDocumentoMB.listaDocumentosModelos}" var="tipo"
-							itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
-
-						<p:ajax listener="#{emissaoDocumentoMB.montarTags}"
-							update="pnTags,viewDoc" process="@this" />
-
-					</p:selectOneMenu>
-				</h:panelGroup>
-
-				<p:outputPanel id="pnTags">
-					<h:panelGroup
-						rendered="#{emissaoDocumentoMB.tag != null and emissaoDocumentoMB.tag.entidade eq 'Paciente'}">
+<h:panelGroup id="painelPaciente"
+						>
 
 						<h:outputText for="filtroDinamicoPaciente" value="Paciente:" />
-						<p:autoComplete id="filtroDinamicoPaciente"
+						<p:autoComplete id="filtroDinamicoPaciente" 
 							value="#{emissaoDocumentoMB.pacienteSelecionado}"
-							style="margin-bottom:20px;"
+							style=""
 							completeMethod="#{emissaoDocumentoMB.sugestoesPacientes}" var="p"
 							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 							converter="paciente" forceSelection="true" scrollHeight="400"
@@ -119,8 +100,50 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{p.nomeMae}" />
 							</p:column>
 
-							<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
-								update="pnTags,viewDoc" />
+							<p:ajax event="itemSelect"
+								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
+								update="pnTags,painelPaciente,viewDoc,:lume:documentoImprimir" />
+						</p:autoComplete>
+					</h:panelGroup>
+
+				<h:panelGroup>
+					<p:outputLabel style="margin:0px;"
+						for="filtroModeloDocumentoEmitir" value="Modelo do documento:" />
+
+					<p:autoComplete id="filtroModeloDocumentoEmitir"
+						value="#{emissaoDocumentoMB.modeloSelecionado}"
+						style=""
+						completeMethod="#{emissaoDocumentoMB.sugestoesModelos}" var="tipo"
+						itemLabel="#{tipo.descricao}" itemValue="#{tipo}"
+						converter="documento" forceSelection="true" scrollHeight="400"
+						minQueryLength="3" queryDelay="1000" dropdown="true">
+						
+						<p:ajax event="itemSelect" listener="#{emissaoDocumentoMB.montarTags(null)}"
+								update="pnTags,painelPaciente,viewDoc" process="@this" />
+						
+					</p:autoComplete>
+
+				</h:panelGroup>
+				<p:outputPanel id="pnTags">
+					
+
+					<h:panelGroup
+						rendered="#{emissaoDocumentoMB.mostrarProf}">
+
+						<h:outputText for="filtroDinamicoProfissional" value="Profissional:" />
+						<p:autoComplete id="filtroDinamicoProfissional"
+							value="#{emissaoDocumentoMB.profissionalSelecionado}"
+							style=""
+							completeMethod="#{emissaoDocumentoMB.sugestoesProfissionais}" var="p"
+							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+							converter="profissional" forceSelection="true" scrollHeight="400"
+							minQueryLength="3" queryDelay="1000" dropdown="true">							
+							<p:column headerText="Nome">
+								<h:outputText value="#{p.dadosBasico.nome}" />
+							</p:column>
+							<p:ajax event="itemSelect"
+								listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this"
+								update="pnTags,painelPaciente,viewDoc,:lume:documentoImprimir" />
 						</p:autoComplete>
 					</h:panelGroup>
 
@@ -130,14 +153,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 						<p:autoComplete queryDelay="1000"
 							value="#{emissaoDocumentoMB.cid}" id="cid"
-							style="margin-bottom:20px;"
+							style=""
 							completeMethod="#{emissaoDocumentoMB.geraSugestoesCID}" var="c"
 							itemLabel="#{c.label}" itemValue="#{c}" converter="cid"
 							forceSelection="true" scrollHeight="500" minQueryLength="3"
 							dropdown="true">
 
 							<p:ajax event="itemSelect"
-								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc"/>
+								listener="#{emissaoDocumentoMB.processarCID}" update="viewDoc" />
 
 						</p:autoComplete>
 					</h:panelGroup>
@@ -148,31 +171,46 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
 								style="min-width:0px;margin-top:10px;margin-bottom:20px;">
-								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}" process="@this" update=":lume:viewDoc"/>
+								<p:ajax listener="#{emissaoDocumentoMB.atualizarTag()}"
+									process="@this" update=":lume:viewDoc,:lume:documentoImprimir" />
 							</p:inputText>
 						</h:panelGroup>
 
-						<h:panelGroup style="margin-top:10px !important;margin-bottom:20px !important;"
+						<h:panelGroup
+							style="margin-top:10px !important;margin-bottom:20px !important;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
-							<h:outputLabel value="#{tag.descricaoCampo}:"/>
+							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:calendar value="#{tag.respTagData}" autocomplete="false"
 								timeInput="true">
-								<p:ajax event="dateSelect" process="@this"  listener="#{emissaoDocumentoMB.atualizarTag()}" update=":lume:viewDoc" />
+								<p:ajax event="dateSelect" process="@this"
+									listener="#{emissaoDocumentoMB.atualizarTag()}"
+									update=":lume:viewDoc" />
 							</p:calendar>
 						</h:panelGroup>
 					</ui:repeat>
-
+					<p:outputLabel style="color:red">
+						<b>Para personalizar sua impressão com inserção de logo, cabeçalho e rodapé é necessário utilizar o atalho de imprimir nas AÇÔES da lista de Documentos Emitidos. </b>
+					</p:outputLabel>
 				</p:outputPanel>
 			</p:panelGrid>
 
 			<p:panelGrid id="viewDoc" columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
-				<p:fieldset legend="Pré-visualização" toggleable="true" style="max-height:500px;">
-					<h:outputText id="documentoImprimir"
-							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
-							escape="false" />
-				</p:fieldset>
+			
+				<p:fieldset legend="Pré-visualização" toggleable="false" id="preVisualizar"
+					style="max-height:500px;">			
+							
+						
+					<pe:ckEditor id="documentoImprimir" widgetVar="documentoImprimir" width="100%"
+					value="#{emissaoDocumentoMB.modeloHtml}" escape="false" height="300px"
+					toolbar="[[ 'PageBreak','Print','Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl','Table','HorizontalRule','SpecialChar','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
+					styleClass="BordNone" binding="#{emissaoDocumentoMB.ckEditorEmissao}">
+					<p:ajax process="@this" />
+				</pe:ckEditor>	
+						
+						
+				</p:fieldset>				
 			</p:panelGrid>
 
 		</p:panelGrid>

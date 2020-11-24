@@ -23,6 +23,16 @@
 		<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js"></script>
 
+		<ui:remove>
+			<script
+				src="https://cdn.ckeditor.com/ckeditor5/23.1.0/decoupled-document/ckeditor.js"></script>
+
+
+			<script
+				src="https://cdn.tiny.cloud/1/35stk1g19g7gcl56pzk24gtukyh88txqzsonqu5zsn2k85r9/tinymce/5/tinymce.min.js"
+				referrerpolicy="origin"></script>
+		</ui:remove>
+
 		<h:outputScript name="js/nanoscroller.js" library="ultima-layout" />
 		<h:outputScript name="js/layout.js" library="ultima-layout" />
 		<h:outputScript name="js/ripple.js" library="ultima-layout" />
@@ -39,7 +49,7 @@
 		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
 
 		<script
-			src="https://cdn.jsdelivr.net/npm/promise-polyfill@7.1.0/dist/promise.min.js"></script>		
+			src="https://cdn.jsdelivr.net/npm/promise-polyfill@7.1.0/dist/promise.min.js"></script>
 	</p:cache>
 
 	<ui:insert name="head" />
@@ -184,20 +194,19 @@
 			};
 			ga.l = +new Date;
 			ga('create', 'UA-100802286-3', 'auto');
-			ga('send', 'pageview');			
-			
-		
-			
-			function startTimer() {	
-				PF('loading').show();
-			//var open = PF('loading').isVisible();	
-			//	if(!open){				
-				//	t = setTimeout("PF('loading').show();", 200);						
-			//	}				
+			ga('send', 'pageview');
+
+			function startTimer() {
+				//PF('loading').show();
+				  ajaxInProgress = setTimeout(function () {
+		                PF('loading').show();
+		            }, 500);
 			}
-			function stopTimer() {	
-				PF('loading').hide();
-			//	x = setTimeout("PF('loading').hide();", 500);			
+			function stopTimer() {			
+			//	PF('loading').hide();
+				  clearTimeout(ajaxInProgress);
+		            PF('loading').hide();
+		            ajaxInProgress = null;			
 			}
 			//]]>
 		</script>
@@ -254,8 +263,7 @@
 					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="startTimer();" onsuccess="stopTimer();"
-					onerror="stopTimer();" oncomplete="stopTimer();"/>
+				<p:ajaxStatus onstart="startTimer();" oncomplete="stopTimer();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />
