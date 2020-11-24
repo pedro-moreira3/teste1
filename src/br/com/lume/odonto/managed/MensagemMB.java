@@ -19,29 +19,22 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hpsf.Array;
 import org.primefaces.PrimeFaces;
 import org.primefaces.json.JSONObject;
-import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
-import br.com.lume.agendamento.AgendamentoSingleton;
-import br.com.lume.common.bo.BO;
 import br.com.lume.common.log.LogIntelidenteSingleton;
-import br.com.lume.common.log.LogUtils;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.mensagem.MensagemSingleton;
-import br.com.lume.mensagem.bo.MensagemBO;
 import br.com.lume.odonto.entity.Afiliacao;
-import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Mensagem;
+import br.com.lume.odonto.entity.MensagemEmpresa;
+import br.com.lume.odonto.entity.MensagemPatrocinador;
+import br.com.lume.odonto.entity.MensagemUsuario;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
-import br.com.lume.security.PerfilSingleton;
-import br.com.lume.security.UsuarioSingleton;
-import br.com.lume.security.bo.PerfilBO;
 import br.com.lume.security.entity.Empresa;
-import br.com.lume.security.entity.Perfil;
-import br.com.lume.security.entity.Usuario;
 
 @Named
 @ViewScoped
@@ -74,6 +67,9 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
             this.perfis.add("Orçamentista");
             this.perfis.add("Cirurgião Dentista");
             this.perfis.add("Auxiliar de Cirurgião Dentista");
+            
+            this.setEntityList(MensagemSingleton.getInstance().getBo().listAll());
+            
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
@@ -108,7 +104,45 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     @Override
     public void actionPersist(ActionEvent event) {
         try {
+            
+            if(this.clientesSelected != null && !this.clientesSelected.isEmpty()) {
+                this.getEntity().setClientes(new ArrayList<MensagemEmpresa>());
+                for(Empresa emp : this.clientesSelected) {
+                    MensagemEmpresa m = new MensagemEmpresa();
+                    m.setId(0l);
+                    m.setEmpresa(emp);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getClientes().add(m);
+                }
+            }
+            
+            if(this.patrocinadoresSelected != null && !this.patrocinadoresSelected.isEmpty()) {
+                this.getEntity().setPatrocinadores(new ArrayList<MensagemPatrocinador>());
+                for(Afiliacao a : this.patrocinadoresSelected) {
+                    MensagemPatrocinador m = new MensagemPatrocinador();
+                    m.setId(0l);
+                    m.setPatrocinador(a);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getPatrocinadores().add(m);
+                }
+            }
+            
+            if(this.usuariosSelected != null && !this.usuariosSelected.isEmpty()) {
+                this.getEntity().setUsuarios(new ArrayList<MensagemUsuario>());
+                for(Profissional pr : this.usuariosSelected) {
+                    MensagemUsuario m = new MensagemUsuario();
+                    m.setId(0l);
+                    m.setUsuario(pr);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getUsuarios().add(m);
+                }
+            }
+            
             MensagemSingleton.getInstance().getBo().persist(this.getEntity());
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro ao salvar a mensagem");
             e.printStackTrace();

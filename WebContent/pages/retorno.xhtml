@@ -102,7 +102,22 @@
 				<div class="card card-w-title">
 					<p:outputPanel id="pnRetorno">
 						<h:inputHidden id="idRetorno" value="#{retornoMB.entity.id}" />
-						<h1>Retorno</h1>
+				
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>
+										<h1>Retorno</h1>									
+									</h:panelGroup>
+									<h:panelGroup>
+									<p:commandButton value="Video tutorial"
+											icon="White fa fa-youtube-play White"
+											oncomplete="PF('dlgVideo').show()"
+											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/sRYTjfw-kJ0?autoplay=1')}"
+											process="@this,painelVideo" update="painelVideo"/>
+									</h:panelGroup>
+	
+						</p:panelGrid>	
+						
 						<p:separator styleClass="SeparatorFull" />
 
 						<p:fieldset toggleable="false">

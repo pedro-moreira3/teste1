@@ -135,7 +135,7 @@
 												var="patrocinador" itemLabel="#{patrocinador.nome}"
 												itemValue="#{patrocinador}" />
 
-											<p:ajax process="@this" update="filtros"/>
+											<p:ajax process="@this" update="filtros" />
 
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="patro" />
@@ -173,7 +173,7 @@
 											<f:selectItems value="#{mensagemMB.clientes}" var="cliente"
 												itemLabel="#{cliente.empStrNme}" itemValue="#{cliente}" />
 
-											<p:ajax process="@this" update="filtros"/>
+											<p:ajax process="@this" update="filtros" />
 
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="cliente" />
@@ -210,8 +210,9 @@
 											filter="true" filterMatchMode="contains"
 											converter="profissional">
 											<f:selectItems value="#{mensagemMB.usuarios}" var="usuario"
-												itemLabel="#{usuario.dadosBasico.nome}" itemValue="#{usuario}" />
-											<p:ajax process="@this" update="filtros"/>
+												itemLabel="#{usuario.dadosBasico.nome}"
+												itemValue="#{usuario}" />
+											<p:ajax process="@this" update="filtros" />
 										</p:selectCheckboxMenu>
 										<p:message styleClass="msg" for="usuario" />
 									</h:panelGroup>
@@ -223,9 +224,16 @@
 					<p:fieldset legend="Mensagem">
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							
+							<p:inputTextarea widgetVar="edtMensagem" rows="10" cols="50" 
+								value="#{mensagemMB.entity.mensagem}"/>
+							
+							<ui:remove>
 							<p:textEditor widgetVar="edtMensagem"
 								value="#{mensagemMB.entity.mensagem}" height="300"
 								style="margin-bottom:10px" />
+							</ui:remove>
+							
 						</p:panelGrid>
 					</p:fieldset>
 				</p:scrollPanel>
@@ -261,13 +269,14 @@
 									icon="ui-icon-add" value="Nova mensagem"
 									oncomplete="PF('dlgNovaMag').show();" />
 							</h:panelGroup>
-							
-							<h:panelGroup>
-								<p:commandButton styleClass="GreenButton"
-									icon="ui-icon-add" value="teste mensagem"
-									actionListener="#{mensagemMB.testeSendQuick}"
-									process="@this"/>
-							</h:panelGroup>
+
+							<ui:remove>
+								<h:panelGroup>
+									<p:commandButton styleClass="GreenButton" icon="ui-icon-add"
+										value="teste mensagem"
+										actionListener="#{mensagemMB.testeSendQuick}" process="@this" />
+								</h:panelGroup>
+							</ui:remove>
 
 						</p:panelGrid>
 					</p:fieldset>

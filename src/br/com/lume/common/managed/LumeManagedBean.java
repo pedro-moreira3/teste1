@@ -30,8 +30,6 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
-import br.com.lume.common.iugu.Iugu;
-import br.com.lume.common.iugu.responses.SubscriptionResponse;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
@@ -46,7 +44,7 @@ import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
 import br.com.lume.whatsapp.WhatsappSingleton;
-import org.primefaces.component.treetable.TreeTable;
+
 
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
@@ -72,6 +70,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private StreamedContent arquivoDownload;
     private ByteArrayInputStream streamOut;
 
+    private String videoLink;
+    
     @PostConstruct
     public void init() {
         this.getEntity();
@@ -463,5 +463,14 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             }
         this.streamOut = streamOut;
     }
+
+    public String getVideoLink() {
+        return videoLink;
+    }
+    
+    public void setVideoLink(String videoLink) {
+        this.videoLink = videoLink;
+    }    
+
 
 }

@@ -253,6 +253,6 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setTabelaAtendimento(DataTable tabelaAtendimento) {
         this.tabelaAtendimento = tabelaAtendimento;
-    }
+    } 
 
 }
