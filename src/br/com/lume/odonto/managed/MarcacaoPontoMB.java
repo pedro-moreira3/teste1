@@ -13,6 +13,7 @@ import org.primefaces.PrimeFaces;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalDiaria;
 import br.com.lume.odonto.entity.ProfissionalDiaria.TipoPonto;
@@ -27,6 +28,7 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
 
     public MarcacaoPontoMB() {
         super(ProfissionalDiariaSingleton.getInstance().getBo());
+        this.setClazz(ProfissionalDiaria.class);
     }
 
     public void carregaProfissional(Profissional profissional) {
