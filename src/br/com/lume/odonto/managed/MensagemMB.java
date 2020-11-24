@@ -33,6 +33,9 @@ import br.com.lume.mensagem.bo.MensagemBO;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Mensagem;
+import br.com.lume.odonto.entity.MensagemEmpresa;
+import br.com.lume.odonto.entity.MensagemPatrocinador;
+import br.com.lume.odonto.entity.MensagemUsuario;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
@@ -108,7 +111,45 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     @Override
     public void actionPersist(ActionEvent event) {
         try {
+            
+            if(this.clientesSelected != null && !this.clientesSelected.isEmpty()) {
+                this.getEntity().setClientes(new ArrayList<MensagemEmpresa>());
+                for(Empresa emp : this.clientesSelected) {
+                    MensagemEmpresa m = new MensagemEmpresa();
+                    m.setId(0l);
+                    m.setEmpresa(emp);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getClientes().add(m);
+                }
+            }
+            
+            if(this.patrocinadoresSelected != null && !this.patrocinadoresSelected.isEmpty()) {
+                this.getEntity().setPatrocinadores(new ArrayList<MensagemPatrocinador>());
+                for(Afiliacao a : this.patrocinadoresSelected) {
+                    MensagemPatrocinador m = new MensagemPatrocinador();
+                    m.setId(0l);
+                    m.setPatrocinador(a);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getPatrocinadores().add(m);
+                }
+            }
+            
+            if(this.usuariosSelected != null && !this.usuariosSelected.isEmpty()) {
+                this.getEntity().setUsuarios(new ArrayList<MensagemUsuario>());
+                for(Profissional pr : this.usuariosSelected) {
+                    MensagemUsuario m = new MensagemUsuario();
+                    m.setId(0l);
+                    m.setUsuario(pr);
+                    m.setMensagem(this.getEntity());
+                    
+                    this.getEntity().getUsuarios().add(m);
+                }
+            }
+            
             MensagemSingleton.getInstance().getBo().persist(this.getEntity());
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro ao salvar a mensagem");
             e.printStackTrace();

@@ -26,6 +26,7 @@ import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 
+import br.com.lume.atestado.AtestadoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.HtmlToText;
@@ -33,17 +34,32 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.documento.bo.DocumentoBO;
+import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
+import br.com.lume.documentoGenerico.DocumentoGenericoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.odonto.entity.Atestado;
+import br.com.lume.odonto.entity.Contrato;
 // import br.com.lume.odonto.bo.DocumentoBO;
 // import br.com.lume.odonto.bo.DominioBO;
 // import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
+import br.com.lume.odonto.entity.DocumentoEmitido;
+import br.com.lume.odonto.entity.DocumentoGenerico;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.PedidoExame;
+import br.com.lume.odonto.entity.Receituario;
+import br.com.lume.odonto.entity.Recibo;
 import br.com.lume.odonto.entity.Tag;
 import br.com.lume.odonto.entity.TagDocumentoModelo;
 import br.com.lume.odonto.entity.TagEntidade;
+import br.com.lume.odonto.entity.TermoConsentimento;
+import br.com.lume.pedidoExame.PedidoExameSingleton;
+import br.com.lume.receituario.ReceituarioSingleton;
+import br.com.lume.recibo.ReciboSingleton;
 import br.com.lume.tag.TagSingleton;
 import br.com.lume.tagEntidade.TagEntidadeSingleton;
+import br.com.lume.termoConsentimento.TermoConsentimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -105,6 +121,94 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
+    public void replaceDocsAntigo() {
+        try {
+            DocumentoBO docBO = DocumentoSingleton.getInstance().getBo();
+            List<Documento> docs = docBO.listAll();
+            for(Documento d : docs) {
+                d.setModelo(docBO.replaceDocumentoAntigo(d.getModelo()));
+                docBO.persist(d);
+            }
+            
+            this.gerarDocsEmitidos();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void gerarDocsEmitidos() {
+        try {
+            List<DocumentoEmitido> docsEmitidos = new ArrayList<DocumentoEmitido>();
+            
+            List<Receituario> receituarios = ReceituarioSingleton.getInstance().getBo().listAll();
+            List<Atestado> atestados = AtestadoSingleton.getInstance().getBo().listAll();
+            List<TermoConsentimento> termos = TermoConsentimentoSingleton.getInstance().getBo().listAll();
+            List<PedidoExame> exames = PedidoExameSingleton.getInstance().getBo().listAll();
+            List<Recibo> recibos = ReciboSingleton.getInstance().getBo().listAll();
+            List<DocumentoGenerico> contratos = DocumentoGenericoSingleton.getInstance().getBo().listAll();
+            
+            for(Receituario r : receituarios) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getReceituarioGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            for(Atestado r : atestados) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getAtestadoGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            for(TermoConsentimento r : termos) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getTermoGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            for(PedidoExame r : exames) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getDocumentoGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            for(Recibo r : recibos) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getDocumentoGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            for(DocumentoGenerico r : contratos) {
+                DocumentoEmitido doc = new DocumentoEmitido();
+                doc.setId(0l);
+                doc.setModelo(r.getDocumentoGerado());
+                doc.setEmitidoPara(r.getPaciente());
+                doc.setEmitidoPor(r.getProfissional());
+                docsEmitidos.add(doc);
+            }
+            
+            DocumentoEmitidoSingleton.getInstance().getBo().persistBatch(docsEmitidos);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void carregarTiposDocumento() {
         try {
             this.listaTiposDocumentos = DominioSingleton.getInstance().getBo().listByObjeto("documento");
