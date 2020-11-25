@@ -16,10 +16,27 @@
 </style>
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-						<h1>Configuração de Documentos
-						<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
-				<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'titulo')}" position="bottom" />
-						</h1>
+						
+						
+						
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>
+										<h1>Configuração de Documentos
+											<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
+											<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configurarDocumento', 'titulo')}" position="bottom" />
+										</h1>									
+									</h:panelGroup>
+									<h:panelGroup>
+									<p:commandButton value="Video tutorial"
+											icon="White fa fa-youtube-play White"
+											oncomplete="PF('dlgVideo').show()"
+											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1')}"
+											process="@this,painelVideo" update="painelVideo"/>
+									</h:panelGroup>
+	
+						</p:panelGrid>	
+						
 						<div class="SeparatorFull"></div>
 
 						<p:panel>
