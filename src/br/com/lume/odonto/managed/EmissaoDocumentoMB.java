@@ -86,7 +86,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private Date dataInicio;
     private Date dataFim;
     private Paciente emitidoPara;
-    private String filtroPeriodo;
+    private String filtroPeriodo = "H";
 
     private StreamedContent arqTemp;
     private StreamedContent arqEmitido;
@@ -111,6 +111,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
 
+        actionTrocaDatasCriacao();
         if (getDataInicio() != null && getDataFim() != null) {
             Calendar c = Calendar.getInstance();
             c.setTime(getDataInicio());
@@ -145,6 +146,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             doc.setProfissionalSelecionado(profissionalSelecionado);
             doc.setDocumentoModelo(modeloSelecionado);
             doc.setModelo(modeloHtml);
+            doc.setTipoDoc(modeloSelecionado.getTipo());
             ckEditorEmissao.getValue();
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);

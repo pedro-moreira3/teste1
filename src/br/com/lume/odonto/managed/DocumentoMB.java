@@ -121,6 +121,24 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
+    public void consertaDocsEmitidos() {
+        List<DocumentoEmitido> docsEmitidos = new ArrayList<DocumentoEmitido>();
+        try {
+            List<DocumentoEmitido> docs = DocumentoEmitidoSingleton.getInstance().getBo().listAll();
+            for(DocumentoEmitido d : docs) {
+                if(d.getDocumentoModelo() != null && d.getTipoDoc() == null) {
+                    d.setTipoDoc(d.getDocumentoModelo().getTipo());
+                    docsEmitidos.add(d);
+                }
+            }
+            DocumentoEmitidoSingleton.getInstance().getBo().persistBatch(docsEmitidos);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+    
     public void replaceDocsAntigo() {
         try {
             DocumentoBO docBO = DocumentoSingleton.getInstance().getBo();
@@ -148,12 +166,21 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             List<Recibo> recibos = ReciboSingleton.getInstance().getBo().listAll();
             List<DocumentoGenerico> contratos = DocumentoGenericoSingleton.getInstance().getBo().listAll();
             
+            Dominio domReceita = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Receituario");
+            Dominio domAtestado = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Atestado");
+            Dominio domTermos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Termo consentimento");
+            Dominio domExames = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Pedido de Exames");
+            Dominio domRecibos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Recibo");
+            Dominio domContratos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Contrato Paciente");
+            
             for(Receituario r : receituarios) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getReceituarioGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setTipoDoc(domReceita);
+                doc.setDataEmissao(r.getDataHora());
                 docsEmitidos.add(doc);
             }
             
@@ -163,6 +190,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getAtestadoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setDataEmissao(r.getDataHora());
+                doc.setTipoDoc(domAtestado);
                 docsEmitidos.add(doc);
             }
             
@@ -172,6 +201,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getTermoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setDataEmissao(r.getDataHora());
+                doc.setTipoDoc(domTermos);
                 docsEmitidos.add(doc);
             }
             
@@ -181,6 +212,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getDocumentoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setDataEmissao(r.getDataHora());
+                doc.setTipoDoc(domExames);
                 docsEmitidos.add(doc);
             }
             
@@ -190,6 +223,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getDocumentoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setDataEmissao(r.getDataHora());
+                doc.setTipoDoc(domRecibos);
                 docsEmitidos.add(doc);
             }
             
@@ -199,6 +234,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getDocumentoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
+                doc.setDataEmissao(r.getDataHora());
+                doc.setTipoDoc(domContratos);
                 docsEmitidos.add(doc);
             }
             

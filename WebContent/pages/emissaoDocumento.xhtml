@@ -176,10 +176,10 @@
 								
 							</p:column>
 
-							<p:column filterBy="#{documento.documentoModelo.tipo.nome}"
-								sortBy="#{documento.documentoModelo.tipo.nome}"
+							<p:column filterBy="#{documento.tipoDoc.nome}"
+								sortBy="#{documento.tipoDoc.nome}"
 								filterMatchMode="contains" headerText="Tipo do documento">
-								<h:outputText value="#{documento.documentoModelo.tipo.nome}" />
+								<h:outputText value="#{documento.tipoDoc.nome}" />
 							</p:column>
 
 							<p:column filterBy="#{documento.documentoModelo.descricao}"
