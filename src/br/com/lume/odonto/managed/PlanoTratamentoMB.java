@@ -41,7 +41,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
@@ -57,7 +56,6 @@ import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.NegociacaoOrcamento;
 import br.com.lume.odonto.entity.Odontograma;
@@ -495,7 +493,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             log.error(OdontoMensagens.getMensagem("erro.plano.cria.retorno"), e);
         }
     }
-    
+
     private boolean finalizaProcedimento() throws Exception {
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
@@ -1099,17 +1097,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     
-    private boolean validaOrcamentoMaiorPermitido() {  
-        
+    private boolean validaOrcamentoMaiorPermitido() {
         BigDecimal valorDesconto = new BigDecimal(0);
-        
-        DescontoOrcamento descontoOrcamento = descontosDisponiveis.get(numeroParcelaOrcamento.intValue());
-        if(descontoOrcamento == null) {
-           return false; 
-        }       
-        
         if(!descontosDisponiveis.isEmpty()) {
-            valorDesconto = descontoOrcamento.getDesconto();
+            valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
         }
         if (orcamentoSelecionado.getDescontoTipo().equals(
                 "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
@@ -1403,11 +1394,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionRemoveOrcamento(Orcamento orcamento) {
         try {
-            boolean result = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
-            
-            if(!result)
-                this.addInfo(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Verifique se há lançamentos validados na fatura de recebimento.");
-            
+            OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
             carregaOrcamentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -1478,7 +1465,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
-            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             return;
         }
