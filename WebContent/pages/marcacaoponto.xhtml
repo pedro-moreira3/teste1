@@ -62,11 +62,15 @@
 
 					</p:outputPanel>
 
-					<p:panelGrid columns="2" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:panelGrid columns="3" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 						<p:commandButton icon="fa fa-save" value="Salvar"
 							process="@this, :lume:pnlPontoDados" styleClass="GreenButton"
 							actionListener="#{marcacaoPontoMB.salvar}" />
+						<p:commandButton icon="fa fa-trash" value="Excluir Diária"
+							process="@this, :lume:pnlPontoDados" styleClass="NavyButton"
+							actionListener="#{marcacaoPontoMB.excluir}"
+							rendered="#{marcacaoPontoMB.entity.id != null and marcacaoPontoMB.entity.id != 0}" />
 						<p:commandButton icon="fa fa-close" value="Cancelar"
 							process="@this" oncomplete="PF('dlgMarcacaoPonto').hide()" />
 					</p:panelGrid>

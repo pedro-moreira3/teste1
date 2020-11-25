@@ -254,6 +254,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setDiariasSelecionadas(null);
             PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            
+            pesquisarDiaria();
         } catch (Exception e) {
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         }
