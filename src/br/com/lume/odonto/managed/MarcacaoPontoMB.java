@@ -79,7 +79,7 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
                     return;
                 } else {
                     ProfissionalDiariaSingleton.getInstance().inativarDiaria(diariaMesmoDia, UtilsFrontEnd.getProfissionalLogado());
-                    addInfo("Sucesso", "Diária existente previamente para o Dia/Profissional foi excluida!");
+                   // addInfo("Sucesso", "Diária existente previamente para o Dia/Profissional foi excluida!");
                 }
             }
 

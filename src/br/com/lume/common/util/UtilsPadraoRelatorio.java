@@ -15,6 +15,7 @@ public class UtilsPadraoRelatorio {
         SELECIONE("", "Selecione...", true),
         ONTEM("O", "Ontem"),
         HOJE("H", "Hoje"),
+        MES_ANTERIOR("MA", "Mês Anterior"),
         MES_ATUAL("M", "Mês Atual"),
         ULTIMOS_7_DIAS("S", "Últimos 7 dias"),
         ULTIMOS_15_DIAS("Q", "Últimos 15 dias"),

@@ -76,7 +76,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private Profissional profissional, profissionalDiaria;
 
     private String filtroPeriodo = "MA";
-    private PeriodoBusca filtroPeriodoDiaria = PeriodoBusca.MES_ATUAL;
+    private PeriodoBusca filtroPeriodoDiaria = PeriodoBusca.MES_ANTERIOR;
 
     private List<String> pendencias = new ArrayList<String>();
 
@@ -122,6 +122,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private RepasseFaturas repasseFatura;
 
     private Lancamento lancamentoDeducoes;
+    
+    private boolean imprimirSemProcedimento = false;
 
     public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboLancamentos.get(profissional);
@@ -1459,6 +1461,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
    
     public void setDiariaParaRecibo(List<ProfissionalDiaria> diariaParaRecibo) {
         this.diariaParaRecibo = diariaParaRecibo;
+    }
+
+    
+    public boolean isImprimirSemProcedimento() {
+        return imprimirSemProcedimento;
+    }
+
+    
+    public void setImprimirSemProcedimento(boolean imprimirSemProcedimento) {
+        this.imprimirSemProcedimento = imprimirSemProcedimento;
     }
             
 }

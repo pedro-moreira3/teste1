@@ -49,15 +49,15 @@
 						</p:selectOneRadio>
 						
 						<h:panelGroup styleClass="md-inputfield" style="margin-top: 30px">
-							<p:inputNumber id="valorRemuneracao"
+							<p:inputNumber id="valorRemuneracao" 
 								value="#{marcacaoPontoMB.entity.valorDiaria}" maxlength="13"
 								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-								thousandSeparator="."
-								rendered="#{marcacaoPontoMB.entity != null}"
+								thousandSeparator="."							
+								rendered="#{marcacaoPontoMB.entity.id != null and marcacaoPontoMB.entity.id != 0}"
 								readonly="#{permiteEditarValor == null or permiteEditarValor != 'S'}" />
-							<p:outputLabel for="valorRemuneracao"
+							<p:outputLabel for="valorRemuneracao" rendered="#{marcacaoPontoMB.entity.id != null and marcacaoPontoMB.entity.id != 0}"
 								value="Valor Remuneração: " />
-							<p:message for="valorRemuneracao" styleClass="msg" />
+							<p:message for="valorRemuneracao" styleClass="msg" rendered="#{marcacaoPontoMB.entity.id != null and marcacaoPontoMB.entity.id != 0}" />
 						</h:panelGroup>
 
 					</p:outputPanel>
@@ -68,7 +68,7 @@
 							process="@this, :lume:pnlPontoDados" styleClass="GreenButton"
 							actionListener="#{marcacaoPontoMB.salvar}" />
 						<p:commandButton icon="fa fa-trash" value="Excluir Diária"
-							process="@this, :lume:pnlPontoDados" styleClass="NavyButton"
+							process="@this, :lume:pnlPontoDados" styleClass="RedButton"
 							actionListener="#{marcacaoPontoMB.excluir}"
 							rendered="#{marcacaoPontoMB.entity.id != null and marcacaoPontoMB.entity.id != 0}" />
 						<p:commandButton icon="fa fa-close" value="Cancelar"
