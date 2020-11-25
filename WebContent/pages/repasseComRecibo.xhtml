@@ -719,16 +719,20 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 					</p:outputPanel>
 
 				</p:scrollPanel>
-			</p:outputPanel>
-			<h:panelGroup style="display:block;margin-left:3px;">
-					<p:selectBooleanCheckbox id="checkFiltro"
+				
+				<h:panelGroup style="display:block;margin-left:3px;" >
+					<p:selectBooleanCheckbox id="checkFiltro" rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"
 						value="#{repasseProfissionalComReciboMB.imprimirSemProcedimento}">
 						<p:ajax event="change" process="@this,lume:impressHere"
 							update="lume:impressHere"
 							 />
 					</p:selectBooleanCheckbox>
-					<p:outputLabel for="checkFiltro" value="Omitir procedimentos na impressão" />								
+					<p:outputLabel for="checkFiltro" value="Omitir procedimentos na impressão" rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"/>								
 				</h:panelGroup>
+				
+			</p:outputPanel>
+			
+			
 			<p:panelGrid columns="4" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton styleClass="NavyButton" value="Impressão"
