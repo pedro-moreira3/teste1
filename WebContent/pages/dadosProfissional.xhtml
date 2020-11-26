@@ -10,6 +10,13 @@ body .ui-selectoneradio td label {
 	width: calc(100% - 44px) !important;
 	margin-top: 10% !important;
 }
+.option {
+	display: inline-flex;
+}
+.helper {
+	margin-left: 10px;
+	font-weight: bold;
+}
 </style>
 
 	<p:outputPanel id="pnPrincipal" styleClass="BordNone">
@@ -20,12 +27,12 @@ body .ui-selectoneradio td label {
 			<h:panelGroup id="foto">
 				<div class="Container100">
 					<p:graphicImage styleClass="Fleft"
-						value="#{profissionalMB.imagemUsuario}" stream="false"
+						value="#{lumeSecurity.imagemUsuario}" stream="false"
 						style="width:100%;"
-						rendered="#{profissionalMB.imagemUsuario != null}" />
+						rendered="#{lumeSecurity.imagemUsuario != null}" />
 					<h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft"
 						style="width:100%;" library="images"
-						rendered="#{profissionalMB.imagemUsuario == null}" />
+						rendered="#{lumeSecurity.imagemUsuario == null}" />
 
 					<p:outputPanel
 						rendered="#{profissionalMB.entity.id != null and profissionalMB.entity.id != 0}">
@@ -311,9 +318,16 @@ body .ui-selectoneradio td label {
 						value="#{profissionalMB.entity.tipoRemuneracao}"
 						layout="responsive" columns="1">
 						<p:ajax process="@this" update="pgRemuneracao" />
-						<f:selectItem itemLabel="Procedimento" itemValue="PRO" />
-						<f:selectItem itemLabel="Porcentagem" itemValue="POR" />
-						<f:selectItem itemLabel="Fixa" itemValue="FIX" />
+						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Procedimento   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="PRO" itemEscaped="false" 
+							itemDescription="Selecione essa opção para profissionais que recebem por procedimento. Sempre que existir um procedimento executado por esse profissional, o valor preenchido já ficará disponível para repasse" />
+						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Porcentagem   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="POR" itemEscaped="false" 
+							itemDescription="Selecione essa opção para profissionais que recebem por porcentual. Sempre que existir um procedimento executado por esse profissional, será calculado o valor de repasse com base no percentual de remuneração" />
+						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Fixo   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="FIX" itemEscaped="false" 
+							itemDescription="Selecione essa opção para profissionais que recebem de forma fixa. Coloque a data de remuneração e o valor nos dados abaixo para controle" />
+					<ui:remove>
+						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Diária   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="DIA" itemEscaped="false"
+							itemDescription="Selecione essa opção para profissionais que recebem fixo por dia. Sempre que existir um procedimento executado por esse profissional nesse dia, o valor preenchido já ficará disponível para repasse" />
+				</ui:remove>
 					</p:selectOneRadio>
 				</p:panelGrid>
 
@@ -359,6 +373,23 @@ body .ui-selectoneradio td label {
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}">
 						<f:validateLongRange minimum="1" maximum="31" />
 					</p:inputText>
+					
+					<p:outputLabel for="valorRemuneracaoDia" value="Valor Remuneração Integral : "
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
+					<p:inputNumber id="valorRemuneracaoDia"
+						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
+						value="#{profissionalMB.entity.valorRemuneracao}" maxlength="13"
+						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+						thousandSeparator="."
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
+					<p:outputLabel for="valorRemuneracaoReduzidaDia" value="Valor Remuneração Reduzida : "
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
+					<p:inputNumber id="valorRemuneracaoReduzidaDia"
+						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
+						value="#{profissionalMB.entity.valorRemuneracaoReduzida}" maxlength="13"
+						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+						thousandSeparator="."
+						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
 				</p:panelGrid>
 			</p:fieldset>
 		</p:panelGrid>
@@ -436,7 +467,7 @@ body .ui-selectoneradio td label {
 		widgetVar="dtPrincipal"
 		var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
-		rowKey="#{profissional.id}" paginatorPosition="bottom"
+		rowKey="#{profissional}" paginatorPosition="bottom"
 		binding="#{profissionalMB.tabelaProfissional}">
 		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalMB.carregaTela}" />
@@ -447,7 +478,7 @@ body .ui-selectoneradio td label {
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"
-			sortBy="#{profissional.dadosBasico.nomeLimpo}" 
+			sortBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterFunction="#{profissionalMB.filtroSemAcento}">
 			<h:outputText value="#{profissional.dadosBasico.prefixoNome}"
 				title="#{profissional.id}" />

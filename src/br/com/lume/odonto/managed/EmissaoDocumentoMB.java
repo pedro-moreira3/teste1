@@ -86,7 +86,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private Date dataInicio;
     private Date dataFim;
     private Paciente emitidoPara;
-    private String filtroPeriodo;
+    private String filtroPeriodo = "H";
 
     private StreamedContent arqTemp;
     private StreamedContent arqEmitido;
@@ -111,6 +111,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
 
+        actionTrocaDatasCriacao();
         if (getDataInicio() != null && getDataFim() != null) {
             Calendar c = Calendar.getInstance();
             c.setTime(getDataInicio());
@@ -145,6 +146,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             doc.setProfissionalSelecionado(profissionalSelecionado);
             doc.setDocumentoModelo(modeloSelecionado);
             doc.setModelo(modeloHtml);
+            doc.setTipoDoc(modeloSelecionado.getTipo());
             ckEditorEmissao.getValue();
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);
@@ -531,9 +533,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                                 modelo = modelo.replaceAll("\\#profissaoPaciente", this.pacienteSelecionado.getDadosBasico().getProfissao());
                             }
                             if (!Utils.getIdadePaciente(this.pacienteSelecionado).equals("")) {
-                                modelo = modelo.replaceAll("\\#idadePaciente", Utils.getIdadePaciente(this.pacienteSelecionado));
+                                modelo = modelo.replaceAll("\\#idadePaciente", Utils.getIdadePaciente(this.pacienteSelecionado) + " anos");
                             }
-                            if (this.pacienteSelecionado.getDadosBasico().getNome() != null && !this.pacienteSelecionado.getDadosBasico().getNome().equals("")) {
+                            if (this.pacienteSelecionado.getConvenio() != null &&
+                                    this.pacienteSelecionado.getConvenio().getDadosBasico().getNome() != null && !this.pacienteSelecionado.getDadosBasico().getNome().equals("")) {
                                 modelo = modelo.replaceAll("\\#convenioPaciente", this.pacienteSelecionado.getConvenio().getDadosBasico().getNome());
                             }
                         } else {

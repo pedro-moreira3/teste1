@@ -67,6 +67,17 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
+		
+		<p:outputPanel id="viewMarcacaoPonto">
+			<ui:include src="marcacaoponto.xhtml">
+				<ui:param name="permiteEditarData" value="N" />
+				<ui:param name="permiteEditarValor" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseMarcacaoPonto" actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
+				process="@this"
+				update=""
+				oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
+		</p:outputPanel>
 
 
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
@@ -471,8 +482,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
 				styleClass="remove12ColPaddingSide">
 				<p:scrollPanel mode="native"
-					style="position: relative; width: 100%; height: 100%;">
-
+					style="position: relative; width: 100%; height: calc(100% - 20px);">
 					<p:outputPanel style="padding: 10px;" id="impressHere">
 						<div style="font-size: 10pt">
 							<ui:remove>
@@ -500,8 +510,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<div style="width: 1%" />
 								<h:panelGroup
 									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
-									<span> <b><h:outputText
-												value="Quantidade de repasses" /></b>
+									<span> 
+										<b><h:outputText rendered="#{reciboRepasseProfissionalMB.showIfCalculo(reciboRepasseProfissionalMB.entity)}"
+											value="Quantidade de repasses" /></b>
+										<b><h:outputText rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"
+											value="Quantidade de Diárias" /></b>
 									</span>
 									<br />
 									<span> <h:outputText
@@ -536,99 +549,162 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								</h:panelGroup>
 							</div>
 							<br />
-							<table style="width: 100%; border-collapse: collapse;">
-								<thead>
-									<tr>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Procedimento</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Data de execução</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Plano de Tratamento</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Paciente</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor Total</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor já pago</th>
-										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor à pagar</th>
-									</tr>
-								</thead>
-								<tbody>
-									<ui:repeat var="reciboLancamento"
-										value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}">
+							<p:outputPanel rendered="#{reciboRepasseProfissionalMB.showIfCalculo(reciboRepasseProfissionalMB.entity)}">
+								<table style="width: 100%; border-collapse: collapse;">
+									<thead>
 										<tr>
-											<p:outputPanel rendered="#{reciboLancamento.dados == null}">
-												<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}">
-
-													</h:outputText></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.valorTotalRepassar}">
-														<f:convertNumber type="currency" currencySymbol="R$"
-															maxFractionDigits="2" />
-													</h:outputText></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{(reciboLancamento.lancamento.valorComDesconto != null and reciboLancamento.lancamento.valorComDesconto != 0 ? reciboLancamento.lancamento.valorComDesconto : reciboLancamento.lancamento.valor)}">
-														<f:convertNumber type="currency" currencySymbol="R$"
-															maxFractionDigits="2" />
-													</h:outputText>
-													<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
-													</h:outputText>
-													</td>
-											</p:outputPanel>
-											<p:outputPanel rendered="#{reciboLancamento.dados != null}">
-												<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
-														value="#{reciboLancamento.dados.planoTratamentoProcedimento}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.dataExecucao}">
-														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-													</h:outputText></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.planoTratamento}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.paciente}" /></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.valorTotal}">
-														<f:convertNumber type="currency" currencySymbol="R$"
-															maxFractionDigits="2" />
-													</h:outputText></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.valorJaPago}">
-														<f:convertNumber type="currency" currencySymbol="R$"
-															maxFractionDigits="2" />
-													</h:outputText></td>
-												<td
-													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.valorAPagar}">
-														<f:convertNumber type="currency" currencySymbol="R$"
-															maxFractionDigits="2" />
-													</h:outputText>
-												<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
-													</h:outputText>	
-												</td>
-											</p:outputPanel>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Procedimento</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Data de execução</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Plano de Tratamento</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Paciente</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor Total</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor já pago</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor à pagar</th>
 										</tr>
-									</ui:repeat>
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										<ui:repeat var="reciboLancamento"
+											value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}">
+											<tr>
+												<p:outputPanel rendered="#{reciboLancamento.dados == null}">
+													<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
+															value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}">
+	
+														</h:outputText></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.valorTotalRepassar}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{(reciboLancamento.lancamento.valorComDesconto != null and reciboLancamento.lancamento.valorComDesconto != 0 ? reciboLancamento.lancamento.valorComDesconto : reciboLancamento.lancamento.valor)}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText>
+														<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
+														</h:outputText>
+														</td>
+												</p:outputPanel>
+												<p:outputPanel rendered="#{reciboLancamento.dados != null}">
+													<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
+															value="#{reciboLancamento.dados.planoTratamentoProcedimento}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.dataExecucao}">
+															<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.planoTratamento}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.paciente}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.valorTotal}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.valorJaPago}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboLancamento.dados.valorAPagar}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText>
+													<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
+														</h:outputText>	
+													</td>
+												</p:outputPanel>
+											</tr>
+										</ui:repeat>
+									</tbody>
+								</table>
+							</p:outputPanel>
+							<p:outputPanel rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}">
+								<table style="width: 100%; border-collapse: collapse;">
+									<thead>
+										<tr>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">Data</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 55%;
+												display:#{(repasseProfissionalComReciboMB.imprimirSemProcedimento)?'none':'table-cell'};"
+												>Procedimentos</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">Tipo</th>
+											<th
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">Valor</th>
+										</tr>
+									</thead>
+									<tbody>
+										<ui:repeat var="reciboDiaria"
+											value="#{reciboRepasseProfissionalMB.entity.reciboDiarias}">
+											<tr>
+												<p:outputPanel rendered="#{reciboDiaria.dados == null}">
+													<td style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.diaria.dataPontoStr}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px;
+														display:#{(repasseProfissionalComReciboMB.imprimirSemProcedimento)?'none':'table-cell'};"
+														><h:outputText
+															value="#{reciboDiaria.diaria.allPTPsDiaria}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.diaria.tipoPonto.descricao}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.diaria.valorDiaria}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText></td>
+												</p:outputPanel>
+												<p:outputPanel rendered="#{reciboDiaria.dados != null}">
+													<td style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.dados.dataDiariaStr}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px;
+														display:#{(repasseProfissionalComReciboMB.imprimirSemProcedimento)?'none':'table-cell'};"
+														><h:outputText
+															value="#{reciboDiaria.dados.procedimentos}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.dados.tipoPonto.descricao}" /></td>
+													<td
+														style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
+															value="#{reciboDiaria.dados.valorDiaria}">
+															<f:convertNumber type="currency" currencySymbol="R$"
+																maxFractionDigits="2" />
+														</h:outputText></td>
+												</p:outputPanel>
+											</tr>
+										</ui:repeat>
+									</tbody>
+								</table>
+							</p:outputPanel>
 							<br />
 							<div style="width: 100%; height: 80px;">
 								<div
@@ -643,10 +719,23 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 					</p:outputPanel>
 
 				</p:scrollPanel>
+				
+				<h:panelGroup style="display:block;margin-left:3px;" >
+					<p:selectBooleanCheckbox id="checkFiltro" rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"
+						value="#{repasseProfissionalComReciboMB.imprimirSemProcedimento}">
+						<p:ajax event="change" process="@this,lume:impressHere"
+							update="lume:impressHere"
+							 />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkFiltro" value="Omitir procedimentos na impressão" rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"/>								
+				</h:panelGroup>
+				
 			</p:outputPanel>
+			
+			
 			<p:panelGrid columns="4" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton styleClass="NavyButton" value="Impressao"
+				<p:commandButton styleClass="NavyButton" value="Impressão"
 					process="@this" icon="fa fa-printer">
 					<p:printer target=":lume:impressHere" />
 				</p:commandButton>
@@ -688,7 +777,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							</p:panel>
 						</p:panelGrid>
 
-						<p:dataTable
+						<p:dataTable 
+							rendered="#{reciboRepasseProfissionalMB.showIfCalculo(reciboRepasseProfissionalMB.entity)}"
 							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
 							var="reciboLancamento" filterDelay="1000" reflow="true"
 							emptyMessage="Nenhum repasse encontrado"
@@ -829,10 +919,80 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<h:outputText value="#{reciboLancamento.dados.lancamentoPago}" />
 							</p:column>
 						</p:dataTable>
+						
+						<p:dataTable 
+							rendered="#{reciboRepasseProfissionalMB.showIfDiaria(reciboRepasseProfissionalMB.entity)}"
+							value="#{reciboRepasseProfissionalMB.entity.reciboDiarias}"
+							var="reciboDiaria" filterDelay="1000" reflow="true"
+							emptyMessage="Nenhum repasse encontrado"
+							id="dtReciboRepasseDiarias" rows="15" paginator="true"
+							paginatorPosition="bottom" rowKey="#{reciboDiaria}">
+							<f:facet name="header">
+								<h:outputText value="Repasses de Profissionais" />
+							</f:facet>
+							
+							<p:column
+								filterMatchMode="contains" headerText="Data da Diária" width="10%"
+								filterBy="#{reciboDiaria.diaria.dataPontoStr}"
+								sortBy="#{reciboDiaria.diaria.dataPontoStr}">
+								<h:outputText
+									value="#{reciboDiaria.diaria.dataPontoStr}" />
+							</p:column>
+							
+							<p:column rendered="#{reciboDiaria.dados == null}"
+								filterMatchMode="contains" headerText="Procedimentos"
+								filterBy="#{reciboDiaria.diaria.allPTPsDiaria}"
+								sortBy="#{reciboDiaria.diaria.allPTPsDiaria}">
+								<h:outputText styleClass="left"
+									value="#{reciboDiaria.diaria.allPTPsDiaria}" />
+							</p:column>
+							<p:column rendered="#{reciboDiaria.dados != null}"
+								filterMatchMode="contains" headerText="Procedimentos"
+								filterBy="#{reciboDiaria.dados.procedimentos}"
+								sortBy="#{reciboDiaria.dados.procedimentos}">
+								<div align="left"><h:outputText
+									value="#{reciboDiaria.dados.procedimentos}" /></div>
+							</p:column>
+
+							<p:column rendered="#{reciboDiaria.dados == null}"
+								filterMatchMode="contains" headerText="Tipo da Diária" width="10%"
+								filterBy="#{reciboDiaria.diaria.tipoPonto.descricao}"
+								sortBy="#{reciboDiaria.diaria.tipoPonto.descricao}">
+								<div align="left"><h:outputText
+									value="#{reciboDiaria.diaria.tipoPonto.descricao}" /></div>
+							</p:column>
+							<p:column rendered="#{reciboDiaria.dados != null}"
+								width="10%" filterMatchMode="contains" headerText="Tipo da Diária"
+								filterBy="#{reciboDiaria.dados.tipoPonto.descricao}"
+								sortBy="#{reciboDiaria.dados.tipoPonto.descricao}">
+								<h:outputText
+									value="#{reciboDiaria.dados.tipoPonto.descricao}" />
+							</p:column>
+							
+							<p:column rendered="#{reciboDiaria.dados == null}"
+								filterMatchMode="contains" headerText="Valor da Diária" width="10%"
+								filterBy="#{reciboDiaria.diaria.valorDiaria}"
+								sortBy="#{reciboDiaria.diaria.valorDiaria}">
+								<h:outputText
+									value="#{reciboDiaria.diaria.valorDiaria}" />
+							</p:column>
+							<p:column rendered="#{reciboDiaria.dados != null}"
+								width="10%" filterMatchMode="contains" headerText="Valor da Diária"
+								filterBy="#{reciboDiaria.dados.valorDiaria}"
+								sortBy="#{reciboDiaria.dados.valorDiaria}">
+								<h:outputText
+									value="#{reciboDiaria.dados.valorDiaria}">
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+										type="currency" />
+								</h:outputText>
+							</p:column>
+							
+						</p:dataTable>
 
 					</p:outputPanel>
 				</p:scrollPanel>
 			</p:outputPanel>
+			
 			<p:panelGrid columns="4" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton styleClass="NavyButton"
@@ -1125,11 +1285,15 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 		</p:dialog>
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
 			header="Gerar recibo de pagamento" modal="true" width="70%">
+			<p:ajax event="close" listener="#{repasseProfissionalComReciboMB.cancelarRecibo}"/>
 			<p:outputPanel id="gerarReciboPnl">
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
-					<h:outputText
+					<h:outputText rendered="#{repasseProfissionalComReciboMB.lancamentoParaRecibo != null and !repasseProfissionalComReciboMB.lancamentoParaRecibo.isEmpty()}"
 						value="Será gerado um recibo para cada profissional destinatário dos lançamentos, agrupando-os em um único recibo."
+						escape="false" />
+					<h:outputText rendered="#{repasseProfissionalComReciboMB.diariaParaRecibo != null and !repasseProfissionalComReciboMB.diariaParaRecibo.isEmpty()}"
+						value="Será gerado um recibo para cada profissional destinatário das diárias, agrupando-os em um único recibo."
 						escape="false" />
 				</p:panelGrid>
 				<p:dataTable
@@ -1145,6 +1309,14 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						<h:outputText value="#{profissional.dadosBasico.nome}" />
 					</p:column>
 					<p:column filterMatchMode="contains" headerText="Qtde. Lançamentos"
+						rendered="#{repasseProfissionalComReciboMB.lancamentoParaRecibo != null and !repasseProfissionalComReciboMB.lancamentoParaRecibo.isEmpty()}"
+						sortBy="#{repasseProfissionalComReciboMB.getQtdeLancamentosFromProfissional(profissional)}"
+						filterBy="#{repasseProfissionalComReciboMB.getQtdeLancamentosFromProfissional(profissional)}">
+						<h:outputText
+							value="#{repasseProfissionalComReciboMB.getQtdeLancamentosFromProfissional(profissional)}" />
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Qtde. Diárias"
+						rendered="#{repasseProfissionalComReciboMB.diariaParaRecibo != null and !repasseProfissionalComReciboMB.diariaParaRecibo.isEmpty()}"
 						sortBy="#{repasseProfissionalComReciboMB.getQtdeLancamentosFromProfissional(profissional)}"
 						filterBy="#{repasseProfissionalComReciboMB.getQtdeLancamentosFromProfissional(profissional)}">
 						<h:outputText
@@ -1182,10 +1354,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 						process="@this,detalhesNovoRecibo"
+						oncomplete="PF('dtPrincipalRepasseDiaria').filter();"
 						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" />
 					<p:commandButton styleClass="NavyButton" value="Fechar"
-						process="@this"
-						actionListener="#{repasseProfissionalComReciboMB.cancelarRecibo}" />
+						process="@this" onclick="PF('dlgGerarRecibo').hide()" />
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
@@ -1195,7 +1367,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:tabView id="tabViewRepasseProfissional">
-						<p:tab title="Repasse Com Recibo">
+						<p:tab title="Repasse por Procedimento ou Porcentagem">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 									<div class="card card-w-title">
@@ -1362,11 +1534,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }"
 														update=":lume:pnCalculoRepasse" />
-<<<<<<< HEAD
 												
-=======
-														
->>>>>>> refs/heads/backend
 														<p:commandButton icon="fa fa-repeat"
 															styleClass="NavyButton" title="Recalcular Repasse"
 															rendered="#{repasseProfissionalComReciboMB.admin}"
@@ -1379,11 +1547,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 																message="Cofirma o recálculo de repasse de profissional?">
 															</p:confirm>
 														</p:commandButton>
-<<<<<<< HEAD
 
-=======
-														
->>>>>>> refs/heads/backend
 													<p:commandButton icon="fa fa-dollar"
 														styleClass="NavyButton" title="Ajuste Manual"
 														rendered="#{repasseProfissionalComReciboMB.admin}"
@@ -1491,10 +1655,177 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						</p:tab>
 
 
+<ui:remove>
 
+						<p:tab title="Repasse por Diária">
+							<div class="ui-g ui-fluid">
+								<div class="ui-g-12 ui-lg-12">
+									<div class="card card-w-title">
+										<h1>Repasse dos Profissionais por Diária</h1>
+										<p:fieldset legend="Filtros">
+											<p:outputPanel id="filtrosDiaria">
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup styleClass="md-combo" style="margin-top:8px">
+														<p:selectOneMenu id="filtroPeriodoRepassesDiaria"
+															value="#{repasseProfissionalComReciboMB.filtroPeriodoDiaria}"
+															converter="enumPeriodoBusca">
+															<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+																var="periodo" itemValue="#{periodo}"
+																itemLabel="#{periodo.descricao}" />
+															<p:ajax process="@this" update="dataInicioDiaria dataFimDiaria"
+																listener="#{repasseProfissionalComReciboMB.actionTrocaDatasDiaria}" />
+														</p:selectOneMenu>
+														<p:outputLabel for="filtroPeriodoRepassesDiaria"
+															value="Período de Marcação do Ponto:" />
+													</h:panelGroup>
+													<h:panelGroup>
+														<p:outputLabel for="dataInicioDiaria"
+															value="Data Inicial do Ponto:" />
+														<p:calendar id="dataInicioDiaria"
+															value="#{repasseProfissionalComReciboMB.dataInicioDiaria}"
+															autocomplete="false" />
+													</h:panelGroup>
 
+													<h:panelGroup>
+														<p:outputLabel for="dataFimDiaria"
+															value="Data Final do Ponto:" />
+														<p:calendar id="dataFimDiaria"
+															value="#{repasseProfissionalComReciboMB.dataFimDiaria}"
+															autocomplete="false" />
+													</h:panelGroup>
+												</p:panelGrid>
+												<p:panelGrid columns="2" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup>
+														<p:outputLabel for="fitroProfissionalDiaria"
+															value="Profissional:" />
+														<p:autoComplete dropdown="true" queryDelay="1000"
+															size="35"
+															value="#{repasseProfissionalComReciboMB.profissionalDiaria}"
+															id="fitroProfissionalDiaria" minQueryLength="3"
+															completeMethod="#{repasseProfissionalComReciboMB.geraSugestoesProfissionalDiaria}"
+															var="profissional"
+															itemLabel="#{profissional.dadosBasico.prefixoNome}"
+															itemValue="#{profissional}" converter="profissional"
+															forceSelection="true">
+														</p:autoComplete>
+													</h:panelGroup>
+												</p:panelGrid>
+												
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank form-group ui-fluid">
 
+													<p:commandButton id="pesquisarRepasseDiaria"
+														icon="White fa fa-search" value="Pesquisar"
+														styleClass="OrangeButton"
+														actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
+														process="@this"
+														update=""
+														oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
 
+													<h:panelGroup>
+														<p:splitButton icon="White fa fa fa-file-excel-o"
+															value="Exportar tabela para Excel"
+															styleClass="GreenSplitButton"
+															actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('xls')}"
+															ajax="false"
+															process=" @this"
+															update="@this" immediate="true"
+															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+															<p:fileDownload
+																value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+
+															<p:menuitem value="Exportar tabela para PDF"
+																icon="fa fa fa-file-pdf-o"
+																actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('pdf')}"
+																ajax="false"
+																process="@this"
+																immediate="true"
+																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+																<p:fileDownload
+																	value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+															</p:menuitem>
+														</p:splitButton>
+													</h:panelGroup>
+												</p:panelGrid>
+											</p:outputPanel>
+
+											<p:panelGrid columns="4" layout="grid"
+												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+												<p:commandButton
+													value="Gerar Recibo das Diárias Selecionados"
+													process="@this"
+													actionListener="#{repasseProfissionalComReciboMB.prepararReciboDiaria}"
+													update=":lume:gerarReciboPnl" />
+											</p:panelGrid>
+
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtPrincipalRepasseDiaria"
+												value="#{repasseProfissionalComReciboMB.diarias}"
+												var="diaria" paginator="false" rowKey="#{diaria}"
+												paginatorPosition="bottom" widgetVar="dtPrincipalRepasseDiaria"
+												binding="#{repasseProfissionalComReciboMB.tabelaRepasseDiaria}"
+												selection="#{repasseProfissionalComReciboMB.diariasSelecionadas}">
+												<f:facet name="header">Diárias</f:facet>
+												<p:column selectionMode="multiple" style="width:16px;" />
+												<p:column width="80" headerText="Ações">
+													<p:commandButton icon="fa fa-eye"
+														process="@this" title="Editar Diária" 
+														update=":lume:viewMarcacaoPonto, :lume:pnlPonto, :lume:pnlPontoHeader"
+														actionListener="#{marcacaoPontoMB.carregaDiaria(diaria)}"
+														styleClass="NavyButton" oncomplete="PF('dlgMarcacaoPonto').show();" />
+												</p:column>
+												<p:column width="15%"
+													filterBy="#{diaria.profissional.dadosBasico.prefixoNome}"
+													sortBy="#{diaria.profissional.dadosBasico.prefixoNome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Dentista Executor" />
+													</f:facet>
+													<h:outputText
+														value="#{diaria.profissional.dadosBasico.prefixoNome}" />
+												</p:column>
+												<p:column
+													filterBy="#{diaria.allPTPsDiaria}"
+													sortBy="#{diaria.allPTPsDiaria}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimentos executados no dia" />
+													</f:facet>
+													<h:outputText
+														value="#{diaria.allPTPsDiaria}" />
+												</p:column>
+												<p:column filterBy="#{diaria.dataPontoStr}" width="120"
+													headerText="Data do Ponto" filterMatchMode="contains"
+													sortBy="#{diaria.dataPontoStr}">
+													<h:outputText value="#{diaria.dataPontoStr}" />
+												</p:column>
+												<p:column filterBy="#{diaria.tipoPonto.descricao}" width="120"
+													headerText="Tipo da Diária" filterMatchMode="contains"
+													sortBy="#{diaria.tipoPonto.descricao}">
+													<h:outputText value="#{diaria.tipoPonto.descricao}" />
+												</p:column>
+												<p:column filterBy="#{diaria.valorDiaria}" width="120"
+													headerText="Valor Diária" filterMatchMode="contains"
+													sortBy="#{diaria.valorDiaria}">
+													<h:outputText value="#{diaria.valorDiaria}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+											</p:dataTable>
+										</p:fieldset>
+									</div>
+								</div>
+							</div>
+						</p:tab>
+</ui:remove>
 
 
 
@@ -1596,7 +1927,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<p:commandButton title="Pagar" styleClass="GreenButton"
 										icon="fa fa-check" oncomplete="PF('dlgConfirmarPagamanto').show();"
 										actionListener="#{reciboRepasseProfissionalMB.preparaAprovarRecibo(recibo)}"
-										process="@this" update="dtRecibos"
+										process="@this" update=":lume:tabViewRepasseProfissional:pnConfirmarPagamento, dtRecibos"
 										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">										
 									</p:commandButton>
 									<p:commandButton title="Cancelar Recibo" styleClass="RedButton"
@@ -1625,7 +1956,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
+								<p:column headerText="Qtde. Repasses/Diárias" filterMatchMode="contains"
 									width="5%" filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
@@ -1646,50 +1977,49 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 		responsive="true" modal="true" appendTo=":lume" resizable="false"
 		header="Confirmar Pagamento" width="600">
 
-		<p:panel id="pnConfirmarPagamento" styleClass="BordNone">
-			<p:panelGrid columns="1" layout="grid"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<b>
-					Você tem certeza que deseja aprovar o pagamento este recibo?  Os lançamentos não pagos 
-					serão pagos neste momento, completando o repasse.
-					</b> 
-			</p:panelGrid>
-			<p:panelGrid columns="1" layout="grid"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<h:panelGroup>
-					<p:outputLabel for="dataRepassar" value="Data de pagamento do Repasse:" />
-					<p:calendar id="dataRepassar" required="true"
-						value="#{reciboRepasseProfissionalMB.dataRepassar}"
-						autocomplete="false" />
-					</h:panelGroup>
-			</p:panelGrid>
-			<br />
-			<div class="SeparatorFull"></div>
-			<p:panelGrid columns="2" layout="grid"
-				styleClass="ui-panelgrid-blank form-group ui-fluid">
-				<p:commandButton id="persistFinalizarNovamente"
-					icon="White fa fa-save" value="Salvar"
-					actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo}"		
-					update="dtRecibos"
-					process="@this,pnConfirmarPagamento"
-					oncomplete="PF('dlgConfirmarPagamanto').hide()"
-					styleClass="GreenButton" />
-				<p:commandButton icon="White fa fa-close" value="Fechar"
-					oncomplete="PF('dlgConfirmarPagamanto').hide()" process="@this"
-					styleClass="NavyButton" />
-			</p:panelGrid>
-			<div class="EmptyBox20"></div>
-		</p:panel>
+		<p:outputPanel id="pnConfirmarPagamento">
+			<p:panel styleClass="BordNone">
+				<p:panelGrid columns="1" layout="grid" 
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<h:outputText value="#{reciboRepasseProfissionalMB.getMensagemAprovacaoRecibo(reciboRepasseProfissionalMB.repasseParaAprovar)}"
+						style="font-weight: bold;" /> 
+				</p:panelGrid>
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<h:panelGroup>
+						<p:outputLabel for="dataRepassar" value="Data de pagamento do Repasse:" />
+						<p:calendar id="dataRepassar" required="true"
+							value="#{reciboRepasseProfissionalMB.dataRepassar}"
+							autocomplete="false" />
+						</h:panelGroup>
+				</p:panelGrid>
+				<br />
+				<div class="SeparatorFull"></div>
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton id="persistFinalizarNovamente"
+						icon="White fa fa-save" value="Salvar"
+						actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo}"		
+						update="dtRecibos"
+						process="@this,pnConfirmarPagamento"
+						oncomplete="PF('dlgConfirmarPagamanto').hide()"
+						styleClass="GreenButton" />
+					<p:commandButton icon="White fa fa-close" value="Fechar"
+						oncomplete="PF('dlgConfirmarPagamanto').hide()" process="@this"
+						styleClass="NavyButton" />
+				</p:panelGrid>
+				<div class="EmptyBox20"></div>
+			</p:panel>
+		</p:outputPanel>
 	</p:dialog>
 							
 						</p:tab>
 
-						<p:tab title="Repasse Antigo">
-
-							<ui:include src="faturamento.xhtml"></ui:include>
-
-						</p:tab>
-
+						<ui:remove>
+							<p:tab title="Repasse Antigo">
+								<ui:include src="faturamento.xhtml"></ui:include>
+							</p:tab>
+						</ui:remove>
 
 
 
