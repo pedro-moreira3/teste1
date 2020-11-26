@@ -74,8 +74,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				<ui:param name="permiteEditarValor" value="S" />
 			</ui:include>
 			<p:remoteCommand name="onCloseMarcacaoPonto" actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
-				process="@this, :lume:tabViewRepasseProfissional:filtrosDiaria"
-				update=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+				process="@this"
+				update=""
 				oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
 		</p:outputPanel>
 
@@ -1352,7 +1352,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
-						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 						process="@this,detalhesNovoRecibo"
 						oncomplete="PF('dtPrincipalRepasseDiaria').filter();"
 						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" />
@@ -1722,8 +1722,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														icon="White fa fa-search" value="Pesquisar"
 														styleClass="OrangeButton"
 														actionListener="#{repasseProfissionalComReciboMB.pesquisarDiaria}"
-														process="@this, :lume:tabViewRepasseProfissional:filtrosDiaria"
-														update=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+														process="@this"
+														update=""
 														oncomplete="PF('dtPrincipalRepasseDiaria').filter();" />
 
 													<h:panelGroup>
@@ -1732,7 +1732,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															styleClass="GreenSplitButton"
 															actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('xls')}"
 															ajax="false"
-															process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+															process=" @this"
 															update="@this" immediate="true"
 															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -1743,7 +1743,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 																icon="fa fa fa-file-pdf-o"
 																actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('pdf')}"
 																ajax="false"
-																process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+																process="@this"
 																immediate="true"
 																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 																<p:fileDownload
@@ -1758,7 +1758,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 												<p:commandButton
 													value="Gerar Recibo das Diárias Selecionados"
-													process="@this, :lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria"
+													process="@this"
 													actionListener="#{repasseProfissionalComReciboMB.prepararReciboDiaria}"
 													update=":lume:gerarReciboPnl" />
 											</p:panelGrid>
