@@ -126,10 +126,10 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         try {
             List<DocumentoEmitido> docs = DocumentoEmitidoSingleton.getInstance().getBo().listAll();
             for(DocumentoEmitido d : docs) {
-                if(d.getDocumentoModelo() != null && d.getTipoDoc() == null) {
-                    d.setTipoDoc(d.getDocumentoModelo().getTipo());
+               // if(d.getDocumentoModelo() != null && d.getTipoDoc() == null) {
+                //    d.setTipoDoc(d.getDocumentoModelo().getTipo());
                     docsEmitidos.add(d);
-                }
+              //  }
             }
             DocumentoEmitidoSingleton.getInstance().getBo().persistBatch(docsEmitidos);
         } catch (Exception e) {
@@ -179,7 +179,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setModelo(r.getReceituarioGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
-                doc.setTipoDoc(domReceita);
+               // doc.setTipoDoc(domReceita);
                 doc.setDataEmissao(r.getDataHora());
                 docsEmitidos.add(doc);
             }
@@ -191,7 +191,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-                doc.setTipoDoc(domAtestado);
+            //    doc.setTipoDoc(domAtestado);
                 docsEmitidos.add(doc);
             }
             
@@ -213,7 +213,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-                doc.setTipoDoc(domExames);
+              // doc.setTipoDoc(domExames);
                 docsEmitidos.add(doc);
             }
             
@@ -224,7 +224,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-                doc.setTipoDoc(domRecibos);
+             //   doc.setTipoDoc(domRecibos);
                 docsEmitidos.add(doc);
             }
             
@@ -235,7 +235,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-                doc.setTipoDoc(domContratos);
+             //   doc.setTipoDoc(domContratos);
                 docsEmitidos.add(doc);
             }
             

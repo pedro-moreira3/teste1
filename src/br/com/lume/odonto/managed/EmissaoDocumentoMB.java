@@ -146,7 +146,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             doc.setProfissionalSelecionado(profissionalSelecionado);
             doc.setDocumentoModelo(modeloSelecionado);
             doc.setModelo(modeloHtml);
-            doc.setTipoDoc(modeloSelecionado.getTipo());
+           // doc.setTipoDoc(modeloSelecionado.getTipo());
             ckEditorEmissao.getValue();
             DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.setEntity(doc);
