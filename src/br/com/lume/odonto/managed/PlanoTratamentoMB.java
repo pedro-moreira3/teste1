@@ -868,6 +868,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionFinalizarSalvar(ActionEvent event) {
         try {
             ptpMudarExecutor.setFinalizadoPorProfissional(profissionalFinalizarNovamente);
+            ptpMudarExecutor.setDentistaExecutor(profissionalFinalizarNovamente);
             calculaRepasse(ptpMudarExecutor);
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptpMudarExecutor);
             PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').hide()");
