@@ -27,6 +27,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hpsf.Array;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
@@ -1476,6 +1477,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.imprimirSemValores = false;
             this.orcamentoSelecionado = orcamento;
             orcamentoSelecionado.setValorPago(getTotalPago());
+            
+            orcamentoSelecionado.getItens().sort((p1,p2) -> {
+                Integer i = p1.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial();
+                return i.compare(i, p2.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial());
+            });
 
             NegociacaoOrcamento negociacaOrcamento = NegociacaoOrcamentoSingleton.getInstance().getBo().getNegociacaoFromOrcamento(orcamentoSelecionado);
             populaDescontos();

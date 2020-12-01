@@ -25,6 +25,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.MessagesManager;
 import br.com.lume.mensagem.MensagemSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Mensagem;
@@ -90,12 +91,10 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
         System.out.println("Response Code : " + responseCode);
     }
 
-    public void testeSendQuick() {
+    public void testeTwilio() {
         try {
-            JSONObject obj = new JSONObject().put("Entry", new JSONObject().put("tar_num", "5541999473590")
-                    .append("tar_msg", "TESTE ENVIO SENDQUICK").append("tar_mode", "text"));
-
-            sendPost("http://18.230.76.168/api/sendsms_json.php", obj.toString());
+            MessagesManager m = MessagesManager.getInstance();
+            m.smsSender();
         } catch (Exception e) {
             e.printStackTrace();
         }
