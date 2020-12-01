@@ -479,7 +479,22 @@
 							</p:dataTable>
 
 						</p:fieldset>
-
+						<p:fieldset legend="Parâmetros do Sistema - Configuração para contas Recorrentes">
+							
+							<h:outputLabel class="fa fa-question" id="tooltipTituloContasRecorretes" 
+							style="position:relative;font-size:20px;padding-left: 400px;top:-36px;" />
+							<p:tooltip for="tooltipTituloContasRecorretes" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'contasRecorrentesTitulo')}" />
+							
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-g-6, ui-g-6"
+								styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="parametroMeses" value="Quantidade de mêses para gerar contas recorrentes: " />
+									<p:inputNumber id="parametroMeses" value="#{cadastroEmpresaMB.entity.quantidadeMesesFaturaRecorrente}" decimalPlaces="0">
+									</p:inputNumber> 
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:fieldset>	
 						<br />
 						<div class="SeparatorFull"></div>
 
@@ -492,7 +507,14 @@
 								styleClass="GreenButton" />
 						</p:panelGrid>
 
-						<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
+					
+					</p:outputPanel>
+
+				</div>
+			</div>
+		</div>
+		
+			<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
 							resizable="false" modal="true" responsive="true" appendTo=":lume"
 							width="600" header="Configuração de desconto">
 
@@ -541,12 +563,7 @@
 							</p:outputPanel>
 
 						</p:dialog>
-
-					</p:outputPanel>
-
-				</div>
-			</div>
-		</div>
+		
 
 	</ui:define>
 </ui:composition>

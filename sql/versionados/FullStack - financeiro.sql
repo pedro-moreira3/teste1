@@ -49,3 +49,11 @@ LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES = 'Pagamentos/Recebimentos';
 
+alter table TARIFA add column FORMA_PAGAMENTO char(1) default 'R'
+
+alter table LANCAMENTO_CONTABIL add column DESCRICAO varchar(200);
+
+alter table LANCAMENTO_CONTABIL add column OBSERVACAO varchar(200);
+
+
+

@@ -513,7 +513,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         carregarEspecialidadesSelecionadas();
     }
 
- public void actionInativar(ActionEvent event) {
+    public void actionInativar(ActionEvent event) {
         try {
             
             this.getEntity().setStatus(Status.INATIVO);    
@@ -536,15 +536,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionAtivar(ActionEvent event) {
         try {
-            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), this.getEntity().getDadosBasico().getEmail(),
-                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setJustificativa(null);
             this.getEntity().setStatus(Status.ATIVO);
             this.actionPersist(event);
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
-        }catch (UsuarioDuplicadoException e) {
-            e.printStackTrace();
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "O email cadastrado já está em uso.");
         } catch (Exception e) {
             e.printStackTrace();
         }

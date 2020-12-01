@@ -60,11 +60,18 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
         carregarEmpresa();
+        this.descontoSelecionado = new DescontoOrcamento();
     }
 
     @Override
     public void actionPersist(ActionEvent event) {
         try {
+            
+            if( this.getEntity().getQuantidadeMesesFaturaRecorrente() < 1) {
+                this.addError("Para contas recorrentes, o mínimo de mêses é 1.", "");
+                return;
+            }
+            
             // TODO Auto-generated method stub
 
             if(verificarRangeData()) {
@@ -80,7 +87,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
                 UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
                 menuMB.carregarMenu();
 
-                this.addInfo("Sucesso", "Dados salvos com sucesso!");
+               // this.addInfo("Sucesso", "Dados salvos com sucesso!");
             }
             
         } catch (Exception e) {
@@ -159,8 +166,13 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     }
     
     public String formatarDesconto(DescontoOrcamento desconto) {
-        int i = (int) desconto.getDesconto().doubleValue();
-        return String.valueOf(i)+"%";
+        if(desconto != null && desconto.getDesconto() != null) {
+            int i = (int) desconto.getDesconto().doubleValue();
+            return String.valueOf(i)+"%";    
+        }
+        
+        return "0%";    
+        
     }
     
     public void handleFotoUpload(FileUploadEvent event) {

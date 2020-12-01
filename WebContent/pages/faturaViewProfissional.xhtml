@@ -47,12 +47,12 @@ body .sideChkBox .ui-chkbox-label {
 
 	<ui:include src="ptpCustoDireto.xhtml	" />
 
-	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
+	<p:dialog id="faturaViewProf" appendTo=":lume" widgetVar="dlgFaturaViewProfissional"
 		responsive="true" modal="true"
-		onHide="PF('dlgFaturaView').toggleMaximize();onCloseFaturaView();"
-		onShow="PF('dlgFaturaView').toggleMaximize();">
+		onHide="PF('dlgFaturaViewProfissional').toggleMaximize();onCloseFaturaView();"
+		onShow="PF('dlgFaturaViewProfissional').toggleMaximize();">
 		<f:facet name="header">
-			<p:outputPanel id="pnlfaturaViewHeader">
+			<p:outputPanel id="pnlfaturaViewProfHeader">
 				<h:outputText
 					value="Visualização da Fatura - #{faturaPagtoMB.entity.dataCriacaoStr}" />
 			</p:outputPanel>
@@ -61,7 +61,7 @@ body .sideChkBox .ui-chkbox-label {
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
-				<p:outputPanel id="pnlfaturaView">
+				<p:outputPanel id="pnlfaturaViewProf">
 					<div class="ui-g ui-fluid">
 						<div class="ui-g-12 ui-lg-12">
 							<p:panelGrid columns="4" layout="grid"
@@ -78,8 +78,8 @@ body .sideChkBox .ui-chkbox-label {
 								<p:inputText id="planoTratamentoFatura" readonly="true"
 									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.descricao}" />
 
-								<h:outputText for="dataCriacao" value="Data Criação:" />
-								<p:inputText id="dataCriacao"
+								<h:outputText for="dataCriacaoProf" value="Data Criação:" />
+								<p:inputText id="dataCriacaoProf"
 									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
 
 								<h:outputText for="pacienteFaturaOrigem"
@@ -101,25 +101,25 @@ body .sideChkBox .ui-chkbox-label {
 
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
-								<p:panel id="valorTotal" header="Valor Total">
+								<p:panel id="valorTotalProf" header="Valor Total">
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalFatura}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorPago" header="Valor Pago">
+								<p:panel id="valorPagoProf" header="Valor Pago">
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalPago}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorNaoPago" header="Valor Não Pago">
+								<p:panel id="valorNaoPagoProf" header="Valor Não Pago">
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPago}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorNaoPlanejado" header="Valor Não Planejado">
+								<p:panel id="valorNaoPlanejadoProf" header="Valor Não Planejado">
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -186,14 +186,14 @@ body .sideChkBox .ui-chkbox-label {
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
 									itemLabel="Mostrar lançamentos cancelados."
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
-									<p:ajax process="@this" update="lancamentosFatura" />
+									<p:ajax process="@this" update="lancamentosFaturaProf" />
 								</p:selectBooleanCheckbox>
 							</p:panel>
 							<br />
 							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 								value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
-								id="lancamentosFatura">
+								id="lancamentosFaturaProf">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 
 								<p:column styleClass="cabecalho" width="10%"
@@ -256,7 +256,7 @@ body .sideChkBox .ui-chkbox-label {
 				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>
-		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
+		<p:panelGrid columns="4" layout="grid" id="buttonViewFaturaProf"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
@@ -267,12 +267,12 @@ body .sideChkBox .ui-chkbox-label {
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
 				styleClass="NavyButton" process="@this"
 				oncomplete="PF('dlgPrintFatura').show()"
-				update="@parent:@parent:faturaInclude" />
+				update="@parent:@parent:faturaIncludeProf" />
 			<p:column
 				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
 			<p:column />
 			<p:commandButton value="Fechar" icon="fa fa-close"
-				styleClass="NavyButton" oncomplete="PF('dlgFaturaView').hide()"
+				styleClass="NavyButton" oncomplete="PF('dlgFaturaViewProfissional').hide()"
 				process="@this" />
 		</p:panelGrid>
 	</p:dialog>
@@ -284,8 +284,8 @@ body .sideChkBox .ui-chkbox-label {
 			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 	</p:confirmDialog>
 
-	<p:outputPanel id="faturaInclude">
-		<ui:include src="/templates/faturaImpressao.xhtml">
+	<p:outputPanel id="faturaIncludeProf">
+		<ui:include src="/templates/faturaImpressaoProf.xhtml">
 			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
 			<ui:param name="show"
 				value="#{faturaPagtoMB.showLancamentosCancelados}" />
