@@ -36,6 +36,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -1289,7 +1290,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
             if (existeCadastroTarifa()) {
                 setTarifasNewPlanejamento(
-                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO));
                 return true;
             } else {
                 getPlanejamentoAtual().setnParcela(1);

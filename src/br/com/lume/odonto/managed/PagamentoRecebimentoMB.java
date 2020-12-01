@@ -123,7 +123,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         try {
 
-            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber.doubleValue(), new BigDecimal(0),
+            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber, new BigDecimal(0),
                     motivoRecebimento);
 
             if (this.faturaRecebimento != null) {
@@ -171,7 +171,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         try {
 
-            item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivo.getDescricao(), SALDO.ENTRADA, valorPagar.doubleValue(), new BigDecimal(0), motivo);
+            item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivo.getDescricao(), SALDO.ENTRADA, valorPagar, new BigDecimal(0), motivo);
 
             if (this.fornecedorSelecionado.getSexo() != null) {
 
