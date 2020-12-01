@@ -17,12 +17,12 @@
 		</repository>
 	</repositories>
 	<dependencies>
-	<!-- https://mvnrepository.com/artifact/org.codehaus.jettison/jettison -->
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jettison/jettison -->
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
 			<version>1.4.0</version>
-		</dependency>	
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -37,6 +37,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/lumeerp.jar</systemPath>
 		</dependency>
+
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>8.3.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/javax.faces/javax.faces-api -->
 		<dependency>
 			<groupId>javax.faces</groupId>
