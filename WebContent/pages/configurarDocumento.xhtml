@@ -148,10 +148,10 @@
 
 							<p:column headerText="Ações">
 								<p:commandButton id="btnView" styleClass="NavyButton"
-									icon="White fa fa-eye"
+									icon="White fa fa-eye" title="Editar"
 									actionListener="#{documentoMB.carregarDocumento(documento)}"
 									oncomplete="PF('dlgNovoDocumento').show();"
-									update=":lume:dlgNovoDocumento,:lume:editor,:lume:pnPrincipalDocumento" process="@this" />
+									update=":lume:dlgNovoDocumento,:lume:editor,:lume:pnPrincipalDocumento,:lume:pnEditor" process="@this,lume:pnPrincipalDocumento" />
 
 								<h:panelGroup rendered="#{documento.isAtivo()}">
 									<p:commandButton id="persistInativar"
