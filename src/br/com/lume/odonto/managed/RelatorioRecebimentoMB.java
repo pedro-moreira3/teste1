@@ -17,6 +17,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
@@ -122,7 +123,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     public void geraListaTarifa() {
         try {
-            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.RECEBIMENTO));
             if (this.getTarifas() != null)
                 Collections.sort(this.getTarifas());
         } catch (Exception e) {

@@ -14,11 +14,14 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
@@ -36,9 +39,9 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     private String periodoCredito;
     private Date dataCreditoInicial;
     private Date dataCreditoFinal;
-    private String statusCredito = "N";
-    private Paciente filtroPorPaciente;
+    private String statusCredito = "N";    
     private Tarifa formaPagamento;
+    private DadosBasico dadosBasico;
     private List<Lancamento> lancamentosSelecionadosConferencia = new ArrayList<Lancamento>();
     private BigDecimal somatorioValorConferirConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorConferidoConferencia = new BigDecimal(0);
@@ -71,7 +74,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
 
-            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), getFormaPagamento(),
+            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicos(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList() != null) {
                 getEntityList().forEach(lancamento -> {
@@ -100,7 +103,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void geraListaTarifa() {
         try {
-            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.AMBOS));
             if (this.getTarifas() != null)
                 Collections.sort(this.getTarifas());
         } catch (Exception e) {
@@ -291,6 +294,17 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         else
             return "Validado com erro";
     }
+    
+    public String origemDestinoLancamento(Lancamento l) {
+        if(l.getFatura().getPaciente() != null) {
+            return l.getFatura().getPaciente().getDadosBasico().getNome();
+        }
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(l);
+        if(lc != null){
+            return lc.getDadosBasico().getNome();
+        }       
+        return "";
+    }
 
     public void exportarTabelaConferencia(String type) {
         exportarTabela("Conferência de recebimentos", getTabelaLancamentoConferencia(), type);
@@ -334,14 +348,6 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void setStatusCredito(String statusCredito) {
         this.statusCredito = statusCredito;
-    }
-
-    public Paciente getFiltroPorPaciente() {
-        return filtroPorPaciente;
-    }
-
-    public void setFiltroPorPaciente(Paciente filtroPorPaciente) {
-        this.filtroPorPaciente = filtroPorPaciente;
     }
 
     public List<Lancamento> getLancamentosSelecionadosConferencia() {
@@ -398,6 +404,16 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void setTarifas(List<Tarifa> tarifas) {
         this.tarifas = tarifas;
+    }
+
+    
+    public DadosBasico getDadosBasico() {
+        return dadosBasico;
+    }
+
+    
+    public void setDadosBasico(DadosBasico dadosBasico) {
+        this.dadosBasico = dadosBasico;
     }
 
 }

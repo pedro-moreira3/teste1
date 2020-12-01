@@ -23,6 +23,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -264,7 +265,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     public void atualizaProduto() {
         if (formaPagamento.equals("CC") || formaPagamento.equals("CD") || formaPagamento.equals("BO")) {
-            tarifas = TarifaSingleton.getInstance().getBo().listByForma(formaPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            tarifas = TarifaSingleton.getInstance().getBo().listByForma(formaPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.RECEBIMENTO);
             produto = true;
         } else {
             if (this.getEntity().getDataPagamento() == null) {
