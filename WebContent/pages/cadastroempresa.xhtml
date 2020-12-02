@@ -15,6 +15,56 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
+<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
+							resizable="false" modal="true" responsive="true" appendTo=":lume"
+							width="600" header="Configuração de desconto">
+
+							<p:outputPanel id="pnDesconto">
+								<p:fieldset collapsed="false" toggleable="false">
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+										style="border:0px none; background-color:transparent;">
+										<p:outputPanel>		
+											<p:outputLabel value="Quantidade máxima de parcelas:" />
+											<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'quantidadeParcelas')}" />
+										</p:outputPanel>		
+										<h:panelGroup>
+											<p:inputNumber id="quantidadeParcelas"
+												value="#{cadastroEmpresaMB.descontoSelecionado.quantidadeParcelas}"
+												decimalPlaces="0">
+											</p:inputNumber>
+										</h:panelGroup>
+										<p:outputPanel>		
+											<p:outputLabel value="Desconto máximo permitido:" />
+											<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoMaximo')}" />
+										</p:outputPanel>	
+										<h:panelGroup>
+											<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
+												value="#{cadastroEmpresaMB.descontoSelecionado.desconto}" decimalPlaces="0">
+											</p:inputNumber>
+										</h:panelGroup>
+
+										<p:commandButton id="btnSalvarDesconto" value="Salvar"
+											styleClass="GreenButton" icon="White fa fa-save"
+											actionListener="#{cadastroEmpresaMB.cadastrarDesconto}"
+											update=":lume:pnEmpresaDescontos,:lume:dtDescontos,pnDesconto"
+											oncomplete="PF('dlgDesconto').hide();PF('dtDescontos').filter();"
+											process="quantidadeParcelas, descontoEmpresa, @this">
+										</p:commandButton>
+										<p:commandButton id="btnFcharDesconto" value="Fechar"
+											styleClass="NavyButton" icon="White fa fa-close"
+											actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(null)}"
+											update="pnDesconto, dlgDesconto" oncomplete="PF('dlgDesconto').hide();"
+											process="@this">
+										</p:commandButton>
+									</p:panelGrid>
+								</p:fieldset>
+							</p:outputPanel>
+
+						</p:dialog>
+
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 						<h1>Cadastro da Clínica</h1>
 						<div class="SeparatorFull"></div>
@@ -492,55 +542,7 @@
 								styleClass="GreenButton" />
 						</p:panelGrid>
 
-						<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
-							resizable="false" modal="true" responsive="true" appendTo=":lume"
-							width="600" header="Configuração de desconto">
-
-							<p:outputPanel id="pnDesconto">
-								<p:fieldset collapsed="false" toggleable="false">
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-										style="border:0px none; background-color:transparent;">
-										<p:outputPanel>		
-											<p:outputLabel value="Quantidade máxima de parcelas:" />
-											<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
-											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'quantidadeParcelas')}" />
-										</p:outputPanel>		
-										<h:panelGroup>
-											<p:inputNumber id="quantidadeParcelas"
-												value="#{cadastroEmpresaMB.descontoSelecionado.quantidadeParcelas}"
-												decimalPlaces="0">
-											</p:inputNumber>
-										</h:panelGroup>
-										<p:outputPanel>		
-											<p:outputLabel value="Desconto máximo permitido:" />
-											<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
-											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoMaximo')}" />
-										</p:outputPanel>	
-										<h:panelGroup>
-											<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
-												value="#{cadastroEmpresaMB.descontoSelecionado.desconto}" decimalPlaces="0">
-											</p:inputNumber>
-										</h:panelGroup>
-
-										<p:commandButton id="btnSalvarDesconto" value="Salvar"
-											styleClass="GreenButton" icon="White fa fa-save"
-											actionListener="#{cadastroEmpresaMB.cadastrarDesconto}"
-											update=":lume:pnEmpresaDescontos,:lume:dtDescontos,pnDesconto"
-											oncomplete="PF('dlgDesconto').hide();PF('dtDescontos').filter();"
-											process="quantidadeParcelas, descontoEmpresa, @this">
-										</p:commandButton>
-										<p:commandButton id="btnFcharDesconto" value="Fechar"
-											styleClass="NavyButton" icon="White fa fa-close"
-											actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(null)}"
-											update="pnDesconto, dlgDesconto" oncomplete="PF('dlgDesconto').hide();"
-											process="@this">
-										</p:commandButton>
-									</p:panelGrid>
-								</p:fieldset>
-							</p:outputPanel>
-
-						</p:dialog>
+						
 
 					</p:outputPanel>
 
