@@ -91,6 +91,7 @@ public class MarcacaoPontoMB extends LumeManagedBean<ProfissionalDiaria> {
                 getEntity().setDataAlteracao(new Date());
                 getEntity().setProfissionalAlteracao(UtilsFrontEnd.getProfissionalLogado());
             }
+            getEntity().setValorDiaria(getEntity().calculaValorDiaria());
 
             ProfissionalDiariaSingleton.getInstance().getBo().persist(getEntity());
             setEntity(null);
