@@ -359,20 +359,20 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 dadosBasicos.add(f.getDadosBasico());
             }
 
-            if ("Pagar".equals(tipo)) {
-                List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-                for (Profissional f : profissionais) {
-                    f.getDadosBasico().setTipoInformacao("Profissional");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
+            // if ("Pagar".equals(tipo)) {
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            for (Profissional f : profissionais) {
+                f.getDadosBasico().setTipoInformacao("Profissional");
+                dadosBasicos.add(f.getDadosBasico());
             }
-            if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
-                for (Paciente f : pacientes) {
-                    f.getDadosBasico().setTipoInformacao("Paciente");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
+            // }
+            //  if ("Receber".equals(tipo)) {
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
+            for (Paciente f : pacientes) {
+                f.getDadosBasico().setTipoInformacao("Paciente");
+                dadosBasicos.add(f.getDadosBasico());
             }
+            //  }
 
             List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             for (Convenio f : convenios) {
@@ -413,7 +413,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 this.tipo = "Receber";
             }
             if (faturaItem.getDescricaoItem() != null) {
-                lc.setDescricao(  faturaItem.getDescricaoItem().replace(lc.getMotivo().getDescricao() + " - ", ""));
+                lc.setDescricao(faturaItem.getDescricaoItem().replace(lc.getMotivo().getDescricao() + " - ", ""));
             }
             setEntity(lc);
 
@@ -426,7 +426,23 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("Erro no actionRemove", e);
+            log.error("Erro no actionEditar", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+        }
+    }
+
+  
+    public void actionRemove(LancamentoContabil lc) {
+        try {
+            if(lc.getLancamento() != null) {
+                FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
+                geraLista();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
+   
+            }else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");  
+            }            
+        } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
     }
@@ -483,10 +499,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 } else {
                     tipoSaldo = SALDO.ENTRADA;
                 }
-            //    getEntity().setDescricao(descricaoFatura(getEntity()));
+                //    getEntity().setDescricao(descricaoFatura(getEntity()));
                 super.actionPersist(event);
-                FaturaItem fiAtualizada = FaturaItemSingleton.getInstance().atualizaItemFaturaGenerica(faturaItem, descricaoFatura(getEntity()), tipoSaldo, this.getEntity().getValor(), new BigDecimal(0),
-                        this.getEntity().getMotivo());
+                FaturaItem fiAtualizada = FaturaItemSingleton.getInstance().atualizaItemFaturaGenerica(faturaItem, descricaoFatura(getEntity()), tipoSaldo, this.getEntity().getValor(),
+                        new BigDecimal(0), this.getEntity().getMotivo());
                 FaturaItemSingleton.getInstance().getBo().persist(fiAtualizada);
             } catch (Exception e) {
                 e.printStackTrace();

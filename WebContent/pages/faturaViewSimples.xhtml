@@ -142,7 +142,7 @@ body .height31 input {
 													decimalSeparator="," symbol="R$ " thousandSeparator="." />
 											</h:panelGroup>
 											
-											<p:outputLabel for="descricaoEditar" value="DescriÃ§Ã£o : " />
+											<p:outputLabel for="descricaoEditar" value="Descrição : " />
 											<h:panelGroup styleClass="lumeField">
 												<p:inputText id="descricaoEditar"
 													value="#{faturaPagtoMB.lancamentoContabilEditarItem.descricao}"
@@ -175,7 +175,7 @@ body .height31 input {
 						</p:dialog>
 		
 
-	<p:dialog widgetVar="dlgNewLancamento" header="Novo LanÃ§amento"
+	<p:dialog widgetVar="dlgNewLancamento" header="Novo Lançamento"
 		responsive="true" modal="true" appendTo=":lume">
 		<p:ajax event="close" resetValues="true" update="pnlNewLancamentoSimples" />
 		<div class="ui-g ui-fluid">
@@ -240,7 +240,7 @@ body .height31 input {
 						<p:message for="dataPagamentoSimples" styleClass="msg" />
 					</h:panelGroup>
 					<h:panelGroup styleClass="lumeField">
-						<p:outputLabel for="dataCreditoSimples" value="Data de CrÃ©dito:" />
+						<p:outputLabel for="dataCreditoSimples" value="Data de Crédito:" />
 						<p:calendar id="dataCreditoSimples" value="#{faturaPagtoMB.dataCredito}"
 							pattern="dd/MM/yyyy" showWeeksBar="false"
 							locale="#{lumeSecurity.locale}"
@@ -261,7 +261,7 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgAjusteLancamento" header="Ajustar lanÃ§amento"
+	<p:dialog widgetVar="dlgAjusteLancamento" header="Ajustar lançamento"
 		responsive="true" modal="true" appendTo=":lume" width="700px">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -324,7 +324,7 @@ body .height31 input {
 								<p:ajax event="dateSelect" process="@this"/>
 							</p:calendar>
 							<p:outputLabel for="ajustarLancamentoDataCreditoSimples"
-								value="Data de CrÃ©dito:" />
+								value="Data de Crédito:" />
 							<p:message for="ajustarLancamentoDataCreditoSimples" styleClass="msg" />
 						</h:panelGroup>
 
@@ -349,7 +349,7 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgNovoLancamento" header="Novo LanÃ§amento"
+	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
 		responsive="true" modal="true" appendTo=":lume" width="70%"
 		height="80%">
 		<div class="ui-g ui-fluid">
@@ -479,7 +479,7 @@ body .height31 input {
 											oncomplete="novoLancamentoRefazCalculos()" />
 									</p:calendar>
 									<p:outputLabel for="novoLancamentoDataCreditoSimples"
-										value="Data de CrÃ©dito:" />
+										value="Data de Crédito:" />
 									<p:message for="novoLancamentoDataCreditoSimples" styleClass="msg" />
 								</h:panelGroup>
 
@@ -547,7 +547,7 @@ body .height31 input {
 							</p:column>
 							<p:column filterBy="#{parcela.dataCredito}"
 								sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
-								headerText="Data de CrÃ©dito">
+								headerText="Data de Crédito">
 								<h:outputText value="#{parcela.dataCredito}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
@@ -575,7 +575,7 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgEditarLancamento" header="Editar LanÃ§amento"
+	<p:dialog widgetVar="dlgEditarLancamento" header="Editar Lançamento"
 		responsive="true" modal="true" appendTo=":lume" width="700px">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -625,7 +625,7 @@ body .height31 input {
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
 							<p:outputLabel for="editarLancamentoDataCreditoSimples"
-								value="Data de CrÃ©dito:" />
+								value="Data de Crédito:" />
 							<p:message for="editarLancamentoDataCreditoSimples" styleClass="msg" />
 						</h:panelGroup>
 						
@@ -671,7 +671,7 @@ body .height31 input {
 		<f:facet name="header">
 			<p:outputPanel id="pnlfaturaViewHeaderSimples">
 				<h:outputText
-					value="VisualizaÃ§Ã£o da Fatura - #{faturaPagtoMB.entity.dataCriacaoStr}" />
+					value="Visualização da Fatura - #{faturaPagtoMB.entity.dataCriacaoStr}" />
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel
@@ -695,7 +695,7 @@ body .height31 input {
 									value="#{faturaPagtoMB.origem.nome}"
 									readonly="true" />
 
-								<h:outputText for="dataCriacaoSimples" value="Data CriaÃ§Ã£o:" />
+								<h:outputText for="dataCriacaoSimples" value="Data Criação:" />
 								<p:inputText id="dataCriacaoSimples"
 									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
 
@@ -736,24 +736,26 @@ body .height31 input {
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
 
-								<p:column headerText="AÃ§Ãµes" width="50" exportable="false"									
+								<p:column headerText="Ações" width="50" exportable="false"									
 								rendered="true">
 									
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
-										title="Editar"									
+										title="Editar"	disabled="#{fi.fatura.statusFatura.rotulo eq 'PA' or fi.fatura.statusFatura.rotulo eq 'C'}"								
 										update=":lume:pnEditarPagamentoRecebimento"
 										actionListener="#{faturaPagtoMB.actionEditarItem(fi)}"
 										onsuccess="PF('dlgEditarPagamentoRecebimento').show()" process="@this"
 										>
 									</p:commandButton>
 									
+			
+								
 								
 	                
 								</p:column>
 								
 								<p:column sortBy="#{fi.descricaoItem}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
-									headerText="DescriÃ§Ã£o">
+									headerText="Descrição">
 									<h:outputText value="#{fi.descricaoItem}" style="float:left" />
 								</p:column>
 
@@ -774,13 +776,13 @@ body .height31 input {
 
 							<p:panel>
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
-									itemLabel="Mostrar lanÃ§amentos cancelados."
+									itemLabel="Mostrar lançamentos cancelados."
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
 									<p:ajax process="@this" update="lancamentosFaturaSimples" />
 								</p:selectBooleanCheckbox>
 								
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
-									itemLabel="Mostrar lanÃ§amentos de estorno."
+									itemLabel="Mostrar lançamentos de estorno."
 									value="#{faturaPagtoMB.showLancamentosEstorno}">
 									<p:ajax process="@this" update="lancamentosFaturaSimples" />
 								</p:selectBooleanCheckbox>
@@ -790,21 +792,21 @@ body .height31 input {
 								value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
 								id="lancamentosFaturaSimples">
-								<f:facet name="header">LanÃ§amentos da Fatura</f:facet>
+								<f:facet name="header">Lançamentos da Fatura</f:facet>
 
-								<p:column headerText="AÃ§Ãµes" width="50" exportable="false"
+								<p:column headerText="Ações" width="50" exportable="false"
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
-										title="Cancelar lanÃ§amento"
+										title="Cancelar lançamento"
 										disabled="#{!l.ativo or l.validado != 'N'}"
 										update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento and l.lancamentoExtornado == 'N'}">
-										<p:confirm header="ConfirmaÃ§Ã£o" icon="ui-icon-alert"
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
-											message="VocÃª tem certeza que deseja cancelar este lanÃ§amento? &lt;br/&gt; &lt;b&gt;Se jÃ¡ foi confirmado&lt;/b&gt;, o saldo ficarÃ¡ disponÃ­vel na &lt;b&gt;conta do paciente&lt;/b&gt;.">
+											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se jÃ¡ foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="NavyButton"
@@ -817,7 +819,7 @@ body .height31 input {
 									</p:commandButton>
 									
 										<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
-										title="Editar lanÃ§amento"
+										title="Editar lançamento"
 										disabled="#{!l.ativo or l.validado != 'N'}"
 										update=":lume:pnlEditarLancamentoSimples,:lume:editarLancamentoFormaPagamentoSimples"
 										actionListener="#{faturaPagtoMB.actionStartEditarLancamento(l)}"
@@ -867,18 +869,18 @@ body .height31 input {
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.dataCreditoStr}" filterMatchMode="contains"
 									width="10%" filterBy="#{l.dataCreditoStr}"
-									headerText="Data de CrÃ©dito"
+									headerText="Data de Crédito"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
-									sortBy="#{(l.validado == 'S' ? 'Sim' : 'NÃ£o')}" width="5%"
+									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
 									filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterBy="#{(l.validado == 'S' ? 'Sim' : 'NÃ£o')}"
+									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									headerText="Conferido?">
-									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'NÃ£o')}" />
+									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
@@ -906,13 +908,13 @@ body .height31 input {
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFaturaSimples"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton value="Novo LanÃ§amento" icon="fa fa-gear"
+			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="@parent:pnlNovoLancamentoSimples,novoLancamentoParcelasTableSimples"
 				styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"				
 				actionListener="#{faturaPagtoMB.actionNovoLancamentoNew}"
 				oncomplete="PF('dlgNovoLancamento').show();PF('dtnovoLancamentoParcelasTableSimples').filter()" />		
-			<p:commandButton value="Visualizar ImpressÃ£o" icon="fa fa-print"
+			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
 				styleClass="NavyButton" process="@this"
 				oncomplete="PF('dlgPrintFatura').show()"
 				update="" />
@@ -929,7 +931,7 @@ body .height31 input {
 	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 		<p:commandButton value="Sim" type="button"
 			styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-		<p:commandButton value="NÃ£o" type="button"
+		<p:commandButton value="Não" type="button"
 			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 	</p:confirmDialog>
 

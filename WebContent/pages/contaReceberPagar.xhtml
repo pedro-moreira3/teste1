@@ -285,11 +285,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												
 												<p:commandButton 
 												
-												actionListener="#{lancamentoContabilMB.actionRemove}"
+												actionListener="#{lancamentoContabilMB.actionRemove(lc)}"
 												update=":lume:pnNovoPagamentoRecebimento,:lume:tv:dtLancamentoContabil"
 												process="@this"
 												title="Cancelar lançamento"
-												disabled="#{lc.id == 0 or lc.lancamento != null}"
+												disabled="#{lc.lancamento.fatura.tipoFatura.rotulo eq 'PP'}"
 												styleClass="RedButton" icon="fa fa-trash" >
 													<p:confirm header="Confirmação" icon="ui-icon-alert"
 																escape="false"

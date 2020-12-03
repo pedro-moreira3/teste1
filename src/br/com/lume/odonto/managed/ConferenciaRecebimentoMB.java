@@ -12,14 +12,17 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
@@ -100,6 +103,12 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public void onTabChange(TabChangeEvent event) {    
+        if (event.getTab().getId().contains("tab2")) {
+            carregarLancamentosConferencia();
+        }
+    }
 
     public void geraListaTarifa() {
         try {
@@ -111,6 +120,34 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             e.printStackTrace();
         }
+    }
+    
+    //para que o valor da fatura seja editavel, somente se existir somente um lancamento na fatura e se ela for generica.
+    public boolean faturaEditavel(Lancamento lancamento) {
+        if (!lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO) && !lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)) {
+            return false;
+
+        } else if (lancamento.getFatura().getLancamentosFiltered().size() == 1 && lancamento.getFatura().getItens().size() == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public void alteraFaturaListener(Lancamento lancamento) {       
+        try {
+            List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+            lancamento.setFormaPagamento(lancamento.getTarifa().getTipo());
+            lancamentos.add(lancamento);
+            LancamentoSingleton.getInstance().getBo().persist(lancamento);
+            Fatura fatura = lancamento.getFatura();
+            fatura.setLancamentos(lancamentos);      
+            FaturaSingleton.getInstance().ajustarFaturaGenerica(fatura, UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            e.printStackTrace();
+        }
+
     }
 
     public void validarLancamentosSelecionados() {
@@ -259,31 +296,31 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         }
     }
 
-    public BigDecimal valorConferir(Lancamento lc) {
-        if (lc.getValidadoPorProfissional() != null) {
+    public BigDecimal valorConferir(Lancamento l) {
+        if (l.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
         }
-        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return lc.getValor();
+        if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return l.getValor();
         }
-        return lc.getValorComDesconto();
+        return l.getValorComDesconto();
     }
 
-    public BigDecimal valorConferido(Lancamento lc) {
-        if (lc.getValidadoPorProfissional() != null) {
-            if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-                return lc.getValor();
+    public BigDecimal valorConferido(Lancamento l) {
+        if (l.getValidadoPorProfissional() != null) {
+            if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return l.getValor();
             }
-            return lc.getValorComDesconto();
+            return l.getValorComDesconto();
         }
         return new BigDecimal(0);
     }
 
-    public BigDecimal valorTotal(Lancamento lc) {
-        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return lc.getValor();
+    public BigDecimal valorTotal(Lancamento l) {
+        if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return l.getValor();
         }
-        return lc.getValorComDesconto();
+        return l.getValorComDesconto();
     }
 
     public String statusLancamentoConferencia(Lancamento lc) {
@@ -296,13 +333,23 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     }
     
     public String origemDestinoLancamento(Lancamento l) {
-        if(l.getFatura().getPaciente() != null) {
+        if (l.getFatura().getPaciente() != null) {
             return l.getFatura().getPaciente().getDadosBasico().getNome();
         }
+        if (l.getFatura().getOrigem() != null) {
+            return l.getFatura().getOrigem().getDadosBasico().getNome();
+        }
+        if (l.getFatura().getFornecedor() != null) {
+            return l.getFatura().getFornecedor().getDadosBasico().getNome();
+        }
+        if (l.getFatura().getProfissional() != null) {
+            return l.getFatura().getProfissional().getDadosBasico().getNome();
+        }
+        
         LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(l);
-        if(lc != null){
+        if (lc != null) {
             return lc.getDadosBasico().getNome();
-        }       
+        }
         return "";
     }
 
