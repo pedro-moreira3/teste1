@@ -644,11 +644,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     } else {
                         valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
                     }
-
-                    if (repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null) {
-                        valorProcedimento = repasse.getFaturaItem().getValorComDesconto();
-                    } else {
-                        valorProcedimento = ptp.getProcedimento().getValor();
+                    
+                    if(ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                        valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
+                    }else if(ptp != null && ptp.getProcedimento() != null) {
+                        valorProcedimento = ptp.getProcedimento().getValor();  
+                    }else {
+                        if (repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null) {
+                            valorProcedimento = repasse.getFaturaItem().getValorComDesconto();
+                        }      
                     }
 
                     repasseFatura = repasse.getRepasseFaturas();
@@ -851,6 +855,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         } else {
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
+                           
                             addError("Cálculo", "Cálculo disponível somente após pagamento do paciente.");
                             return;
                         }
