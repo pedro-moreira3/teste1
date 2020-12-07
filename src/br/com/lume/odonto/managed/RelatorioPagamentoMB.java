@@ -116,12 +116,12 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
                 //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
                 //}
             }
-            for (int i = 0; i < origens.size(); i++) {
+          //  for (int i = 0; i < origens.size(); i++) {
               //  if (i < origens.size()) {
-                    itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
+                //    itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
               //  }// else {
                 //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-            } 
+          //  } 
 
             for (int i = 0; i < profissionais.size(); i++) {
                 if (profissionais.get(i).getDadosBasico() != null) {

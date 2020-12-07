@@ -292,6 +292,13 @@ hr.hrSaldo {
 			update="dtLancamentosConferir,dtFaturas,dtLancamentosPendentes" />
 	</p:outputPanel>
 
+	<p:outputPanel id="viewFaturaSimples">
+			<ui:include src="faturaViewSimples.xhtml">
+				<ui:param name="showNewLancamento" value="S" />
+			</ui:include>
+			<p:remoteCommand process="@this" name="onCloseFaturaView"/>
+	</p:outputPanel>	
+
 	<p:outputPanel id="resumoFinanceiro">
 		<p:outputPanel styleClass="BordNone">
 			<h1>
@@ -417,8 +424,22 @@ hr.hrSaldo {
 					<p:commandButton icon="fa fa-eye" process="@this"
 						actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+						rendered="#{lc.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						title="Visualizar Fatura" />
+					
+						
+							<p:commandButton icon="fa fa-eye" process="@this"
+												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
+												update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
+												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
+												title="Visualizar Fatura" rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+												lc.fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
+												}"											
+												/>	
+						
+						
+						
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
 					sortBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
@@ -500,7 +521,18 @@ hr.hrSaldo {
 						actionListener="#{faturaPagtoMB.visualizaFatura(fatura)}"
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
+						rendered="#{fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
 						title="Visualizar Fatura" />
+						
+							<p:commandButton icon="fa fa-eye" process="@this"
+												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(fatura)}"
+												update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
+												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
+												title="Visualizar Fatura" rendered="#{fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+												fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
+												}"											
+												/>
+						
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"
 					sortBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"

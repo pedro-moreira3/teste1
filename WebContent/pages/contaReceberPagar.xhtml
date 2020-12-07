@@ -274,7 +274,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 														update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
 												
 												<p:commandButton icon="fa fa-eye" process="@this"
-												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc)}"
+												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.lancamento.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
 												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
 												title="Visualizar Fatura" rendered="#{lc.lancamento.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
@@ -552,7 +552,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												
 												
 												<p:commandButton icon="fa fa-eye" process="@this"
-												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc)}"
+												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
 												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
 												title="Visualizar Fatura" rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
@@ -853,7 +853,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank form-group ui-fluid"
 											columnClasses="ui-g-2,ui-g-10">
-											<p:outputLabel for="forma" value="Forma : "/>
+											<p:outputLabel for="forma" value="Forma: "/>
 											<p:selectOneRadio id="forma" 
 												value="#{lancamentoContabilMB.tipo}">
 												<p:ajax process="@this"
@@ -899,7 +899,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													<h:panelGroup styleClass="lumeField">
 														<p:outputLabel for="nomeOrigem" value="Nome : " />
 														<p:inputText id="nomeOrigem"
-															value="#{lancamentoContabilMB.origem.dadosBasico.nome}"
+															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.nome}"
 															maxlength="200"
 															required="#{lancamentoContabilMB.visivel}" />
 													</h:panelGroup>
@@ -915,12 +915,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													<h:panelGroup styleClass="lumeField" id="pgDocumento">
 														<p:outputLabel value="Documento : " />
 														<p:inputMask id="documentoCPF"
-															value="#{lancamentoContabilMB.origem.dadosBasico.documento}"
+															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.documento}"
 															mask="999.999.999-99"
 															rendered="#{lancamentoContabilMB.tipoOrigem == 'F'}"
 															required="false" validator="cpfValidator" />
 														<p:inputMask id="documentoCNPJ"
-															value="#{lancamentoContabilMB.origem.dadosBasico.documento}"
+															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.documento}"
 															mask="99.999.999/9999-99"
 															rendered="#{lancamentoContabilMB.tipoOrigem == 'J'}"
 															required="false" validator="cnpjValidator" />

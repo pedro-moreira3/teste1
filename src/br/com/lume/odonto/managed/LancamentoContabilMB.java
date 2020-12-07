@@ -80,7 +80,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private List<DadosBasico> dadosBasicos;
 
-    private Origem origem;
+    private Fornecedor fornecedorOrigem;
 
     private boolean visivel;
 
@@ -138,8 +138,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             this.geraLista();
             this.geraListaTarifa();
             this.geraListaOrigens();
-            origem = new Origem();
-            origem.setDadosBasico(new DadosBasico());
+            fornecedorOrigem = new Fornecedor();
+            fornecedorOrigem.setDadosBasico(new DadosBasico());
             tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
 
         } catch (Exception e) {
@@ -157,19 +157,19 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
             SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
             SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");
-            SelectItemGroup listaOrigem = new SelectItemGroup("OUTRAS ORIGENS/DESTINOS");
+            // SelectItemGroup listaOrigem = new SelectItemGroup("OUTRAS ORIGENS/DESTINOS");
 
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
-            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            //List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
 
             //   tam = fornecedores.size() + origens.size() - 1;
 
             SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
             SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];
             SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
-            SelectItem itensOrigens[] = new SelectItem[origens.size()];
+            //  SelectItem itensOrigens[] = new SelectItem[origens.size()];
 
             for (int i = 0; i < fornecedores.size(); i++) {             //   if (i < fornecedores.size()) {
 
@@ -178,12 +178,12 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
                 //}
             }
-            for (int i = 0; i < origens.size(); i++) {
-                //  if (i < origens.size()) {
-                itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
-                //  }// else {
-                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-            }
+//            for (int i = 0; i < origens.size(); i++) {
+//                //  if (i < origens.size()) {
+//                itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
+//                //  }// else {
+//                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
+//            }
 
             for (int i = 0; i < profissionais.size(); i++) {
                 if (profissionais.get(i).getDadosBasico() != null) {
@@ -200,7 +200,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             listaProfissionais.setSelectItems(itensProfissionais);
             listaFornecedores.setSelectItems(itensFornecedores);
             listaPacientes.setSelectItems(itensPacientes);
-            listaOrigem.setSelectItems(itensOrigens);
+            // listaOrigem.setSelectItems(itensOrigens);
 
             if (this.origens == null)
                 this.setOrigens(new ArrayList<SelectItem>());
@@ -208,7 +208,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             this.origens.add(listaProfissionais);
             this.origens.add(listaPacientes);
             this.origens.add(listaFornecedores);
-            this.origens.add(listaOrigem);
+            // this.origens.add(listaOrigem);
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);
@@ -343,45 +343,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void geraListaSugestoes() {
         try {
 
-            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            this.dadosBasicos = Utils.geraListaSugestoesOrigens(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
 
-            dadosBasicos = new ArrayList<>();
-            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            for (Origem f : origens) {
-                f.getDadosBasico().setTipoInformacao("Origem/Destino");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-
-            //  if ("Pagar".equals(tipo)) {
-            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            for (Fornecedor f : fornecedores) {
-                f.getDadosBasico().setTipoInformacao("Fornecedor");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-
-            // if ("Pagar".equals(tipo)) {
-            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            for (Profissional f : profissionais) {
-                f.getDadosBasico().setTipoInformacao("Profissional");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-            // }
-            //  if ("Receber".equals(tipo)) {
-            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
-            for (Paciente f : pacientes) {
-                f.getDadosBasico().setTipoInformacao("Paciente");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-            //  }
-
-            List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            for (Convenio f : convenios) {
-                f.getDadosBasico().setTipoInformacao("Convênio");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-
-            // }
-            dadosBasicos.sort((o1, o2) -> o2.getNome().compareTo(o1.getNome()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -431,17 +394,16 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         }
     }
 
-  
     public void actionRemove(LancamentoContabil lc) {
         try {
-            if(lc.getLancamento() != null) {
+            if (lc.getLancamento() != null) {
                 FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
                 geraLista();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
-   
-            }else {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");  
-            }            
+
+            } else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
@@ -570,10 +532,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 } else if (tipo.equals(TipoPessoa.FORNECEDOR)) {
                     fatura = FaturaSingleton.getInstance().criaFaturaGenerica(FornecedorSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
                             faturaItem);
-                } else if (tipo.equals(TipoPessoa.ORIGEM)) {
-                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(OrigemSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
-                            faturaItem);
                 }
+//                else if (tipo.equals(TipoPessoa.ORIGEM)) {
+//                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(OrigemSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
+//                            faturaItem);
+//                }
                 fatura.setTipoFatura(tipoFatura);
                 fatura.setRecorrente(recorrente);
                 FaturaSingleton.getInstance().getBo().persist(fatura);
@@ -675,7 +638,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void novoOrigem(ActionEvent event) {
-        origem = new Origem();
+        fornecedorOrigem = new Fornecedor();
         visivel = true;
     }
 
@@ -685,12 +648,12 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionPersistOrigem(ActionEvent event) {
         try {
-            origem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            OrigemSingleton.getInstance().getBo().persist(origem);
+            fornecedorOrigem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            FornecedorSingleton.getInstance().getBo().persist(fornecedorOrigem);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             this.geraListaSugestoes();
-            this.getEntity().setDadosBasico(origem.getDadosBasico());
+            this.getEntity().setDadosBasico(fornecedorOrigem.getDadosBasico());
         } catch (UsuarioDuplicadoException ud) {
             this.addError(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO), "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
@@ -736,13 +699,13 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.visivel = visivel;
     }
 
-    public Origem getOrigem() {
-        return origem;
-    }
-
-    public void setOrigem(Origem origem) {
-        this.origem = origem;
-    }
+//    public Origem getOrigem() {
+//        return origem;
+//    }
+//
+//    public void setOrigem(Origem origem) {
+//        this.origem = origem;
+//    }
 
     public List<CategoriaMotivo> getCategorias() {
         return categorias;
@@ -926,6 +889,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setEditando(boolean editando) {
         this.editando = editando;
+    }
+
+    public Fornecedor getFornecedorOrigem() {
+        return fornecedorOrigem;
+    }
+
+    public void setFornecedorOrigem(Fornecedor fornecedorOrigem) {
+        this.fornecedorOrigem = fornecedorOrigem;
     }
 
 }

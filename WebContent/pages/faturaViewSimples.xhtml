@@ -80,6 +80,25 @@ body .height31 input {
 											styleClass="ui-panelgrid-blank form-group ui-fluid"
 											columnClasses="ui-g-2,ui-g-10" rendered="#{faturaPagtoMB.faturaItemEditar ne null}">	
 											
+											
+										<p:outputLabel for="dadosBasicosEditar" value="Origem/Destino : " />
+											<h:panelGroup id="pnBtorigemEditar" >
+												<h:panelGroup styleClass="lumeField" style="display: flex">
+													<p:autoComplete queryDelay="1000"
+														value="#{faturaPagtoMB.lancamentoContabilEditarItem.dadosBasico}"
+														id="dadosBasicosEditar" 
+														completeMethod="#{faturaPagtoMB.geraSugestoesEditarItem}"
+														var="d" itemLabel="#{d.tipoInformacaoNome}"
+														itemValue="#{d}" converter="dadosBasico" required="true"
+														size="46" minQueryLength="3" dropdown="true">
+														<p:ajax event="itemSelect"
+															listener="#{faturaPagtoMB.handleSelectEditarItem}"
+															process=":lume:dadosBasicosEditar"
+															update=":lume:tipocategoriaEditar, :lume:categoriaEditar, :lume:motivoEditar,:lume:dataEditar" />
+													</p:autoComplete>													
+												</h:panelGroup>										
+											</h:panelGroup>											
+											
 											<p:outputLabel for="tipocategoriaEditar" value="Tipo Categoria : " />
 											<h:panelGroup styleClass="lumeField">
 												<p:selectOneMenu id="tipocategoriaEditar"
@@ -160,8 +179,8 @@ body .height31 input {
 											<p:commandButton id="persistEditar" icon="White fa fa-save"
 													value="Salvar"
 													actionListener="#{faturaPagtoMB.actionPersistEditarItem}"
-													update=":lume:pnEditarPagamentoRecebimento,pnlfaturaViewSimples,pnlNewLancamentoSimples "
-													process="@this,:lume:pnEditarPagamentoRecebimento"
+													update="@parent:@parent:@parent:pnEditarPagamentoRecebimento,@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples "
+													process="@this, @parent:@parent:@parent:pnEditarPagamentoRecebimento"
 													oncomplete="PF('dtLancamentoContabil').filter()"
 													styleClass="GreenButton" />
 											<p:commandButton value="Fechar" icon="White fa fa-close"
@@ -253,7 +272,7 @@ body .height31 input {
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton value="Salvar" icon="White fa fa-save"
 							actionListener="#{faturaPagtoMB.actionPersistLancamento}"
-							update="pnlNewLancamentoSimples, pnlfaturaViewSimples, buttonViewFaturaSimples"
+							update="pnlNewLancamentoSimples, @parent:pnlfaturaViewSimples, buttonViewFaturaSimples"
 							process="@this, pnlNewLancamentoSimples" styleClass="GreenButton" />
 					</p:panelGrid>
 				</p:outputPanel>
@@ -338,7 +357,7 @@ body .height31 input {
 
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.ajustarLancamento}"
-						update="pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this,pnlAjusteLancamentoSimples"
+						update="@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this,pnlAjusteLancamentoSimples"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgAjusteLancamento').hide()"
@@ -564,7 +583,7 @@ body .height31 input {
 
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento}"
-						update="pnlfaturaViewSimples" process="@this, pnlNovoLancamentoSimples"
+						update="@parent:pnlfaturaViewSimples" process="@this, pnlNovoLancamentoSimples"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
@@ -650,7 +669,7 @@ body .height31 input {
 
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistEditarLancamento}"
-						update="pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this, pnlEditarLancamentoSimples"
+						update="@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this, @parent:@parent:@parent:pnlEditarLancamentoSimples"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgEditarLancamento').hide()"
@@ -741,7 +760,7 @@ body .height31 input {
 									
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar"	disabled="#{fi.fatura.statusFatura.rotulo eq 'PA' or fi.fatura.statusFatura.rotulo eq 'C'}"								
-										update=":lume:pnEditarPagamentoRecebimento"
+										update=" @parent:@parent:@parent:pnEditarPagamentoRecebimento"
 										actionListener="#{faturaPagtoMB.actionEditarItem(fi)}"
 										onsuccess="PF('dlgEditarPagamentoRecebimento').show()" process="@this"
 										>
@@ -821,7 +840,7 @@ body .height31 input {
 										<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar lançamento"
 										disabled="#{!l.ativo or l.validado != 'N'}"
-										update=":lume:pnlEditarLancamentoSimples,:lume:editarLancamentoFormaPagamentoSimples"
+										update=" @parent:@parent:@parent:pnlEditarLancamentoSimples,@parent:@parent:@parent:editarLancamentoFormaPagamentoSimples"
 										actionListener="#{faturaPagtoMB.actionStartEditarLancamento(l)}"
 										onsuccess="PF('dlgEditarLancamento').show()" process="@this"
 										rendered="#{showNewLancamento != null and l.lancamentoExtornado == 'N' and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">

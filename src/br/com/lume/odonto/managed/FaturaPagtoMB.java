@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.SelectEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.OdontoPerfil;
@@ -37,16 +38,19 @@ import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
+import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamento.objects.LancamentoParcelaInfo;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
+import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -56,8 +60,10 @@ import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
+import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.NegociacaoFatura;
@@ -177,7 +183,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private DataTable tabelaFatura;
 
     private DadosBasico origem;
-    
+
     private LancamentoContabil lancamentoContabilEditarItem;
 
     private String tipo = "Pagar";
@@ -191,7 +197,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<TipoCategoria> tiposCategoria;
     private FaturaItem faturaItemEditar;
 
-    
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
@@ -459,14 +464,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         updateWichScreenOpenForFaturaView();
     }
-    
-    public void visualizaFaturaSimples(LancamentoContabil lc) {
-        setEntity(lc.getLancamento().getFatura());
+
+    public void visualizaFaturaSimples(Fatura fatura) {
+        setEntity(fatura);
         setShowLancamentosCancelados(false);
         setShowLancamentosEstorno(false);
-        updateValues(lc.getLancamento().getFatura(), true, false);
+        updateValues(fatura, true, false);
         updateWichScreenOpenForFaturaView();
-        origem = lc.getDadosBasico();
+        if (fatura.getProfissional() != null)
+            origem = fatura.getProfissional().getDadosBasico();
+        if (fatura.getPaciente() != null)
+            origem = fatura.getPaciente().getDadosBasico();
+        if (fatura.getFornecedor() != null)
+            origem = fatura.getFornecedor().getDadosBasico();
     }
 
     public void visualizaFaturaSimples(Lancamento l) {
@@ -478,18 +488,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         updateWichScreenOpenForFaturaView();
         if (l.getFatura().getPaciente() != null) {
             origem = l.getFatura().getPaciente().getDadosBasico();
-        }else if (l.getFatura().getOrigem() != null) {
-            origem = l.getFatura().getOrigem().getDadosBasico();
-        }else if (l.getFatura().getFornecedor() != null) {
+//        }else if (l.getFatura().getOrigem() != null) {
+//            origem = l.getFatura().getOrigem().getDadosBasico();
+        } else if (l.getFatura().getFornecedor() != null) {
             origem = l.getFatura().getFornecedor().getDadosBasico();
-        }else if (l.getFatura().getProfissional() != null) {
-            origem =  l.getFatura().getProfissional().getDadosBasico();
-        }else {
+        } else if (l.getFatura().getProfissional() != null) {
+            origem = l.getFatura().getProfissional().getDadosBasico();
+        } else {
             origem = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(l).getDadosBasico();
         }
 
     }
-
 
     public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
         try {
@@ -687,6 +696,44 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         handleSelectPagamento();
     }
 
+    public void handleSelectEditarItem(SelectEvent event) {
+        Object object = event.getObject();
+        lancamentoContabilEditarItem.setDadosBasico((DadosBasico) object);
+//        Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
+//        if (ultimoMotivo != null) {
+//            tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
+//            categoria = ultimoMotivo.getCategoria();
+//            this.getEntity().setMotivo(ultimoMotivo);
+//        }
+        lancamentoContabilEditarItem.setData(new Date());
+        if (lancamentoContabilEditarItem.getDadosBasico() == null) {
+            this.addError(OdontoMensagens.getMensagem("lancamentoContabil.dadosbasico.vazio"), "");
+        }
+    }
+
+    public List<DadosBasico> geraSugestoesEditarItem(String query) {
+
+        List<DadosBasico> dadosBasicos = null;
+        try {
+            dadosBasicos = Utils.geraListaSugestoesOrigens(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        } catch (Exception e) {        
+            e.printStackTrace();
+        }
+
+        List<DadosBasico> suggestions = new ArrayList<>();
+        if (query.length() >= 3) {
+            for (DadosBasico d : dadosBasicos) {
+                if (Utils.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
+                    suggestions.add(d);
+                }
+            }
+        } else if (query.equals("")) {
+            suggestions = dadosBasicos;
+        }
+        // Collections.sort(suggestions);
+        return suggestions;
+    }
+
     public void actionPersistLancamento() {
         try {
             if (getValor().compareTo(getEntity().getDadosTabelaRepasseTotalFatura()) <= 0) {
@@ -787,7 +834,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
 
     }
-    
+
     public void carregarCategorias() {
         try {
             if (tipoCategoria != null) {
@@ -826,30 +873,32 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             }
 
-            if (categoria != null) {
-                motivos = MotivoSingleton.getInstance().getBo().listByCategoria(categoria, tipo);
-            } else {
-                motivos = MotivoSingleton.getInstance().getBo().listByTipo(tipo);
-            }
+          
 
             if (lancamentoContabilEditarItem != null && lancamentoContabilEditarItem.getMotivo() != null) {
                 categoria = lancamentoContabilEditarItem.getMotivo().getCategoria();
                 tipoCategoria = lancamentoContabilEditarItem.getMotivo().getCategoria().getTipoCategoria();
             }
-
+            
+            
+            if (categoria != null) {
+                motivos = MotivoSingleton.getInstance().getBo().listByCategoria(categoria, tipo);
+            } else {
+                motivos = MotivoSingleton.getInstance().getBo().listByTipo(tipo);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     public void actionEditarItem(FaturaItem faturaItem) {
         try {
 
             Lancamento lancamento = faturaItem.getFatura().getLancamentosFiltered().get(0);
             lancamentoContabilEditarItem = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
 
-            carregarListasEditaritem();
 
             if (faturaItem.getTipoSaldo().equals("S")) {
                 this.tipo = "Pagar";
@@ -857,18 +906,21 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             } else {
                 this.tipo = "Receber";
             }
+            
+            carregarListasEditaritem();
+
             if (faturaItem.getDescricaoItem() != null) {
                 lancamentoContabilEditarItem.setDescricao(faturaItem.getDescricaoItem().replace(lancamentoContabilEditarItem.getMotivo().getDescricao() + " - ", ""));
             }
 
-            faturaItemEditar = faturaItem;
-
+            faturaItemEditar = faturaItem;            
+            
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
     }
-    
+
     public void actionPersistEditarItem() {
 
         BigDecimal valorTotalExistenteLancamentos = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(getEntity(), ValidacaoLancamento.TODOS_ATIVOS);
@@ -898,7 +950,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             e.printStackTrace();
         }
     }
-    
+
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------
 
     public void actionStartEditarLancamento(Lancamento l) {
@@ -918,17 +970,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             LancamentoSingleton.getInstance().getBo().persist(editarLancamento);
 
             LancamentoContabil lancamentoContabilEditar = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(editarLancamento);
-            if(lancamentoContabilEditar != null) {
-            lancamentoContabilEditar.setData(editarLancamento.getDataCredito());
-            if (editarLancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO)) {
-                lancamentoContabilEditar.setValor(editarLancamento.getValor().negate());   
-            }else {
-                lancamentoContabilEditar.setValor(editarLancamento.getValor());
+            if (lancamentoContabilEditar != null) {
+                lancamentoContabilEditar.setData(editarLancamento.getDataCredito());
+                if (editarLancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO)) {
+                    lancamentoContabilEditar.setValor(editarLancamento.getValor().negate());
+                } else {
+                    lancamentoContabilEditar.setValor(editarLancamento.getValor());
+                }
+
+                LancamentoContabilSingleton.getInstance().getBo().persist(lancamentoContabilEditar);
             }
-            
-            LancamentoContabilSingleton.getInstance().getBo().persist(lancamentoContabilEditar);
-            }
-            
+
             //  FaturaItemSingleton.getInstance().recalculaItemsFaturasGenericas(editarLancamento.getFatura());
 
             //TODO esse ajuste sera chamado automaticamente na tela de conferencia
@@ -1171,7 +1223,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         novoLancamentoAtualizaListaParcelas();
     }
-    
+
     private void novoLancamentoAtualizaListaParcelas() {
         this.novoLancamentoParcelas = atualizaListaParcelas(novoLancamentoDataPagamento, novoLancamentoDataCredito, novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela,
                 novoLancamentoValorDaParcela, novoLancamentoValorDaPrimeiraParcelaDiferenca, novoLancamentoFormaPagamento);
@@ -1300,13 +1352,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             //if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
             //    negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
-            
-          //uma parcela só, nao tem entrada
-            if(negociacaoQuantidadeParcelas == 1) {
+
+            //uma parcela só, nao tem entrada
+            if (negociacaoQuantidadeParcelas == 1) {
                 negociacaoValorDaParcela = negociacaoValorDaPrimeiraParcela;
                 negociacaoValorDaPrimeiraParcela = new BigDecimal(0);
-            }            
-            
+            }
+
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
                     negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca, negociacaoValorTotal, totalSemDesconto,
                     negociacaoObservacao, UtilsFrontEnd.getProfissionalLogado());
@@ -2502,82 +2554,66 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.showLancamentosEstorno = showLancamentosEstorno;
     }
 
-    
     public DadosBasico getOrigem() {
         return origem;
     }
 
-    
     public void setOrigem(DadosBasico origem) {
         this.origem = origem;
     }
 
-    
     public TipoCategoria getTipoCategoria() {
         return tipoCategoria;
     }
 
-    
     public void setTipoCategoria(TipoCategoria tipoCategoria) {
         this.tipoCategoria = tipoCategoria;
     }
 
-    
     public List<CategoriaMotivo> getCategorias() {
         return categorias;
     }
 
-    
     public void setCategorias(List<CategoriaMotivo> categorias) {
         this.categorias = categorias;
     }
 
-    
     public CategoriaMotivo getCategoria() {
         return categoria;
     }
 
-    
     public void setCategoria(CategoriaMotivo categoria) {
         this.categoria = categoria;
     }
 
-    
     public List<Motivo> getMotivos() {
         return motivos;
     }
 
-    
     public void setMotivos(List<Motivo> motivos) {
         this.motivos = motivos;
     }
 
-    
     public List<TipoCategoria> getTiposCategoria() {
         return tiposCategoria;
     }
 
-    
     public void setTiposCategoria(List<TipoCategoria> tiposCategoria) {
         this.tiposCategoria = tiposCategoria;
     }
 
-    
     public FaturaItem getFaturaItemEditar() {
         return faturaItemEditar;
     }
 
-    
     public void setFaturaItemEditar(FaturaItem faturaItemEditar) {
         this.faturaItemEditar = faturaItemEditar;
     }
 
-    
     public LancamentoContabil getLancamentoContabilEditarItem() {
         return lancamentoContabilEditarItem;
     }
 
-    
     public void setLancamentoContabilEditarItem(LancamentoContabil lancamentoContabilEditarItem) {
         this.lancamentoContabilEditarItem = lancamentoContabilEditarItem;
     }

@@ -336,9 +336,9 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         if (l.getFatura().getPaciente() != null) {
             return l.getFatura().getPaciente().getDadosBasico().getNome();
         }
-        if (l.getFatura().getOrigem() != null) {
-            return l.getFatura().getOrigem().getDadosBasico().getNome();
-        }
+       // if (l.getFatura().getOrigem() != null) {
+       //     return l.getFatura().getOrigem().getDadosBasico().getNome();
+       // }
         if (l.getFatura().getFornecedor() != null) {
             return l.getFatura().getFornecedor().getDadosBasico().getNome();
         }

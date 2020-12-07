@@ -22,10 +22,12 @@ import br.com.lume.fornecedor.FornecedorSingleton;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Local;
+import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
+import br.com.lume.origem.OrigemSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -50,6 +52,27 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
      //   dadosBasicoBO = new DadosBasicoBO();
         this.setClazz(Fornecedor.class);
         this.carregaLista();
+        
+        
+        //TEMPORARIO, MIGRACAO DE ORIGEM PARA FORNECEDOR
+        List<Origem> origens;
+        try {
+            origens = OrigemSingleton.getInstance().getBo().listAll();
+            for (Origem origem : origens) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setConta(origem.getConta());
+                fornecedor.setDadosBasico(origem.getDadosBasico());
+                fornecedor.setDataExclusao(origem.getDataExclusao());
+                fornecedor.setExcluido(origem.getExcluido());
+                fornecedor.setExcluidoPorProfissional(origem.getExcluidoPorProfissional());
+                fornecedor.setIdEmpresa(origem.getIdEmpresa());
+                FornecedorSingleton.getInstance().getBo().persist(fornecedor);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       
     }
 
     public void carregaLista() {
