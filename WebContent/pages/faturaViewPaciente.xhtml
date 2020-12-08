@@ -80,7 +80,7 @@ body .height31 input {
 						<p:outputLabel for="formaPagamento" value="Forma de Pagamento: " />
 						<p:selectOneRadio id="formaPagamento"
 							value="#{faturaPagtoMB.formaPagamento}" required="true"
-							layout="grid" columns="3">
+							layout="grid" columns="15">
 							<p:ajax update="pnlNewLancamento" process="@this"
 								listener="#{faturaPagtoMB.atualizaProduto}" />
 							<f:selectItems value="#{faturaPagtoMB.formasPagamento}" var="tp"

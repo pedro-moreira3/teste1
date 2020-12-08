@@ -19,6 +19,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.lume.common.exception.business.RepasseNaoPossuiRecebimentoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -582,7 +583,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
             this.pesquisar();
-        } catch (Exception e) {
+        }catch (RepasseNaoPossuiRecebimentoException e) {
+            this.addError("Erro", "Procedimento está executado e não está em nenhum orçamento!");
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -644,11 +648,13 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     } else {
                         valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
                     }
-
-                    if (repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null) {
-                        valorProcedimento = repasse.getFaturaItem().getValorComDesconto();
-                    } else {
-                        valorProcedimento = ptp.getProcedimento().getValor();
+                    FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+                    if (itemOrigem != null) {
+                        valorProcedimento = itemOrigem.getValorComDesconto();
+                    } else if(ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                        valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
+                    }else if(ptp != null && ptp.getProcedimento() != null) {
+                        valorProcedimento = ptp.getProcedimento().getValor();  
                     }
 
                     repasseFatura = repasse.getRepasseFaturas();
@@ -851,6 +857,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         } else {
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
+                           
                             addError("Cálculo", "Cálculo disponível somente após pagamento do paciente.");
                             return;
                         }

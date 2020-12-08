@@ -143,11 +143,12 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         try {
             DocumentoBO docBO = DocumentoSingleton.getInstance().getBo();
             List<Documento> docs = docBO.listAll();
+            List<Documento> docsSalvar = new ArrayList<Documento>();
             for(Documento d : docs) {
                 d.setModelo(docBO.replaceDocumentoAntigo(d.getModelo()));
-                docBO.persist(d);
+                docsSalvar.add(d);
             }
-            
+            docBO.persistBatch(docsSalvar);
             this.gerarDocsEmitidos();
             
         } catch (Exception e) {
