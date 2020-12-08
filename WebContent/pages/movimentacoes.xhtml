@@ -145,6 +145,13 @@
 									<h:outputText
 										value="#{movimentacoesMB.getFaturaInfo(l.fatura)}" />
 								</p:column>
+								<p:column headerText="Nome"
+									filterBy="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}"
+									sortBy="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}"
+									filterMatchMode="contains" width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}" />
+								</p:column>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
