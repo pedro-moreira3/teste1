@@ -39,6 +39,8 @@ import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton.TipoPessoa;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
@@ -716,7 +718,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         List<DadosBasico> dadosBasicos = null;
         try {
             dadosBasicos = Utils.geraListaSugestoesOrigens(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-        } catch (Exception e) {        
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -873,20 +875,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             }
 
-          
-
             if (lancamentoContabilEditarItem != null && lancamentoContabilEditarItem.getMotivo() != null) {
                 categoria = lancamentoContabilEditarItem.getMotivo().getCategoria();
                 tipoCategoria = lancamentoContabilEditarItem.getMotivo().getCategoria().getTipoCategoria();
             }
-            
-            
+
             if (categoria != null) {
                 motivos = MotivoSingleton.getInstance().getBo().listByCategoria(categoria, tipo);
             } else {
                 motivos = MotivoSingleton.getInstance().getBo().listByTipo(tipo);
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -899,22 +898,21 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             Lancamento lancamento = faturaItem.getFatura().getLancamentosFiltered().get(0);
             lancamentoContabilEditarItem = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
 
-
             if (faturaItem.getTipoSaldo().equals("S")) {
                 this.tipo = "Pagar";
                 //  lancamentoContabilEditarItem.setValor(lancamentoContabilEditarItem.getValor().negate());
             } else {
                 this.tipo = "Receber";
             }
-            
+
             carregarListasEditaritem();
 
             if (faturaItem.getDescricaoItem() != null) {
                 lancamentoContabilEditarItem.setDescricao(faturaItem.getDescricaoItem().replace(lancamentoContabilEditarItem.getMotivo().getDescricao() + " - ", ""));
             }
 
-            faturaItemEditar = faturaItem;            
-            
+            faturaItemEditar = faturaItem;
+
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -943,6 +941,28 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             lancamentoContabilEditarItem.setDescricao(faturaItemEditar.getDescricaoItem().replace(lancamentoContabilEditarItem.getMotivo().getDescricao() + " - ", ""));
             FaturaItemSingleton.getInstance().getBo().persist(faturaItemEditar);
             LancamentoContabilSingleton.getInstance().getBo().persist(lancamentoContabilEditarItem);
+
+            Fatura fatura = faturaItemEditar.getFatura();
+            TipoPessoa tipoPessoa =  DadosBasicoSingleton.getTipoPessoa(lancamentoContabilEditarItem.getDadosBasico());
+            if(tipoPessoa.equals(TipoPessoa.FORNECEDOR)) {
+                fatura.setFornecedor(FornecedorSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));
+                fatura.setPaciente(null);              
+                fatura.setProfissional(null);                
+            }else if(tipoPessoa.equals(TipoPessoa.PACIENTE)) {
+                fatura.setPaciente(PacienteSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));               
+                fatura.setProfissional(null);
+                fatura.setFornecedor(null);
+            }else if(tipoPessoa.equals(TipoPessoa.PROFISSIONAL)) {
+                fatura.setProfissional(ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));
+                fatura.setPaciente(null);
+                fatura.setFornecedor(null);              
+            }
+            origem = lancamentoContabilEditarItem.getDadosBasico();
+            FaturaSingleton.getInstance().getBo().persist(fatura);
+            setEntity(fatura);
+            
+            //TODO depois de colocar a recorrencia verificar aqui
+            
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
             PrimeFaces.current().executeScript("PF('dlgEditarPagamentoRecebimento').hide()");
         } catch (Exception e) {

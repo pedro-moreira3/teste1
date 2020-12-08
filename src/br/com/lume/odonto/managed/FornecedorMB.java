@@ -54,24 +54,25 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
         this.carregaLista();
         
         
-        //TEMPORARIO, MIGRACAO DE ORIGEM PARA FORNECEDOR
-        List<Origem> origens;
-        try {
-            origens = OrigemSingleton.getInstance().getBo().listAll();
-            for (Origem origem : origens) {
-                Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setConta(origem.getConta());
-                fornecedor.setDadosBasico(origem.getDadosBasico());
-                fornecedor.setDataExclusao(origem.getDataExclusao());
-                fornecedor.setExcluido(origem.getExcluido());
-                fornecedor.setExcluidoPorProfissional(origem.getExcluidoPorProfissional());
-                fornecedor.setIdEmpresa(origem.getIdEmpresa());
-                FornecedorSingleton.getInstance().getBo().persist(fornecedor);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        //TEMPORARIO, MIGRACAO DE ORIGEM PARA FORNECEDOR
+//        List<Origem> origens;
+//        try {
+//            origens = OrigemSingleton.getInstance().getBo().listAll();
+//            for (Origem origem : origens) {
+//                Fornecedor fornecedor = new Fornecedor();
+//                fornecedor.setConta(origem.getConta());
+//                fornecedor.setDadosBasico(origem.getDadosBasico());
+//                fornecedor.setDataExclusao(origem.getDataExclusao());
+//                fornecedor.setExcluido(origem.getExcluido());
+//                fornecedor.setExcluidoPorProfissional(origem.getExcluidoPorProfissional());
+//                fornecedor.setIdEmpresa(origem.getIdEmpresa());
+//                FornecedorSingleton.getInstance().getBo().persist(fornecedor);
+//                System.out.println(origem.getDadosBasico().getNome());
+//            }
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
        
     }
 
