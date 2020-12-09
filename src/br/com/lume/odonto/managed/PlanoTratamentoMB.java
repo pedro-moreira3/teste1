@@ -496,6 +496,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
+    /**
+     * Mostra confirmação caso o proc esteja sendo executado mas não está orçado
+     * @return boolean
+     */
+    private boolean validaProcOrcado(PlanoTratamentoProcedimento ptp) {        
+        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
+        if(orcs != null && !orcs.isEmpty()) {
+            if(ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private boolean finalizaProcedimento() throws Exception {
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
@@ -1103,6 +1117,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean validaOrcamentoMaiorPermitido() {
         BigDecimal valorDesconto = new BigDecimal(0);
         if(!descontosDisponiveis.isEmpty()) {
+            if(numeroParcelaOrcamento == null) {
+                return false;
+            }
             valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
         }
         if (orcamentoSelecionado.getDescontoTipo().equals(

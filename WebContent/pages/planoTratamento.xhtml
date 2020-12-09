@@ -837,7 +837,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="Procedimentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 							</f:facet>
 
-							<p:column headerText="Ações" styleClass="TexAlCenter" width="120">
+							<p:column headerText="Ações" styleClass="TexAlCenter" width="100">
 
 								<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 									process="@this"
@@ -863,7 +863,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								headerText="Nr." width="45">
 								<h:outputText value="#{plano.sequencial}" />
 							</p:column>
-							<p:column headerText="Prioridade" width="60">
+							<p:column headerText="Prioridade" width="45">
 								<h:outputText value="#{plano.prioridade}" />
 							</p:column>
 							<p:column headerText="Status" width="60">
@@ -871,7 +871,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:column>
 
 							<p:column sortBy="#{plano.procedimento.descricao}"
-								headerText="Procedimento" width="400">
+								headerText="Procedimento" width="350">
 								<p:outputPanel style="position: relative">
 									<h:outputText value="#{plano.procedimento.descricao}" />
 									<p:outputPanel
@@ -884,20 +884,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:outputPanel>
 							</p:column>
 							<p:column sortBy="#{plano.denteRegiao}" headerText="Dente/Região"
-								width="200">
+								width="100">
 								<h:outputText value="#{plano.denteRegiaoStr}"
 									id="denteRegiaoProc" />
 								<p:tooltip for="denteRegiaoProc"
 									value="Odontograma #{plano.denteObj.odontograma.dataCadastroStrE}"
 									rendered="#{plano.denteObj != null}" position="bottom" />
 							</p:column>
-							<p:column headerText="Face" width="200">
+							<p:column headerText="Face" width="100">
 								<h:outputText value="#{plano.label}" />
 							</p:column>
 
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
-								id="clValor" width="90px;">
+								id="clValor" width="80px;">
 								<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
@@ -927,6 +927,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									style="width: 35px;display: inline-block;">
 									<p:ajax process="@this" update="@this"
 										listener="#{planoTratamentoMB.fazNada()}" />
+									
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
 									title="Executar Novamente"
