@@ -1102,6 +1102,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean validaOrcamentoMaiorPermitido() {
         BigDecimal valorDesconto = new BigDecimal(0);
         if(!descontosDisponiveis.isEmpty()) {
+            if(numeroParcelaOrcamento == null)
+                return false;
             valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
         }
         if (orcamentoSelecionado.getDescontoTipo().equals(
