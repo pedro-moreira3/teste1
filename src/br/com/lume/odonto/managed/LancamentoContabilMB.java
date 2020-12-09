@@ -152,38 +152,26 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
 
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            int cont = 0, tam = 0;
-
+         
             SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
             SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
-            SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");
-            // SelectItemGroup listaOrigem = new SelectItemGroup("OUTRAS ORIGENS/DESTINOS");
+            SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");          
 
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
-            //List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-
-            //   tam = fornecedores.size() + origens.size() - 1;
+         
 
             SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
             SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];
             SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
-            //  SelectItem itensOrigens[] = new SelectItem[origens.size()];
+          
 
-            for (int i = 0; i < fornecedores.size(); i++) {             //   if (i < fornecedores.size()) {
+            for (int i = 0; i < fornecedores.size(); i++) {          
 
                 itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
-                //   }// else {
-                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-                //}
+               
             }
-//            for (int i = 0; i < origens.size(); i++) {
-//                //  if (i < origens.size()) {
-//                itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
-//                //  }// else {
-//                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-//            }
 
             for (int i = 0; i < profissionais.size(); i++) {
                 if (profissionais.get(i).getDadosBasico() != null) {
@@ -199,16 +187,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
             listaProfissionais.setSelectItems(itensProfissionais);
             listaFornecedores.setSelectItems(itensFornecedores);
-            listaPacientes.setSelectItems(itensPacientes);
-            // listaOrigem.setSelectItems(itensOrigens);
+            listaPacientes.setSelectItems(itensPacientes);          
 
             if (this.origens == null)
                 this.setOrigens(new ArrayList<SelectItem>());
 
             this.origens.add(listaProfissionais);
             this.origens.add(listaPacientes);
-            this.origens.add(listaFornecedores);
-            // this.origens.add(listaOrigem);
+            this.origens.add(listaFornecedores);          
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);

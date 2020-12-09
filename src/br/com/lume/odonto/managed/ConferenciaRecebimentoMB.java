@@ -124,7 +124,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     
     //para que o valor da fatura seja editavel, somente se existir somente um lancamento na fatura e se ela for generica.
     public boolean faturaEditavel(Lancamento lancamento) {
-        if (!lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO) && !lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)) {
+        if (!lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO) && !lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_RECEBIMENTO)) {
             return false;
 
         } else if (lancamento.getFatura().getLancamentosFiltered().size() == 1 && lancamento.getFatura().getItens().size() == 1) {

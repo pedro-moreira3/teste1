@@ -93,35 +93,26 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
         try {
 
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            int cont = 0, tam = 0;
-
+         
             SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
-            SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");          
-            SelectItemGroup listaOrigem = new SelectItemGroup("OUTRAS ORIGENS/DESTINOS");
+            SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
+            SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");          
 
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);          
-            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);            
-
-         //   tam = fornecedores.size() + origens.size() - 1;
+            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
+         
 
             SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
-            SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];  
-            SelectItem itensOrigens[] = new SelectItem[origens.size()];
+            SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];
+            SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
+          
 
-            for (int i = 0; i < fornecedores.size(); i++) {             //   if (i < fornecedores.size()) {
-              
-                    itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
-             //   }// else {
-                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-                //}
+            for (int i = 0; i < fornecedores.size(); i++) {          
+
+                itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
+               
             }
-          //  for (int i = 0; i < origens.size(); i++) {
-              //  if (i < origens.size()) {
-                //    itensOrigens[i] = new SelectItem(origens.get(i).getDadosBasico(), origens.get(i).getDadosBasico().getNome());
-              //  }// else {
-                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
-          //  } 
 
             for (int i = 0; i < profissionais.size(); i++) {
                 if (profissionais.get(i).getDadosBasico() != null) {
@@ -129,19 +120,25 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
                 }
             }
 
+            for (int i = 0; i < pacientes.size(); i++) {
+                if (pacientes.get(i).getDadosBasico() != null) {
+                    itensPacientes[i] = new SelectItem(pacientes.get(i).getDadosBasico(), pacientes.get(i).getDadosBasico().getNome());
+                }
+            }
+
             listaProfissionais.setSelectItems(itensProfissionais);
-            listaFornecedores.setSelectItems(itensFornecedores);         
-            listaOrigem.setSelectItems(itensOrigens);
+            listaFornecedores.setSelectItems(itensFornecedores);
+            listaPacientes.setSelectItems(itensPacientes);          
 
             if (this.origens == null)
                 this.setOrigens(new ArrayList<SelectItem>());
 
-            this.origens.add(listaProfissionais);         
-            this.origens.add(listaFornecedores);
-            this.origens.add(listaOrigem);
+            this.origens.add(listaProfissionais);
+            this.origens.add(listaPacientes);
+            this.origens.add(listaFornecedores);          
 
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "NÃ£o foi possÃ­vel carregar os registros", true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }

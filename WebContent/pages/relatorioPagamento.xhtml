@@ -99,8 +99,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup>
-								<h:outputText for="faturaOrigemDestino" value="Destino (Fornecedor, Profissional):" />
-								<p:selectOneMenu id="faturaOrigemDestino"
+											<p:outputLabel for="faturaOrigemDestino"
+												value="Destino (Fornecedor, Profissional, Paciente):" />
+
+											<p:selectOneMenu id="faturaOrigemDestino"
 												converter="dadosBasico" value="#{relatorioPagamentoMB.origemFiltro}"
 												style="min-width:0px;"
 												filter="true" filterMatchMode="contains">
@@ -114,7 +116,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													itemLabel="#{m.nome}" itemValue="#{m}" />
 
 											</p:selectOneMenu>
-							</h:panelGroup>
+										</h:panelGroup>
 
 							<h:panelGroup>
 								<p:outputLabel for="status" value="Status do Pagamento: " />
