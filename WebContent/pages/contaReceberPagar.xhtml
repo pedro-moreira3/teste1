@@ -139,6 +139,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="forma"
 												value="Forma de pagamento/recebimento:" />
 											<p:selectOneMenu id="forma"
+											autoWidth="false"
 												value="#{lancamentoContabilMB.formaPagamento}"
 												converter="tarifa">
 
@@ -155,20 +156,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="faturaOrigemDestino"
 												value="Origem/Destino:" />
 
-											<p:selectOneMenu id="faturaOrigemDestino"
-												converter="dadosBasico" value="#{lancamentoContabilMB.origemFiltro}"
-												style="min-width:0px;"
-												filter="true" filterMatchMode="contains">
-
-												<p:ajax event="itemSelect" process="@this" immediate="true" />
-
-												<f:selectItem
-													itemLabel="Selecione a Origem/Destino"
-													itemValue="#{null}" />
-												<f:selectItems value="#{lancamentoContabilMB.origens}" var="m"
-													itemLabel="#{m.nome}" itemValue="#{m}" />
-
-											</p:selectOneMenu>
+											
+											<p:autoComplete queryDelay="1000"
+														value="#{lancamentoContabilMB.origemFiltro}"
+														id="faturaOrigemDestino"
+														completeMethod="#{lancamentoContabilMB.geraSugestoes}"
+														var="d" itemLabel="#{d.tipoInformacaoNome}"
+														itemValue="#{d}" converter="dadosBasico" 
+														size="46" minQueryLength="3" dropdown="true">
+														<p:ajax event="itemSelect" process="@this" />
+													</p:autoComplete>
+											
+											
+											
 										</h:panelGroup>
 										
 									</p:panelGrid>
@@ -293,7 +293,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												styleClass="RedButton" icon="fa fa-trash" >
 													<p:confirm header="Confirmação" icon="ui-icon-alert"
 																escape="false"
-																message="Você tem certeza que deseja cancelar este lançamento?">
+																message="Você tem certeza que deseja cancelar esta fatura?">
 													</p:confirm>												
 												</p:commandButton>
 												
