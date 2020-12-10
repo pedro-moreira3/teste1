@@ -139,6 +139,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean incluirObservacoesCobranca = false;
 
     private boolean omitirProcedimentosNaoInclusos = false;
+    
+    private boolean omitirDadosEmpresa = false;
+    
+    private boolean omitirLogo = false;
 
     private String filtroStatus = "T";
 
@@ -2676,6 +2680,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setPtLazyModel(PlanoTratamentoLazyModel ptLazyModel) {
         this.ptLazyModel = ptLazyModel;
+    }
+
+    
+    public boolean isOmitirDadosEmpresa() {
+        return omitirDadosEmpresa;
+    }
+
+    
+    public void setOmitirDadosEmpresa(boolean omitirDadosEmpresa) {
+        this.omitirDadosEmpresa = omitirDadosEmpresa;
+    }
+
+    
+    public boolean isOmitirLogo() {
+        return omitirLogo;
+    }
+
+    
+    public void setOmitirLogo(boolean omitirLogo) {
+        this.omitirLogo = omitirLogo;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {
