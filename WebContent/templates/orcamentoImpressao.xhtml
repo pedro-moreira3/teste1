@@ -25,7 +25,7 @@
 
 				<p:outputPanel id="orcamento2PrintInterno"
 					style="font-family: sans-serif">
-					<p:outputPanel rendered="#{orcamentoImpressaoMB.showLogo}">
+					<p:outputPanel rendered="#{orcamentoImpressaoMB.showLogo and !planoTratamentoMB.omitirLogo}">
 						<div style="width: 100%;">
 							<img src="/imagens/#{orcamentoImpressaoMB.logo}" 
 								style="margin-left: 50%; transform: translateX(-50%);" />
@@ -33,14 +33,13 @@
 					</p:outputPanel>
 					<br />
 					<br />
-
 					<div style="width: 100%; text-align: center;">
 						<span style="font-size: 18px;"><b>Orçamento</b></span>
 					</div>
 					<p:separator styleClass="SeparatorFull" />
-					<span style="font-size: 18px;"><b>#{orcamentoImpressaoMB.nomeClinica}</b></span>
+					<span style="font-size: 18px;display:#{planoTratamentoMB.omitirDadosEmpresa?'none':''};"><b>#{orcamentoImpressaoMB.nomeClinica}</b></span>
 					<br />
-					<span style="font-size: 14px;">#{orcamentoImpressaoMB.infoClinica}</span>
+					<span style="font-size: 14px;display:#{planoTratamentoMB.omitirDadosEmpresa?'none':''};">#{orcamentoImpressaoMB.infoClinica}</span>
 					<br />
 					<span style="font-size: 14px;">Paciente:
 						#{pt.paciente.dadosBasico.nome}</span>
@@ -252,6 +251,25 @@
 							/>
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="checkOmitirProcedimentosNaoInclusos" value="Omitir procedimentos não inclusos na impressão" />
+					
+					
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="checkOmitirDadosEmpresa"
+						value="#{planoTratamentoMB.omitirDadosEmpresa}">
+						<p:ajax event="change" process="@this,lume:tabViewPaciente:orcamento2PrintInterno"
+							update=":lume:tabViewPaciente:orcamento2PrintInterno"
+							/>
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkOmitirDadosEmpresa" value="Omitir dados da empresa na impressão" /><p:spacer width="20" height="0" />
+					
+					<p:selectBooleanCheckbox id="checkOmitirLogo"
+						value="#{planoTratamentoMB.omitirLogo}">
+						<p:ajax event="change" process="@this,lume:tabViewPaciente:orcamento2PrintInterno"
+							update=":lume:tabViewPaciente:orcamento2PrintInterno"
+							/>
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkOmitirLogo" value="Omitir logo na impressão" />
+					
 				</h:panelGroup>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
