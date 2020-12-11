@@ -877,6 +877,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             calculaRepasse(ptpMudarExecutor);
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptpMudarExecutor);
             PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').hide()");
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarSalvar", e);
