@@ -23,6 +23,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -82,8 +83,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private List<DadosBasico> dadosBasicos;
 
-    private Fornecedor fornecedorOrigem;
-
     private boolean visivel;
 
     private CategoriaMotivo categoria;
@@ -106,7 +105,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private int quantidadeVezesRecorrencia;
 
-    private String tipoOrigem = "J";
+    //TODO depois fazer enum tipos sao fornecedor, paciente e profissional
+    private String tipoCadastro = "FOR";
+    
+    private String nomeCadastro;
+    
+    private String celularCadastro;
+    
+    private String emailCadastro;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamento;
@@ -139,9 +145,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             actionTrocaDatas();
             this.geraLista();
             this.geraListaTarifa();
-            //  this.geraListaOrigens();
-            fornecedorOrigem = new Fornecedor();
-            fornecedorOrigem.setDadosBasico(new DadosBasico());
+            //  this.geraListaOrigens();   
+            tipoCadastro = "FOR";
             tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
 
         } catch (Exception e) {
@@ -652,8 +657,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         }
     }
 
-    public void novoOrigem(ActionEvent event) {
-        fornecedorOrigem = new Fornecedor();
+    public void novoOrigem(ActionEvent event) {        
+        nomeCadastro = null;
+        celularCadastro = null;
+        emailCadastro = null;
         visivel = true;
     }
 
@@ -663,12 +670,36 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionPersistOrigem(ActionEvent event) {
         try {
-            fornecedorOrigem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            FornecedorSingleton.getInstance().getBo().persist(fornecedorOrigem);
+            DadosBasico db = new DadosBasico();
+            db.setNome(this.getNomeCadastro());
+            db.setCelular(this.getCelularCadastro());
+            db.setEmail(this.getEmailCadastro());
+            if(tipoCadastro.equals("FOR")) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setDadosBasico(db);
+                fornecedor.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                FornecedorSingleton.getInstance().getBo().persist(fornecedor);
+                this.getEntity().setDadosBasico(fornecedor.getDadosBasico());
+            }else if(tipoCadastro.equals("PAC")) {
+                Paciente paciente = new Paciente();
+                paciente.setDadosBasico(db);
+                paciente.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+                paciente.setPreCadastro("S");
+                PacienteSingleton.getInstance().getBo().persist(paciente);
+                this.getEntity().setDadosBasico(paciente.getDadosBasico());               
+            }else if(tipoCadastro.equals("PRO")) {
+                Profissional profissional = new Profissional();
+                profissional.setDadosBasico(db);
+                profissional.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+                profissional.setPerfil(OdontoPerfil.DENTISTA);
+                ProfissionalSingleton.getInstance().getBo().persist(profissional);
+                this.getEntity().setDadosBasico(profissional.getDadosBasico());               
+            }
+            
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             this.geraListaSugestoes();
-            this.getEntity().setDadosBasico(fornecedorOrigem.getDadosBasico());
+          
         } catch (UsuarioDuplicadoException ud) {
             this.addError(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO), "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
@@ -768,14 +799,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public String getTipoOrigem() {
-        return tipoOrigem;
-    }
-
-    public void setTipoOrigem(String tipoOrigem) {
-        this.tipoOrigem = tipoOrigem;
     }
 
     public DataTable getTabelaLancamento() {
@@ -906,12 +929,44 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.editando = editando;
     }
 
-    public Fornecedor getFornecedorOrigem() {
-        return fornecedorOrigem;
+    
+    public String getTipoCadastro() {
+        return tipoCadastro;
     }
 
-    public void setFornecedorOrigem(Fornecedor fornecedorOrigem) {
-        this.fornecedorOrigem = fornecedorOrigem;
+    
+    public void setTipoCadastro(String tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
+    }
+
+    
+    public String getNomeCadastro() {
+        return nomeCadastro;
+    }
+
+    
+    public void setNomeCadastro(String nomeCadastro) {
+        this.nomeCadastro = nomeCadastro;
+    }
+
+    
+    public String getCelularCadastro() {
+        return celularCadastro;
+    }
+
+    
+    public void setCelularCadastro(String celularCadastro) {
+        this.celularCadastro = celularCadastro;
+    }
+
+    
+    public String getEmailCadastro() {
+        return emailCadastro;
+    }
+
+    
+    public void setEmailCadastro(String emailCadastro) {
+        this.emailCadastro = emailCadastro;
     }
 
 }

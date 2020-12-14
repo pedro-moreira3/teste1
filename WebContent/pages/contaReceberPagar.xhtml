@@ -897,34 +897,36 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													visible="#{lancamentoContabilMB.visivel}"
 													styleClass="BordNone">
 													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="nomeOrigem" value="Nome : " />
-														<p:inputText id="nomeOrigem"
-															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.nome}"
-															maxlength="200"
-															required="#{lancamentoContabilMB.visivel}" />
-													</h:panelGroup>
-													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="tipoOrigem" value="Tipo de Pessoa: " />
-														<p:selectOneRadio id="tipoOrigem"
-															value="#{lancamentoContabilMB.tipoOrigem}" columns="2">
-															<f:selectItem itemLabel="Juridica" itemValue="J" />
-															<f:selectItem itemLabel="Física" itemValue="F" />
-															<p:ajax update=":lume:pgDocumento" />
+														<p:outputLabel for="tipoCadastro" value="Tipo do Cadastro: " />
+														<p:selectOneRadio id="tipoCadastro"
+															value="#{lancamentoContabilMB.tipoCadastro}" columns="2">
+															<f:selectItem itemLabel="Fornecedor" itemValue="FOR" />
+															<f:selectItem itemLabel="Paciente" itemValue="PAC" />
+															<f:selectItem itemLabel="Profissional" itemValue="PRO" />
+															
 														</p:selectOneRadio>
 													</h:panelGroup>
-													<h:panelGroup styleClass="lumeField" id="pgDocumento">
-														<p:outputLabel value="Documento : " />
-														<p:inputMask id="documentoCPF"
-															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.documento}"
-															mask="999.999.999-99"
-															rendered="#{lancamentoContabilMB.tipoOrigem == 'F'}"
-															required="false" validator="cpfValidator" />
-														<p:inputMask id="documentoCNPJ"
-															value="#{lancamentoContabilMB.fornecedorOrigem.dadosBasico.documento}"
-															mask="99.999.999/9999-99"
-															rendered="#{lancamentoContabilMB.tipoOrigem == 'J'}"
-															required="false" validator="cnpjValidator" />
-													</h:panelGroup>
+													<h:panelGroup styleClass="lumeField">
+														<p:outputLabel for="nomeCadastro" value="Nome: " />
+														<p:inputText id="nomeCadastro"
+															value="#{lancamentoContabilMB.nomeCadastro}"
+															maxlength="200"
+															required="#{lancamentoContabilMB.visivel}" />
+													</h:panelGroup>													
+													<h:panelGroup styleClass="lumeField">
+														<p:outputLabel for="celularCadastro" value="Celular: " />
+														<p:inputText id="celularCadastro"
+															value="#{lancamentoContabilMB.celularCadastro}"
+															maxlength="200"
+															required="#{lancamentoContabilMB.visivel}" />
+													</h:panelGroup>	
+													<h:panelGroup styleClass="lumeField">
+														<p:outputLabel for="emailCadastro" value="Email : " />
+														<p:inputText id="emailCadastro"
+															value="#{lancamentoContabilMB.emailCadastro}"
+															maxlength="200"
+															required="#{lancamentoContabilMB.visivel}" />
+													</h:panelGroup>	
 													<br />
 													<br />
 													<div class="SeparatorFull"></div>
@@ -932,7 +934,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 														styleClass="ui-panelgrid-blank form-group ui-fluid">
 														<p:commandButton id="persistOrigem"
 															icon="White fa fa-save" styleClass="GreenButton"
-															process="pgDocumento,nomeOrigem,@this" value="Salvar"
+															process="@this,nomeCadastro,celularCadastro,emailCadastro,tipoCadastro" value="Salvar"
 															update=":lume:pnNovoOrigem, :lume:dadosBasicos"
 															actionListener="#{lancamentoContabilMB.actionPersistOrigem}" />
 													</p:panelGrid>
