@@ -28,13 +28,13 @@
 							<p:inputText id="email" value="#{fornecedorMB.entity.dadosBasico.email}" maxlength="200" />
 
 							<p:outputLabel for="documento" value="CPF/CNPJ : " />
-							<p:inputText id="documento" required="true" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18"							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
+							<p:inputText id="documento" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18"							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
 								<f:validator validatorId="documentoValidator" />
 							</p:inputText>
 
 							<p:outputLabel for="cep" value="CEP : " />
 							<h:panelGroup style="display: flex !important">
-								<p:inputMask id="cep" required="true" value="#{fornecedorMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999">
+								<p:inputMask id="cep"  value="#{fornecedorMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999">
 									<f:validator validatorId="cepValidator" />
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White" actionListener="#{fornecedorMB.actionBuscaCep}"
@@ -42,22 +42,22 @@
 							</h:panelGroup>
 
 							<p:outputLabel for="endereco" value="Endereço : " />
-							<p:inputText id="endereco" required="true" value="#{fornecedorMB.entity.dadosBasico.endereco}" maxlength="200" />
+							<p:inputText id="endereco"  value="#{fornecedorMB.entity.dadosBasico.endereco}" maxlength="200" />
 
 							<p:outputLabel for="numero" value="Número : " />
-							<p:inputMask id="numero" required="true" mask="9?99999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" style="width: 100% !important" />
+							<p:inputMask id="numero"  mask="9?99999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" style="width: 100% !important" />
 
 							<p:outputLabel for="bairro" value="Bairro : " />
-							<p:inputText id="bairro" required="true" value="#{fornecedorMB.entity.dadosBasico.bairro}" maxlength="200"/>
+							<p:inputText id="bairro"  value="#{fornecedorMB.entity.dadosBasico.bairro}" maxlength="200"/>
 
 							<p:outputLabel for="complemento" value="Complemento : " />
 							<p:inputText id="complemento" value="#{fornecedorMB.entity.dadosBasico.complemento}" maxlength="200" />
 
 							<p:outputLabel for="cidade" value="Cidade : " />
-							<p:inputText id="cidade" required="true" value="#{fornecedorMB.entity.dadosBasico.cidade}" maxlength="200" />
+							<p:inputText id="cidade"  value="#{fornecedorMB.entity.dadosBasico.cidade}" maxlength="200" />
 
 							<p:outputLabel for="estado" value="Estado : " />
-							<p:selectOneMenu id="estado" required="true" value="#{fornecedorMB.entity.dadosBasico.uf}">
+							<p:selectOneMenu id="estado"  value="#{fornecedorMB.entity.dadosBasico.uf}">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
 								<f:selectItems value="#{fornecedorMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
 							</p:selectOneMenu>
@@ -69,7 +69,7 @@
 							<p:inputText id="telCelular" value="#{fornecedorMB.entity.dadosBasico.celular}" styleClass="telefone"/>
 
 							<p:outputLabel for="contato" value="Contato : " />
-							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}" required="false" maxlength="200" />
+							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}"  maxlength="200" />
 							
 							<p:column></p:column>
 							<p:column></p:column>
