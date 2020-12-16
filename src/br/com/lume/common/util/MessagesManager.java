@@ -8,6 +8,8 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.rest.conversations.v1.configuration.Webhook;
 import com.twilio.type.PhoneNumber;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
+
 public class MessagesManager {
 
     private static MessagesManager instance;
@@ -44,12 +46,14 @@ public class MessagesManager {
             .setFilters(
                 Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
             .setTarget(Webhook.Target.WEBHOOK)
-            .setPreWebhookUrl("https://sistema.intelidente.com/webhook")
+            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
             .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
             .setMethod("POST")
             .update();
 
+        
         System.out.println(webhook.getMethod());
+        LogIntelidenteSingleton.getInstance().makeLog(webhook.getMethod().toString());
     }
     
     public void receiveMsgs() {
@@ -61,6 +65,7 @@ public class MessagesManager {
 
         for(com.twilio.rest.conversations.v1.conversation.Webhook record : webhooks) {
             System.out.println(record.getSid());
+            LogIntelidenteSingleton.getInstance().makeLog(record.getSid());
         }
     }
 }
