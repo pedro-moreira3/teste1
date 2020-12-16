@@ -45,7 +45,7 @@ public class MessagesManager {
                 Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
             .setTarget(Webhook.Target.WEBHOOK)
             .setPreWebhookUrl("https://sistema.intelidente.com/webhook")
-            .setPostWebhookUrl("https://sistema.intelidente.com/webhook")
+            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
             .setMethod("POST")
             .update();
 
