@@ -52,6 +52,8 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     private List<Empresa> clientesSelected;
     private List<Profissional> usuarios;
     private List<Profissional> usuariosSelected;
+    
+    MessagesManager m;
 
     private boolean switchAllPatro = true;
     private boolean switchAllClientes = true;
@@ -70,6 +72,11 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
             this.perfis.add("Auxiliar de Cirurgião Dentista");
             
             this.setEntityList(MensagemSingleton.getInstance().getBo().listAll());
+            
+            m = MessagesManager.getInstance();
+            
+            m.configurationWebhook();
+            m.receiveMsgs();
             
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -93,11 +100,7 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
 
     public void testeTwilio() {
         try {
-            MessagesManager m = MessagesManager.getInstance();
             m.smsSender();
-            
-            m.configurationWebhook();
-            m.receiveMsgs();
         } catch (Exception e) {
             e.printStackTrace();
         }
