@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.text.Normalizer;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
@@ -24,15 +26,24 @@ import org.primefaces.event.TabChangeEvent;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
+import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabil;
+import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
+import br.com.lume.odonto.entity.ReciboRepasseProfissionalDiaria;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -41,6 +52,9 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
+import br.com.lume.repasse.ReciboRepasseProfissionalSingleton.TipoRecibo;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.transferenciaConta.TransferenciaContaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -102,7 +116,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void aprovarRecibo() {
         try {          
-            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(dataRepassar,repasseParaAprovar, UtilsFrontEnd.getProfissionalLogado());
+            aprovarRecibo(dataRepassar,repasseParaAprovar, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             pesquisarRecibos();
            // PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
@@ -110,6 +124,166 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         } catch (Exception e) {
             addInfo("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             e.printStackTrace();
+        }
+    }
+    
+    public boolean aprovarRecibo(Date dataRepasse,ReciboRepasseProfissional recibo, Profissional profissional) throws Exception {
+        if(getTipoRecibo(recibo) == TipoRecibo.CALCULO) {
+            for (ReciboRepasseProfissionalLancamento repasse : recibo.getReciboLancamentos()) {
+                PlanoTratamentoProcedimento ptp = null;
+                try {
+                    Lancamento lancRepasse = repasse.getLancamento();
+                    RepasseFaturasLancamento rfl = RepasseFaturasLancamentoSingleton.getInstance().getBo()
+                            .getFaturaRepasseLancamentoFromLancamentoRepasse(lancRepasse);
+                    FaturaItem faturaItemOrigem = rfl.getFaturaItem();
+                    ptp = PlanoTratamentoProcedimentoSingleton.getInstance()
+                            .getProcedimentoFromFaturaItem(faturaItemOrigem);
+                } catch (Exception e) {
+                    LogIntelidenteSingleton.getInstance().makeLog(e);
+                }
+                if (ptp != null && Status.SIM.equals(ptp.getPlanoTratamento().getStatus()))
+                    if (repasse.getDados() != null)
+                        throw new Exception("Procedimento " + repasse.getDados().getPlanoTratamentoProcedimento()
+                                + " faz parte de um plano de tratamento encerrado!");
+                    else
+                        throw new Exception("Procedimento " + ptp.getDescricaoCompletaComFace()
+                                + " faz parte de um plano de tratamento encerrado!");
+            }
+    
+            try {
+                List<Lancamento> lancamentos2Aprovar = new ArrayList<>();
+                for (ReciboRepasseProfissionalLancamento repasse : recibo.getReciboLancamentos()) {
+                    if (!"S".equals(repasse.getLancamento().getValidado())) {
+                        repasse.getLancamento().setDataCredito(dataRepasse);
+                        repasse.getLancamento().setDataPagamento(dataRepasse);                  
+                        lancamentos2Aprovar.add(repasse.getLancamento());
+                        repasse.setValidadoAoAprovarRecibo("S");
+                    }
+                    // agora tambem confere os lancamentos automaticamente
+                    validaEConfereLancamentos(repasse.getLancamento(),
+                            profissional);
+                }
+                LancamentoSingleton.getInstance().validaLancamentoLote(lancamentos2Aprovar, profissional);
+                recibo.setAprovado("S");
+                recibo.setDataAprovacao(new Date());
+                recibo.setDataPagamento(dataRepasse);
+                recibo.setAprovadoPor(profissional);
+                return ReciboRepasseProfissionalSingleton.getInstance().getBo().persist(recibo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        } else if(getTipoRecibo(recibo) == TipoRecibo.DIARIA) {
+            
+            try {
+                Fatura fatura = FaturaSingleton.getInstance()
+                    .criaFatura(recibo.getProfissional(), profissional, true);
+                {
+//                  for(ReciboRepasseProfissionalDiaria diaria: recibo.getReciboDiarias()) {
+//                      String observacao = "";
+//                      observacao += "<br>Repasse de profissional por Diária</b><br/>";
+//                      observacao += "<ul style=\"margin: 0px 0px 0px 5px; padding-left: 15px;\">";
+//                      observacao += " <li><b>" + diaria.getDados().getDataDiariaStr() + ":</b> " + 
+//                              NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(diaria.getDados().getValorDiaria()) + 
+//                              " [" + diaria.getDados().getTipoPonto().getDescricao() + "]" + "</li>";
+//                      observacao += "</ul>";
+//                      FaturaItemSingleton.getInstance().criaItemFatura(fatura, 
+//                              "Pagamento Diária [" + diaria.getDados().getDataDiariaStr() + "]", observacao, 
+//                              diaria.getDados().getValorDiaria().doubleValue(), BigDecimal.ZERO);
+//                  }
+                }
+                {
+                    String observacao = "";
+                    observacao += "<br>Repasse de profissional por Diárias</b><br/>";
+                    observacao += "<ul style=\"margin: 0px 0px 0px 5px; padding-left: 15px;\">";
+                    for(ReciboRepasseProfissionalDiaria diaria: recibo.getReciboDiarias())
+                        observacao += " <li><b>" + diaria.getDados().getDataDiariaStr() + ":</b> " +
+                                NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(diaria.getDados().getValorDiaria()) + 
+                                " [" + diaria.getDados().getTipoPonto().getDescricao() + "]" + "</li>";
+                    observacao += "</ul>";
+                    FaturaItemSingleton.getInstance().criaItemFatura(fatura, 
+                            "Pagamento Diárias [" + recibo.getDiasDiarias() + "]", observacao, 
+                            recibo.getValorTotalRepasse(), BigDecimal.ZERO);
+                }
+                Lancamento lancamento = LancamentoSingleton.getInstance().novoLancamento(fatura, 
+                        BigDecimal.valueOf(recibo.getValorTotalRepasse()), "DI", 1, 1, dataRepasse, 
+                        dataRepasse, null, profissional, null);
+               validaEConfereLancamentos(lancamento, profissional);
+                LancamentoSingleton.getInstance().validaLancamento(lancamento, profissional);
+                recibo.setFaturaRepasseDiaria(fatura);
+                
+                recibo.setAprovado("S");
+                recibo.setDataAprovacao(new Date());
+                recibo.setDataPagamento(dataRepasse);
+                recibo.setAprovadoPor(profissional);
+                return ReciboRepasseProfissionalSingleton.getInstance().getBo().persist(recibo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        }
+        return false;
+    }
+    
+    public void validaEConfereLancamentos(Lancamento l, Profissional profissional) throws Exception {
+        List<LancamentoContabil> lancamentosContabeisProntos = new ArrayList<>();
+        try {
+            if (l != null) {
+                List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
+                for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
+                    lancamentoContabil.setData(l.getDataCredito());
+                    //se nao for a tarifa ajustamos o valor do lancamento contabil, pois
+                    //o valor do lancamento pode ter sido editado
+                    if(lancamentoContabil.getMotivo().getId() != 3l) {
+                        if(lancamentoContabil.getTipo().equals("Pagar")) {
+                        lancamentoContabil.setValor(l.getValor().negate());
+                        }else {
+                            lancamentoContabil.setValor(l.getValor());
+                        }
+                    }
+                    LancamentoContabilSingleton.getInstance().getBo().persist(lancamentoContabil);
+                    lancamentosContabeisProntos.add(lancamentoContabil);
+                }
+
+                Date data = Calendar.getInstance().getTime();
+                l.setDataValidado(data);
+                l.setValidadoPorProfissional(profissional);
+                l.setValidado(Status.SIM);
+                if (!Status.SIM.equals(l.getPagamentoConferido())) {
+                    l.setDataConferido(data);
+                    l.setConferidoPorProfissional(profissional);
+                    l.setPagamentoConferido(Status.SIM);
+                }
+                LancamentoSingleton.getInstance().getBo().merge(l);
+                TransferenciaContaSingleton.getInstance().validaTransferencia(l, profissional);
+                FaturaSingleton.getInstance().atualizarStatusFatura(l.getFatura(), profissional);
+                
+                PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
+                if(pt != null && pt.isOrtodontico() && EmpresaSingleton.getInstance().isValidarRepassePorProcedimentoOrtodontico(profissional.getIdEmpresa())) {
+                    RepasseFaturasLancamentoSingleton.getInstance().geraLancamentosRepasse(l.getFatura(), l, profissional);
+                }
+            }
+        } catch (Exception e) {
+            // Desfaz os LC salvos
+            lancamentosContabeisProntos.forEach(lc -> {
+                try {
+                    lc.setData(null);
+                    LancamentoContabilSingleton.getInstance().getBo().persist(lc);
+                } catch (Exception ex) {
+                    // TODO: handle exception
+                }
+            });
+            throw e;
+        }
+    }
+    
+    public TipoRecibo getTipoRecibo(ReciboRepasseProfissional recibo) {
+        if(recibo.getReciboLancamentos() != null && !recibo.getReciboLancamentos().isEmpty()) {
+            return TipoRecibo.CALCULO;
+        } else if(recibo.getReciboDiarias() != null && !recibo.getReciboDiarias().isEmpty()) {
+            return TipoRecibo.DIARIA;
+        } else {
+            return null;
         }
     }
     
