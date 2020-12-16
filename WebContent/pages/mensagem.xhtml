@@ -270,13 +270,11 @@
 									oncomplete="PF('dlgNovaMag').show();" />
 							</h:panelGroup>
 
-							<ui:remove>
 								<h:panelGroup>
 									<p:commandButton styleClass="GreenButton" icon="ui-icon-add"
 										value="teste mensagem"
-										actionListener="#{mensagemMB.testeSendQuick}" process="@this" />
+										actionListener="#{mensagemMB.testeTwilio}" process="@this" />
 								</h:panelGroup>
-							</ui:remove>
 
 						</p:panelGrid>
 					</p:fieldset>
