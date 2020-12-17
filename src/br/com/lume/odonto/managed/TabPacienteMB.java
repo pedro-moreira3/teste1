@@ -13,6 +13,8 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
@@ -80,7 +82,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void onTabChange(TabChangeEvent event) {
         if ("Plano de Tratamento".equals(event.getTab().getTitle())) {
             planoTratamentoMB.carregarPlanosTratamento();
-        } else if ("Odontograma".equals(event.getTab().getTitle())) {
+        }else if ("Anamnese".equals(event.getTab().getTitle())) {
+            pacienteMB.carregarAnamneses();            
+        }else if ("Odontograma".equals(event.getTab().getTitle())) {
             odontogramaMB.atualizaOdontograma();
         } else if ("Manutenção Orto".equals(event.getTab().getTitle())) {
             ortodontiaMB.carregarTela();

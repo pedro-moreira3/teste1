@@ -214,7 +214,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-                doc.setTipoDoc(domExames);
+               doc.setTipoDoc(domExames);
                 docsEmitidos.add(doc);
             }
             

@@ -1,14 +1,11 @@
 package br.com.lume.common.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.twilio.Twilio;
-import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.rest.conversations.v1.configuration.Webhook;
 import com.twilio.type.PhoneNumber;
-
-import br.com.lume.common.log.LogIntelidenteSingleton;
 
 public class MessagesManager {
 
@@ -40,32 +37,8 @@ public class MessagesManager {
         System.out.println(message.getSid());
     }
     
-    public void configurationWebhook() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        Webhook webhook = Webhook.updater()
-            .setFilters(
-                Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
-            .setTarget(Webhook.Target.WEBHOOK)
-            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-            .setMethod("POST")
-            .update();
-
+    public void smsReceive() {
         
-        System.out.println(webhook.getMethod());
-        LogIntelidenteSingleton.getInstance().makeLog(webhook.getMethod().toString());
     }
     
-    public void receiveMsgs() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        ResourceSet<com.twilio.rest.conversations.v1.conversation.Webhook> webhooks =
-                com.twilio.rest.conversations.v1.conversation.Webhook.reader("CHXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-            .limit(20)
-            .read();
-
-        for(com.twilio.rest.conversations.v1.conversation.Webhook record : webhooks) {
-            System.out.println(record.getSid());
-            LogIntelidenteSingleton.getInstance().makeLog(record.getSid());
-        }
-    }
 }

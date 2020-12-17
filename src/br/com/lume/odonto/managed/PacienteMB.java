@@ -220,8 +220,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     planoRender = true;
                 }
                 DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
-                if (UtilsFrontEnd.getProfissionalLogado() != null) {
-                    configuracoesAnamneses = ConfiguracaoAnamneseSingleton.getInstance().getBo().listAll(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                if (UtilsFrontEnd.getProfissionalLogado() != null) {                  
                     convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
 
@@ -515,7 +514,18 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 ag.setDadosTabelaStatusAntigoDetalhado(StatusAgendamentoUtil.findBySigla(ag.getStatusNovo()));
             });
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no carregarAgendamentos", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
+    public void carregarAnamneses() {
+        try {
+            configuracoesAnamneses = ConfiguracaoAnamneseSingleton.getInstance().getBo().listAll(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Erro no carregarAnamneses", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }

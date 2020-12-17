@@ -308,10 +308,7 @@
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.adicionarLogoOrcamentoBool}" />
 
-								<p:outputLabel
-									value="Subtrair valor de impostos no repasse do profissional" />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.repasseAdicionaTributosBool}" />
+							
 
 								<p:outputLabel for="foto"
 									value="Logo (resolução recomendada 180x50 pixels, utilizar .png ou .jpg, somente utilizar logo se sua clínica não utilizar papel timbrado): "
@@ -364,6 +361,12 @@
 									value="Validar se os custos diretos do procedimento já foram conferidos para permitir repasse profissional " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepasseConfereCustoDiretoBool}" />
+								
+								<p:outputLabel
+									value="Subtrair valor de impostos no repasse do profissional" />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.repasseAdicionaTributosBool}" />
+								
 								<ui:remove>
 									<p:outputLabel
 										value="Marque se você não quer que procedimentos com valor zerado apareçam no recibo de profissionais " />
