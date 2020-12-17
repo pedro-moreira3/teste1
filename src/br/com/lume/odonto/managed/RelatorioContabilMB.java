@@ -73,6 +73,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
                 lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByPeriodoAndTipo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 this.ordenaRegistros();
                 this.geraExtrato();
             }

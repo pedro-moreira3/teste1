@@ -95,7 +95,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
+          //  DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
             FornecedorSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);

@@ -39,6 +39,14 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
     private BigDecimal saldoInicial, saldoFinal;
 
     private NumberFormat formatter;
+    
+    private boolean origemDestinoCheck = true;
+    
+    private boolean grupoCheck = false;
+    
+    private boolean categoriaCheck = false;
+    
+    private boolean motivoCheck = false;
 
     public RelatorioContabilDetalhadoMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
@@ -65,7 +73,9 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         try {
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            } else {
+            }else if(!origemDestinoCheck && ! grupoCheck && !categoriaCheck && !motivoCheck) { 
+                this.addError("Escolha pelo menos uma informação para o relatório.", ""); 
+            }else {
                 lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.geraExtrato();
             }
@@ -75,13 +85,57 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         }
     }
 
-    private void geraExtrato() {
+    public void geraExtrato() {
+        
+        int colspan = 5;
+        
+       // int widthColunasHeader = 0;
+        if(origemDestinoCheck) {
+            colspan--;         
+        }
+        if(grupoCheck) {
+            colspan--;        
+        }
+        if(categoriaCheck) {
+            colspan--;         
+        }
+        if(motivoCheck) {
+            colspan--;          
+        }
+//        if(colspan ==  1) {
+//            widthColunasHeader = 30;
+//        }else if(colspan ==  2) {
+//            widthColunasHeader = 20;
+//        }else if(colspan ==  3) {
+//            widthColunasHeader = 15; 
+//        }else if(colspan ==  4) {
+//            widthColunasHeader = 10;
+//        }
+        
         Date dataAnterior = null;
         String cor, corLinha = "white";
-        extrato = "<table class='extrato-financeiro' style=\"border-spacing: 0;\" width=\"100%\"><tr bgcolor=white><td width=\"20%\">Data</td><td width=\"30%\">Origem/Destino</td><td width=\"30%\">Descrição</td><td width=\"20%\" align=\"right\">Valor</td></tr><tr><td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
-        extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
-        this.saldoInicial();
-        extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
+        extrato = "<table class='extrato-financeiro' style=\"border-spacing: 0;\" width=\"100%\">";
+        extrato += "<tr bgcolor=white><td width=\"20%\">Data</td>";        
+        
+        if(origemDestinoCheck) {
+            extrato += "<td colspan=\""+colspan+"\">Origem/Destino</td>";    
+        }
+        if(grupoCheck) {
+            extrato += "<td colspan=\""+colspan+"\">Grupo</td>";        
+        }
+        if(categoriaCheck) {         
+            extrato += "<td colspan=\""+colspan+"\">Categoria</td>";
+        }
+        if(motivoCheck) {        
+            extrato += "<td colspan=\""+colspan+"\">Motivo</td>";
+        }
+        
+        extrato += "<td width=\"20%\" align=\"right\">Valor</td></tr><tr>";
+        extrato += "<td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
+       // extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
+       // this.saldoInicial();
+       // extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";        
+        
         for (LancamentoContabil lc : lancamentoContabeis) {
             if (lc != null) {
                 extrato += "<tr bgcolor=\"";
@@ -93,8 +147,35 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 } else {
                     extrato += corLinha + "\"><td>";
                 }
-                extrato += "</td><td>" + (lc.getDadosBasico() != null && lc.getDadosBasico().getNome() != null ? lc.getDadosBasico().getNome() : "");
-                extrato += "</td><td>" + (lc.getMotivo() != null ? lc.getMotivo().getDescricao() : "");
+                
+                if(origemDestinoCheck) {
+                    extrato += "</td><td colspan=\""+colspan+"\">" + (lc.getDadosBasico() != null && lc.getDadosBasico().getNome() != null ? lc.getDadosBasico().getNome() : "");    
+                }
+               // else {
+               //     extrato += "</td><td>";  
+              //  }
+                if(grupoCheck) {
+                    extrato += "</td><td colspan=\""+colspan+"\">" + (lc.getMotivo().getCategoria().getTipoCategoria().getDescricao() != null ? lc.getMotivo().getCategoria().getTipoCategoria().getDescricao() : "");     
+                }
+                //else {
+               //     extrato += "</td><td>";  
+                //}
+                if(categoriaCheck) {
+                    extrato += "</td><td colspan=\""+colspan+"\">" + (lc.getMotivo().getCategoria().getDescricao() != null ? lc.getMotivo().getCategoria().getDescricao() : "");    
+                }
+                //else {
+               //     extrato += "</td><td>";  
+                //}
+                if(motivoCheck) {
+                    extrato += "</td><td colspan=\""+colspan+"\">" + (lc.getMotivo() != null ? lc.getMotivo().getDescricao() : "");    
+                }
+                //else {
+                //    extrato += "</td><td>";  
+                //}
+                
+                
+                
+                
                 if (lc.getTipo().equals("Pagar")) {
                     cor = "red";
                 } else {
@@ -146,13 +227,15 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
         desenhaSaldo(receitaBruta, "Receita Bruta");
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
-        desenhaSaldo(gastosOdontologicos.multiply(new BigDecimal(-1)), "Gastos Odontológicos");
         desenhaSaldo(gastosOperacionais.multiply(new BigDecimal(-1)), "Gastos Operacionais");
+        desenhaSaldo(gastosOdontologicos.multiply(new BigDecimal(-1)), "Gastos Odontológicos");        
         desenhaSaldo(gastosGerais.multiply(new BigDecimal(-1)), "Gastos Gerais");
-        desenhaSaldo(totalGastos.multiply(new BigDecimal(-1)), "Tota de Gastos");
+        desenhaSaldo(totalGastos.multiply(new BigDecimal(-1)), "Total de Gastos");
+        extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
+        desenhaSaldo(saldoPeriodo, "Saldo do Período");
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
         saldoInicial();
-        desenhaSaldo(saldoPeriodo, "Saldo do Período");
+     
     }
 
     private void saldoInicial() {
@@ -172,6 +255,8 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         }
         this.desenhaSaldo(saldoInicial, "Saldo Acumulado Inicial");
     }
+    
+    
 
     private void saldoFinal() {
         saldoFinal = new BigDecimal(0);
@@ -190,6 +275,16 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
     private void desenhaSaldo(BigDecimal valor, String tipo) {
         String cor;
         extrato += "<tr bgcolor=whitesmoke>";
+      //  for (int i = 0; i < quantidadeColunas; i++) {
+       //     extrato += "<td></td>";
+     //   }
+       // quantidadeColunas++;
+        
+      // int colspan = quantidadeColunas;
+       // if(quantidadeColunas == 1) {
+       //     colspan++;
+       // }
+        
         extrato += "<td></td><td><td style='text-align: right;font-weight: bold;'>" + tipo;
 
         if (valor.intValue() < 0) {
@@ -197,7 +292,9 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         } else {
             cor = "blue";
         }
-        extrato += "</td><td align=\"right\"> <font color=\"" + cor + "\">" + formatter.format(valor) + "</font></td></tr></tr>";
+        extrato += "</td>";
+       
+        extrato += "<td align=\"right\" > <font color=\"" + cor + "\">" + formatter.format(valor) + "</font></td></tr></tr>";
     }
 
     private String invertCor(String cor) {
@@ -268,5 +365,45 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     public void setSaldoFinal(BigDecimal saldoFinal) {
         this.saldoFinal = saldoFinal;
+    }
+
+    
+    public boolean isOrigemDestinoCheck() {
+        return origemDestinoCheck;
+    }
+
+    
+    public void setOrigemDestinoCheck(boolean origemDestinoCheck) {
+        this.origemDestinoCheck = origemDestinoCheck;
+    }
+
+    
+    public boolean isGrupoCheck() {
+        return grupoCheck;
+    }
+
+    
+    public void setGrupoCheck(boolean grupoCheck) {
+        this.grupoCheck = grupoCheck;
+    }
+
+    
+    public boolean isCategoriaCheck() {
+        return categoriaCheck;
+    }
+
+    
+    public void setCategoriaCheck(boolean categoriaCheck) {
+        this.categoriaCheck = categoriaCheck;
+    }
+
+    
+    public boolean isMotivoCheck() {
+        return motivoCheck;
+    }
+
+    
+    public void setMotivoCheck(boolean motivoCheck) {
+        this.motivoCheck = motivoCheck;
     }
 }
