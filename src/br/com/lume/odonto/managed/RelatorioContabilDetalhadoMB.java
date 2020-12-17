@@ -49,9 +49,9 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
     }
 
     public void onTabChange(TabChangeEvent event) {       
-        if (event.getTab().getId().contains("tab4")) {
-            this.filtra();
-        }
+     //   if (event.getTab().getId().contains("tab4")) {
+      //      this.filtra();
+      //  }
     }
 
     private void carregarDatasIniciais() {

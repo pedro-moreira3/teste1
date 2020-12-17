@@ -61,7 +61,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
         this.periodoCredito = "1";
         this.actionTrocaDatasConferencia();
-        this.carregarLancamentosConferencia();
+        //this.carregarLancamentosConferencia();
         this.geraListaTarifa();
     }
 
@@ -105,9 +105,9 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     }
     
     public void onTabChange(TabChangeEvent event) {    
-        if (event.getTab().getId().contains("tab2")) {
-            carregarLancamentosConferencia();
-        }
+      //  if (event.getTab().getId().contains("tab2")) {
+       //     carregarLancamentosConferencia();
+       // }
     }
 
     public void geraListaTarifa() {

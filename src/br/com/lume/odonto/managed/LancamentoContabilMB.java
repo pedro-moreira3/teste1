@@ -143,11 +143,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             this.periodo = "5";
             actionTrocaDatas();
-            this.geraLista();
+          //  this.geraLista();
             this.geraListaTarifa();
             //  this.geraListaOrigens();   
-            tipoCadastro = "FOR";
-            tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
+            
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -235,10 +234,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        System.out.println(event.getTab().getId());
-        if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
-            this.carregarLancamentosValidar();
-        }
+     //   System.out.println(event.getTab().getId());
+     //   if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
+      //      this.carregarLancamentosValidar();
+      //  }
     }
 
     public void validarLC(LancamentoContabil lc) {
@@ -299,12 +298,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void geraLista() {
-        try {
-            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
-            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
+        try {        
             lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno,
-                    formaPagamento, origemFiltro);
-            carrearListasPorTipoPagamento();
+                    formaPagamento, origemFiltro);         
             updateSomatorio();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -406,8 +402,17 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     @Override
     public void actionNew(ActionEvent event) {
+        try {
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
+            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();            
+            carrearListasPorTipoPagamento();  
+            tipoCadastro = "FOR";
+            tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
         this.editando = false;
-        super.actionNew(event);
+     ///   super.actionNew(event);
     }
 
     @Override
@@ -461,6 +466,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 FaturaItem fiAtualizada = FaturaItemSingleton.getInstance().atualizaItemFaturaGenerica(faturaItem, descricaoFatura(getEntity()), tipoSaldo, this.getEntity().getValor(),
                         new BigDecimal(0), this.getEntity().getMotivo());
                 FaturaItemSingleton.getInstance().getBo().persist(fiAtualizada);
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -469,6 +475,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         geraLista();
         updateSomatorio();
         PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
+        this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
     }
 
     public String descricaoFatura(LancamentoContabil lc) {
