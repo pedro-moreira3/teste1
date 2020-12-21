@@ -317,6 +317,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         geraListaSugestoes();
         carregarMotivos();
         try {
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);            
             if ("Pagar".equals(tipo)) {
                 tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
             } else if ("Receber".equals(tipo)) {
@@ -405,7 +406,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     @Override
     public void actionNew(ActionEvent event) {
         try {
-            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();            
             carrearListasPorTipoPagamento();  
             tipoCadastro = "FOR";
@@ -419,6 +420,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.editando = false;
      ///   super.actionNew(event);
     }
+    
+  
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -657,12 +660,12 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void handleSelect(SelectEvent event) {
         Object object = event.getObject();
         this.getEntity().setDadosBasico((DadosBasico) object);
-//        Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
-//        if (ultimoMotivo != null) {
-//            tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
-//            categoria = ultimoMotivo.getCategoria();
-//            this.getEntity().setMotivo(ultimoMotivo);
-//        }
+        Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
+        if (ultimoMotivo != null) {
+            tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
+            categoria = ultimoMotivo.getCategoria();
+            this.getEntity().setMotivo(ultimoMotivo);
+        }
         this.getEntity().setData(new Date());
         if (this.getEntity().getDadosBasico() == null) {
             this.addError(OdontoMensagens.getMensagem("lancamentoContabil.dadosbasico.vazio"), "");

@@ -63,4 +63,14 @@ update seg_objeto set obj_int_codpai = 9 ,obj_int_ordem = 9,obj_str_des = 'Cadas
 -- verificar o codigo certo para inserir nesse caso
 insert into seg_perobjeto (per_int_cod,obj_int_cod)
  select per_int_cod,180 from seg_perobjeto where obj_int_cod = 90
+ 
+ 
+ alter table TIPO_CATEGORIA add column tipo varchar(200);
+ 
+ update TIPO_CATEGORIA set tipo = 'Pagar' where descricao = 'Gastos Gerais';
+ update TIPO_CATEGORIA set tipo = 'Pagar' where descricao = 'Gastos Operacionais';
+ update TIPO_CATEGORIA set tipo = 'Pagar' where descricao = 'Gastos Odontológicos';
+ update TIPO_CATEGORIA set tipo = 'Receber' where descricao = 'Receita Bruta';
+ 
+ 
 
