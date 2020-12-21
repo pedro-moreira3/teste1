@@ -41,15 +41,20 @@ public class MessagesManager {
     }
     
     public void configurationWebhook() {
+//        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+//        Webhook webhook = Webhook.updater()
+//            .setFilters(
+//                Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
+//            .setTarget(Webhook.Target.WEBHOOK)
+//            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
+//            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
+//            .setMethod("POST")
+//            .update();
+        
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        Webhook webhook = Webhook.updater()
-            .setFilters(
-                Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
-            .setTarget(Webhook.Target.WEBHOOK)
-            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-            .setMethod("POST")
-            .update();
+        Webhook webhook = Webhook.fetcher().fetch();
+
+        System.out.println(webhook.getMethod());
 
         System.out.println("---------- CONFIGURANDO WEBHOOK ------------");
         System.out.println(webhook.getMethod());
