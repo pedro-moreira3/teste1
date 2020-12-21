@@ -43,7 +43,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     }
 
     private void carregarTela() {
-        if(UtilsFrontEnd.getEmpresaLogada().getIdIugu() != null) {
+        if(UtilsFrontEnd.getEmpresaLogada().getIdIugu() != null && !UtilsFrontEnd.getEmpresaLogada().getIdIugu().isEmpty()) {
             InvoiceResponse invoice = Iugu.getInstance().listaFaturasPorCliente(UtilsFrontEnd.getEmpresaLogada().getIdIugu());
             
             listaFaturas = invoice.getItems();
