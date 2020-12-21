@@ -141,7 +141,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         super(LancamentoContabilSingleton.getInstance().getBo());
         this.setClazz(LancamentoContabil.class);
         try {
-            this.periodo = "5";
+            this.periodo = "9";
             actionTrocaDatas();
           //  this.geraLista();
             this.geraListaTarifa();
@@ -387,7 +387,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             if (lc.getLancamento() != null) {
                 FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
-                geraLista();
+               
+                
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
 
             } else {
@@ -397,7 +398,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
-        this.geraLista();
+        actionNew(null);
+        geraLista();
     }
 
     @Override
@@ -408,6 +410,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             carrearListasPorTipoPagamento();  
             tipoCadastro = "FOR";
             tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
+            tipoCategoria = null;
+            categoria = null;
+            formaPagamentoDigitacao = null;        
         } catch (Exception e) {
            e.printStackTrace();
         }
@@ -471,7 +476,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 e.printStackTrace();
             }
         }
-
+        actionNew(null);
         geraLista();
         updateSomatorio();
         PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");

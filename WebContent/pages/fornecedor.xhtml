@@ -136,22 +136,43 @@
 							 <p:column headerText="Ações" width="20%">
 							 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
 	                                actionListener="#{fornecedorMB.carregarEditar(fornecedor)}" style="width:33px !important" />
-							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:tbDtPrincipal" title="Remover" process="@this"
-	                                 style="width:33px !important" actionListener="#{fornecedorMB.carregarEditar(fornecedor)}"/>
+	                            <h:panelGroup rendered="#{fornecedor.excluido eq 'N'}">
+									<p:commandButton id="persistInativar"
+										icon="White fa fa-chain-broken" title="Inativar"
+										actionListener="#{fornecedorMB.actionInativar(fornecedor)}"
+										update="dtPrincipal" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{fornecedor.excluido eq 'S'}">
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Ativar"
+										actionListener="#{fornecedorMB.actionAtivar(fornecedor)}"
+										update="dtPrincipal" process="@this" styleClass="NavyButton" />
+								</h:panelGroup>     
+	                                 
+	                                 
 	                        </p:column>								
 							<p:column filterBy="#{fornecedor.dadosBasico.nome}" sortBy="#{fornecedor.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome" filterFunction="#{fornecedorMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.nome}" title="#{fornecedor.id}"/>
 							</p:column>
-							<p:column filterBy="#{fornecedor.dadosBasico.bairro}" sortBy="#{fornecedor.dadosBasico.bairro}" filterMatchMode="contains" headerText="Bairro" filterFunction="#{fornecedorMB.filtroSemAcento}">
-								<h:outputText value="#{fornecedor.dadosBasico.bairro}" />
+							<p:column filterBy="#{fornecedor.dadosBasico.telefone}" sortBy="#{fornecedor.dadosBasico.telefone}" filterMatchMode="contains" headerText="Telefone Comercial" filterFunction="#{fornecedorMB.filtroSemAcento}">
+								<h:outputText value="#{fornecedor.dadosBasico.telefone}" />
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.celular}" sortBy="#{fornecedor.dadosBasico.celular}" filterMatchMode="contains"
 								headerText="Telefone Celular">
-								<h:outputText value="#{fornecedor.dadosBasico.celular}" />
+								<h:outputText value="#{fornecedor.dadosBasico.celular}" />		
+									
+								<p:button icon="White fa fa-whatsapp"
+									disabled="#{fornecedorMB.getUrlWpp(fornecedor) == null}"
+									onclick="window.open('#{fornecedorMB.getUrlWpp(fornecedor)}'); return false;"
+									styleClass="GreenButton" />	
+								
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.responsavel}" sortBy="#{fornecedor.dadosBasico.responsavel}" filterMatchMode="contains"
 								headerText="Contato" filterFunction="#{fornecedorMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.responsavel}" />
+							</p:column>
+							<p:column filterBy="#{fornecedor.status}" sortBy="#{fornecedor.status}" filterMatchMode="contains" headerText="Status" filterFunction="#{fornecedorMB.filtroSemAcento}">
+								<h:outputText value="#{fornecedor.status}"/>
 							</p:column>
 						</p:dataTable>
 					</p:outputLabel>

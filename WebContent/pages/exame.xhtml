@@ -161,12 +161,13 @@
 							headerText="Descrição">
 							<h:outputText value="#{exame.descricao}" />
 						</p:column>
-						<p:column headerText="Download" styleClass="TexAlCenter">
-							<p:commandButton ajax="true" icon="White fa fa-download ">
+						<p:column headerText="Baixar arquivo" styleClass="TexAlCenter">
+							<p:commandButton ajax="false" icon="White fa fa-download " immediate="true" process="@this"
+							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">							
 								<p:fileDownload value="#{exameMB.getArquivo(exame)}" />
 							</p:commandButton>
 						</p:column>
-						<p:column headerText="Arquivo Original" styleClass="TexAlCenter">
+						<p:column headerText="Abrir Arquivo" styleClass="TexAlCenter">
 							<p:commandButton action="#{exameMB.actionEditFile}"
 								icon="White fa fa-save" process="@this"
 								oncomplete="PF('viewDialogResponsivo').show();PF('viewDialogResponsivo').toggleMaximize();"
@@ -184,27 +185,29 @@
 									value="#{exame}" />
 							</p:commandButton>
 						</p:column>
-						<p:column headerText="Arquivo Editado"
-							styleClass="TexAlCenter BotaoExame">
-							<p:commandButton action="#{exameMB.actionEditFile2}"
-								icon="White fa fa-save" process="@this"
-								oncomplete="PF('viewDialog').show();PF('viewDialog').toggleMaximize();"
-								update=":lume:tabViewPaciente:pnResponsivoEditar"
-								disabled="#{exameMB.validaPdf(exame) or exame.anexoAlterado == null}">
-								<f:setPropertyActionListener target="#{exameMB.entity}"
-									value="#{exame}" />
-							</p:commandButton>
-						</p:column>
-						<p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
-							<p:commandButton action="#{exameMB.actionEditFile}"
-								disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton" icon="fa fa-eye"
-								process="@this" immediate="true"
-								update=":lume:tabViewPaciente:paint,:lume:tabViewPaciente:arquivoBase64"
-								oncomplete="doPaint();PF('editDialog').show();">
-								<f:setPropertyActionListener target="#{exameMB.entity}"
-									value="#{exame}" />
-							</p:commandButton>
-						</p:column>
+						<ui:remove>
+							<p:column headerText="Arquivo Editado"
+								styleClass="TexAlCenter BotaoExame">
+								<p:commandButton action="#{exameMB.actionEditFile2}"
+									icon="White fa fa-save" process="@this"
+									oncomplete="PF('viewDialog').show();PF('viewDialog').toggleMaximize();"
+									update=":lume:tabViewPaciente:pnResponsivoEditar"
+									disabled="#{exameMB.validaPdf(exame) or exame.anexoAlterado == null}">
+									<f:setPropertyActionListener target="#{exameMB.entity}"
+										value="#{exame}" />
+								</p:commandButton>
+							</p:column>
+							<p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
+								<p:commandButton action="#{exameMB.actionEditFile}"
+									disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton" icon="fa fa-eye"
+									process="@this" immediate="true"
+									update=":lume:tabViewPaciente:paint,:lume:tabViewPaciente:arquivoBase64"
+									oncomplete="doPaint();PF('editDialog').show();">
+									<f:setPropertyActionListener target="#{exameMB.entity}"
+										value="#{exame}" />
+								</p:commandButton>
+							</p:column>
+						</ui:remove>
 						<p:column headerText="Data/Hora" sortBy="#{exame.dataHoraStrOrd}">
 							<h:outputText value="#{exame.dataHoraStr}" />
 						</p:column>

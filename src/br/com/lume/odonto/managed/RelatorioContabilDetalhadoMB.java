@@ -230,6 +230,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         desenhaSaldo(gastosOperacionais.multiply(new BigDecimal(-1)), "Gastos Operacionais");
         desenhaSaldo(gastosOdontologicos.multiply(new BigDecimal(-1)), "Gastos Odontológicos");        
         desenhaSaldo(gastosGerais.multiply(new BigDecimal(-1)), "Gastos Gerais");
+        extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
         desenhaSaldo(totalGastos.multiply(new BigDecimal(-1)), "Total de Gastos");
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
         desenhaSaldo(saldoPeriodo, "Saldo do Período");

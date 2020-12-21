@@ -96,7 +96,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax process="@this"
 													update="inicioLancamento,fimLancamento"
 													listener="#{lancamentoContabilMB.actionTrocaDatas}" />
-
+												<f:selectItem itemValue="9" itemLabel="Mês Atual" />
 												<f:selectItem itemValue="1" itemLabel="Hoje" />
 												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
 												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
@@ -105,6 +105,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
 												<f:selectItem itemValue="7" itemLabel="Mês anterior" />
 												<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
+												
+												
+												
+												
 											</p:selectOneMenu>
 										</h:panelGroup>		
 										
@@ -159,6 +163,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 										
 									</p:panelGrid>
+									<ui:remove>
 									<p:panelGrid columns="4" layout="grid" 
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
@@ -169,7 +174,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:selectBooleanCheckbox>
 										
 									</p:panelGrid>	
-								
+									</ui:remove>
 									<p:panelGrid columns="4" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
 										<p:commandButton id="pesquisarLancamentos"
@@ -376,9 +381,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												<p:ajax process="@this"
 													update="dataConferenciaInicial,dataConferenciaFinal"
-													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />
-
+													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />												
 												<f:selectItem itemValue="1" itemLabel="Hoje" />
+												<f:selectItem itemValue="9" itemLabel="Mês Atual" />												
 												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
 												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
 												<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
@@ -728,10 +733,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="origemDestinoCheck" value="Mostrar Origem/Destino" />											
 											<p:spacer width="20" height="0" />
 											
-											<p:selectBooleanCheckbox id="grupoCheck"
-												value="#{relatorioContabilDetalhadoMB.grupoCheck}">												
+											<p:selectBooleanCheckbox id="motivoCheck"
+												value="#{relatorioContabilDetalhadoMB.motivoCheck}">												
 											</p:selectBooleanCheckbox>
-											<p:outputLabel for="grupoCheck" value="Mostrar Grupo" />											
+											<p:outputLabel for="motivoCheck" value="Mostrar motivo" />
 											<p:spacer width="20" height="0" />
 											
 											<p:selectBooleanCheckbox id="categoriaCheck"
@@ -740,11 +745,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="categoriaCheck" value="Mostrar Categoria" />											
 											<p:spacer width="20" height="0" />
 											
-											<p:selectBooleanCheckbox id="motivoCheck"
-												value="#{relatorioContabilDetalhadoMB.motivoCheck}">												
+											<p:selectBooleanCheckbox id="grupoCheck"
+												value="#{relatorioContabilDetalhadoMB.grupoCheck}">												
 											</p:selectBooleanCheckbox>
-											<p:outputLabel for="motivoCheck" value="Mostrar motivo" />										
-											
+											<p:outputLabel for="grupoCheck" value="Mostrar Grupo" />
 											
 										</h:panelGroup>
 
@@ -866,6 +870,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 															<f:selectItem itemLabel="Fornecedor" itemValue="FOR" />
 															<f:selectItem itemLabel="Paciente" itemValue="PAC" />
 															<f:selectItem itemLabel="Profissional" itemValue="PRO" />
+															<p:ajax process="@this" update=":lume:pnNovoOrigem" />
 															
 														</p:selectOneRadio>
 													</h:panelGroup>
@@ -881,14 +886,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 														<p:inputText id="celularCadastro"
 															value="#{lancamentoContabilMB.celularCadastro}"
 															maxlength="200"
-															required="#{lancamentoContabilMB.visivel}" />
+															required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" />
 													</h:panelGroup>	
 													<h:panelGroup styleClass="lumeField">
 														<p:outputLabel for="emailCadastro" value="Email : " />
 														<p:inputText id="emailCadastro"
 															value="#{lancamentoContabilMB.emailCadastro}"
 															maxlength="200"
-															required="#{lancamentoContabilMB.visivel}" />
+															required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" />
 													</h:panelGroup>	
 													<br />
 													<br />

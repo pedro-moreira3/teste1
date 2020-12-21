@@ -59,3 +59,8 @@ update seg_objeto set obj_int_codpai = 9 ,obj_int_ordem = 9,obj_str_des = 'Cadas
 
 --TODO MIGRAR ORIGENS PARA FORNECEDORES, ESTA NO FORNECEDORESMB
 --APOS MIGRAR REMOVER ORIGEM, ORIGEMBO E ORIGEMSINGLETON E TIRAR AS REFERENCIAS DISSO DO SISTEMA
+
+-- verificar o codigo certo para inserir nesse caso
+insert into seg_perobjeto (per_int_cod,obj_int_cod)
+ select per_int_cod,180 from seg_perobjeto where obj_int_cod = 90
+
