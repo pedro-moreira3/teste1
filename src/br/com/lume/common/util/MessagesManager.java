@@ -2,6 +2,8 @@ package br.com.lume.common.util;
 
 import java.util.Arrays;
 
+import javax.sound.midi.Soundbank;
+
 import com.twilio.Twilio;
 import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
@@ -62,7 +64,8 @@ public class MessagesManager {
 
         for(com.twilio.rest.conversations.v1.conversation.Webhook record : webhooks) {
             System.out.println("------- REGISTRO ---------- ");
-            System.out.println(record.getSid() + "\n");
+            System.out.println("SID: " + record.getSid());
+            System.out.println("TARGET: " + record.getTarget() + "\n");
         }
     }
 }
