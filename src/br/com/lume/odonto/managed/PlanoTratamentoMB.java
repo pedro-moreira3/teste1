@@ -215,6 +215,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             justificativasCancelamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamentoprocedimento", "justificativa");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
         }
@@ -345,6 +346,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             carregarPlanosTratamento();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPersist", e);
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
         }
@@ -388,6 +390,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 ptLazyModel = new PlanoTratamentoLazyModel(planosTratamento);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
@@ -439,6 +442,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             atualizaTela();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionFinalizar", e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
         }
@@ -458,6 +462,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPTInicial", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -495,6 +500,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 RetornoSingleton.getInstance().getBo().persist(r);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(OdontoMensagens.getMensagem("erro.plano.cria.retorno"), e);
         }
     }
@@ -622,7 +628,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 return ConvenioProcedimentoSingleton.getInstance().isUsingConvenio(ptp.getPlanoTratamento(),
                         ptp.getProcedimento()) && !ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(ptp.getPlanoTratamento(), ptp.getProcedimento());
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return false;
     }
@@ -672,6 +678,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("actionAdicionarProcedimento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -716,6 +723,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     return cp.getValor();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
         // return ptProcedimento.getValor();
@@ -806,6 +814,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.addError("Selecione um plano de tratamento.", "");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("actionAdicionarProcedimento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -864,6 +873,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').show()");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarNovamente", e);
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -880,6 +890,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarSalvar", e);
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -893,6 +904,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no calculaRepasses", e);
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -937,6 +949,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("actionPersistFaces", e);
             this.addInfo(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -976,6 +989,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     try {
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
                     } catch (Exception e) {
+                        e.printStackTrace();
                         addError("Erro ao salvar registro", e.getMessage());
                     }
                 }
@@ -987,6 +1001,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 actionFinalizar((ActionEvent) null);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPersistEvolucao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1039,6 +1054,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 return false;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro listByPlanoTratamentoProcedimento ", e);
             addError(OdontoMensagens.getMensagem("erro.plano.agendamento"), "");
             return false;
@@ -1056,6 +1072,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             return oi.getValorOriginal().subtract(oi.getValor()).divide(oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
         } catch (Exception e) {
+            e.printStackTrace();
             return BigDecimal.ZERO;
         }
     }
@@ -1086,6 +1103,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         + "menu \"Cadastro de profissionais\".");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionNewOrcamento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
         }
@@ -1106,10 +1124,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     private boolean validaOrcamentoMaiorPermitido() {
         BigDecimal valorDesconto = new BigDecimal(0);
+        DescontoOrcamento descontoCadastrado = null;
         if(!descontosDisponiveis.isEmpty()) {
-            if(numeroParcelaOrcamento == null)
+            if(numeroParcelaOrcamento == null) {
                 return false;
-            valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
+            }
+            descontoCadastrado = descontosDisponiveis.get(numeroParcelaOrcamento.intValue());
+            if(descontoCadastrado != null) {
+                valorDesconto = descontoCadastrado.getDesconto();
+            }    
         }
         if (orcamentoSelecionado.getDescontoTipo().equals(
                 "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
@@ -1118,7 +1141,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             //orcamentoSelecionado.getValorTotal();
             //orcamentoSelecionado.getValorTotalSemDesconto();
             double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotalSemDesconto().doubleValue();
-            if (descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
+            
+            if(descontoCadastrado != null) {
+                valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
+            }else {
+                valorDesconto =  new BigDecimal(0);
+            }
+            
+            if (descontoEmPorcentagem > valorDesconto.doubleValue()) {
                 return true;
             }
         }
@@ -1252,6 +1282,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             pagtoDinheiro = this.formasPagamentoNewPlanejamento.stream().filter(forma -> "DI".equals(forma.getValor())).collect(Collectors.toList()).get(0);
         } catch (Exception e) {
+            e.printStackTrace();
             pagtoDinheiro = null;
         }
 
@@ -1327,6 +1358,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             newPlanejamento();
             this.addInfo("Sucesso", "Planejamento inserido com sucesso.");
         } catch (Exception e) {
+            e.printStackTrace();
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO) + " " + e.getMessage());
         }
     }
@@ -1375,6 +1407,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             setEntity(planoTratamento);           
             carregaOrcamentos();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no carregaTela", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -1385,6 +1418,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no carregaTela", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -1407,6 +1441,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             carregaOrcamentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
+            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
@@ -1469,10 +1504,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             try {
                 RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             } catch (Exception e) {
+                e.printStackTrace();
                 addError("Erro", "Falha na criação do comissionamento. " + e.getMessage());
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             return;
@@ -1529,6 +1566,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Somente o administrador do sistema pode cancelar o orçamento.");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
@@ -1580,6 +1618,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             carregaTelaOrcamento(getEntity());
             //this.orcamentoSelecionado = null;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1609,6 +1648,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionAlterarRegiao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1622,6 +1662,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.odontogramaSelecionado = getEntity().getOdontograma();
             PrimeFaces.current().executeScript("PF('dlgOdontogramaPT').show()");
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -1659,6 +1700,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
             carregarProcedimentos(denteSelecionado);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no carregaProcedimentos", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -1687,6 +1729,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             getEntity().setOdontograma(odontograma);
             carregarOdontogramas();
         } catch (Exception e) {
+            
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1721,6 +1764,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             carregarStatusDente();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("actionPersistStatusDente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1750,6 +1794,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.enableRegioes = true;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro", "Erro ao adicionar diagnóstico!");
         }
@@ -1801,6 +1846,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().setOdontograma(OdontogramaSingleton.getInstance().getBo().find(getEntity().getOdontograma()));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPersistRegioes", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1811,6 +1857,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             RegiaoDenteSingleton.getInstance().getBo().persist(rd);
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionPersistFacesStatusDente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1826,6 +1873,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().setOdontograma(OdontogramaSingleton.getInstance().getBo().find(getEntity().getOdontograma()));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionRemoverStatusDente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1841,6 +1889,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 denteSelecionado = DenteSingleton.getInstance().getBo().find(denteSelecionado);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no actionRemoverStatusDente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -1851,6 +1900,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (getEntity().getOdontograma().getRegioesRegiao() != null && !getEntity().getOdontograma().getRegioesRegiao().isEmpty() && getRegiaoSelecionada() != null && !getRegiaoSelecionada().isEmpty())
                 return RegiaoRegiaoSingleton.getInstance().getBo().findByDescAndOdontograma(getRegiaoSelecionada(), getEntity().getOdontograma());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no getDiagnosticosRegiao", e);
         }
         return null;
@@ -1939,6 +1989,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             this.addError(Mensagens.ERRO_AO_SALVAR_REGISTRO, "");
         }
 
@@ -1980,6 +2031,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             this.addError(Mensagens.ERRO_AO_SALVAR_REGISTRO, "");
         }
     }
@@ -2020,6 +2072,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             regiaoSelecionada = null;
             carregarProcedimentosComRegiao();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Erro no carregaProcedimentos", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
