@@ -117,7 +117,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 											</p:selectOneMenu>
 										</h:panelGroup>
-
+<ui:remove>
 							<h:panelGroup>
 								<p:outputLabel for="status" value="Status do Pagamento: " />
 								<p:selectOneMenu id="status"
@@ -127,22 +127,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 									<f:selectItems value="#{relatorioPagamentoMB.statuss}"
 										var="status" itemLabel="#{status.descricao}"
-										itemValue="#{status}" />
-									<p:ajax
-										listener="#{relatorioPagamentoMB.alteraStatusLancamento}"
-										update="subStatusRecebimento" process="@this,subStatusRecebimento" />
+										itemValue="#{status}" />									
 								</p:selectOneMenu>
 								<h:outputLabel class="fa fa-question" id="tooltipStatus"
 									style="font-size:24px; margin-left:10px;" />
 								<p:tooltip for="tooltipStatus"
 									value="#{relatorioPagamentoMB.getTooltipValue('relatorioPagamento','statuspagamento')}"
 									position="bottom" style="width:30%;" />
-							</h:panelGroup>
-
-							<h:panelGroup>
-								<p:outputLabel for="subStatusRecebimento"
-									value="Sub Status do Pagamento: " />
-								<p:selectCheckboxMenu id="subStatusRecebimento"
+							</h:panelGroup>							
+</ui:remove>
+								<h:panelGroup>
+								<p:outputLabel for="status"
+									value="Status do Pagamento: " />
+								<p:selectCheckboxMenu id="status"
 									label="Sub Status" multiple="true"
 									style="top:7px;display:inline-block;width:90%;"
 									value="#{relatorioPagamentoMB.subStatus}"
@@ -157,6 +154,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioPagamentoMB.getTooltipValue('relatorioPagamento','substatus')}"
 									position="bottom" style="width:30%;" />
 							</h:panelGroup>
+
+
 
 							<h:panelGroup>
 								<p:outputLabel for="confereciaForma" value="Forma de pagamento:" />
@@ -181,7 +180,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Pesquisar"
 								actionListener="#{relatorioPagamentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal"
-								process="@this,inicio,fim,faturaOrigemDestino,subStatusRecebimento,status"
+								process="@this,inicio,fim,faturaOrigemDestino,status"
 								styleClass="OrangeButton" />
 
 							<ui:remove>
@@ -324,10 +323,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</h:outputText>
 								</f:facet>
 							</p:column>
-							<p:column filterBy="#{lancamento.statusCompleto}"
-								sortBy="#{lancamento.statusCompleto}" filterMatchMode="contains"
+							<p:column filterBy="#{lancamento.subStatusString}"
+								sortBy="#{lancamento.subStatusString}" filterMatchMode="contains"
 								headerText="Status">
-								<h:outputText value="#{lancamento.statusCompleto}" />
+								<h:outputText value="#{lancamento.subStatusString}" />
 							</p:column>
 						</p:dataTable>
 					</p:outputPanel>

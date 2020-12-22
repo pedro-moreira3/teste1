@@ -198,7 +198,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setAdicionarLogoOrcamento("S");
             this.getEntity().setRepasseAdicionaTributos("S");
             this.getEntity().setValidarGeraReciboValorZerado("N");
-            
+            this.getEntity().setQuantidadeMesesFaturaRecorrente(12);
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());  
             cal.set(Calendar.HOUR_OF_DAY, 8);

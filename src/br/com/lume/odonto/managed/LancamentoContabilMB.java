@@ -107,11 +107,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     //TODO depois fazer enum tipos sao fornecedor, paciente e profissional
     private String tipoCadastro = "FOR";
-    
+
     private String nomeCadastro;
-    
+
     private String celularCadastro;
-    
+
     private String emailCadastro;
 
     //EXPORTAÇÃO TABELA
@@ -143,10 +143,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             this.periodo = "9";
             actionTrocaDatas();
-          //  this.geraLista();
+            //  this.geraLista();
             this.geraListaTarifa();
             //  this.geraListaOrigens();   
-            
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -234,10 +233,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void onTabChange(TabChangeEvent event) {
-     //   System.out.println(event.getTab().getId());
-     //   if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
-      //      this.carregarLancamentosValidar();
-      //  }
+        //   System.out.println(event.getTab().getId());
+        //   if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
+        //      this.carregarLancamentosValidar();
+        //  }
     }
 
     public void validarLC(LancamentoContabil lc) {
@@ -298,9 +297,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void geraLista() {
-        try {        
+        try {
             lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno,
-                    formaPagamento, origemFiltro);         
+                    formaPagamento, origemFiltro);
             updateSomatorio();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -317,7 +316,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         geraListaSugestoes();
         carregarMotivos();
         try {
-            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);            
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
             if ("Pagar".equals(tipo)) {
                 tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
             } else if ("Receber".equals(tipo)) {
@@ -388,8 +387,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             if (lc.getLancamento() != null) {
                 FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
-               
-                
+
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
 
             } else {
@@ -407,21 +405,19 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionNew(ActionEvent event) {
         try {
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
-            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();            
-            carrearListasPorTipoPagamento();  
+            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
+            carrearListasPorTipoPagamento();
             tipoCadastro = "FOR";
             tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
             tipoCategoria = null;
             categoria = null;
-            formaPagamentoDigitacao = null;        
+            formaPagamentoDigitacao = null;
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         this.editando = false;
-     ///   super.actionNew(event);
+        ///   super.actionNew(event);
     }
-    
-  
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -474,7 +470,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 FaturaItem fiAtualizada = FaturaItemSingleton.getInstance().atualizaItemFaturaGenerica(faturaItem, descricaoFatura(getEntity()), tipoSaldo, this.getEntity().getValor(),
                         new BigDecimal(0), this.getEntity().getMotivo());
                 FaturaItemSingleton.getInstance().getBo().persist(fiAtualizada);
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -495,6 +491,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         return descricaoItem;
     }
 
+    //TODO mover para o singleton
     private void criarFaturaGenerica(LancamentoContabil lc) {
 
         String descricaoItem = Utils.descricaoItemFaturaGenerica(lc);
@@ -618,18 +615,25 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         }
     }
 
-    public String valorLancamento(LancamentoContabil lancamento) {
-        Locale Local = new Locale("pt", "BR");
-
-        double value = lancamento.getValor().doubleValue();
-        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-
-        String silgaMotivo = lancamento.getMotivo().getSigla();
-
-        if (lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
-            value = value * (-1);
-
-        return "R$ " + df.format(value);
+//    public String valorLancamento(LancamentoContabil lancamento) {
+//        Locale Local = new Locale("pt", "BR");
+//
+//        double value = lancamento.getValor().doubleValue();
+//        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
+//
+//        String silgaMotivo = lancamento.getMotivo().getSigla();
+//
+//        if (lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+//            value = value * (-1);
+//
+//        return "R$ " + df.format(value);
+//    }
+    
+    public double valorLancamentoDouble(LancamentoContabil lancamento) {  
+        if(lancamento.getValor() == null) {
+            return 0d;
+        }       
+        return lancamento.getValor().doubleValue();
     }
 
     public void carregaTela() {
@@ -672,7 +676,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         }
     }
 
-    public void novoOrigem(ActionEvent event) {        
+    public void novoOrigem(ActionEvent event) {
         nomeCadastro = null;
         celularCadastro = null;
         emailCadastro = null;
@@ -689,32 +693,32 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             db.setNome(this.getNomeCadastro());
             db.setCelular(this.getCelularCadastro());
             db.setEmail(this.getEmailCadastro());
-            if(tipoCadastro.equals("FOR")) {
+            if (tipoCadastro.equals("FOR")) {
                 Fornecedor fornecedor = new Fornecedor();
                 fornecedor.setDadosBasico(db);
                 fornecedor.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 FornecedorSingleton.getInstance().getBo().persist(fornecedor);
                 this.getEntity().setDadosBasico(fornecedor.getDadosBasico());
-            }else if(tipoCadastro.equals("PAC")) {
+            } else if (tipoCadastro.equals("PAC")) {
                 Paciente paciente = new Paciente();
                 paciente.setDadosBasico(db);
-                paciente.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+                paciente.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 paciente.setPreCadastro("S");
                 PacienteSingleton.getInstance().getBo().persist(paciente);
-                this.getEntity().setDadosBasico(paciente.getDadosBasico());               
-            }else if(tipoCadastro.equals("PRO")) {
+                this.getEntity().setDadosBasico(paciente.getDadosBasico());
+            } else if (tipoCadastro.equals("PRO")) {
                 Profissional profissional = new Profissional();
                 profissional.setDadosBasico(db);
-                profissional.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+                profissional.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 profissional.setPerfil(OdontoPerfil.DENTISTA);
                 ProfissionalSingleton.getInstance().getBo().persist(profissional);
-                this.getEntity().setDadosBasico(profissional.getDadosBasico());               
+                this.getEntity().setDadosBasico(profissional.getDadosBasico());
             }
-            
+
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             this.geraListaSugestoes();
-          
+
         } catch (UsuarioDuplicadoException ud) {
             this.addError(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO), "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
@@ -725,7 +729,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void exportarTabela(String type) {
-        exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
+        if (tabelaLancamento.getRowCount() > 0) {
+            exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
+        }else {
+            this.addError("Efetue uma pesquisa antes de exportar a tabela.", ""); 
+        }
     }
 
     public List<LancamentoContabil> getLancamentoContabeis() {
@@ -944,42 +952,34 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.editando = editando;
     }
 
-    
     public String getTipoCadastro() {
         return tipoCadastro;
     }
 
-    
     public void setTipoCadastro(String tipoCadastro) {
         this.tipoCadastro = tipoCadastro;
     }
 
-    
     public String getNomeCadastro() {
         return nomeCadastro;
     }
 
-    
     public void setNomeCadastro(String nomeCadastro) {
         this.nomeCadastro = nomeCadastro;
     }
 
-    
     public String getCelularCadastro() {
         return celularCadastro;
     }
 
-    
     public void setCelularCadastro(String celularCadastro) {
         this.celularCadastro = celularCadastro;
     }
 
-    
     public String getEmailCadastro() {
         return emailCadastro;
     }
 
-    
     public void setEmailCadastro(String emailCadastro) {
         this.emailCadastro = emailCadastro;
     }

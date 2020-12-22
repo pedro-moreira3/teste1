@@ -53,185 +53,190 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
-		
+
 		<p:outputPanel id="viewFaturaRepasse">
 			<ui:include src="faturaViewProfissional.xhtml">
 				<ui:param name="showNewLancamento" value="N" />
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
-		
+
 		<p:outputPanel id="viewFaturaSimples">
 			<ui:include src="faturaViewSimples.xhtml">
 				<ui:param name="showNewLancamento" value="S" />
 			</ui:include>
-			<p:remoteCommand process="@this" name="onCloseFaturaView" actionListener="#{lancamentoContabilMB.geraLista}" update=":lume:tv:dtLancamentoContabil" oncomplete="PF('dtLancamentoContabil').filter()"/>
-		</p:outputPanel>	
+			<p:remoteCommand process="@this" name="onCloseFaturaView"
+				actionListener="#{lancamentoContabilMB.geraLista}"
+				update=":lume:tv:dtLancamentoContabil"
+				oncomplete="PF('dtLancamentoContabil').filter()" />
+		</p:outputPanel>
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:tabView id="tv" styleClass="NoPadding">
-					
+
 						<p:tab id="tab1" title="Pagamentos/Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
-									
-<h1>Pagamentos/Recebimentos</h1>										
-																
+
+									<h1>Pagamentos/Recebimentos</h1>
+
 									<div class="EmptyBox20"></div>
-							
-							<p:fieldset toggleable="false">
-							
-							
-									<p:panelGrid columns="3" layout="grid" id="filtroPrincipalDatas"
-										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-										<h:panelGroup>
-											<p:outputLabel for="listaPeriodoInicial" value="Período:" />
-											<p:selectOneMenu id="listaPeriodoInicial"
-												value="#{lancamentoContabilMB.periodo}"
-												update="inicioLancamento,fimLancamento">
+									<p:fieldset toggleable="false">
 
-												<p:ajax process="@this"
-													update="inicioLancamento,fimLancamento"
-													listener="#{lancamentoContabilMB.actionTrocaDatas}" />
-												<f:selectItem itemValue="9" itemLabel="Mês Atual" />
-												<f:selectItem itemValue="1" itemLabel="Hoje" />
-												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
-												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
-												<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
-												<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
-												<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
-												<f:selectItem itemValue="7" itemLabel="Mês anterior" />
-												<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
-												
-												
-												
-												
-											</p:selectOneMenu>
-										</h:panelGroup>		
-										
-										<h:panelGroup >
-											<p:outputLabel for="inicioLancamento" value="Inicio: " />
-											<p:calendar id="inicioLancamento"
-												value="#{lancamentoContabilMB.inicio}" pattern="dd/MM/yyyy"
-												mask="true" required="false" />
-										</h:panelGroup>
-										
-										<h:panelGroup >
-												<p:outputLabel for="fimLancamento" value="Fim: " />
-											<p:calendar id="fimLancamento"
-												value="#{lancamentoContabilMB.fim}" pattern="dd/MM/yyyy"
-												mask="true" required="false" />
-										</h:panelGroup>
-										
+
+										<p:panelGrid columns="3" layout="grid"
+											id="filtroPrincipalDatas"
+											styleClass="ui-panelgrid-blank ui-fluid form-group">
+
 											<h:panelGroup>
-											<p:outputLabel for="forma"
-												value="Forma de pagamento/recebimento:" />
-											<p:selectOneMenu id="forma"
-											autoWidth="false"
-												value="#{lancamentoContabilMB.formaPagamento}"
-												converter="tarifa">
+												<p:outputLabel for="listaPeriodoInicial" value="Período:" />
+												<p:selectOneMenu id="listaPeriodoInicial"
+													value="#{lancamentoContabilMB.periodo}"
+													update="inicioLancamento,fimLancamento">
 
-												<p:ajax process="@this" />
+													<p:ajax process="@this"
+														update="inicioLancamento,fimLancamento"
+														listener="#{lancamentoContabilMB.actionTrocaDatas}" />
+													<f:selectItem itemValue="9" itemLabel="Mês Atual" />
+													<f:selectItem itemValue="7" itemLabel="Mês anterior" />
+													<f:selectItem itemValue="1" itemLabel="Hoje" />
+													<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
+													<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
+													<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
+													<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
+													<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />													
+													<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
 
-												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-												<f:selectItems value="#{lancamentoContabilMB.tarifas}"
-													var="tarifa" itemLabel="#{tarifa.produto} (#{tarifa.formaPagamentoStr})"
-													itemValue="#{tarifa}" />
-											</p:selectOneMenu>
-										</h:panelGroup>
-										
-										<h:panelGroup>
-											<p:outputLabel for="faturaOrigemDestino"
-												value="Origem/Destino:" />
+												</p:selectOneMenu>
+											</h:panelGroup>
 
-											
-											<p:autoComplete queryDelay="1000"
-														value="#{lancamentoContabilMB.origemFiltro}"
-														id="faturaOrigemDestino"
-														completeMethod="#{lancamentoContabilMB.geraSugestoes}"
-														var="d" itemLabel="#{d.tipoInformacaoNome}"
-														itemValue="#{d}" converter="dadosBasico" 
-														size="46" minQueryLength="3" dropdown="true">
-														<p:ajax event="itemSelect" process="@this" />
-													</p:autoComplete>
-											
-											
-											
-										</h:panelGroup>
-										
-									</p:panelGrid>
-									<ui:remove>
-									<p:panelGrid columns="4" layout="grid" 
-										styleClass="ui-panelgrid-blank ui-fluid form-group">
-										
-										<p:outputLabel for="mostrarextornos" value="Mostrar lançamento de extorno: " />	
-										<p:selectBooleanCheckbox id="mostrarextornos" 
-											value="#{lancamentoContabilMB.mostrarExtorno}">
-											<p:ajax process="@this"/>
-										</p:selectBooleanCheckbox>
-										
-									</p:panelGrid>	
-									</ui:remove>
-									<p:panelGrid columns="4" layout="grid"
-										styleClass="ui-panelgrid-blank form-group ui-fluid">
-										<p:commandButton id="pesquisarLancamentos"
-											icon="fa fa-search White" value="Pesquisar"
-											actionListener="#{lancamentoContabilMB.geraLista}"
-											update="filtroPrincipalDatas,dtLancamentoContabil"
-											process="@this,filtroPrincipalDatas"
-											oncomplete="PF('dtLancamentoContabil').filter()"
-											styleClass="OrangeButton" />
-									</p:panelGrid>
-	</p:fieldset>		
-										<h:inputHidden id="idLancamentoContabil"
-										value="#{lancamentoContabilMB.entity.id}" />
-									
-										
+											<h:panelGroup>
+												<p:outputLabel for="inicioLancamento" value="Inicio: " />
+												<p:calendar id="inicioLancamento"
+													value="#{lancamentoContabilMB.inicio}" pattern="dd/MM/yyyy"
+													mask="true" required="false" />
+											</h:panelGroup>
+
+											<h:panelGroup>
+												<p:outputLabel for="fimLancamento" value="Fim: " />
+												<p:calendar id="fimLancamento"
+													value="#{lancamentoContabilMB.fim}" pattern="dd/MM/yyyy"
+													mask="true" required="false" />
+											</h:panelGroup>
+
+											<h:panelGroup>
+												<p:outputLabel for="forma"
+													value="Forma de pagamento/recebimento:" />
+												<p:selectOneMenu id="forma" autoWidth="false"
+													value="#{lancamentoContabilMB.formaPagamento}"
+													converter="tarifa">
+
+													<p:ajax process="@this" />
+
+													<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+													<f:selectItems value="#{lancamentoContabilMB.tarifas}"
+														var="tarifa"
+														itemLabel="#{tarifa.produto} (#{tarifa.formaPagamentoStr})"
+														itemValue="#{tarifa}" />
+												</p:selectOneMenu>
+											</h:panelGroup>
+
+											<h:panelGroup>
+												<p:outputLabel for="faturaOrigemDestino"
+													value="Origem/Destino:" />
+
+
+												<p:autoComplete queryDelay="1000"
+													value="#{lancamentoContabilMB.origemFiltro}"
+													id="faturaOrigemDestino"
+													completeMethod="#{lancamentoContabilMB.geraSugestoes}"
+													var="d" itemLabel="#{d.tipoInformacaoNome}"
+													itemValue="#{d}" converter="dadosBasico" size="46"
+													minQueryLength="3" dropdown="true">
+													<p:ajax event="itemSelect" process="@this" />
+												</p:autoComplete>
+
+
+
+											</h:panelGroup>
+
+										</p:panelGrid>
+										<ui:remove>
+											<p:panelGrid columns="4" layout="grid"
+												styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+												<p:outputLabel for="mostrarextornos"
+													value="Mostrar lançamento de extorno: " />
+												<p:selectBooleanCheckbox id="mostrarextornos"
+													value="#{lancamentoContabilMB.mostrarExtorno}">
+													<p:ajax process="@this" />
+												</p:selectBooleanCheckbox>
+
+											</p:panelGrid>
+										</ui:remove>
 										<p:panelGrid columns="4" layout="grid"
 											styleClass="ui-panelgrid-blank form-group ui-fluid">
-											
-												
-												<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Pagamento/Recebimento"
-					oncomplete="PF('dlgNovoPagamentoRecebimento').show();" actionListener="#{lancamentoContabilMB.actionNew}"
-	                update=":lume:dlgNovoPagamentoRecebimento"  process="@this"/>
-												
-												
-												<h:panelGroup>
-												<p:splitButton icon="White fa fa fa-file-excel-o"
-													value="Exportar tabela para Excel"
-													styleClass="GreenSplitButton"
-													actionListener="#{lancamentoContabilMB.exportarTabela('xls')}"
-													ajax="false" process="dtLancamentoContabil,@this"
-													update="@this" immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:commandButton id="pesquisarLancamentos"
+												icon="fa fa-search White" value="Pesquisar"
+												actionListener="#{lancamentoContabilMB.geraLista}"
+												update="filtroPrincipalDatas,dtLancamentoContabil"
+												process="@this,filtroPrincipalDatas"
+												oncomplete="PF('dtLancamentoContabil').filter()"
+												styleClass="OrangeButton" />
+										</p:panelGrid>
+									</p:fieldset>
+									<h:inputHidden id="idLancamentoContabil"
+										value="#{lancamentoContabilMB.entity.id}" />
 
+
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+
+										<p:commandButton id="new" icon="White fa fa-file-o"
+											value="Novo Pagamento/Recebimento"
+											oncomplete="PF('dlgNovoPagamentoRecebimento').show();"
+											actionListener="#{lancamentoContabilMB.actionNew}"
+											update=":lume:dlgNovoPagamentoRecebimento" process="@this" />
+
+
+										<h:panelGroup>
+											<p:splitButton icon="White fa fa fa-file-excel-o"
+												value="Exportar tabela para Excel"
+												styleClass="GreenSplitButton"
+												actionListener="#{lancamentoContabilMB.exportarTabela('xls')}"
+												ajax="false" process="dtLancamentoContabil,@this"
+												update="@this" immediate="true"
+												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+												<p:fileDownload
+													value="#{lancamentoContabilMB.arquivoDownload}" />
+
+												<p:menuitem value="Exportar tabela para PDF"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}"
+													ajax="false" process="dtLancamentoContabil,@this"
+													immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 													<p:fileDownload
 														value="#{lancamentoContabilMB.arquivoDownload}" />
+												</p:menuitem>
+												<p:menuitem value="Exportar tabela para CSV"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{lancamentoContabilMB.exportarTabela('csv')}"
+													ajax="false" process="dtLancamentoContabil,@this"
+													immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload
+														value="#{lancamentoContabilMB.arquivoDownload}" />
+												</p:menuitem>
+											</p:splitButton>
+										</h:panelGroup>
 
-													<p:menuitem value="Exportar tabela para PDF"
-														icon="fa fa fa-file-pdf-o"
-														actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}"
-														ajax="false" process="dtLancamentoContabil,@this"
-														immediate="true"
-														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-														<p:fileDownload
-															value="#{lancamentoContabilMB.arquivoDownload}" />
-													</p:menuitem>
-													<p:menuitem value="Exportar tabela para CSV"
-														icon="fa fa fa-file-pdf-o"
-														actionListener="#{lancamentoMB.exportarTabela('csv')}"
-														ajax="false" process="dtLancamentoContabil,@this"
-														immediate="true"
-														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-														<p:fileDownload value="#{lancamentoMB.arquivoDownload}" />
-													</p:menuitem>
-												</p:splitButton>
-											</h:panelGroup>	
-												
-										</p:panelGrid>
+									</p:panelGrid>
 
 
 									<div class="EmptyBox20"></div>
@@ -243,55 +248,53 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										selectionMode="single" rowKey="#{lc}"
 										paginatorPosition="bottom"
 										binding="#{lancamentoContabilMB.tabelaLancamento}">
-										
+
 										<f:facet name="header">Contas a Pagar/Receber</f:facet>
 
 										<p:tooltip for="@parent" rendered="#{lc.validado == 'S'}"
 											value="Conferido às #{lc.dataValidacaoStr} pelo profissional #{lc.validadoPorProfissional.dadosBasico.prefixoNome}" />
-										<p:column width="80" headerText="Ações"
-											exportable="false">
+										<p:column width="80" headerText="Ações" exportable="false">
 											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFatura(lc.lancamento.fatura)}"
 												update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
-												oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
-												title="Visualizar Fatura" rendered="#{lc.lancamento.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
-												disabled="#{lc.lancamento == null}"
-												/>
-												
-												<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
-														title="Visualizar Fatura" rendered="#{lc.lancamento.fatura.tipoFatura eq 'PAGAMENTO_PROFISSIONAL'}"
-														oncomplete="PF('dlgFaturaViewProfissional').show();"
-														actionListener="#{faturaPagtoMB.visualizaFatura(lc.lancamento.fatura)}"
-														process="@this"
-														update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
-												
-												<p:commandButton icon="fa fa-eye" process="@this"
+												oncomplete="PF('dlgFaturaView').show();"
+												styleClass="NavyButton" title="Visualizar Fatura"
+												rendered="#{lc.lancamento.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
+												disabled="#{lc.lancamento == null}" />
+
+											<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
+												title="Visualizar Fatura"
+												rendered="#{lc.lancamento.fatura.tipoFatura eq 'PAGAMENTO_PROFISSIONAL'}"
+												oncomplete="PF('dlgFaturaViewProfissional').show();"
+												actionListener="#{faturaPagtoMB.visualizaFatura(lc.lancamento.fatura)}"
+												process="@this"
+												update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
+
+											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.lancamento.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
-												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
-												title="Visualizar Fatura" rendered="#{lc.lancamento.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+												oncomplete="PF('dlgFaturaViewSimples').show();"
+												styleClass="NavyButton" title="Visualizar Fatura"
+												rendered="#{lc.lancamento.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
 												lc.lancamento.fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
 												}"
-												disabled="#{lc.lancamento == null}"
-												/>
-												
-												<p:commandButton 
-												
+												disabled="#{lc.lancamento == null}" />
+
+											<p:commandButton
 												actionListener="#{lancamentoContabilMB.actionRemove(lc)}"
 												update=":lume:pnNovoPagamentoRecebimento,:lume:tv:dtLancamentoContabil"
-												process="@this"
-												title="Cancelar lançamento"
+												process="@this" title="Cancelar lançamento"
 												disabled="#{lc.lancamento.fatura.tipoFatura.rotulo eq 'PP'}"
-												styleClass="RedButton" icon="fa fa-trash" >
-													<p:confirm header="Confirmação" icon="ui-icon-alert"
-																escape="false"
-																message="Você tem certeza que deseja cancelar esta fatura?">
-													</p:confirm>												
-												</p:commandButton>
-												
-											
-													
-												
+												styleClass="RedButton" icon="fa fa-trash">
+												<p:confirm header="Confirmação" icon="ui-icon-alert"
+													escape="false"
+													message="Você tem certeza que deseja cancelar esta fatura?">
+												</p:confirm>
+											</p:commandButton>
+
+
+
+
 										</p:column>
 
 										<p:column filterBy="#{lc.dadosBasico.nome}"
@@ -320,14 +323,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
 											<h:outputText value="#{lc.motivo.descricao}" />
 										</p:column>
+
 										<p:column
-											filterBy="#{lancamentoContabilMB.valorLancamento(lc)}"
-											sortBy="#{lancamentoContabilMB.valorLancamento(lc)}"
-											filterMatchMode="contains"
-											headerText="Valor(R$)">
+											filterBy="#{lancamentoContabilMB.valorLancamentoDouble(lc)}"
+											filterMatchMode="contains" headerText="Valor(R$)"
+											sortBy="#{lancamentoContabilMB.valorLancamentoDouble(lc)}">
 											<h:outputText
-												value="#{lancamentoContabilMB.valorLancamento(lc)}">
+												value="#{lancamentoContabilMB.valorLancamentoDouble(lc)}">
+												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
 											</h:outputText>
+
 											<f:facet name="footer" style="text-align:center;">
 												<h:outputText value="Total " />
 												<h:outputText
@@ -337,6 +342,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												</h:outputText>
 											</f:facet>
 										</p:column>
+
 										<p:column headerText="Data" filterBy="#{lc.dataStr}"
 											sortBy="#{lc.data}" filterMatchMode="contains"
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
@@ -381,9 +387,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												<p:ajax process="@this"
 													update="dataConferenciaInicial,dataConferenciaFinal"
-													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />												
+													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />
 												<f:selectItem itemValue="1" itemLabel="Hoje" />
-												<f:selectItem itemValue="9" itemLabel="Mês Atual" />												
+												<f:selectItem itemValue="9" itemLabel="Mês Atual" />
 												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
 												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
 												<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
@@ -436,17 +442,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<h:panelGroup>
 											<h:outputText for="filtroPaciente" value="Origem/Destino :" />
 											<p:autoComplete queryDelay="1000"
-														value="#{conferenciaRecebimentoMB.dadosBasico}"
-														id="filtroPaciente"
-														completeMethod="#{lancamentoContabilMB.geraSugestoes}"
-														var="d" itemLabel="#{d.tipoInformacaoNome}"
-														itemValue="#{d}" converter="dadosBasico" required="true"
-														size="46" minQueryLength="3" dropdown="true">
-														<p:ajax event="itemSelect" process="@this"  />
-													</p:autoComplete>
-											
-											
-											
+												value="#{conferenciaRecebimentoMB.dadosBasico}"
+												id="filtroPaciente"
+												completeMethod="#{lancamentoContabilMB.geraSugestoes}"
+												var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
+												converter="dadosBasico" required="true" size="46"
+												minQueryLength="3" dropdown="true">
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
+
+
+
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -460,7 +466,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}"
-													var="tarifa" itemLabel="#{tarifa.produto} (#{tarifa.formaPagamentoStr})"
+													var="tarifa"
+													itemLabel="#{tarifa.produto} (#{tarifa.formaPagamentoStr})"
 													itemValue="#{tarifa}" />
 											</p:selectOneMenu>
 										</h:panelGroup>
@@ -468,12 +475,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:panelGrid>
 
 									<p:panelGrid columns="3" layout="grid"
-										styleClass="ui-panelgrid-blank ui-fluid form-group"> 
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 										<h:panelGroup>
 											<p:commandButton value="Pesquisar"
-												action="#{conferenciaRecebimentoMB.carregarLancamentosConferencia}" oncomplete="PF('dtLancamentoValidar').filter()"
-												icon="White fa fa-search" update="lancamentosAValidar,dtLancamentoValidar"
+												action="#{conferenciaRecebimentoMB.carregarLancamentosConferencia}"
+												oncomplete="PF('dtLancamentoValidar').filter()"
+												icon="White fa fa-search"
+												update="lancamentosAValidar,dtLancamentoValidar"
 												process="@this" styleClass="NavyButton" />
 										</h:panelGroup>
 
@@ -538,21 +547,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
 												update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
 												oncomplete="PF('dlgFaturaView').show();"
-												styleClass="NavyButton" title="Visualizar Fatura" 
-												rendered="#{lc.fatura.tipoFatura ne 'FATURA_GENERICA_PAGAMENTO' and lc.fatura.tipoFatura ne 'FATURA_GENERICA_RECEBIMENTO'}"	
-												/>
-												
-												
-												<p:commandButton icon="fa fa-eye" process="@this"
+												styleClass="NavyButton" title="Visualizar Fatura"
+												rendered="#{lc.fatura.tipoFatura ne 'FATURA_GENERICA_PAGAMENTO' and lc.fatura.tipoFatura ne 'FATURA_GENERICA_RECEBIMENTO'}" />
+
+
+											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
-												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
-												title="Visualizar Fatura" rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+												oncomplete="PF('dlgFaturaViewSimples').show();"
+												styleClass="NavyButton" title="Visualizar Fatura"
+												rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
 												lc.fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
-												}"											
-												/>
-												
-												
+												}" />
+
+
 											<ui:remove>
 												<p:commandButton icon="White fa fa-money"
 													styleClass="RedButton" title="Ajustar valor"
@@ -568,12 +576,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText value="#{lc.fatura.tipoFaturaDescricao}"
 												title="#{lc.id}" />
 										</p:column>
-										<p:column filterBy="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}"
+										<p:column
+											filterBy="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}"
 											sortBy="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}"
 											filterFunction="#{conferenciaRecebimentoMB.filtroSemAcento}"
 											filterMatchMode="contains" headerText="Origem/Destino">
-											<h:outputText value="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}"
-												 />
+											<h:outputText
+												value="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}" />
 										</p:column>
 										<p:column filterBy="#{lc.pt.descricao}"
 											sortBy="#{lc.pt.descricao}" filterMatchMode="contains"
@@ -583,19 +592,23 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column filterBy="#{lc.formaPagamentoStr}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
 											headerText="Produto">
-											<h:outputText value="#{lc.formaPagamentoStr}" rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}" />											
-											
-											<p:selectOneMenu id="confereciaForma" rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"	
-												value="#{lc.tarifa}" style="" disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
+											<h:outputText value="#{lc.formaPagamentoStr}"
+												rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}" />
+
+											<p:selectOneMenu id="confereciaForma"
+												rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"
+												value="#{lc.tarifa}" style=""
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
 												converter="tarifa">
 
-												<p:ajax process="@this" listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}"/>											
+												<p:ajax process="@this"
+													listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}" />
 												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}"
 													var="tarifa" itemLabel="#{tarifa.produto}"
 													itemValue="#{tarifa}" />
 											</p:selectOneMenu>
-											
-											
+
+
 										</p:column>
 										<p:column headerText="Data Pagamento"
 											filterBy="#{lc.dataPagamentoStr}"
@@ -605,8 +618,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column headerText="Data Crédito"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<p:calendar value="#{lc.dataCredito}"
-												autocomplete="false" locale="#{lumeSecurity.locale}" mask="true"
+											<p:calendar value="#{lc.dataCredito}" autocomplete="false"
+												locale="#{lumeSecurity.locale}" mask="true"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
 												<p:ajax event="dateSelect" process="@this" />
 											</p:calendar>
@@ -640,31 +653,35 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</h:outputText>
 											<f:facet name="footer">
 												<h:outputText value="Total " />
-												<h:outputText 
+												<h:outputText
 													value="#{lc.fatura.tipoFaturaconferenciaRecebimentoMB.somatorioValorConferidoConferencia}">
 													<f:convertNumber currencySymbol="R$" type="currency"
 														minFractionDigits="2" />
 												</h:outputText>
-													
+
 											</f:facet>
 										</p:column>
 										<p:column headerText="Valor total"
 											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterMatchMode="contains">
-											<h:outputText rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"	
+											<h:outputText
+												rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
 												value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
 												<f:convertNumber currencySymbol="R$" type="currency"
 													minFractionDigits="2" />
 											</h:outputText>
-											<p:inputNumber id="valor" rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"							
-											value="#{lc.valor}" disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
-											required="true" maxlength="13" maxValue="9999999999.99"
-											decimalSeparator="," symbol="R$ " thousandSeparator="." >
-											<p:ajax event="change" process="@this" listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}"
-											 oncomplete="PF('dtLancamentoValidar').filter()"/>
-											</p:inputNumber>											
-											
+											<p:inputNumber id="valor"
+												rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"
+												value="#{lc.valor}"
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
+												required="true" maxlength="13" maxValue="9999999999.99"
+												decimalSeparator="," symbol="R$ " thousandSeparator=".">
+												<p:ajax event="change" process="@this"
+													listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}"
+													oncomplete="PF('dtLancamentoValidar').filter()" />
+											</p:inputNumber>
+
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText
@@ -682,17 +699,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											exportable="false">
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
-												update="dtLancamentoValidar"
-												process="@this"
-												styleClass="GreenButton"
-												title="Valor recebido"
+												update="dtLancamentoValidar" process="@this"
+												styleClass="GreenButton" title="Valor recebido"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"
 												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
-												update="dtLancamentoValidar"
-												process="@this"
-												styleClass="RedButton"
-												title="Falha no recebimento"
+												update="dtLancamentoValidar" process="@this"
+												styleClass="RedButton" title="Falha no recebimento"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 										</p:column>
 									</p:dataTable>
@@ -700,7 +713,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</div>
 							</div>
 						</p:tab>
-						
+
 						<p:tab id="tab4" title="Extrato">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
@@ -726,30 +739,33 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												pattern="dd/MM/yyyy" mask="true" required="true" />
 
 										</p:panelGrid>
-										<h:panelGroup style="display:block;margin-left:10px;margin-top:10px;margin-bottom:10px;" id="painelCheckbox">
+										<h:panelGroup
+											style="display:block;margin-left:10px;margin-top:10px;margin-bottom:10px;"
+											id="painelCheckbox">
 											<p:selectBooleanCheckbox id="origemDestinoCheck"
-												value="#{relatorioContabilDetalhadoMB.origemDestinoCheck}">												
+												value="#{relatorioContabilDetalhadoMB.origemDestinoCheck}">
 											</p:selectBooleanCheckbox>
-											<p:outputLabel for="origemDestinoCheck" value="Mostrar Origem/Destino" />											
+											<p:outputLabel for="origemDestinoCheck"
+												value="Mostrar Origem/Destino" />
 											<p:spacer width="20" height="0" />
-											
+
 											<p:selectBooleanCheckbox id="motivoCheck"
-												value="#{relatorioContabilDetalhadoMB.motivoCheck}">												
+												value="#{relatorioContabilDetalhadoMB.motivoCheck}">
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="motivoCheck" value="Mostrar motivo" />
 											<p:spacer width="20" height="0" />
-											
+
 											<p:selectBooleanCheckbox id="categoriaCheck"
-												value="#{relatorioContabilDetalhadoMB.categoriaCheck}">												
+												value="#{relatorioContabilDetalhadoMB.categoriaCheck}">
 											</p:selectBooleanCheckbox>
-											<p:outputLabel for="categoriaCheck" value="Mostrar Categoria" />											
+											<p:outputLabel for="categoriaCheck" value="Mostrar Categoria" />
 											<p:spacer width="20" height="0" />
-											
+
 											<p:selectBooleanCheckbox id="grupoCheck"
-												value="#{relatorioContabilDetalhadoMB.grupoCheck}">												
+												value="#{relatorioContabilDetalhadoMB.grupoCheck}">
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="grupoCheck" value="Mostrar Grupo" />
-											
+
 										</h:panelGroup>
 
 										<div class="SeparatorFull"></div>
@@ -808,264 +824,265 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 
 					</p:dialog>
-					
-						<p:dialog id="dlgNovoPagamentoRecebimento" widgetVar="dlgNovoPagamentoRecebimento"
-							resizable="false" modal="true" responsive="true" appendTo=":lume"
-							width="50%" header="Novo Pagamento/Recebimento">
 
-							<p:outputPanel id="pnNovoPagamentoRecebimento" style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+					<p:dialog id="dlgNovoPagamentoRecebimento"
+						widgetVar="dlgNovoPagamentoRecebimento" resizable="false"
+						modal="true" responsive="true" appendTo=":lume" width="50%"
+						header="Novo Pagamento/Recebimento">
+
+						<p:outputPanel id="pnNovoPagamentoRecebimento"
+							style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
 							<p:scrollPanel mode="native"
-									style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
-							
+								style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
+
 								<p:panelGrid columns="2" layout="grid" id="gridDados"
-											styleClass="ui-panelgrid-blank form-group ui-fluid"
-											columnClasses="ui-g-2,ui-g-10">
-											<p:outputLabel for="forma" value="Forma: "/>
-											<p:selectOneRadio id="forma" 
-												value="#{lancamentoContabilMB.tipo}">
-												<p:ajax process="@this"
-													update=":lume:pnNovoPagamentoRecebimento"
-													listener="#{lancamentoContabilMB.carrearListasPorTipoPagamento}" />
-												<f:selectItem itemLabel="Pagamento" itemValue="Pagar" />
-												<f:selectItem itemLabel="Recebimento" itemValue="Receber" />
-											</p:selectOneRadio>
+									styleClass="ui-panelgrid-blank form-group ui-fluid"
+									columnClasses="ui-g-2,ui-g-10">
+									<p:outputLabel for="forma" value="Forma: " />
+									<p:selectOneRadio id="forma"
+										value="#{lancamentoContabilMB.tipo}">
+										<p:ajax process="@this"
+											update=":lume:pnNovoPagamentoRecebimento"
+											listener="#{lancamentoContabilMB.carrearListasPorTipoPagamento}" />
+										<f:selectItem itemLabel="Pagamento" itemValue="Pagar" />
+										<f:selectItem itemLabel="Recebimento" itemValue="Receber" />
+									</p:selectOneRadio>
 
-											<p:outputLabel for="dadosBasicos" value="Origem/Destino : " />
-											<h:panelGroup id="pnBtorigem" >
-												<h:panelGroup styleClass="lumeField" style="display: flex">
-													<p:autoComplete queryDelay="1000"
-														value="#{lancamentoContabilMB.entity.dadosBasico}"
-														id="dadosBasicos" 
-														completeMethod="#{lancamentoContabilMB.geraSugestoes}"
-														var="d" itemLabel="#{d.tipoInformacaoNome}"
-														itemValue="#{d}" converter="dadosBasico" required="true"
-														size="46" minQueryLength="3" dropdown="true">
-														<p:ajax event="itemSelect"
-															listener="#{lancamentoContabilMB.handleSelect}"
-															process=":lume:dadosBasicos"
-															update=":lume:tipocategoria, :lume:categoria, :lume:motivo,:lume:data" />
-													</p:autoComplete>
-													<p:commandButton id="novoOrigem"
-														rendered="#{!lancamentoContabilMB.visivel}"
-														icon="fa fa-plus White"
-														update="pnNovoOrigem, :lume:pnBtorigem"
-														immediate="true"
-														actionListener="#{lancamentoContabilMB.novoOrigem}"
-														style="margin-left: 5px;" />
-													<p:commandButton id="cancelarNovoOrigem"
-														rendered="#{lancamentoContabilMB.visivel}"
-														icon="fa fa-minus White"
-														update="pnNovoOrigem, :lume:pnBtorigem"
-														immediate="true"
-														actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}"
-														style="margin-left: 5px;" />
-												</h:panelGroup>
-												<p:panel id="pnNovoOrigem" 
-													visible="#{lancamentoContabilMB.visivel}"
-													styleClass="BordNone">
-													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="tipoCadastro" value="Tipo do Cadastro: " />
-														<p:selectOneRadio id="tipoCadastro"
-															value="#{lancamentoContabilMB.tipoCadastro}" columns="2">
-															<f:selectItem itemLabel="Fornecedor" itemValue="FOR" />
-															<f:selectItem itemLabel="Paciente" itemValue="PAC" />
-															<f:selectItem itemLabel="Profissional" itemValue="PRO" />
-															<p:ajax process="@this" update=":lume:pnNovoOrigem" />
-															
-														</p:selectOneRadio>
-													</h:panelGroup>
-													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="nomeCadastro" value="Nome: " />
-														<p:inputText id="nomeCadastro"
-															value="#{lancamentoContabilMB.nomeCadastro}"
-															maxlength="200"
-															required="#{lancamentoContabilMB.visivel}" />
-													</h:panelGroup>													
-													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="celularCadastro" value="Celular: " />
-														<p:inputText id="celularCadastro"
-															value="#{lancamentoContabilMB.celularCadastro}"
-															maxlength="200"
-															required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" />
-													</h:panelGroup>	
-													<h:panelGroup styleClass="lumeField">
-														<p:outputLabel for="emailCadastro" value="Email : " />
-														<p:inputText id="emailCadastro"
-															value="#{lancamentoContabilMB.emailCadastro}"
-															maxlength="200"
-															required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" />
-													</h:panelGroup>	
-													<br />
-													<br />
-													<div class="SeparatorFull"></div>
-													<p:panelGrid columns="1" layout="grid"
-														styleClass="ui-panelgrid-blank form-group ui-fluid">
-														<p:commandButton id="persistOrigem"
-															icon="White fa fa-save" styleClass="GreenButton"
-															process="@this,nomeCadastro,celularCadastro,emailCadastro,tipoCadastro" value="Salvar"
-															update=":lume:pnNovoOrigem, :lume:dadosBasicos"
-															actionListener="#{lancamentoContabilMB.actionPersistOrigem}" />
-													</p:panelGrid>
-												</p:panel>
-											</h:panelGroup>
+									<p:outputLabel for="dadosBasicos" value="Origem/Destino : " />
+									<h:panelGroup id="pnBtorigem">
+										<h:panelGroup styleClass="lumeField" style="display: flex">
+											<p:autoComplete queryDelay="1000"
+												value="#{lancamentoContabilMB.entity.dadosBasico}"
+												id="dadosBasicos"
+												completeMethod="#{lancamentoContabilMB.geraSugestoes}"
+												var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
+												converter="dadosBasico" required="true" size="46"
+												minQueryLength="3" dropdown="true">
+												<p:ajax event="itemSelect"
+													listener="#{lancamentoContabilMB.handleSelect}"
+													process=":lume:dadosBasicos"
+													update=":lume:tipocategoria, :lume:categoria, :lume:motivo,:lume:data" />
+											</p:autoComplete>
+											<p:commandButton id="novoOrigem"
+												rendered="#{!lancamentoContabilMB.visivel}"
+												icon="fa fa-plus White"
+												update="pnNovoOrigem, :lume:pnBtorigem" immediate="true"
+												actionListener="#{lancamentoContabilMB.novoOrigem}"
+												style="margin-left: 5px;" />
+											<p:commandButton id="cancelarNovoOrigem"
+												rendered="#{lancamentoContabilMB.visivel}"
+												icon="fa fa-minus White"
+												update="pnNovoOrigem, :lume:pnBtorigem" immediate="true"
+												actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}"
+												style="margin-left: 5px;" />
+										</h:panelGroup>
+										<p:panel id="pnNovoOrigem"
+											visible="#{lancamentoContabilMB.visivel}"
+											styleClass="BordNone">
+											<h:panelGroup styleClass="lumeField">
+												<p:outputLabel for="tipoCadastro" value="Tipo do Cadastro: " />
+												<p:selectOneRadio id="tipoCadastro"
+													value="#{lancamentoContabilMB.tipoCadastro}" columns="2">
+													<f:selectItem itemLabel="Fornecedor" itemValue="FOR" />
+													<f:selectItem itemLabel="Paciente" itemValue="PAC" />
+													<f:selectItem itemLabel="Profissional" itemValue="PRO" />
+													<p:ajax process="@this" update=":lume:pnNovoOrigem" />
 
-											<p:outputLabel for="tipocategoria" value="Grupo : " />
+												</p:selectOneRadio>
+											</h:panelGroup>
 											<h:panelGroup styleClass="lumeField">
-												<p:selectOneMenu id="tipocategoria"
-													converter="tipocategoria" required="false"
-													value="#{lancamentoContabilMB.tipoCategoria}" filter="true"
-													filterMatchMode="contains">
-													<p:ajax process="@this" update="categoria"
-														listener="#{lancamentoContabilMB.carregarCategorias}" />
-													<f:selectItem itemValue="#{null}"
-														itemLabel="Selecione um Grupo" />
-													<f:selectItems
-														value="#{lancamentoContabilMB.tiposCategoria}" var="m"
-														itemLabel="#{m.descricao}" itemValue="#{m}" />
-												</p:selectOneMenu>
+												<p:outputLabel for="nomeCadastro" value="Nome: " />
+												<p:inputText id="nomeCadastro"
+													value="#{lancamentoContabilMB.nomeCadastro}"
+													maxlength="100" required="#{lancamentoContabilMB.visivel}" />
 											</h:panelGroup>
-
-											<p:outputLabel for="categoria" value="Categoria : " />
 											<h:panelGroup styleClass="lumeField">
-												<p:selectOneMenu id="categoria" converter="categoriamotivo"
-													required="false" value="#{lancamentoContabilMB.categoria}"
-													filter="true" filterMatchMode="contains">
-													<p:ajax process="@this" update=":lume:motivo"
-														listener="#{lancamentoContabilMB.carregarMotivos}" />
-													<f:selectItem itemValue="#{null}"
-														itemLabel="Selecione uma Categoria" />
-													<f:selectItems value="#{lancamentoContabilMB.categorias}"
-														var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
-												</p:selectOneMenu>
+												<p:outputLabel for="celularCadastro" value="Celular: " />
+												<p:inputText id="celularCadastro"
+													value="#{lancamentoContabilMB.celularCadastro}"
+													maxlength="20"
+													required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" />
 											</h:panelGroup>
-
-											<p:outputLabel for="motivo" value="Motivo : " />
 											<h:panelGroup styleClass="lumeField">
-												<p:selectOneMenu id="motivo" converter="motivo"
-													required="true"
-													value="#{lancamentoContabilMB.entity.motivo}" filter="true"
-													filterMatchMode="contains">
-													<p:ajax process="@this" update="tipocategoria,categoria"
-														listener="#{lancamentoContabilMB.carregarTipoECategoria}" />
-													<f:selectItem itemValue="#{null}"
-														itemLabel="Selecione um Motivo" />
-													<f:selectItems value="#{lancamentoContabilMB.motivos}"
-														var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
-												</p:selectOneMenu>
+												<p:outputLabel for="emailCadastro" value="Email : " />
+												<p:inputText id="emailCadastro"
+													value="#{lancamentoContabilMB.emailCadastro}"
+													maxlength="100" validatorMessage="E-mail inválido"
+													required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" >
+														<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+												</p:inputText>
+												<p:message for="emailCadastro" styleClass="msg" />
 											</h:panelGroup>
-											<p:outputLabel for="formaDigitacao" value="Forma de pagamento : " />
-											<h:panelGroup styleClass="lumeField">
-												<p:selectOneMenu id="formaDigitacao" required="true"
-													value="#{lancamentoContabilMB.formaPagamentoDigitacao}"
-													converter="tarifa">
-	
-													<p:ajax process="@this" />
-	
-													<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-													<f:selectItems value="#{lancamentoContabilMB.tarifasDigitacao}"
-														var="tarifa" itemLabel="#{tarifa.produto}"
-														itemValue="#{tarifa}" />
-												</p:selectOneMenu>
-											</h:panelGroup>
-											<p:outputLabel for="data" value="Data : " />
-											<h:panelGroup styleClass="lumeField">
-												<p:calendar id="data" required="true"
-													value="#{lancamentoContabilMB.entity.data}"
-													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-													locale="#{lumeSecurity.locale}"
-													timeZone="#{lumeSecurity.timeZone}" navigator="true"
-													yearRange="-100:+10">
-												</p:calendar>
-											</h:panelGroup>
-
-											<p:outputLabel for="valor" value="Valor : " />
-											<h:panelGroup styleClass="lumeField">
-												<p:inputNumber id="valor"
-													value="#{lancamentoContabilMB.entity.valor}"
-													required="true" maxlength="13" maxValue="9999999999.99"
-													decimalSeparator="," symbol="R$ " thousandSeparator="." />
-											</h:panelGroup>
-											
-											<p:outputLabel for="descricao" value="Descrição : " />
-											<h:panelGroup styleClass="lumeField">
-												<p:inputText id="descricao"
-													value="#{lancamentoContabilMB.entity.descricao}"
-													required="false" maxlength="100"
-													 />
-											</h:panelGroup>
-											<ui:remove>
-											<p:outputLabel for="observacoes" value="Observações : " />
-											<h:panelGroup styleClass="lumeField">
-												<p:inputText id="observacoes"
-													value="#{lancamentoContabilMB.entity.observacao}"
-													required="false" maxlength="200"
-													 />
-											</h:panelGroup>
-											</ui:remove>
-												<p:outputLabel for="recorrente" value="Recorrente? " />
-											<p:selectOneRadio id="recorrente" 
-												value="#{lancamentoContabilMB.recorrente}">
-												<p:ajax process="@this"
-													update=":lume:pnRecorrente" />
-												<f:selectItem itemLabel="Não" itemValue="N" />
-												<f:selectItem itemLabel="Sim" itemValue="S" />
-											</p:selectOneRadio>
-											
-										</p:panelGrid>
-											
-										<p:panelGrid columns="2" layout="grid" id="pnRecorrente"
-											styleClass="ui-panelgrid-blank form-group ui-fluid"
-											columnClasses="ui-g-6,ui-g-6">
-											
-											
-												<p:outputLabel for="diasRecorrente" value="De quanto em quanto tempo? " rendered="#{lancamentoContabilMB.recorrente eq 'S'}" />
-											<h:panelGroup styleClass="lumeField" rendered="#{lancamentoContabilMB.recorrente eq 'S'}">
-												<p:selectOneMenu id="diasRecorrente"
-													 required="false"
-													value="#{lancamentoContabilMB.diasRecorrente}" filter="true"
-													filterMatchMode="contains">													
-													<f:selectItem itemValue="30"
-														itemLabel="A cada 30 dias" />
-													<f:selectItem itemValue="15"
-														itemLabel="A cada 15 dias" />
-														<f:selectItem itemValue="7"
-														itemLabel="A cada 7 dias" />
-												</p:selectOneMenu>
-											</h:panelGroup>
-											
-											<p:outputLabel for="quantidadeRecorrencia" rendered="#{lancamentoContabilMB.recorrente eq 'S'}" 
-											value="Quantas vezes? (deixe 0 para pagamentos/recebimentos sem data de fim): " />
-											<h:panelGroup styleClass="lumeField" rendered="#{lancamentoContabilMB.recorrente eq 'S'}">
-												<p:inputNumber id="quantidadeRecorrencia"
-													value="#{lancamentoContabilMB.quantidadeVezesRecorrencia}"
-													required="true" decimalPlaces="0"
-												 />
-											</h:panelGroup>
-											
-											
-											</p:panelGrid>
-										
-											<p:panelGrid columns="2" layout="grid" 
-												styleClass="ui-panelgrid-blank form-group ui-fluid"
-												columnClasses="ui-g-6,ui-g-6">
-												
-											<p:commandButton id="persist" icon="White fa fa-save"
+											<br />
+											<br />
+											<div class="SeparatorFull"></div>
+											<p:panelGrid columns="1" layout="grid"
+												styleClass="ui-panelgrid-blank form-group ui-fluid">
+												<p:commandButton id="persistOrigem" icon="White fa fa-save"
+													styleClass="GreenButton"
+													process="@this,nomeCadastro,celularCadastro,emailCadastro,tipoCadastro"
 													value="Salvar"
-													actionListener="#{lancamentoContabilMB.actionPersist}"
-													update=":lume:pnNovoPagamentoRecebimento,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
-													process="@this,:lume:dadosBasicos,motivo,data,valor,formaDigitacao,descricao,diasRecorrente,quantidadeRecorrencia"
-													oncomplete="PF('dtLancamentoContabil').filter()"
-													styleClass="GreenButton" />
-											<p:commandButton value="Fechar" icon="White fa fa-close"
-												process="@this" oncomplete="PF('dlgNovoPagamentoRecebimento').hide()"
-											styleClass="NavyButton" />	
-											</p:panelGrid>	
-												
-							</p:scrollPanel>			
-							</p:outputPanel>
+													update=":lume:pnNovoOrigem, :lume:dadosBasicos"
+													actionListener="#{lancamentoContabilMB.actionPersistOrigem}" />
+											</p:panelGrid>
+										</p:panel>
+									</h:panelGroup>
 
-						</p:dialog>
-		
+									<p:outputLabel for="tipocategoria" value="Grupo : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:selectOneMenu id="tipocategoria" converter="tipocategoria"
+											required="false"
+											value="#{lancamentoContabilMB.tipoCategoria}" filter="true"
+											filterMatchMode="contains">
+											<p:ajax process="@this" update="categoria"
+												listener="#{lancamentoContabilMB.carregarCategorias}" />
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione um Grupo" />
+											<f:selectItems value="#{lancamentoContabilMB.tiposCategoria}"
+												var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<p:outputLabel for="categoria" value="Categoria : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:selectOneMenu id="categoria" converter="categoriamotivo"
+											required="false" value="#{lancamentoContabilMB.categoria}"
+											filter="true" filterMatchMode="contains">
+											<p:ajax process="@this" update=":lume:motivo"
+												listener="#{lancamentoContabilMB.carregarMotivos}" />
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione uma Categoria" />
+											<f:selectItems value="#{lancamentoContabilMB.categorias}"
+												var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<p:outputLabel for="motivo" value="Motivo : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:selectOneMenu id="motivo" converter="motivo"
+											required="true" value="#{lancamentoContabilMB.entity.motivo}"
+											filter="true" filterMatchMode="contains">
+											<p:ajax process="@this" update="tipocategoria,categoria"
+												listener="#{lancamentoContabilMB.carregarTipoECategoria}" />
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione um Motivo" />
+											<f:selectItems value="#{lancamentoContabilMB.motivos}"
+												var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+									<p:outputLabel for="formaDigitacao"
+										value="Forma de pagamento : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:selectOneMenu id="formaDigitacao" required="true"
+											value="#{lancamentoContabilMB.formaPagamentoDigitacao}"
+											converter="tarifa">
+
+											<p:ajax process="@this" />
+
+											<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+											<f:selectItems
+												value="#{lancamentoContabilMB.tarifasDigitacao}"
+												var="tarifa" itemLabel="#{tarifa.produto}"
+												itemValue="#{tarifa}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+									<p:outputLabel for="data" value="Data : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:calendar id="data" required="true"
+											value="#{lancamentoContabilMB.entity.data}"
+											pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+											locale="#{lumeSecurity.locale}"
+											timeZone="#{lumeSecurity.timeZone}" navigator="true"
+											yearRange="-100:+10">
+										</p:calendar>
+									</h:panelGroup>
+
+									<p:outputLabel for="valor" value="Valor : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:inputNumber id="valor"
+											value="#{lancamentoContabilMB.entity.valor}" required="true"
+											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+											symbol="R$ " thousandSeparator="." />
+									</h:panelGroup>
+
+									<p:outputLabel for="descricao" value="Descrição : " />
+									<h:panelGroup styleClass="lumeField">
+										<p:inputText id="descricao"
+											value="#{lancamentoContabilMB.entity.descricao}"
+											required="false" maxlength="100" />
+									</h:panelGroup>
+									<ui:remove>
+										<p:outputLabel for="observacoes" value="Observações : " />
+										<h:panelGroup styleClass="lumeField">
+											<p:inputText id="observacoes"
+												value="#{lancamentoContabilMB.entity.observacao}"
+												required="false" maxlength="200" />
+										</h:panelGroup>
+									</ui:remove>
+									<p:outputLabel for="recorrente" value="Recorrente? " />
+									<p:selectOneRadio id="recorrente"
+										value="#{lancamentoContabilMB.recorrente}">
+										<p:ajax process="@this" update=":lume:pnRecorrente" />
+										<f:selectItem itemLabel="Não" itemValue="N" />
+										<f:selectItem itemLabel="Sim" itemValue="S" />
+									</p:selectOneRadio>
+
+								</p:panelGrid>
+
+								<p:panelGrid columns="2" layout="grid" id="pnRecorrente"
+									styleClass="ui-panelgrid-blank form-group ui-fluid"
+									columnClasses="ui-g-6,ui-g-6">
+
+
+									<p:outputLabel for="diasRecorrente"
+										value="De quanto em quanto tempo? "
+										rendered="#{lancamentoContabilMB.recorrente eq 'S'}" />
+									<h:panelGroup styleClass="lumeField"
+										rendered="#{lancamentoContabilMB.recorrente eq 'S'}">
+										<p:selectOneMenu id="diasRecorrente" required="false"
+											value="#{lancamentoContabilMB.diasRecorrente}" filter="true"
+											filterMatchMode="contains">
+											<f:selectItem itemValue="30" itemLabel="A cada 30 dias" />
+											<f:selectItem itemValue="15" itemLabel="A cada 15 dias" />
+											<f:selectItem itemValue="7" itemLabel="A cada 7 dias" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<p:outputLabel for="quantidadeRecorrencia"
+										rendered="#{lancamentoContabilMB.recorrente eq 'S'}"
+										value="Quantas vezes? (deixe 0 para pagamentos/recebimentos sem data de fim): " />
+									<h:panelGroup styleClass="lumeField"
+										rendered="#{lancamentoContabilMB.recorrente eq 'S'}">
+										<p:inputNumber id="quantidadeRecorrencia"
+											value="#{lancamentoContabilMB.quantidadeVezesRecorrencia}"
+											required="true" decimalPlaces="0" />
+									</h:panelGroup>
+
+
+								</p:panelGrid>
+
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid"
+									columnClasses="ui-g-6,ui-g-6">
+
+									<p:commandButton id="persist" icon="White fa fa-save"
+										value="Salvar"
+										actionListener="#{lancamentoContabilMB.actionPersist}"
+										update=":lume:pnNovoPagamentoRecebimento,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
+										process="@this,:lume:dadosBasicos,motivo,data,valor,formaDigitacao,descricao,diasRecorrente,quantidadeRecorrencia"
+										oncomplete="PF('dtLancamentoContabil').filter()"
+										styleClass="GreenButton" />
+									<p:commandButton value="Fechar" icon="White fa fa-close"
+										process="@this"
+										oncomplete="PF('dlgNovoPagamentoRecebimento').hide()"
+										styleClass="NavyButton" />
+								</p:panelGrid>
+
+							</p:scrollPanel>
+						</p:outputPanel>
+
+					</p:dialog>
+
 
 				</div>
 			</div>

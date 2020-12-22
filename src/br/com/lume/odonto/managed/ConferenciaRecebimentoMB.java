@@ -17,6 +17,7 @@ import org.primefaces.event.TabChangeEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
@@ -233,68 +234,13 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void actionTrocaDatasConferencia() {
         try {
-
-            this.setDataCreditoInicial(getDataInicio(this.getPeriodoCredito()));
-            this.setDataCreditoFinal(getDataFim(this.getPeriodoCredito()));
-
+            this.setDataCreditoInicial(Utils.getDataInicio(this.getPeriodoCredito()));
+            this.setDataCreditoFinal(Utils.getDataFim(this.getPeriodoCredito()));
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasConferencia", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-    }
-
-    public Date getDataInicio(String filtro) {
-        Date dataInicio = null;
-        try {
-            Calendar c = Calendar.getInstance();
-            if ("1".equals(filtro)) {
-                dataInicio = c.getTime();
-            } else if ("2".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -7);
-                dataInicio = c.getTime();
-            } else if ("3".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -15);
-                dataInicio = c.getTime();
-            } else if ("4".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -20);
-                dataInicio = c.getTime();
-            } else if ("5".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -30);
-                dataInicio = c.getTime();
-            } else if ("6".equals(filtro)) {
-                c.set(Calendar.DAY_OF_MONTH, -45);
-                dataInicio = c.getTime();
-            } else if ("7".equals(filtro)) {
-                c.add(Calendar.MONTH, -1);
-                dataInicio = c.getTime();
-            } else if ("8".equals(filtro)) {
-                c.add(Calendar.MONTH, -6);
-                dataInicio = c.getTime();
-            }
-            return dataInicio;
-        } catch (Exception e) {
-            log.error("Erro no getDataInicio", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            return null;
-        }
-    }
-
-    public Date getDataFim(String filtro) {
-        Date dataFim = null;
-        try {
-            Calendar c = Calendar.getInstance();
-            if (filtro == null) {
-                dataFim = null;
-            } else {
-                dataFim = c.getTime();
-            }
-            return dataFim;
-        } catch (Exception e) {
-            log.error("Erro no getDataFim", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            return null;
-        }
-    }
+    } 
 
     public BigDecimal valorConferir(Lancamento l) {
         if (l.getValidadoPorProfissional() != null) {

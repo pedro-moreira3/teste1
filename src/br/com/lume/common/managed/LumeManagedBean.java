@@ -3,12 +3,16 @@ package br.com.lume.common.managed;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.Collator;
 import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -375,7 +379,82 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             e.printStackTrace();
         }
     }
+    
+    public int sortString(Object o1, Object o2) {
+        return compareWithDigits((String) o1, (String) o2);
+//        return new StringComparator().compare((String) o1, (String) o2);
+    }
+    
+    /**
+     * Compara String considerando as substrings numéricas.
+     *
+     * @param  o1
+     * @param  o2
+     * @return
+     */
+    public static int compareWithDigits(String o1, String o2) {
+        Collator collator = Collator.getInstance(Locale.getDefault());
 
+        Pattern pattern = Pattern.compile("(\\d+)");
+        Matcher pesquisa1 = pattern.matcher(o1);
+        Matcher pesquisa2 = pattern.matcher(o2);
+
+        // Verifica se existe digitos na String
+        if (pesquisa1.find() && pesquisa2.find()) {
+
+            int index1 = pesquisa1.start(0);
+            int index2 = pesquisa2.start(0);
+
+            // Verifica se os digitos encontram-se na mesma posição
+            if (index1 == index2) {
+
+                // Verifica se a string começa com dígito
+                if ((index1 == 0) && (index2 == 0)) {
+                    return compareDigit(o1, o2, collator);
+                } else {
+                    int result = collator.compare(o1.substring(0, index1), o2.substring(0, index2));
+                    // Verifica se o prefixo antes dos dígitos são iguais
+                    if (result == 0) {
+                        return compareWithDigits(o1.substring(index1), o2.substring(index1));
+                    }
+                    return result;
+                }
+            }
+        }
+        return collator.compare(o1, o2);
+    }
+
+    /**
+     * Compara duas strings considerando-as strings de representação númeria, ou seja, considera o número que a string representa.
+     *
+     * @param  o1
+     * @param  o2
+     * @param  collator
+     * @return
+     */
+    private static int compareDigit(String o1, String o2, Collator collator) {
+        StringBuilder digits1 = new StringBuilder();
+
+        int i;
+        for (i = 0; (i < o1.length()) && Character.isDigit(o1.charAt(i)); i++) {
+            digits1.append(o1.charAt(i));
+        }
+
+        StringBuilder digits2 = new StringBuilder();
+        int j;
+        for (j = 0; (j < o2.length()) && Character.isDigit(o2.charAt(j)); j++) {
+            digits2.append(o2.charAt(j));
+        }
+        int digitsResult = new BigDecimal(digits1.toString()).compareTo(new BigDecimal(digits2.toString()));
+
+        if (digitsResult == 0) {
+            return compareWithDigits(o1.substring(i), o2.substring(j));
+        } else {
+            return digitsResult;
+        }
+
+    }
+    
     public void exportarTreeTable(String header, TreeTable tabela, String type) {
 
         ByteArrayInputStream arq;

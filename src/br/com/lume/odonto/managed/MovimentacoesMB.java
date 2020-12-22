@@ -173,12 +173,8 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         return FaturaSingleton.getInstance().getFaturaInfo(f);
     }
 
-    public String getFaturaInfoNome(Fatura f) {
-        if (f.getPaciente() != null)
-            return f.getPaciente().getDadosBasico().getNome();
-        else if (f.getProfissional() != null)
-            return f.getProfissional().getDadosBasico().getNome();
-        return "";
+    public String getFaturaInfoNome(Fatura f) {        
+        return FaturaSingleton.getInstance().getFaturaInfoNome(f);
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
