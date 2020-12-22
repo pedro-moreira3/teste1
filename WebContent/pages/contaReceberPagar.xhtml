@@ -584,12 +584,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText
 												value="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}" />
 										</p:column>
-										<p:column filterBy="#{lc.pt.descricao}"
+										<p:column filterBy="#{lc.pt.descricao}" filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.pt.descricao}" filterMatchMode="contains"
 											headerText="PlanoTratamento">
 											<h:outputText value="#{lc.pt.descricao}" title="#{lc.pt.id}" />
 										</p:column>
-										<p:column filterBy="#{lc.formaPagamentoStr}"
+										<p:column filterBy="#{lc.formaPagamentoStr}" filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
 											headerText="Produto">
 											<h:outputText value="#{lc.formaPagamentoStr}"
