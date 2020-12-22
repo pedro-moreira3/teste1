@@ -186,6 +186,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
                 l.calculaStatusESubStatus();
                 updateSomatorioConferencia();
+                //se for 0 a quantidade de recorrencia, para as fatura genericas, precisamos criar nova fatura ao pagar uma delas
+                if(l.getFatura().getFaturaRecorrente() != null && l.getFatura().getFaturaRecorrente().getQuantidadeRecorrencia() == 0) {
+                    FaturaSingleton.getInstance().criaFaturaRecorrente(l.getFatura(),UtilsFrontEnd.getProfissionalLogado());
+                }
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {

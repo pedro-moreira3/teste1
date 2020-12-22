@@ -146,7 +146,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             //  this.geraLista();
             this.geraListaTarifa();
             //  this.geraListaOrigens();   
-
+            geraListaSugestoes();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
