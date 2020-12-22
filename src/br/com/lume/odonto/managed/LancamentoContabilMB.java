@@ -412,6 +412,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             tipoCategoria = null;
             categoria = null;
             formaPagamentoDigitacao = null;
+            getEntity().setDadosBasico(null);
+            this.getEntity().setMotivo(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -665,10 +667,16 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         Object object = event.getObject();
         this.getEntity().setDadosBasico((DadosBasico) object);
         Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
-        if (ultimoMotivo != null) {
-            tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
-            categoria = ultimoMotivo.getCategoria();
-            this.getEntity().setMotivo(ultimoMotivo);
+        if (ultimoMotivo != null) {  
+            
+            if(ultimoMotivo.getCategoria() != null && ultimoMotivo.getCategoria().getTipoCategoria() != null) {
+                if(ultimoMotivo.getCategoria().getTipoCategoria().getTipo().equals(tipo)) {
+                    tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();                    
+                    categoria = ultimoMotivo.getCategoria();
+                    this.getEntity().setMotivo(ultimoMotivo);
+                }
+            }
+          
         }
         this.getEntity().setData(new Date());
         if (this.getEntity().getDadosBasico() == null) {

@@ -23,7 +23,9 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
@@ -143,12 +145,29 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     
     public String planoTratamentoFromLancamento(Lancamento lancamento) {
         try {
-            String planoTratamento = lancamento.getFatura().getItens().get(
-                    0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
+            String planoTratamento = null;
+            if(lancamento.getFatura().getItens().get(0) != null && lancamento.getFatura().getItens().get(
+                    0).getOrigemOrcamento() != null) {
+                 planoTratamento = lancamento.getFatura().getItens().get(
+                        0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
+            }           
+          
 
             if (planoTratamento != null)
                 return planoTratamento;
         }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    
+    public String dadosBasicosFromLancamento(Lancamento lancamento) {
+        try {
+            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
+
+            if (lc != null)
+                return lc.getDadosBasico().getNome();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";

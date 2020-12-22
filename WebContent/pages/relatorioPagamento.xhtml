@@ -254,12 +254,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column
 								filterBy="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}"
 								sortBy="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}"
-								filterMatchMode="contains" headerText="Destino">
+								filterMatchMode="contains" headerText="Destino" filterFunction="#{relatorioPagamentoMB.filtroSemAcento}">
 								<h:outputText
 									value="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}" />
 							</p:column>							
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
-								sortBy="#{lancamento.formaPagamentoStr}"
+								sortBy="#{lancamento.formaPagamentoStr}" filterFunction="#{relatorioPagamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Forma de pagamento">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>

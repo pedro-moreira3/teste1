@@ -59,7 +59,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputLabel class="fa fa-question" id="tooltipTitulo"
 									style="font-size:24px; margin-left:10px;" />
 								<p:tooltip for="tooltipTitulo"
-									value="Nessa tela você pode visualizar todos as faturas de recebimento, de acordo com os filtros, é possível consultar dados
+									value="Nessa tela você pode visualizar todas as faturas de recebimento, de acordo com os filtros, é possível consultar dados
 									específicos. Para filtrar por sub status, é necessário selecionar ao menos um status do recebimento."
 									position="bottom" style="width:40%;" />
 							</h1>
@@ -259,11 +259,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									title="#{lancamento.id}" />
 							</p:column>
 							<p:column
-								filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Paciente">
+								filterBy="#{relatorioRecebimentoMB.dadosBasicosFromLancamento(lancamento)}"
+								sortBy="#{relatorioRecebimentoMB.dadosBasicosFromLancamento(lancamento)}"
+								filterMatchMode="contains" headerText="Origem">
 								<h:outputText
-									value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
+									value="#{relatorioRecebimentoMB.dadosBasicosFromLancamento(lancamento)}" />
 							</p:column>
 							<p:column
 								filterBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
