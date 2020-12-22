@@ -72,5 +72,18 @@ insert into seg_perobjeto (per_int_cod,obj_int_cod)
  update TIPO_CATEGORIA set tipo = 'Pagar' where descricao = 'Gastos Odontológicos';
  update TIPO_CATEGORIA set tipo = 'Receber' where descricao = 'Receita Bruta';
  
+ update seg_objeto set obj_int_codpai = 9 ,obj_int_ordem = 9,obj_str_des = 'Cadastro de Fornecedores' where obj_str_caminho ilike '%fornecedor%'
+
+ update seg_objeto set obj_str_des = 'Configurações' where obj_str_des = 'Administrativo'
+ 
+ 
+update seg_objeto set obj_int_codpai = 9 where obj_str_caminho = 'tarifa.jsf'
+
+
+commit
+ 
+ 
+ 
+ 
  
 

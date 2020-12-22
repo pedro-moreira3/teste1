@@ -651,6 +651,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public List<DadosBasico> geraSugestoes(String query) {
         List<DadosBasico> suggestions = new ArrayList<>();
         if (query.length() >= 3) {
+            if(dadosBasicos == null ){
+                geraListaSugestoes();
+            }
             for (DadosBasico d : dadosBasicos) {
                 if (Utils.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
                     suggestions.add(d);
