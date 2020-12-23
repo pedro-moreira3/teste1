@@ -71,10 +71,6 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     private Date dataRepassar = new Date();
     
-    private boolean imprimirSemParcela = false;
-    
-    private boolean renderizarParcela = true;
-    
     public ReciboRepasseProfissionalMB() {
         super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
         this.setClazz(ReciboRepasseProfissional.class);
@@ -98,13 +94,6 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         //System.out.println("ReciboRepasseProfissionalMB" + new Timestamp(System.currentTimeMillis()));
     }
 
-    public void imprimirSemParcelaListener() {
-        renderizarParcela = true;
-        if (imprimirSemParcela) {
-            renderizarParcela = false;
-        }
-    }
-    
     public void cancelarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().inativaRecibo(r, UtilsFrontEnd.getProfissionalLogado());
         addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO));
@@ -124,6 +113,26 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         }
     }
     
+    public boolean showIfCalculo(ReciboRepasseProfissional r) {
+        return r.getReciboLancamentos() != null && !r.getReciboLancamentos().isEmpty();
+    }
+    public boolean showIfDiaria(ReciboRepasseProfissional r) {
+        return r.getReciboDiarias() != null && !r.getReciboDiarias().isEmpty();
+    }
+    
+    public String getMensagemAprovacaoRecibo(ReciboRepasseProfissional r) {
+        if(r == null)
+            return "";
+        
+        if(showIfCalculo(r)) {
+            return "Você tem certeza que deseja aprovar o pagamento este recibo?  Os lançamentos não pagos " + 
+            "serão pagos neste momento, completando o repasse.";
+        } else if(showIfDiaria(r)) {
+            return "Você tem certeza que deseja aprovar o pagamento este recibo?  Será criada uma fatura de " + 
+                    "pagamento para o profissional, completando o repasse.";
+        } else
+            return "";
+    }
     
     public void preparaAprovarRecibo(ReciboRepasseProfissional r) {
         dataRepassar = new Date();
@@ -665,26 +674,6 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setDataRepassar(Date dataRepassar) {
         this.dataRepassar = dataRepassar;
-    }
-
-    
-    public boolean isImprimirSemParcela() {
-        return imprimirSemParcela;
-    }
-
-    
-    public void setImprimirSemParcela(boolean imprimirSemParcela) {
-        this.imprimirSemParcela = imprimirSemParcela;
-    }
-
-    
-    public boolean isRenderizarParcela() {
-        return renderizarParcela;
-    }
-
-    
-    public void setRenderizarParcela(boolean renderizarParcela) {
-        this.renderizarParcela = renderizarParcela;
     }
 
 }
