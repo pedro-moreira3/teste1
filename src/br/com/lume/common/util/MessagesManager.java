@@ -7,7 +7,7 @@ import javax.sound.midi.Soundbank;
 import com.twilio.Twilio;
 import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.rest.conversations.v1.configuration.Webhook;
+import com.twilio.twiml.messaging.*;
 import com.twilio.type.PhoneNumber;
 
 public class MessagesManager {
@@ -57,10 +57,14 @@ public class MessagesManager {
     }
 
     public void configurationConversation() {
+        
+        Body body = new Body.Builder("TESTE").build();
+        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message.Builder().body(body).build();
+        
+        
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         com.twilio.rest.conversations.v1.conversation.Webhook webhook = 
-                com.twilio.rest.conversations.v1.conversation.Webhook.creator(
-                sidEnv,
+                com.twilio.rest.conversations.v1.conversation.Webhook.creator("chxxx",
                 com.twilio.rest.conversations.v1.conversation.Webhook.Target.WEBHOOK)
             .setConfigurationMethod(com.twilio.rest.conversations.v1.conversation.Webhook.Method.GET)
             .setConfigurationFilters(

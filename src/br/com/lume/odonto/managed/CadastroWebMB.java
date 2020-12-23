@@ -29,6 +29,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.ClienteViaCepWS;
 import br.com.lume.common.util.Endereco;
@@ -222,7 +223,8 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
             TarifaSingleton.getInstance().createTarifasDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
             
-            cadastrarDadosTemplate(getEntity());
+            this.clonarDadosModelo();
+            
             this.actionPersistFilial(null);
             this.actionPersistProfissional(null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -312,6 +314,24 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         }
     }
 
+    private void clonarDadosModelo() {
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Iniciando cadastro dos dados template ...");
+                    cadastrarDadosTemplate(getEntity());
+                    System.out.println("Dados cadastrados.");
+                }catch (Exception e) {
+                    LogIntelidenteSingleton.getInstance().makeLog(e);
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        th.start();
+    }
+    
     public void cadastrarDadosTemplate(Empresa destino) {
         try {
             //  EspecialidadeBO especialidadeBO = new EspecialidadeBO();
