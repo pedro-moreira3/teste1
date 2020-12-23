@@ -80,6 +80,21 @@ insert into seg_perobjeto (per_int_cod,obj_int_cod)
 update seg_objeto set obj_int_codpai = 9 where obj_str_caminho = 'tarifa.jsf'
 
 
+update seg_objeto set obj_int_ordem = 1  where obj_str_des = 'Recebimento dos Pacientes' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 2  where obj_str_des = 'Registro de Custos Diretos' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 3   where obj_str_des = 'Pagamentos/Recebimentos' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 4  where obj_str_des = 'Repasse dos Profissionais' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 5  where obj_str_des = 'Movimentações' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 6  where obj_str_des = 'Mensalidades do Sistema' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 7  where obj_str_des = 'Relatório de Pagamentos' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 8  where obj_str_des = 'Relatório de Recebimentos' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 9  where obj_str_des = 'Relatório de Repasses' and obj_cha_sts = 'A';
+update seg_objeto set obj_int_ordem = 10  where obj_str_des = 'Relatório de Faturas' and obj_cha_sts = 'A';
+
+
+update motivo set id_categoria = 34 where id = 3
+update CATEGORIA_MOTIVO set id_tipo = 7 where id = 44
+
 commit
  
  
