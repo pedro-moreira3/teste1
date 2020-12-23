@@ -1218,7 +1218,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             descricao += "" + agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] "
                             + agendamento.getPaciente().getDadosBasico().getNome();
 
-                            if(agendamento.getPaciente().getPendenciaFinanceiraBool()) {
+                            if(PacienteSingleton.getInstance().getPendenciaFinanceiraPaciente(paciente)) {
                                 descricao += " - $ ";
                             }
                             
@@ -1239,7 +1239,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
                             event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
                         
-                            if(agendamento.getPaciente().getPendenciaFinanceiraBool()) {
+                            if(PacienteSingleton.getInstance().getPendenciaFinanceiraPaciente(paciente)) {
                                 event.setDescription("Verificar cobrança do paciente");
                             }
                             
