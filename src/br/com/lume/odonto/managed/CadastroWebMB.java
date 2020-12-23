@@ -347,35 +347,35 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
             EspecialidadeSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Especialidade!");
-            addInfo("Cadastrou Especialidade!", "");
+            //addInfo("Cadastrou Especialidade!", "");
             
             ConfiguracaoAnamneseSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Configuracoes anamnese!");
-            addInfo("Cadastrou Configuracoes anamnese!", "");
+            //addInfo("Cadastrou Configuracoes anamnese!", "");
 
             ItemSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Itens!");
-            addInfo("Cadastrou Itens!", "");
+            //addInfo("Cadastrou Itens!", "");
 
             ProcedimentoSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Procedimentos!");
-            addInfo("Cadastrou Procedimentos!", "");
+            //addInfo("Cadastrou Procedimentos!", "");
 
             PerguntaSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Pergunta/Resposta!");
-            addInfo("Cadastrou Pergunta/Resposta!", "");
+            //addInfo("Cadastrou Pergunta/Resposta!", "");
 
             KitSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Kits!");
-            addInfo("Cadastrou Kits!", "");
+            //addInfo("Cadastrou Kits!", "");
 
             ProcedimentoKitSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Procedimento/Kits Kits!");
-            addInfo("Cadastrou Procedimento/Kits Kits!", "");
+            //addInfo("Cadastrou Procedimento/Kits Kits!", "");
 
             DocumentoSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Documentos!");
-            addInfo("Cadastrou Documentos!", "");
+            //addInfo("Cadastrou Documentos!", "");
 
         } catch (Exception e) {
             e.printStackTrace();
