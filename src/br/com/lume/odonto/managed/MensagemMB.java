@@ -100,7 +100,9 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
         try {
             
             m.smsSender();
+            m.configurationConversation();
             m.receiveMsgs();
+            m.listAllMessagesInHistory();
             
         } catch (Exception e) {
             e.printStackTrace();
