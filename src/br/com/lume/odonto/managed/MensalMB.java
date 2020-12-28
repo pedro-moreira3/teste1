@@ -33,32 +33,30 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(MensalMB.class);
-   
-    private List<ItemResponse> listaFaturas;  
+
+    private List<ItemResponse> listaFaturas;
 
     public MensalMB() {
         super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
         carregarTela();
-    } 
-    
-   private void carregarTela() {        
-       
-       InvoiceResponse invoice = Iugu.getInstance().listaFaturasPorCliente(UtilsFrontEnd.getEmpresaLogada().getIdIugu());
-       
-        listaFaturas = invoice.getItems();
-        System.out.println("teste");
     }
 
-    
+    private void carregarTela() {
+        if(UtilsFrontEnd.getEmpresaLogada().getIdIugu() != null && !UtilsFrontEnd.getEmpresaLogada().getIdIugu().isEmpty()) {
+            InvoiceResponse invoice = Iugu.getInstance().listaFaturasPorCliente(UtilsFrontEnd.getEmpresaLogada().getIdIugu());
+            
+            listaFaturas = invoice.getItems();
+            System.out.println("Listando faturas ...");
+        }
+    }
+
     public List<ItemResponse> getListaFaturas() {
         return listaFaturas;
     }
 
-    
     public void setListaFaturas(List<ItemResponse> listaFaturas) {
         this.listaFaturas = listaFaturas;
     }
 
-  
 }
