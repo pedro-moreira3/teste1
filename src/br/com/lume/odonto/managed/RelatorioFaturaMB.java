@@ -131,7 +131,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                 Paciente paciente = null;
                 Profissional profissional = null;
                 Fornecedor fornecedor = null;
-                Origem origem = null;
+              //  Origem origem = null;
 
                 if (this.origem != null) {
 
@@ -142,9 +142,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                         if (profissional == null)
                             paciente = PacienteSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
 
-                    } else if (this.origem.getDocumento() == null && this.origem.getSexo() == null) {
-
-                        origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
+//                    } else if (this.origem.getDocumento() == null && this.origem.getSexo() == null) {
+//
+//                        origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
 
                     } else if (this.origem.getSexo() == null || this.origem.getSexo().isEmpty()) {
 
@@ -152,7 +152,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                     }
                 }
 
-                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, origem,
+                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, null,
                         statusFatura, Arrays.asList(this.subStatusFatura)));
 
                 getEntityList().forEach(fatura -> {
@@ -188,8 +188,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
             return fatura.getPaciente().getDadosBasico().getNome();
         if (fatura.getFornecedor() != null)
             return fatura.getFornecedor().getDadosBasico().getNome();
-        if (fatura.getOrigem() != null)
-            return fatura.getOrigem().getDadosBasico().getNome();
+      //  if (fatura.getOrigem() != null)
+     //       return fatura.getOrigem().getDadosBasico().getNome();
 
         return "";
     }
@@ -280,9 +280,10 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
             for (int i = 0; i < tam; i++) {
                 if (i < fornecedores.size()) {
                     itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
-                } else {
-                    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
                 }
+                //else {
+                //    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
+                //}
             }
 
             for (int i = 0; i < profissionais.size(); i++) {

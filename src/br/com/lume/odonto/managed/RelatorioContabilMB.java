@@ -54,10 +54,10 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        System.out.println(event.getTab().getId());
-        if (event.getTab().getId().contains("tab3")) {
-            this.filtra();
-        }
+       // System.out.println(event.getTab().getId());
+    //    if (event.getTab().getId().contains("tab3")) {
+     //      this.filtra();
+     //   }
     }
 
     private void carregarDatasIniciais() {
@@ -73,6 +73,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
                 lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByPeriodoAndTipo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 this.ordenaRegistros();
                 this.geraExtrato();
             }

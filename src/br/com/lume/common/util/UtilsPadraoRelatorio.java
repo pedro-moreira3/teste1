@@ -67,6 +67,9 @@ public class UtilsPadraoRelatorio {
                 c.add(Calendar.DAY_OF_MONTH, -1);
             } else if (periodo == null) {
                 c = null;
+            }else if (PeriodoBusca.MES_ANTERIOR.equals(periodo)) {             
+                c.add(Calendar.MONTH, -1);
+                c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));   
             }
 
             if (c != null) {
@@ -107,6 +110,11 @@ public class UtilsPadraoRelatorio {
                 case MES_ATUAL:
                     c.set(Calendar.DAY_OF_MONTH, 1);
                     break;
+                case MES_ANTERIOR:
+                    c.add(Calendar.MONTH, -1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    break;    
                 default:
                     c = null;
                     break;

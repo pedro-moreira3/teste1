@@ -37,6 +37,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -505,6 +506,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
+    /**
+     * Mostra confirmação caso o proc esteja sendo executado mas não está orçado
+     * @return boolean
+     */
+    private boolean validaProcOrcado(PlanoTratamentoProcedimento ptp) {        
+        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
+        if(orcs != null && !orcs.isEmpty()) {
+            if(ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private boolean finalizaProcedimento() throws Exception {
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
@@ -1328,7 +1343,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
             if (existeCadastroTarifa()) {
                 setTarifasNewPlanejamento(
-                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO));
                 return true;
             } else {
                 getPlanejamentoAtual().setnParcela(1);
@@ -1729,7 +1744,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             getEntity().setOdontograma(odontograma);
             carregarOdontogramas();
         } catch (Exception e) {
-            
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }

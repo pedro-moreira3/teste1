@@ -12,13 +12,20 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.odonto.entity.DadosBasico;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
@@ -36,9 +43,9 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     private String periodoCredito;
     private Date dataCreditoInicial;
     private Date dataCreditoFinal;
-    private String statusCredito = "N";
-    private Paciente filtroPorPaciente;
+    private String statusCredito = "N";    
     private Tarifa formaPagamento;
+    private DadosBasico dadosBasico;
     private List<Lancamento> lancamentosSelecionadosConferencia = new ArrayList<Lancamento>();
     private BigDecimal somatorioValorConferirConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorConferidoConferencia = new BigDecimal(0);
@@ -55,7 +62,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
         this.periodoCredito = "1";
         this.actionTrocaDatasConferencia();
-        this.carregarLancamentosConferencia();
+        //this.carregarLancamentosConferencia();
         this.geraListaTarifa();
     }
 
@@ -71,7 +78,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
 
-            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), getFormaPagamento(),
+            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicos(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList() != null) {
                 getEntityList().forEach(lancamento -> {
@@ -97,10 +104,16 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public void onTabChange(TabChangeEvent event) {    
+      //  if (event.getTab().getId().contains("tab2")) {
+       //     carregarLancamentosConferencia();
+       // }
+    }
 
     public void geraListaTarifa() {
         try {
-            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.AMBOS));
             if (this.getTarifas() != null)
                 Collections.sort(this.getTarifas());
         } catch (Exception e) {
@@ -108,6 +121,34 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             e.printStackTrace();
         }
+    }
+    
+    //para que o valor da fatura seja editavel, somente se existir somente um lancamento na fatura e se ela for generica.
+    public boolean faturaEditavel(Lancamento lancamento) {
+        if (!lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO) && !lancamento.getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_RECEBIMENTO)) {
+            return false;
+
+        } else if (lancamento.getFatura().getLancamentosFiltered().size() == 1 && lancamento.getFatura().getItens().size() == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public void alteraFaturaListener(Lancamento lancamento) {       
+        try {
+            List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+            lancamento.setFormaPagamento(lancamento.getTarifa().getTipo());
+            lancamentos.add(lancamento);
+            LancamentoSingleton.getInstance().getBo().persist(lancamento);
+            Fatura fatura = lancamento.getFatura();
+            fatura.setLancamentos(lancamentos);      
+            FaturaSingleton.getInstance().ajustarFaturaGenerica(fatura, UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            e.printStackTrace();
+        }
+
     }
 
     public void validarLancamentosSelecionados() {
@@ -145,6 +186,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
                 l.calculaStatusESubStatus();
                 updateSomatorioConferencia();
+                //se for 0 a quantidade de recorrencia, para as fatura genericas, precisamos criar nova fatura ao pagar uma delas
+                if(l.getFatura().getFaturaRecorrente() != null && l.getFatura().getFaturaRecorrente().getQuantidadeRecorrencia() == 0) {
+                    FaturaSingleton.getInstance().criaFaturaRecorrente(l.getFatura(),UtilsFrontEnd.getProfissionalLogado());
+                }
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
@@ -193,94 +238,39 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void actionTrocaDatasConferencia() {
         try {
-
-            this.setDataCreditoInicial(getDataInicio(this.getPeriodoCredito()));
-            this.setDataCreditoFinal(getDataFim(this.getPeriodoCredito()));
-
+            this.setDataCreditoInicial(Utils.getDataInicio(this.getPeriodoCredito()));
+            this.setDataCreditoFinal(Utils.getDataFim(this.getPeriodoCredito()));
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasConferencia", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-    }
+    } 
 
-    public Date getDataInicio(String filtro) {
-        Date dataInicio = null;
-        try {
-            Calendar c = Calendar.getInstance();
-            if ("1".equals(filtro)) {
-                dataInicio = c.getTime();
-            } else if ("2".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -7);
-                dataInicio = c.getTime();
-            } else if ("3".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -15);
-                dataInicio = c.getTime();
-            } else if ("4".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -20);
-                dataInicio = c.getTime();
-            } else if ("5".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -30);
-                dataInicio = c.getTime();
-            } else if ("6".equals(filtro)) {
-                c.set(Calendar.DAY_OF_MONTH, -45);
-                dataInicio = c.getTime();
-            } else if ("7".equals(filtro)) {
-                c.add(Calendar.MONTH, -1);
-                dataInicio = c.getTime();
-            } else if ("8".equals(filtro)) {
-                c.add(Calendar.MONTH, -6);
-                dataInicio = c.getTime();
-            }
-            return dataInicio;
-        } catch (Exception e) {
-            log.error("Erro no getDataInicio", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            return null;
-        }
-    }
-
-    public Date getDataFim(String filtro) {
-        Date dataFim = null;
-        try {
-            Calendar c = Calendar.getInstance();
-            if (filtro == null) {
-                dataFim = null;
-            } else {
-                dataFim = c.getTime();
-            }
-            return dataFim;
-        } catch (Exception e) {
-            log.error("Erro no getDataFim", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            return null;
-        }
-    }
-
-    public BigDecimal valorConferir(Lancamento lc) {
-        if (lc.getValidadoPorProfissional() != null) {
+    public BigDecimal valorConferir(Lancamento l) {
+        if (l.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
         }
-        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return lc.getValor();
+        if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return l.getValor();
         }
-        return lc.getValorComDesconto();
+        return l.getValorComDesconto();
     }
 
-    public BigDecimal valorConferido(Lancamento lc) {
-        if (lc.getValidadoPorProfissional() != null) {
-            if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-                return lc.getValor();
+    public BigDecimal valorConferido(Lancamento l) {
+        if (l.getValidadoPorProfissional() != null) {
+            if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return l.getValor();
             }
-            return lc.getValorComDesconto();
+            return l.getValorComDesconto();
         }
         return new BigDecimal(0);
     }
 
-    public BigDecimal valorTotal(Lancamento lc) {
-        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return lc.getValor();
+    public BigDecimal valorTotal(Lancamento l) {
+        if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return l.getValor();
         }
-        return lc.getValorComDesconto();
+        return l.getValorComDesconto();
     }
 
     public String statusLancamentoConferencia(Lancamento lc) {
@@ -290,6 +280,27 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             return "Não validado";
         else
             return "Validado com erro";
+    }
+    
+    public String origemDestinoLancamento(Lancamento l) {
+        if (l.getFatura().getPaciente() != null) {
+            return l.getFatura().getPaciente().getDadosBasico().getNome();
+        }
+       // if (l.getFatura().getOrigem() != null) {
+       //     return l.getFatura().getOrigem().getDadosBasico().getNome();
+       // }
+        if (l.getFatura().getFornecedor() != null) {
+            return l.getFatura().getFornecedor().getDadosBasico().getNome();
+        }
+        if (l.getFatura().getProfissional() != null) {
+            return l.getFatura().getProfissional().getDadosBasico().getNome();
+        }
+        
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(l);
+        if (lc != null) {
+            return lc.getDadosBasico().getNome();
+        }
+        return "";
     }
 
     public void exportarTabelaConferencia(String type) {
@@ -334,14 +345,6 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void setStatusCredito(String statusCredito) {
         this.statusCredito = statusCredito;
-    }
-
-    public Paciente getFiltroPorPaciente() {
-        return filtroPorPaciente;
-    }
-
-    public void setFiltroPorPaciente(Paciente filtroPorPaciente) {
-        this.filtroPorPaciente = filtroPorPaciente;
     }
 
     public List<Lancamento> getLancamentosSelecionadosConferencia() {
@@ -398,6 +401,16 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void setTarifas(List<Tarifa> tarifas) {
         this.tarifas = tarifas;
+    }
+
+    
+    public DadosBasico getDadosBasico() {
+        return dadosBasico;
+    }
+
+    
+    public void setDadosBasico(DadosBasico dadosBasico) {
+        this.dadosBasico = dadosBasico;
     }
 
 }

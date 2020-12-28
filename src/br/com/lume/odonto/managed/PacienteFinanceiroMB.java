@@ -310,7 +310,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     }
     
     public String descricaoPT(Fatura fatura) {
-        return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura).getDescricao();
+        PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura); 
+        if(pt != null) {
+            return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura).getDescricao();
+        }
+        return "";
     }
     
     public BigDecimal valorConferirFatura(Fatura fatura) {

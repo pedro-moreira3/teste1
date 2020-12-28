@@ -133,9 +133,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
             if (extensao.equalsIgnoreCase("jpg") || extensao.equalsIgnoreCase("jpeg") || extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("png")) {
                 try {
                     BufferedImage img = ImageIO.read(event.getFile().getInputstream()); // load image
-                    BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
+                    //BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(img, "jpg", baos);
+                    ImageIO.write(img, extensao, baos);
                     this.setFile(this.arquivo.getFileName(), baos.toByteArray());
                     size = baos.size();
                 } catch (IOException e) {

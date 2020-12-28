@@ -1,0 +1,957 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell {
+	padding: 7px 16px;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+
+body .sideChkBox.ui-chkbox {
+	width: auto;
+}
+
+body .sideChkBox .ui-chkbox-box {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
+body .sideChkBox .ui-chkbox-label {
+	vertical-align: middle;
+	margin-top: 0;
+}
+
+.ui-confirm-dialog-message {
+	white-space: pre-line;
+}
+
+body .negociacaoAprovada {
+	background-color: #149952;
+	color: white;
+}
+
+body .negociacaoEmAndamento {
+	
+}
+
+body .lancamentoFalhaOperacao {
+	background-color: #c44949;
+	color: white;
+}
+
+.listaLancamentoColunaDataPagamento input {
+	text-align: center;
+	height: 31px;
+}
+
+body .height31 input {
+	height: 31px;
+}
+</style>
+
+					<p:dialog id="dlgEditarPagamentoRecebimento" widgetVar="dlgEditarPagamentoRecebimento"
+							resizable="false" modal="true" responsive="true"
+							width="50%" header="Editar Pagamento/Recebimento">
+
+							<p:outputPanel id="pnEditarPagamentoRecebimento" style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+							<p:scrollPanel mode="native"
+									style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
+							
+								<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid"
+											columnClasses="ui-g-2,ui-g-10" rendered="#{faturaPagtoMB.faturaItemEditar ne null}">	
+											
+											
+										<p:outputLabel for="dadosBasicosEditar" value="Origem/Destino : " />
+											<h:panelGroup id="pnBtorigemEditar" >
+												<h:panelGroup styleClass="lumeField" style="display: flex">
+													<p:autoComplete queryDelay="1000"
+														value="#{faturaPagtoMB.lancamentoContabilEditarItem.dadosBasico}"
+														id="dadosBasicosEditar" 
+														completeMethod="#{faturaPagtoMB.geraSugestoesEditarItem}"
+														var="d" itemLabel="#{d.tipoInformacaoNome}"
+														itemValue="#{d}" converter="dadosBasico" required="true"
+														size="46" minQueryLength="3" dropdown="true">
+														<p:ajax event="itemSelect"
+															listener="#{faturaPagtoMB.handleSelectEditarItem}"
+															process=":lume:dadosBasicosEditar"
+															update=":lume:tipocategoriaEditar, :lume:categoriaEditar, :lume:motivoEditar,:lume:dataEditar" />
+													</p:autoComplete>													
+												</h:panelGroup>										
+											</h:panelGroup>											
+											
+											<p:outputLabel for="tipocategoriaEditar" value="Tipo Categoria : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:selectOneMenu id="tipocategoriaEditar"
+													converter="tipocategoria" required="false"
+													value="#{faturaPagtoMB.tipoCategoria}" filter="true"
+													filterMatchMode="contains">
+													<p:ajax process="@this" update="categoriaEditar"
+														listener="#{faturaPagtoMB.carregarCategorias}" />
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione um Tipo Categoria" />
+													<f:selectItems
+														value="#{faturaPagtoMB.tiposCategoria}" var="m"
+														itemLabel="#{m.descricao}" itemValue="#{m}" />
+												</p:selectOneMenu>
+											</h:panelGroup>
+
+											<p:outputLabel for="categoriaEditar" value="Categoria : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:selectOneMenu id="categoriaEditar" converter="categoriamotivo"
+													required="false" value="#{faturaPagtoMB.categoria}"
+													filter="true" filterMatchMode="contains">
+													<p:ajax process="@this" update="motivoEditar"
+														listener="#{faturaPagtoMB.carregarMotivos}" />
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione uma Categoria" />
+													<f:selectItems value="#{faturaPagtoMB.categorias}"
+														var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+												</p:selectOneMenu>
+											</h:panelGroup>
+
+											<p:outputLabel for="motivoEditar" value="Motivo : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:selectOneMenu id="motivoEditar" converter="motivo"
+													required="true"
+													value="#{faturaPagtoMB.faturaItemEditar.motivo}" filter="true"
+													filterMatchMode="contains">													
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione um Motivo" />
+													<f:selectItems value="#{faturaPagtoMB.motivos}"
+														var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+												</p:selectOneMenu>
+											</h:panelGroup>	
+																					
+											<p:outputLabel for="dataEditar" value="Data : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:calendar id="dataEditar" required="true"
+													value="#{faturaPagtoMB.lancamentoContabilEditarItem.data}"
+													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+													locale="#{lumeSecurity.locale}"
+													timeZone="#{lumeSecurity.timeZone}" navigator="true"
+													yearRange="-100:+10">
+												</p:calendar>
+											</h:panelGroup>
+
+											<p:outputLabel for="valorEditar" value="Valor : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:inputNumber id="valorEditar"
+													value="#{faturaPagtoMB.faturaItemEditar.valorItem}"
+													required="true" maxlength="13" maxValue="9999999999.99"
+													decimalSeparator="," symbol="R$ " thousandSeparator="." />
+											</h:panelGroup>
+											
+											<p:outputLabel for="descricaoEditar" value="Descrição : " />
+											<h:panelGroup styleClass="lumeField">
+												<p:inputText id="descricaoEditar"
+													value="#{faturaPagtoMB.lancamentoContabilEditarItem.descricao}"
+													required="false" maxlength="100"
+													 />
+											</h:panelGroup>
+											
+										</p:panelGrid>
+									
+										
+											<p:panelGrid columns="2" layout="grid" 
+												styleClass="ui-panelgrid-blank form-group ui-fluid"
+												columnClasses="ui-g-6,ui-g-6">												
+												
+											<p:commandButton id="persistEditar" icon="White fa fa-save"
+													value="Salvar"
+													actionListener="#{faturaPagtoMB.actionPersistEditarItem}"
+													update="@parent:@parent:@parent:pnEditarPagamentoRecebimento,@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples "
+													process="@this, @parent:@parent:@parent:pnEditarPagamentoRecebimento"
+													oncomplete="PF('dtLancamentoContabil').filter()"
+													styleClass="GreenButton" />
+											<p:commandButton value="Fechar" icon="White fa fa-close"
+												process="@this" oncomplete="PF('dlgEditarPagamentoRecebimento').hide()"
+											styleClass="NavyButton" />	
+											</p:panelGrid>	
+												
+							</p:scrollPanel>			
+							</p:outputPanel>
+
+						</p:dialog>
+		
+
+	<p:dialog widgetVar="dlgNewLancamento" header="Novo Lançamento"
+		responsive="true" modal="true" appendTo=":lume">
+		<p:ajax event="close" resetValues="true" update="pnlNewLancamentoSimples" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlNewLancamentoSimples">
+					<h:panelGroup styleClass="lumeField" id="pnTipoSimples">
+						<p:outputLabel for="formaPagamentoSimples" value="Forma de Pagamento: " />
+						<p:selectOneRadio id="formaPagamentoSimples"
+							value="#{faturaPagtoMB.formaPagamento}" required="true"
+							layout="grid" columns="3">
+							<p:ajax update="pnlNewLancamentoSimples" process="@this"
+								listener="#{faturaPagtoMB.atualizaProduto}" />
+							<f:selectItems value="#{faturaPagtoMB.formasPagamento}" var="tp"
+								itemValue="#{tp.valor}" itemLabel="#{tp.nome}" />
+						</p:selectOneRadio>
+						<p:message styleClass="msg" for="formaPagamentoSimples" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="lumeField"
+						rendered="#{faturaPagtoMB.showProduto}">
+						<p:outputLabel for="produtoLancamentoSimples" value="Produto: " />
+						<p:selectOneMenu id="produtoLancamentoSimples"
+							value="#{faturaPagtoMB.tarifa}" converter="tarifa"
+							required="#{faturaPagtoMB.showProduto}">
+							<p:ajax listener="#{faturaPagtoMB.atualizaDataCredito}"
+								process="@this" update="pnlNewLancamentoSimples" />
+							<f:selectItem itemLabel="Selecione um Produto"
+								itemValue="#{null}" />
+							<f:selectItems value="#{faturaPagtoMB.tarifas}" var="tp"
+								itemValue="#{tp}" itemLabel="#{tp.produtoStr}" />
+						</p:selectOneMenu>
+						<p:message for="produtoLancamentoSimples" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="lumeField"
+						rendered="#{faturaPagtoMB.existeCadastroTarifa() and faturaPagtoMB.tarifa != null}">
+						<p:outputLabel for="numParcelasSimples" value="Parcelas: " />
+						<p:selectOneMenu id="numParcelasSimples" value="#{faturaPagtoMB.parcela}"
+							filter="true" filterMatchMode="startsWith">
+							<f:selectItems value="#{faturaPagtoMB.parcelas}" var="p"
+								itemValue="#{p}" itemLabel="#{p}" />
+						</p:selectOneMenu>
+						<p:message for="numParcelasSimples" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="valorAPagarSimples" value="Valor: " />
+						<p:inputNumber id="valorAPagarSimples" value="#{faturaPagtoMB.valor}"
+							required="true" maxlength="13" maxValue="9999999999.99"
+							decimalSeparator="," symbol="R$ " thousandSeparator=".">
+						</p:inputNumber>
+					</h:panelGroup>
+					<h:panelGroup styleClass="lumeField" id="pnJustificativaSimples">
+						<p:outputLabel for="dataPagamentoSimples" value="Data de Recebimento: " />
+						<p:calendar id="dataPagamentoSimples"
+							value="#{faturaPagtoMB.dataPagamento}" required="true"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}"
+							timeZone="#{lumeSecurity.timeZone}" navigator="true"
+							yearRange="-10:+10">
+							<p:ajax event="dateSelect"
+								listener="#{faturaPagtoMB.handleSelectPagamento}"
+								update="pnlNewLancamentoSimples" process="@this, pnlNewLancamentoSimples" />
+						</p:calendar>
+						<p:message for="dataPagamentoSimples" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="dataCreditoSimples" value="Data de Crédito:" />
+						<p:calendar id="dataCreditoSimples" value="#{faturaPagtoMB.dataCredito}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}"
+							timeZone="#{lumeSecurity.timeZone}" navigator="true"
+							yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+						<p:message for="dataCreditoSimples" styleClass="msg" />
+					</h:panelGroup>
+					<div class="SeparatorFull"></div>
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton value="Salvar" icon="White fa fa-save"
+							actionListener="#{faturaPagtoMB.actionPersistLancamento}"
+							update="pnlNewLancamentoSimples, @parent:pnlfaturaViewSimples, buttonViewFaturaSimples"
+							process="@this, pnlNewLancamentoSimples" styleClass="GreenButton" />
+					</p:panelGrid>
+				</p:outputPanel>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgAjusteLancamento" header="Ajustar lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+
+				<p:outputPanel id="pnlAjusteLancamentoSimples">
+					<p:panelGrid columns="1" layout="grid" rendered="#{faturaPagtoMB.ajustarLancamento != null}"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="ajustarLancamentoFormaPagamentoSimples"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="ajustarLancamentoFormaPagamentoSimples"
+								converter="tarifa"
+								value="#{faturaPagtoMB.ajustarLancamento.tarifa}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionAjustarLancamentoAlteraFormaPagamento}"
+									update="ajustarLancamentoDataCreditoSimples" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="ajustarLancamentoFormaPagamentoSimples" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="ajusteLancamentoValorTotalSimples"
+								value="#{faturaPagtoMB.ajustarLancamento.valor}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">								
+							</p:inputNumber>
+							<p:outputLabel for="ajusteLancamentoValorTotalSimples" value="Valor:" />
+							<p:message styleClass="msg" for="ajusteLancamentoValorTotalSimples" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="ajustarLancamentoDataPagamentoSimples"
+								value="#{faturaPagtoMB.ajustarLancamento.dataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraDataPagamento}"
+									update="ajustarLancamentoDataCreditoSimples" process="@this" />
+							</p:calendar>
+							<p:outputLabel for="ajustarLancamentoDataPagamentoSimples"
+								value="Data de Recebimento: " />
+							<p:message for="ajustarLancamentoDataPagamentoSimples" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="ajustarLancamentoDataCreditoSimples"
+								value="#{faturaPagtoMB.ajustarLancamento.dataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
+								<p:ajax event="dateSelect" process="@this"/>
+							</p:calendar>
+							<p:outputLabel for="ajustarLancamentoDataCreditoSimples"
+								value="Data de Crédito:" />
+							<p:message for="ajustarLancamentoDataCreditoSimples" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.ajustarLancamento}"
+						update="@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this,pnlAjusteLancamentoSimples"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgAjusteLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="70%"
+		height="80%">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+
+				<p:outputPanel
+					style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+					<p:scrollPanel mode="native"
+						style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
+
+						<p:outputPanel id="pnlNovoLancamentoSimples">
+							<p:remoteCommand name="novoLancamentoRefazCalculos"
+								process="@this"
+								actionListener="#{faturaPagtoMB.novoLancamentoRefazCalculos()}"
+								update="novoLancamentoValorPrimeiraParcelaSimples, novoLancamentoInfoParcelamentoSimples, novoLancamentoParcelasTableSimples" />
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+								<h:panelGroup styleClass="md-combo">
+
+									<p:outputLabel for="novoLancamentoFiltroParcelasSimples"
+										value="Quantidade de Parcelas:" />
+
+									<p:outputPanel style="display: flex !important">
+										<p:selectOneMenu id="novoLancamentoFiltroParcelasSimples"
+											value="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas}"
+											forceSelection="true" scrollHeight="400">
+
+											<f:selectItem
+												itemLabel="Selecione uma quantidade de parcelas..."
+												itemValue="#{null}" />
+											<f:selectItems
+												value="#{faturaPagtoMB.novoLancamentoParcelasDisponiveis}"
+												var="p" itemValue="#{p}" itemLabel="#{p} parcelas" />
+
+											<p:ajax process="@this"
+												listener="#{faturaPagtoMB.actionNovoLancamentoAtualizaQuantidadeDeParcelas}"
+												update="painelEntradaLancamentoSimples,tooltipNovoLancamentoTarifasDisponiveisSimplesObjSimples, novoLancamentoFormaPagamentoSimples, novoLancamentoValorPrimeiraParcelaSimples, novoLancamentoInfoParcelamentoSimples, novoLancamentoParcelasTableSimples" />
+										</p:selectOneMenu>
+										<p:outputPanel id="tooltipNovoLancamentoTarifasDisponiveisSimplesObjSimples">
+											<h:outputLabel class="fa fa-question"
+												id="tooltipNovoLancamentoTarifasDisponiveisSimples"
+												style="font-size:16px; margin-left:10px; margin-top:10px;" />
+											<p:tooltip for="tooltipNovoLancamentoTarifasDisponiveisSimples"
+												position="bottom" escape="false"
+												value="#{faturaPagtoMB.novoLancamentoTooltipNegociacaoTarifasDisponiveis}" />
+										</p:outputPanel>
+									</p:outputPanel>
+
+
+									<p:message styleClass="msg" for="novoLancamentoFiltroParcelasSimples" />
+
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="novoLancamentoFormaPagamentoSimples"
+										value="Forma de Pagamento:" />
+									<p:selectOneMenu id="novoLancamentoFormaPagamentoSimples"
+										converter="tarifa"
+										value="#{faturaPagtoMB.novoLancamentoFormaPagamento}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="Selecione uma Forma de Pagamento:" />
+										<f:selectItems
+											value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
+											var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+										<p:ajax event="change"
+											listener="#{faturaPagtoMB.actionNovoLancamentoAlteraFormaPagamento}"
+											update="novoLancamentoDataCreditoSimples, novoLancamentoParcelasTableSimples"
+											process="@this" />
+									</p:selectOneMenu>
+									<p:message for="novoLancamentoFormaPagamentoSimples" styleClass="msg" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:inputNumber id="novoLancamentoValorTotalSimples"
+										value="#{faturaPagtoMB.novoLancamentoValorTotal}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+										<p:ajax process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:inputNumber>
+									<p:outputLabel for="novoLancamentoValorTotalSimples" value="Valor:" />
+									<p:message styleClass="msg" for="novoLancamentoValorTotalSimples" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield"
+									style="margin-top: 10px;" id="painelEntradaLancamentoSimples">
+									<p:inputNumber id="novoLancamentoValorPrimeiraParcelaSimples" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
+										value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+										<p:ajax process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:inputNumber>
+									<p:outputLabel for="novoLancamentoValorPrimeiraParcelaSimples" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
+										value="Valor da Entrada  (primeira parcela):" />
+									<p:message styleClass="msg"
+										for="novoLancamentoValorPrimeiraParcelaSimples" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:calendar id="novoLancamentoDataPagamentoSimples"
+										value="#{faturaPagtoMB.novoLancamentoDataPagamento}"
+										pattern="dd/MM/yyyy" showWeeksBar="false"
+										locale="#{lumeSecurity.locale}"
+										timeZone="#{lumeSecurity.timeZone}" navigator="true"
+										yearRange="-10:+10">
+										<p:ajax event="dateSelect"
+											listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
+											update="novoLancamentoDataCreditoSimples"
+											process="@this, novoLancamentoFormaPagamentoSimples"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:calendar>
+									<p:outputLabel for="novoLancamentoDataPagamentoSimples"
+										value="Data de Recebimento: " />
+									<p:message for="novoLancamentoDataPagamentoSimples" styleClass="msg" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:calendar id="novoLancamentoDataCreditoSimples"
+										value="#{faturaPagtoMB.novoLancamentoDataCredito}"
+										pattern="dd/MM/yyyy" showWeeksBar="false"
+										locale="#{lumeSecurity.locale}"
+										timeZone="#{lumeSecurity.timeZone}" navigator="true"
+										yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
+										<p:ajax event="dateSelect" process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:calendar>
+									<p:outputLabel for="novoLancamentoDataCreditoSimples"
+										value="Data de Crédito:" />
+									<p:message for="novoLancamentoDataCreditoSimples" styleClass="msg" />
+								</h:panelGroup>
+
+								<p:outputPanel id="novoLancamentoInfoParcelamentoSimples">
+									<p:outputPanel
+										rendered="#{faturaPagtoMB.novoLancamentoMensagemCalculo != null}">
+
+										<p:outputLabel style="font-weight:bold;font-size:18px"
+											value="#{faturaPagtoMB.novoLancamentoMensagemCalculo}"></p:outputLabel>
+										<br />
+										<p:outputLabel style="font-weight:bold;color:red"
+											value="#{faturaPagtoMB.novoLancamentoMensagemErroCalculo}"></p:outputLabel>
+
+									</p:outputPanel>
+								</p:outputPanel>
+							</p:panelGrid>
+						</p:outputPanel>
+
+						<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
+							id="novoLancamentoParcelasTableSimples" filterDelay="1500" reflow="true"
+							value="#{faturaPagtoMB.novoLancamentoParcelas}" var="parcela"
+							rows="10" paginator="true" rowKey="#{parcela}"
+							paginatorPosition="bottom"
+							widgetVar="dtnovoLancamentoParcelasTableSimples">
+							<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
+							<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
+								filterMatchMode="contains" headerText="NÂº" width="30">
+								<h:outputText value="#{parcela.seq}" />
+							</p:column>
+							<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
+								filterMatchMode="contains" headerText="Valor da Parcela">
+								<h:outputText value="#{parcela.valor}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
+								sortBy="#{parcela.formaPagamento.produtoStr}"
+								filterMatchMode="contains" headerText="Forma de Pagamento">
+
+								<p:selectOneMenu converter="tarifa"
+									value="#{parcela.formaPagamento}">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione uma Forma de Pagamento:" />
+									<f:selectItems
+										value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveisEEntrada}"
+										var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+									<p:ajax event="change" update="novoLancamentoParcelasTableSimples"
+										process="@this" />
+								</p:selectOneMenu>
+
+							</p:column>
+							<p:column filterBy="#{parcela.dataPagamento}"
+								sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
+								headerText="Data de Recebimento">
+								<p:calendar value="#{parcela.dataPagamento}"
+									pattern="dd/MM/yyyy" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-10:+10"
+									styleClass="listaLancamentoColunaDataPagamento">
+									<p:ajax event="dateSelect" update="novoLancamentoParcelasTableSimples"
+										process="@this" />
+								</p:calendar>
+							</p:column>
+							<p:column filterBy="#{parcela.dataCredito}"
+								sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
+								headerText="Data de Crédito">
+								<h:outputText value="#{parcela.dataCredito}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+
+					</p:scrollPanel>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento}"
+						update="@parent:pnlfaturaViewSimples" process="@this, pnlNovoLancamentoSimples"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgEditarLancamento" header="Editar Lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlEditarLancamentoSimples">
+					<p:panelGrid columns="1" layout="grid" rendered="#{faturaPagtoMB.editarLancamento != null}"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="editarLancamentoFormaPagamentoSimples"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="editarLancamentoFormaPagamentoSimples"
+								converter="tarifa"
+								value="#{faturaPagtoMB.editarLancamento.tarifa}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraFormaPagamento}"
+									update="editarLancamentoDataCreditoSimples" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="editarLancamentoFormaPagamentoSimples" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataPagamentoSimples"
+								value="#{faturaPagtoMB.editarLancamento.dataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraDataPagamento}"
+									update="editarLancamentoDataCreditoSimples" process="@this" />
+							</p:calendar>
+							<p:outputLabel for="editarLancamentoDataPagamentoSimples"
+								value="Data de Recebimento: " />
+							<p:message for="editarLancamentoDataPagamentoSimples" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataCreditoSimples"
+								value="#{faturaPagtoMB.editarLancamento.dataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+							<p:outputLabel for="editarLancamentoDataCreditoSimples"
+								value="Data de Crédito:" />
+							<p:message for="editarLancamentoDataCreditoSimples" styleClass="msg" />
+						</h:panelGroup>
+						
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="editarLancamentoValorSimples" disabled="#{!faturaPagtoMB.administrador}"
+								value="#{faturaPagtoMB.editarLancamento.valor}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">								
+							</p:inputNumber>
+							<p:outputLabel for="editarLancamentoValorSimples" value="Valor:" />
+							<p:message styleClass="msg" for="editarLancamentoValorSimples" />
+						</h:panelGroup>
+
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistEditarLancamento}"
+						update="@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples" process="@this, @parent:@parent:@parent:pnlEditarLancamentoSimples"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgEditarLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	
+	
+
+	<p:dialog id="faturaViewSimples" appendTo=":lume" widgetVar="dlgFaturaViewSimples"
+		responsive="true" modal="true"
+		onHide="PF('dlgFaturaViewSimples').toggleMaximize();onCloseFaturaView();"
+		onShow="PF('dlgFaturaViewSimples').toggleMaximize();">
+		<f:facet name="header">
+			<p:outputPanel id="pnlfaturaViewHeaderSimples">
+				<h:outputText
+					value="Visualização da Fatura - #{faturaPagtoMB.entity.dataCriacaoStr}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+				<p:outputPanel id="pnlfaturaViewSimples">
+					<div class="ui-g ui-fluid">
+						<div class="ui-g-12 ui-lg-12">
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+
+								<h:outputText for="pacienteSimples" value="Tipo da Fatura:" />
+								<p:inputText id="faturaTipo"
+									value="#{faturaPagtoMB.entity.tipoFaturaDescricao}"
+									readonly="true" />
+
+								<h:outputText for="pacienteSimples" value="Origem/Destino:" />
+								<p:inputText id="pacienteSimples"
+									value="#{faturaPagtoMB.origem.nome}"
+									readonly="true" />
+
+								<h:outputText for="dataCriacaoSimples" value="Data Criação:" />
+								<p:inputText id="dataCriacaoSimples"
+									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
+
+								<h:outputText for="statusFaturaSimples" value="Status da Fatura:" />
+								<p:outputLabel id="statusFaturaSimples"
+									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
+									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
+									readonly="true" escape="false">
+									<p:tooltip escape="false" for="@parent" position="bottom"
+										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
+										hideDelay="500" />
+								</p:outputLabel>
+
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" layout="grid"
+								columnClasses="ui-g-12"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel id="valorTotalSimples">
+									<f:facet name="header">
+										<h:outputText value="Valor Total" />
+										<h:outputLabel class="fa fa-question" id="tooltipValorTotalSimples"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorTotalSimples" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorTotal')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalFatura}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>								
+							</p:panelGrid>
+
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{faturaPagtoMB.entity.itensFiltered}" var="fi" rows="20"
+								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
+								<f:facet name="header">Itens</f:facet>
+
+								<p:column headerText="Ações" width="50" exportable="false"									
+								rendered="true">
+									
+									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+										title="Editar"	disabled="#{fi.fatura.statusFatura.rotulo eq 'PA' or fi.fatura.statusFatura.rotulo eq 'C'}"								
+										update=" @parent:@parent:@parent:pnEditarPagamentoRecebimento"
+										actionListener="#{faturaPagtoMB.actionEditarItem(fi)}"
+										onsuccess="PF('dlgEditarPagamentoRecebimento').show()" process="@this"
+										>
+									</p:commandButton>
+									
+			
+								
+								
+	                
+								</p:column>
+								
+								<p:column sortBy="#{fi.descricaoItem}"
+									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
+									headerText="Descrição">
+									<h:outputText value="#{fi.descricaoItem}" style="float:left" />
+								</p:column>
+
+							
+
+								<p:column sortBy="#{fi.valorItem}" filterMatchMode="contains"
+									filterBy="#{fi.valorItem}" headerText="Valor" width="100">
+									<h:outputText value="#{fi.valorItem}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
+								
+
+							</p:dataTable>
+
+							<p:separator styleClass="SeparatorFull" />
+
+							<p:panel>
+								<p:selectBooleanCheckbox styleClass="sideChkBox"
+									itemLabel="Mostrar lançamentos cancelados."
+									value="#{faturaPagtoMB.showLancamentosCancelados}">
+									<p:ajax process="@this" update="lancamentosFaturaSimples" />
+								</p:selectBooleanCheckbox>
+								
+								<p:selectBooleanCheckbox styleClass="sideChkBox"
+									itemLabel="Mostrar lançamentos de estorno."
+									value="#{faturaPagtoMB.showLancamentosEstorno}">
+									<p:ajax process="@this" update="lancamentosFaturaSimples" />
+								</p:selectBooleanCheckbox>
+							</p:panel>
+							<br />
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
+								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
+								id="lancamentosFaturaSimples">
+								<f:facet name="header">Lançamentos da Fatura</f:facet>
+
+								<p:column headerText="Ações" width="50" exportable="false"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
+										title="Cancelar lançamento"
+										disabled="#{!l.ativo or l.validado != 'N'}"
+										update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
+										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
+										process="@this"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento and l.lancamentoExtornado == 'N'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se jÃ¡ foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
+										</p:confirm>
+									</p:commandButton>
+									<p:commandButton styleClass="NavyButton"
+										title="Ajuste de valor" icon="fa fa-dollar"
+										actionListener="#{faturaPagtoMB.carregarAjuste(l)}"
+										oncomplete="PF('dlgAjusteLancamento').show();"
+										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
+										rendered="#{l.validado == 'S' and l.lancamentoExtornado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
+										process="@this" update=":lume:pnlAjusteLancamentoSimples">
+									</p:commandButton>
+									
+										<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+										title="Editar lançamento"
+										disabled="#{!l.ativo or l.validado != 'N'}"
+										update=" @parent:@parent:@parent:pnlEditarLancamentoSimples,@parent:@parent:@parent:editarLancamentoFormaPagamentoSimples"
+										actionListener="#{faturaPagtoMB.actionStartEditarLancamento(l)}"
+										onsuccess="PF('dlgEditarLancamento').show()" process="@this"
+										rendered="#{showNewLancamento != null and l.lancamentoExtornado == 'N' and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
+									</p:commandButton>
+									
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')} cabecalho"
+									width="10%"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{l.formaPagamentoStr}"
+									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
+									<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.valor}" filterMatchMode="contains"
+									filterBy="#{l.valor}" headerText="Valor" width="10%"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.valor}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.tributo}" filterMatchMode="contains"
+									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.tributoPerc}">
+										<f:convertNumber type="percent" maxFractionDigits="2" />
+									</h:outputText>
+									<h:outputText rendered="#{repasseProfissional == 'S'}"
+										value="0%">
+									</h:outputText>
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.dataPagamentoStr}"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
+									width="10%" headerText="Data de Recebimento">
+									<h:outputText value="#{l.dataPagamentoStr}" />
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.dataCreditoStr}" filterMatchMode="contains"
+									width="10%" filterBy="#{l.dataCreditoStr}"
+									headerText="Data de Crédito"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.dataCreditoStr}" />
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
+									filterMatchMode="contains"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									headerText="Conferido?">
+									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
+									filterMatchMode="contains" width="10%"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
+									headerText="Conferido Por">
+									<h:outputText
+										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									headerText="Status" sortBy="#{l.statusCompleto}" width="15%"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
+									<h:outputText value="#{l.statusCompleto}" />
+								</p:column>
+							</p:dataTable>
+
+						</div>
+					</div>
+				</p:outputPanel>
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="4" layout="grid" id="buttonViewFaturaSimples"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
+				process="@this" update="@parent:pnlNovoLancamentoSimples,novoLancamentoParcelasTableSimples"
+				styleClass="OrangeButton"
+				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"				
+				actionListener="#{faturaPagtoMB.actionNovoLancamentoNew}"
+				oncomplete="PF('dlgNovoLancamento').show();PF('dtnovoLancamentoParcelasTableSimples').filter()" />		
+			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
+				styleClass="NavyButton" process="@this"
+				oncomplete="PF('dlgPrintFatura').show()"
+				update="" />
+			<p:column
+				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
+			<p:column
+				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
+			<p:commandButton value="Fechar" icon="fa fa-close"
+				styleClass="NavyButton" oncomplete="PF('dlgFaturaViewSimples').hide()"
+				process="@this" />
+		</p:panelGrid>
+	</p:dialog>
+
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+		<p:commandButton value="Sim" type="button"
+			styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		<p:commandButton value="Não" type="button"
+			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	</p:confirmDialog>
+
+</ui:composition>

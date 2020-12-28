@@ -161,10 +161,10 @@
 												<p:column width="50" headerText="Detalhes">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Visualizar Fatura"
-														oncomplete="PF('dlgFaturaView').show();"
+														oncomplete="PF('dlgFaturaViewProfissional').show();"
 														actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 														process="@this"
-														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+														update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
 												</p:column>
 												<p:column
 													filterBy="#{f.profissional.dadosBasico.prefixoNome}"

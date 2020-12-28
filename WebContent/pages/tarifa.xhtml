@@ -40,7 +40,22 @@
 									<p:ajax update="prazo" process="@this" listener="#{tarifaMB.mudaPrazo}" />
 								</p:selectOneRadio>
 							</p:outputPanel>
-						</p:panelGrid>	
+						</p:panelGrid>
+						<p:panelGrid columns="1" columnClasses="" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;" >														
+							<p:outputPanel style="margin-bottom:-15px">											
+								<p:outputLabel for="formaPagto" value="Tipo : " />
+								<h:outputLabel class="fa fa-question" id="tooltipFormaPagto" style="font-size:16px; margin-left:10px;" onclick="PF('tFormaPagto').show()"/>
+								<p:tooltip for="tooltipFormaPagto" id="tFormaPagto" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'formaPagamento')}" />
+							</p:outputPanel>
+							<p:outputPanel>		
+								<p:selectOneRadio id="formaPagto" value="#{tarifaMB.entity.formaPagamento}" required="true">									
+									<f:selectItem itemValue="R" itemLabel="Recebimento" />
+									<f:selectItem itemValue="P" itemLabel="Pagamento" />
+									<f:selectItem itemValue="A" itemLabel="Ambos" />									
+								</p:selectOneRadio>
+							</p:outputPanel>
+						</p:panelGrid>		
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent; " >
 							<p:outputPanel>
@@ -129,7 +144,7 @@
 							<p:outputLabel for="banco" value="Banco: " />
 							<p:inputText id="banco" value="#{tarifaMB.entity.banco}" maxlength="100" />
 							<p:outputLabel for="conta" value="Número da conta: " />
-							<p:inputText id="conta" value="#{tarifaMB.entity.conta}" maxlength="15" mask="9?999" />
+							<p:inputText id="conta" value="#{tarifaMB.entity.conta}" maxlength="15" />
 							<p:outputLabel for="agencia" value="Agência: " />
 							<p:inputText id="agencia" value="#{tarifaMB.entity.agencia}" maxlength="10" mask="9?999" />	
 						</p:panelGrid>
@@ -260,6 +275,9 @@
 							</p:commandButton>
 								
 								
+						</p:column>
+						<p:column filterBy="#{tarifa.formaPagamentoStr}" sortBy="#{tarifa.formaPagamentoStr}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{tarifaMB.filtroSemAcento}">
+							<h:outputText value="#{tarifa.formaPagamentoStr}" title="#{tarifa.id}" />
 						</p:column>
 						<p:column filterBy="#{tarifa.tipoStr}" sortBy="#{tarifa.tipoStr}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.tipoStr}" title="#{tarifa.id}" />

@@ -123,7 +123,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         try {
 
-            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber.doubleValue(), new BigDecimal(0),
+            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber, new BigDecimal(0),
                     motivoRecebimento);
 
             if (this.faturaRecebimento != null) {
@@ -165,13 +165,13 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         Fornecedor fornecedor = null;
         Profissional profissional = null;
-        Origem origem = null;
+        Fornecedor fornecedorOrigem = null;
         Fatura fatura = null;
         FaturaItem item = null;
 
         try {
 
-            item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivo.getDescricao(), SALDO.ENTRADA, valorPagar.doubleValue(), new BigDecimal(0), motivo);
+            item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivo.getDescricao(), SALDO.ENTRADA, valorPagar, new BigDecimal(0), motivo);
 
             if (this.fornecedorSelecionado.getSexo() != null) {
 
@@ -190,7 +190,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
             } else if (fornecedorSelecionado.getDocumento() == null && fornecedorSelecionado.getSexo() == null) {
 
-                origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(fornecedorSelecionado);
+                fornecedorOrigem = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(fornecedorSelecionado);
 
                 if (this.faturaPagamento != null) {
                     fatura = FaturaSingleton.getInstance().getBo().find(this.faturaPagamento);
@@ -200,7 +200,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
                     FaturaSingleton.getInstance().getBo().persist(fatura);
                 } else {
-                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(origem, UtilsFrontEnd.getProfissionalLogado(), item);
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(fornecedorOrigem, UtilsFrontEnd.getProfissionalLogado(), item);
                 }
 
             } else if (fornecedorSelecionado.getSexo() == null || fornecedorSelecionado.getSexo().isEmpty()) {
@@ -279,7 +279,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     public void pesquisar() {
 
         Fornecedor fornecedorFiltro = null;
-        Origem origemFiltro = null;
+       // Fornecedor fornecedorOrigemFiltro = null;
         Profissional profissionalFiltro = null;
 
         try {
@@ -291,7 +291,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
                 } else if (fornecedorFiltroSelecionado.getDocumento() == null && fornecedorFiltroSelecionado.getSexo() == null) {
 
-                    origemFiltro = OrigemSingleton.getInstance().getBo().findByDadosBasicos(fornecedorFiltroSelecionado);
+                    fornecedorFiltro = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(fornecedorFiltroSelecionado);
 
                 } else if (fornecedorFiltroSelecionado.getSexo() == null || fornecedorFiltroSelecionado.getSexo().isEmpty()) {
 
@@ -300,7 +300,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
                 }
             }
 
-            this.faturas = FaturaItemSingleton.getInstance().getBo().faturasItensFromDataAndFornecedor(dataInicio, dataFim, fornecedorFiltro, origemFiltro, profissionalFiltro,
+            this.faturas = FaturaItemSingleton.getInstance().getBo().faturasItensFromDataAndFornecedor(dataInicio, dataFim, fornecedorFiltro, null, profissionalFiltro,
                     this.getProfissionalCriacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
         } catch (Exception e) {
@@ -349,8 +349,8 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         if (fatura.getFatura().getFornecedor() != null) {
             return fatura.getFatura().getFornecedor().getDadosBasico().getNome();
-        } else if (fatura.getFatura().getOrigem() != null) {
-            return fatura.getFatura().getOrigem().getDadosBasico().getNome();
+//        } else if (fatura.getFatura().getOrigem() != null) {
+//            return fatura.getFatura().getOrigem().getDadosBasico().getNome();
         } else if (fatura.getFatura().getProfissional() != null) {
             return fatura.getFatura().getProfissional().getDadosBasico().getNome();
         }
@@ -427,10 +427,11 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
                 if (i < fornecedores.size()) {
                     fornecedores.get(i).getDadosBasico().setTipoInformacao("Fornecedor");
                     itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
-                } else {
-                    origens.get(cont++).getDadosBasico().setTipoInformacao("Origem");
-                    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
                 }
+//                else {
+//                    origens.get(cont++).getDadosBasico().setTipoInformacao("Origem");
+//                    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
+//                }
             }
 
             for (int i = 0; i < profissionais.size(); i++) {

@@ -1,15 +1,20 @@
 package br.com.lume.common.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+
+import javax.sound.midi.Soundbank;
 
 import com.twilio.Twilio;
+import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.twiml.messaging.*;
 import com.twilio.type.PhoneNumber;
 
 public class MessagesManager {
 
     private static MessagesManager instance;
+    private String sidWebhook;
+    private String sidEnv;
     
     public static final String ACCOUNT_SID = "ACf95921d69a6b7507b84009f0f818b319";
     public static final String AUTH_TOKEN = "fb650d8f11c74d7af01731b88ea16cae";
@@ -35,10 +40,65 @@ public class MessagesManager {
             .create();
 
         System.out.println(message.getSid());
+        sidEnv = message.getSid();
     }
     
-    public void smsReceive() {
+    public void configurationWebhook() {
+//        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+//        Webhook webhook = Webhook.updater()
+//            .setFilters(
+//                Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
+//            .setTarget(Webhook.Target.WEBHOOK)
+//            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
+//            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
+//            .setMethod("POST")
+//            .update();
+
+    }
+
+    public void configurationConversation() {
         
+        Body body = new Body.Builder("TESTE").build();
+        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message.Builder().body(body).build();
+        
+        
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        com.twilio.rest.conversations.v1.conversation.Webhook webhook = 
+                com.twilio.rest.conversations.v1.conversation.Webhook.creator("chxxx",
+                com.twilio.rest.conversations.v1.conversation.Webhook.Target.WEBHOOK)
+            .setConfigurationMethod(com.twilio.rest.conversations.v1.conversation.Webhook.Method.GET)
+            .setConfigurationFilters(
+                Arrays.asList("onMessageAdded", "onConversationAdded", "onConversationRemoved", "onConversationUpdate", 
+                        "onMessageAdd", "onMessageAdded"))
+            .setConfigurationUrl("https://dev-intelidente.lumetec.com.br/webhook")
+            .create();
+
+        System.out.println("--------------- configurationConversation ----------------");
+        System.out.println(webhook.getSid());
+        sidWebhook = webhook.getSid();
     }
     
+    public void receiveMsgs() {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        ResourceSet<com.twilio.rest.conversations.v1.conversation.Webhook> webhooks =
+                com.twilio.rest.conversations.v1.conversation.Webhook.reader(sidWebhook)
+            .limit(20)
+            .read();
+
+        for(com.twilio.rest.conversations.v1.conversation.Webhook record : webhooks) {
+            System.out.println("------- REGISTRO ---------- ");
+            System.out.println("SID: " + record.getSid());
+            System.out.println("TARGET: " + record.getTarget() + "\n");
+        }
+    }
+    
+    public void listAllMessagesInHistory() {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        ResourceSet<Message> messages = Message.reader().limit(20).read();
+
+        System.out.println("------------- Listagem do histórico ----------");
+        for(Message record : messages) {
+            System.out.println(record.getSid());
+        }
+    }
 }

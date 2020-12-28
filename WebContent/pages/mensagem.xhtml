@@ -224,16 +224,16 @@
 					<p:fieldset legend="Mensagem">
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							
-							<p:inputTextarea widgetVar="edtMensagem" rows="10" cols="50" 
-								value="#{mensagemMB.entity.mensagem}"/>
-							
+
+							<p:inputTextarea widgetVar="edtMensagem" rows="10" cols="50"
+								value="#{mensagemMB.entity.mensagem}" />
+
 							<ui:remove>
-							<p:textEditor widgetVar="edtMensagem"
-								value="#{mensagemMB.entity.mensagem}" height="300"
-								style="margin-bottom:10px" />
+								<p:textEditor widgetVar="edtMensagem"
+									value="#{mensagemMB.entity.mensagem}" height="300"
+									style="margin-bottom:10px" />
 							</ui:remove>
-							
+
 						</p:panelGrid>
 					</p:fieldset>
 				</p:scrollPanel>
@@ -270,13 +270,11 @@
 									oncomplete="PF('dlgNovaMag').show();" />
 							</h:panelGroup>
 
-							<ui:remove>
-								<h:panelGroup>
-									<p:commandButton styleClass="GreenButton" icon="ui-icon-add"
-										value="teste mensagem"
-										actionListener="#{mensagemMB.testeSendQuick}" process="@this" />
-								</h:panelGroup>
-							</ui:remove>
+							<h:panelGroup>
+								<p:commandButton styleClass="GreenButton" icon="ui-icon-add"
+									value="teste mensagem"
+									actionListener="#{mensagemMB.testeTwilio}" process="@this" />
+							</h:panelGroup>
 
 						</p:panelGrid>
 					</p:fieldset>

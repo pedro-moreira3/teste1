@@ -152,6 +152,7 @@
 									<h:outputText
 										value="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}" />
 								</p:column>
+								<ui:remove>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
@@ -162,6 +163,7 @@
 										oncomplete="PF('dlgFaturaView').show();"
 										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
+								</ui:remove>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"
 									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}"
 									width="15%">
@@ -319,6 +321,15 @@
 									<h:outputText
 										value="#{movimentacoesMB.getFaturaInfo(l.fatura)}" />
 								</p:column>
+								
+									<p:column headerText="Nome"
+									filterBy="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}"
+									sortBy="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}"
+									filterMatchMode="contains" width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getFaturaInfoNome(l.fatura)}" />
+								</p:column>
+								<ui:remove>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
@@ -329,6 +340,7 @@
 										oncomplete="PF('dlgFaturaView').show();"
 										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
+								</ui:remove>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"
 									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}"
 									width="15%">

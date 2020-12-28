@@ -13,21 +13,31 @@ import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton.TipoPessoa;
+import br.com.lume.faturamento.FaturaItemSingleton;
+import br.com.lume.faturamento.FaturaRecorrenteSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -35,6 +45,11 @@ import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
+import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.TipoFatura;
+import br.com.lume.odonto.entity.FaturaItem;
+import br.com.lume.odonto.entity.FaturaItem.SALDO;
+import br.com.lume.odonto.entity.FaturaRecorrente;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
@@ -42,12 +57,14 @@ import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.entity.TipoCategoria;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.tarifa.TarifaSingleton;
 import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
 @ManagedBean
@@ -66,8 +83,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private List<DadosBasico> dadosBasicos;
 
-    private Origem origem;
-
     private boolean visivel;
 
     private CategoriaMotivo categoria;
@@ -77,52 +92,159 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private TipoCategoria tipoCategoria;
 
     private List<TipoCategoria> tiposCategoria;
-    
+
     private BigDecimal somatorioValorLancamento;
 
     //  private TipoCategoriaBO tipoCategoriaBO;
 
     private String tipo = "Pagar";
 
-    private String tipoOrigem = "J";
+    private int diasRecorrente = 30;
+
+    private String recorrente = "N";
+
+    private int quantidadeVezesRecorrencia;
+
+    //TODO depois fazer enum tipos sao fornecedor, paciente e profissional
+    private String tipoCadastro = "FOR";
+
+    private String nomeCadastro;
+
+    private String celularCadastro;
+
+    private String emailCadastro;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamento;
 
     private Date inicio, fim;
-    
+
+    private Tarifa formaPagamento;
+
+    private Tarifa formaPagamentoDigitacao;
+
     private boolean mostrarExtorno = false;
+
+    private String periodo;
+
+    private List<Tarifa> tarifas = new ArrayList<>();
+
+    private List<Tarifa> tarifasDigitacao = new ArrayList<>();
+
+    // private List<SelectItem> origens;
+
+    private DadosBasico origemFiltro;
+
+    private boolean editando = false;
 
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
         this.setClazz(LancamentoContabil.class);
         try {
-            Calendar c = Calendar.getInstance();
-            fim = new Date();
-            // c.add(Calendar.MONTH, 3);
-            // fim = c.getTime();
-            c.set(Calendar.DAY_OF_MONTH, 1);
-            inicio = c.getTime();
-            this.geraLista();
-            //this.carregarLancamentosValidar();
+            this.periodo = "9";
+            actionTrocaDatas();
+            //  this.geraLista();
+            this.geraListaTarifa();
+            //  this.geraListaOrigens();   
+            geraListaSugestoes();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
-    public void onTabChange(TabChangeEvent event) {
-        System.out.println(event.getTab().getId());
-        if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
-            this.carregarLancamentosValidar();
+
+//    public void geraListaOrigens() {
+//        try {
+//
+//            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+//         
+//            SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
+//            SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
+//            SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");          
+//
+//            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+//            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+//            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
+//         
+//
+//            SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
+//            SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];
+//            SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
+//          
+//
+//            for (int i = 0; i < fornecedores.size(); i++) {          
+//
+//                itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
+//               
+//            }
+//
+//            for (int i = 0; i < profissionais.size(); i++) {
+//                if (profissionais.get(i).getDadosBasico() != null) {
+//                    itensProfissionais[i] = new SelectItem(profissionais.get(i).getDadosBasico(), profissionais.get(i).getDadosBasico().getNome());
+//                }
+//            }
+//
+//            for (int i = 0; i < pacientes.size(); i++) {
+//                if (pacientes.get(i).getDadosBasico() != null) {
+//                    itensPacientes[i] = new SelectItem(pacientes.get(i).getDadosBasico(), pacientes.get(i).getDadosBasico().getNome());
+//                }
+//            }
+//
+//            listaProfissionais.setSelectItems(itensProfissionais);
+//            listaFornecedores.setSelectItems(itensFornecedores);
+//            listaPacientes.setSelectItems(itensPacientes);          
+//
+//            if (this.origens == null)
+//                this.setOrigens(new ArrayList<SelectItem>());
+//
+//            this.origens.add(listaProfissionais);
+//            this.origens.add(listaPacientes);
+//            this.origens.add(listaFornecedores);          
+//
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//    }
+
+    public void geraListaTarifa() {
+        try {
+
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.AMBOS));
+            if (this.getTarifas() != null)
+                Collections.sort(this.getTarifas());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            e.printStackTrace();
         }
+    }
+
+    public void actionTrocaDatas() {
+        try {
+
+            this.setInicio(Utils.getDataInicio(this.getPeriodo()));
+            this.setFim(Utils.getDataFim(this.getPeriodo()));
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasConferencia", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public void onTabChange(TabChangeEvent event) {
+        //   System.out.println(event.getTab().getId());
+        //   if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
+        //      this.carregarLancamentosValidar();
+        //  }
     }
 
     public void validarLC(LancamentoContabil lc) {
         try {
             LancamentoContabilSingleton.getInstance().validaLC(lc, UtilsFrontEnd.getProfissionalLogado());
-            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            //  this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
+            e.printStackTrace();
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
@@ -176,11 +298,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void geraLista() {
         try {
-            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
-            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
-            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(
-                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno);
-            carrearListasPorTipoPagamento();
+            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno,
+                    formaPagamento, origemFiltro);
             updateSomatorio();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -196,44 +315,25 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void carrearListasPorTipoPagamento() {
         geraListaSugestoes();
         carregarMotivos();
+        try {
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
+            if ("Pagar".equals(tipo)) {
+                tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
+            } else if ("Receber".equals(tipo)) {
+                tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     public void geraListaSugestoes() {
         try {
 
-            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            this.dadosBasicos = Utils.geraListaSugestoesOrigens(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
 
-            dadosBasicos = new ArrayList<>();
-            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            for (Origem f : origens) {
-                f.getDadosBasico().setTipoInformacao("Origem");
-                dadosBasicos.add(f.getDadosBasico());
-            }
-
-            if ("Pagar".equals(tipo)) {
-                List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-                for (Fornecedor f : fornecedores) {
-                    f.getDadosBasico().setTipoInformacao("Fornecedor");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
-                List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-                for (Profissional f : profissionais) {
-                    f.getDadosBasico().setTipoInformacao("Profissional");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
-            } else if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
-                for (Paciente f : pacientes) {
-                    f.getDadosBasico().setTipoInformacao("Paciente");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
-                List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-                for (Convenio f : convenios) {
-                    f.getDadosBasico().setTipoInformacao("Convênio");
-                    dadosBasicos.add(f.getDadosBasico());
-                }
-            }
-            dadosBasicos.sort((o1, o2) -> o2.getNome().compareTo(o1.getNome()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -246,71 +346,296 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             this.carregarLancamentosValidar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
-
+            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
         }
     }
 
+    public void actionEditar(FaturaItem faturaItem) {
+        try {
+            this.editando = true;
+            Lancamento lancamento = faturaItem.getFatura().getLancamentosFiltered().get(0);
+            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
+
+            if (faturaItem.getTipoSaldo().equals("S")) {
+                this.tipo = "Pagar";
+                lc.setValor(lc.getValor().negate());
+            } else {
+                this.tipo = "Receber";
+            }
+            if (faturaItem.getDescricaoItem() != null) {
+                lc.setDescricao(faturaItem.getDescricaoItem().replace(lc.getMotivo().getDescricao() + " - ", ""));
+            }
+            setEntity(lc);
+
+            carrearListasPorTipoPagamento();
+            carregarCategorias();
+            carregarTipoECategoria();
+
+            formaPagamentoDigitacao = lancamento.getTarifa();
+            recorrente = faturaItem.getFatura().getRecorrente();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Erro no actionEditar", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+        }
+    }
+
+    public void actionRemove(LancamentoContabil lc) {
+        try {
+            if (lc.getLancamento() != null) {
+                FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
+
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
+
+            } else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+        }
+        actionNew(null);
+        geraLista();
+    }
+
+    @Override
+    public void actionNew(ActionEvent event) {
+        try {
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
+            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
+            carrearListasPorTipoPagamento();
+            tipoCadastro = "FOR";
+            tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
+            tipoCategoria = null;
+            categoria = null;
+            formaPagamentoDigitacao = null;
+            getEntity().setDadosBasico(null);
+            this.getEntity().setMotivo(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.editando = false;
+        ///   super.actionNew(event);
+    }
+
     @Override
     public void actionPersist(ActionEvent event) {
-        if (this.getEntity().getData() == null) {
-            this.getEntity().setData(new Date());
-        }
-        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        this.getEntity().setTipo(this.getEntity().getMotivo().getTipo());
-        if (!this.getEntity().getTipo().equals("Inicial")) {
-            boolean isPagamentoProfissional = false;
-            if (this.getEntity().getMotivo().getSigla() != null && this.getEntity().getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)) {
-                isPagamentoProfissional = true;
-            }
-            if (this.getEntity().getTipo().equals("Pagar") && !isPagamentoProfissional) {
-                if (this.getEntity().getValor().compareTo(BigDecimal.ZERO) > 0) {
-                    this.getEntity().setValor((this.getEntity().getValor().negate()));
-                }
-            }
+//        if (this.getEntity().getData() == null) {
+//            this.getEntity().setData(new Date());
+//        }
+//        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        this.getEntity().setTipo(this.getEntity().getMotivo().getTipo());
+//        if (!this.getEntity().getTipo().equals("Inicial")) {
+//            boolean isPagamentoProfissional = false;
+//            if (this.getEntity().getMotivo().getSigla() != null && this.getEntity().getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)) {
+//                isPagamentoProfissional = true;
+//            }
+//            if (this.getEntity().getTipo().equals("Pagar") && !isPagamentoProfissional) {
+//                if (this.getEntity().getValor().compareTo(BigDecimal.ZERO) > 0) {
+//                    this.getEntity().setValor((this.getEntity().getValor().negate()));
+//                }
+//            }
+//        } else {
+//            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//            if (lc != null) {
+//                lc.setValor(this.getEntity().getValor());
+//                this.setEntity(lc);
+//                this.addInfo("Valor do saldo inical alterado.", "");
+//            } else {
+//                this.addInfo("Valor do saldo inical salvo.", "");
+//            }
+//        }
+//        super.actionPersist(event);
+//        validarLC(this.getEntity());
+        if (!editando) {
+            criarFaturaGenerica(this.getEntity());
+            getEntity().setValor(null);
+            getEntity().setData(new Date());
         } else {
-            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (lc != null) {
-                lc.setValor(this.getEntity().getValor());
-                this.setEntity(lc);
-                this.addInfo("Valor do saldo inical alterado.", "");
-            } else {
-                this.addInfo("Valor do saldo inical salvo.", "");
+
+            try {
+                FaturaItem faturaItem = this.getEntity().getLancamento().getFatura().getItensFiltered().get(0);
+
+                SALDO tipoSaldo;
+
+                if (this.getEntity().getTipo().equals("Pagar")) {
+                    this.getEntity().setValor((this.getEntity().getValor().negate()));
+                    tipoSaldo = SALDO.SAIDA;
+                } else {
+                    tipoSaldo = SALDO.ENTRADA;
+                }
+                //    getEntity().setDescricao(descricaoFatura(getEntity()));
+                super.actionPersist(event);
+                FaturaItem fiAtualizada = FaturaItemSingleton.getInstance().atualizaItemFaturaGenerica(faturaItem, descricaoFatura(getEntity()), tipoSaldo, this.getEntity().getValor(),
+                        new BigDecimal(0), this.getEntity().getMotivo());
+                FaturaItemSingleton.getInstance().getBo().persist(fiAtualizada);
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        super.actionPersist(event);
-
-        getEntity().setValor(null);
-        getEntity().setData(null);
+        actionNew(null);
         geraLista();
         updateSomatorio();
+        PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
+        this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
     }
-    
+
+    public String descricaoFatura(LancamentoContabil lc) {
+        String descricaoDigitada = "";
+        if (lc.getDescricao() != null && !lc.getDescricao().equals("")) {
+            descricaoDigitada = " - " + lc.getDescricao();
+        }
+        String descricaoItem = lc.getMotivo().getDescricao() + descricaoDigitada;
+        return descricaoItem;
+    }
+
+    //TODO mover para o singleton
+    private void criarFaturaGenerica(LancamentoContabil lc) {
+
+        String descricaoItem = Utils.descricaoItemFaturaGenerica(lc);
+
+        try {
+            TipoFatura tipoFatura;
+            SALDO tipoSaldo;
+            lc.setTipo(this.getEntity().getMotivo().getTipo());
+            if (lc.getTipo().equals("Pagar")) {
+                //  lc.setValor((this.getEntity().getValor().negate()));
+                tipoSaldo = SALDO.SAIDA;
+                tipoFatura = TipoFatura.FATURA_GENERICA_PAGAMENTO;
+            } else {
+                tipoSaldo = SALDO.ENTRADA;
+                tipoFatura = TipoFatura.FATURA_GENERICA_RECEBIMENTO;
+            }
+
+            TipoPessoa tipo;
+            tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());
+
+            int quantidadeVezes = 1;
+
+            if (recorrente.equals("S")) {
+                //0 = ilimitado, entao pegamos da conf da empresa
+                if (quantidadeVezesRecorrencia == 0) {
+                    if (UtilsFrontEnd.getEmpresaLogada().getQuantidadeMesesFaturaRecorrente() != 0) {
+                        quantidadeVezes = UtilsFrontEnd.getEmpresaLogada().getQuantidadeMesesFaturaRecorrente();
+                    } else {
+                        quantidadeVezes = 12;
+                    }
+                } else {
+                    quantidadeVezes = quantidadeVezesRecorrencia;
+                }
+
+            }
+
+            long numeroRecorrencia = 0;
+            for (int i = 0; i < quantidadeVezes; i++) {
+                FaturaItem faturaItem = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(descricaoItem, tipoSaldo, lc.getValor(), new BigDecimal(0), lc.getMotivo());
+
+                Fatura fatura = null;
+                if (tipo.equals(TipoPessoa.PROFISSIONAL)) {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()),
+                            UtilsFrontEnd.getProfissionalLogado(), faturaItem);
+                } else if (tipo.equals(TipoPessoa.PACIENTE)) {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(PacienteSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
+                            faturaItem);
+                } else if (tipo.equals(TipoPessoa.FORNECEDOR)) {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(FornecedorSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
+                            faturaItem);
+                }
+//                } else if (tipo.equals(TipoPessoa.ORIGEM)) {
+//                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(OrigemSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
+//                            faturaItem);
+//                }
+                //
+                if (recorrente.equals("S")) {
+                    //TODO mover isso para o singleton
+                    FaturaRecorrente faturaRecorrente = new FaturaRecorrente();
+                    faturaRecorrente.setQuantidadeRecorrencia(quantidadeVezesRecorrencia);
+                    faturaRecorrente.setValor(lc.getValor());
+                    faturaRecorrente.setDescricao(descricaoItem);
+                    faturaRecorrente.setMotivo(lc.getMotivo());
+                    faturaRecorrente.setSaldo((tipoSaldo.toString().charAt(0) + "").toUpperCase());
+                    faturaRecorrente.setTarifa(formaPagamentoDigitacao);
+                    faturaRecorrente.setTipoPessoa(tipo.getRotulo());
+                    faturaRecorrente.setIntervaloRecorrencia(diasRecorrente);
+                    faturaRecorrente.setStatus("A");
+                    if (numeroRecorrencia == 0) {
+                        numeroRecorrencia = fatura.getId();
+                    }
+                    faturaRecorrente.setReferenciaRecorrencia(numeroRecorrencia);
+                    faturaRecorrente.setFatura(fatura);
+                    FaturaRecorrenteSingleton.getInstance().getBo().persist(faturaRecorrente);
+                    faturaRecorrente = FaturaRecorrenteSingleton.getInstance().getBo().find(faturaRecorrente);
+                    fatura.setFaturaRecorrente(faturaRecorrente);
+                    fatura.setRecorrente("S");
+                }
+
+                fatura.setTipoFatura(tipoFatura);
+
+                FaturaSingleton.getInstance().getBo().persist(fatura);
+                //Tarifa tarifa = formaPagamentoDigitacao;
+                // if(tipoFatura.equals(TipoFatura.FATURA_GENERICA_PAGAMENTO)) {
+                //     tarifa = null;
+                // }
+
+                Lancamento lancamento = LancamentoSingleton.getInstance().novoLancamento(fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, lc.getData(), lc.getData(),
+                        formaPagamentoDigitacao, UtilsFrontEnd.getProfissionalLogado(), false, "", lc.getDescricao(), lc.getMotivo());
+
+                lc.setLancamento(lancamento);
+
+                lancamento = LancamentoSingleton.getInstance().confereRetornaLancamento(lancamento, UtilsFrontEnd.getProfissionalLogado());
+
+                lancamento.calculaStatusESubStatus();
+
+                FaturaSingleton.getInstance().atualizarStatusFatura(fatura, UtilsFrontEnd.getProfissionalLogado());
+                Calendar c = Calendar.getInstance();
+                c.setTime(lc.getData());
+                c.add(Calendar.DAY_OF_MONTH, diasRecorrente);
+                lc.setData(c.getTime());
+
+            }   //  
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+            e.printStackTrace();
+        }
+    }
+
     public void updateSomatorio() {
         this.setSomatorioValorLancamento(new BigDecimal(0));
-        if(this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
+        if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
             this.lancamentoContabeis.forEach((lc) -> {
                 BigDecimal valor = lc.getValor();
-                if(lc.getTipo().equals("Pagar") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+                if (lc.getTipo().equals("Pagar") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
                     valor = valor.multiply(new BigDecimal(-1));
                 this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
             });
         }
     }
 
-    public String valorLancamento(LancamentoContabil lancamento) {
-        Locale Local = new Locale("pt", "BR");
-
-        double value = lancamento.getValor().doubleValue();
-        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-        
-        String silgaMotivo = lancamento.getMotivo().getSigla();
-        
-        if(lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
-            value = value*(-1);
-            
-        return "R$ " + df.format(value);
+//    public String valorLancamento(LancamentoContabil lancamento) {
+//        Locale Local = new Locale("pt", "BR");
+//
+//        double value = lancamento.getValor().doubleValue();
+//        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
+//
+//        String silgaMotivo = lancamento.getMotivo().getSigla();
+//
+//        if (lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+//            value = value * (-1);
+//
+//        return "R$ " + df.format(value);
+//    }
+    
+    public double valorLancamentoDouble(LancamentoContabil lancamento) {  
+        if(lancamento.getValor() == null) {
+            return 0d;
+        }       
+        return lancamento.getValor().doubleValue();
     }
 
     public void carregaTela() {
@@ -320,11 +645,15 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         categoria = getEntity().getMotivo().getCategoria();
         tipoCategoria = getEntity().getMotivo().getCategoria().getTipoCategoria();
         tipo = getEntity().getMotivo().getTipo();
+        getEntity().setData(new Date());
     }
 
     public List<DadosBasico> geraSugestoes(String query) {
         List<DadosBasico> suggestions = new ArrayList<>();
         if (query.length() >= 3) {
+            if(dadosBasicos == null ){
+                geraListaSugestoes();
+            }
             for (DadosBasico d : dadosBasicos) {
                 if (Utils.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
                     suggestions.add(d);
@@ -333,7 +662,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         } else if (query.equals("")) {
             suggestions = dadosBasicos;
         }
-        Collections.sort(suggestions);
+        // Collections.sort(suggestions);
         return suggestions;
     }
 
@@ -341,18 +670,27 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         Object object = event.getObject();
         this.getEntity().setDadosBasico((DadosBasico) object);
         Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
-        if (ultimoMotivo != null) {
-            tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
-            categoria = ultimoMotivo.getCategoria();
-            this.getEntity().setMotivo(ultimoMotivo);
+        if (ultimoMotivo != null) {  
+            
+            if(ultimoMotivo.getCategoria() != null && ultimoMotivo.getCategoria().getTipoCategoria() != null) {
+                if(ultimoMotivo.getCategoria().getTipoCategoria().getTipo().equals(tipo)) {
+                    tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();                    
+                    categoria = ultimoMotivo.getCategoria();
+                    this.getEntity().setMotivo(ultimoMotivo);
+                }
+            }
+          
         }
+        this.getEntity().setData(new Date());
         if (this.getEntity().getDadosBasico() == null) {
             this.addError(OdontoMensagens.getMensagem("lancamentoContabil.dadosbasico.vazio"), "");
         }
     }
 
     public void novoOrigem(ActionEvent event) {
-        origem = new Origem();
+        nomeCadastro = null;
+        celularCadastro = null;
+        emailCadastro = null;
         visivel = true;
     }
 
@@ -362,12 +700,36 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionPersistOrigem(ActionEvent event) {
         try {
-            origem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            OrigemSingleton.getInstance().getBo().persist(origem);
+            DadosBasico db = new DadosBasico();
+            db.setNome(this.getNomeCadastro());
+            db.setCelular(this.getCelularCadastro());
+            db.setEmail(this.getEmailCadastro());
+            if (tipoCadastro.equals("FOR")) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setDadosBasico(db);
+                fornecedor.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                FornecedorSingleton.getInstance().getBo().persist(fornecedor);
+                this.getEntity().setDadosBasico(fornecedor.getDadosBasico());
+            } else if (tipoCadastro.equals("PAC")) {
+                Paciente paciente = new Paciente();
+                paciente.setDadosBasico(db);
+                paciente.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                paciente.setPreCadastro("S");
+                PacienteSingleton.getInstance().getBo().persist(paciente);
+                this.getEntity().setDadosBasico(paciente.getDadosBasico());
+            } else if (tipoCadastro.equals("PRO")) {
+                Profissional profissional = new Profissional();
+                profissional.setDadosBasico(db);
+                profissional.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                profissional.setPerfil(OdontoPerfil.DENTISTA);
+                ProfissionalSingleton.getInstance().getBo().persist(profissional);
+                this.getEntity().setDadosBasico(profissional.getDadosBasico());
+            }
+
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             this.geraListaSugestoes();
-            this.getEntity().setDadosBasico(origem.getDadosBasico());
+
         } catch (UsuarioDuplicadoException ud) {
             this.addError(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO), "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
@@ -378,7 +740,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void exportarTabela(String type) {
-        exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
+        if (tabelaLancamento.getRowCount() > 0) {
+            exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
+        }else {
+            this.addError("Efetue uma pesquisa antes de exportar a tabela.", ""); 
+        }
     }
 
     public List<LancamentoContabil> getLancamentoContabeis() {
@@ -413,13 +779,13 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.visivel = visivel;
     }
 
-    public Origem getOrigem() {
-        return origem;
-    }
-
-    public void setOrigem(Origem origem) {
-        this.origem = origem;
-    }
+//    public Origem getOrigem() {
+//        return origem;
+//    }
+//
+//    public void setOrigem(Origem origem) {
+//        this.origem = origem;
+//    }
 
     public List<CategoriaMotivo> getCategorias() {
         return categorias;
@@ -469,14 +835,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.tipo = tipo;
     }
 
-    public String getTipoOrigem() {
-        return tipoOrigem;
-    }
-
-    public void setTipoOrigem(String tipoOrigem) {
-        this.tipoOrigem = tipoOrigem;
-    }
-
     public DataTable getTabelaLancamento() {
         return tabelaLancamento;
     }
@@ -515,6 +873,126 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setMostrarExtorno(boolean mostrarExtorno) {
         this.mostrarExtorno = mostrarExtorno;
+    }
+
+    public String getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(String periodo) {
+        this.periodo = periodo;
+    }
+
+    public Tarifa getFormaPagamento() {
+        return formaPagamento;
+    }
+
+    public void setFormaPagamento(Tarifa formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
+    public List<Tarifa> getTarifas() {
+        return tarifas;
+    }
+
+    public void setTarifas(List<Tarifa> tarifas) {
+        this.tarifas = tarifas;
+    }
+
+//    public List<SelectItem> getOrigens() {
+//        return origens;
+//    }
+//
+//    public void setOrigens(List<SelectItem> origens) {
+//        this.origens = origens;
+//    }
+
+    public DadosBasico getOrigemFiltro() {
+        return origemFiltro;
+    }
+
+    public void setOrigemFiltro(DadosBasico origemFiltro) {
+        this.origemFiltro = origemFiltro;
+    }
+
+    public Tarifa getFormaPagamentoDigitacao() {
+        return formaPagamentoDigitacao;
+    }
+
+    public void setFormaPagamentoDigitacao(Tarifa formaPagamentoDigitacao) {
+        this.formaPagamentoDigitacao = formaPagamentoDigitacao;
+    }
+
+    public List<Tarifa> getTarifasDigitacao() {
+        return tarifasDigitacao;
+    }
+
+    public void setTarifasDigitacao(List<Tarifa> tarifasDigitacao) {
+        this.tarifasDigitacao = tarifasDigitacao;
+    }
+
+    public String getRecorrente() {
+        return recorrente;
+    }
+
+    public void setRecorrente(String recorrente) {
+        this.recorrente = recorrente;
+    }
+
+    public int getDiasRecorrente() {
+        return diasRecorrente;
+    }
+
+    public void setDiasRecorrente(int diasRecorrente) {
+        this.diasRecorrente = diasRecorrente;
+    }
+
+    public int getQuantidadeVezesRecorrencia() {
+        return quantidadeVezesRecorrencia;
+    }
+
+    public void setQuantidadeVezesRecorrencia(int quantidadeVezesRecorrencia) {
+        this.quantidadeVezesRecorrencia = quantidadeVezesRecorrencia;
+    }
+
+    public boolean isEditando() {
+        return editando;
+    }
+
+    public void setEditando(boolean editando) {
+        this.editando = editando;
+    }
+
+    public String getTipoCadastro() {
+        return tipoCadastro;
+    }
+
+    public void setTipoCadastro(String tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
+    }
+
+    public String getNomeCadastro() {
+        return nomeCadastro;
+    }
+
+    public void setNomeCadastro(String nomeCadastro) {
+        this.nomeCadastro = nomeCadastro;
+    }
+
+    public String getCelularCadastro() {
+        return celularCadastro;
+    }
+
+    public void setCelularCadastro(String celularCadastro) {
+        this.celularCadastro = celularCadastro;
+    }
+
+    public String getEmailCadastro() {
+        return emailCadastro;
+    }
+
+    public void setEmailCadastro(String emailCadastro) {
+        this.emailCadastro = emailCadastro;
     }
 
 }
