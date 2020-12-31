@@ -43,6 +43,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
@@ -205,6 +206,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     // private String mensagemCalculoOrcamentoDiferenca;
     private BigDecimal valorParcela;
     private BigDecimal diferencaCalculoParcelas = new BigDecimal(0);
+    
+    private List<Convenio> conveniosDisponiveis;
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -215,6 +218,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             atualizaTela();
 
             justificativasCancelamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamentoprocedimento", "justificativa");
+            conveniosDisponiveis = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         } catch (Exception e) {
             e.printStackTrace();
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -2770,6 +2774,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setOmitirLogo(boolean omitirLogo) {
         this.omitirLogo = omitirLogo;
+    }
+
+    public List<Convenio> getConveniosDisponiveis() {
+        return conveniosDisponiveis;
+    }
+
+    
+    public void setConveniosDisponiveis(List<Convenio> conveniosDisponiveis) {
+        this.conveniosDisponiveis = conveniosDisponiveis;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

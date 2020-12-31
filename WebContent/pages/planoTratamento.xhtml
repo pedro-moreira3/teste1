@@ -532,6 +532,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
 							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
+							
+							<p:outputLabel value="Tipo do Plano:" />
+							<h:panelGroup>
+								<p:selectOneRadio id=tipoDoPlano" value="#{planoTratamentoMB.entity.ortodontico}">
+						            <f:selectItem itemLabel="Convencional" itemValue="#{false}" />
+						            <f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
+						        </p:selectOneRadio>
+							</h:panelGroup>
+							
 							<p:outputLabel value="Descrição:" />
 							<h:panelGroup>
 								<p:inputText id="planoTratamentoDescricao"
@@ -694,73 +703,41 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<div class="ui-g-12 ui-lg-12">
 
 						<p:fieldset toggleable="false" legend="Plano de Tratamento">
-							<p:panelGrid columns="6" layout="grid"
-								columnClasses="ui-g-1,ui-g-3,ui-g-1,ui-g-3,ui-g-1,ui-g-3"
+							<p:panelGrid columns="3" layout="grid"
+								columnClasses="ui-g-2,ui-g-4,ui-g-6"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp">
+
+								<p:outputLabel value="Tipo do Plano:" />
+								<h:panelGroup>
+									<p:selectOneRadio id=tipoDoPlano" value="#{planoTratamentoMB.entity.ortodontico}">
+							            <f:selectItem itemLabel="Convencional" itemValue="#{false}" />
+							            <f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
+							        </p:selectOneRadio>
+								</h:panelGroup>
+								<p:column />
 
 								<p:outputLabel for="descricaoPTView"
 									value="Descrição do Plano: " />
 								<p:inputText id="descricaoPTView"
-									value="#{planoTratamentoMB.entity.descricao}" readonly="true" />
+									value="#{planoTratamentoMB.entity.descricao}" />
+								<p:column />
 
-								<p:outputLabel for="profPTView" value="Criado Por: " />
-								<p:inputText id="profPTView"
-									value="#{planoTratamentoMB.entity.profissional.dadosBasico.nome}"
-									readonly="true" />
-
-								<p:outputLabel for="statusPTView" value="Status: " />
-								<p:inputText id="statusPTView"
-									value="#{planoTratamentoMB.entity.statusDescritivo}"
-									readonly="true" />
-
-								<p:outputLabel for="totalPTView" value="Valor Total: " />
-								<p:inputText id="totalPTView"
-									value="#{planoTratamentoMB.entity.valor}" readonly="true">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</p:inputText>
-
-								<p:outputLabel for="descontoPTView" value="Desconto (%): " />
-								<p:inputText id="descontoPTView"
-									value="#{planoTratamentoMB.entity.desconto}" readonly="true">
-								</p:inputText>
-
-								<p:outputLabel for="valorComDescontoPTView"
-									value="Valor Final: " />
-								<p:inputText id="valorComDescontoPTView"
-									value="#{planoTratamentoMB.entity.valorTotalDesconto}"
-									readonly="true">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</p:inputText>
-							</p:panelGrid>
-							<p:panelGrid columns="6" layout="grid"
-								columnClasses="ui-g-2,ui-g-2,ui-g-1,ui-g-3,ui-g-1,ui-g-3"
-								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-								<p:outputLabel for="odontogramaPTView"
-									value="Odontograma Vinculado: " />
-								<p:inputText id="odontogramaPTView"
-									value="#{planoTratamentoMB.entity.odontograma.dataCadastroStrE}"
-									readonly="true" />
 								<p:outputLabel for="convenioPTView" value="Convênio: " />
-								<p:inputText id="convenioPTView"
-									value="#{planoTratamentoMB.entity.convenio.dadosBasico.nome}"
-									readonly="true" />
-								<p:outputLabel for="valorTotalPTView"
-									value="Valor Total dos Procedimentos: " />
-								<p:inputText id="valorTotalPTView"
-									value="#{planoTratamentoMB.entity.valor}" readonly="true">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</p:inputText>
+								<p:selectOneMenu converter="convenio" id="convenioPTView" 
+									value="#{planoTratamentoMB.entity.convenio}">
+									<f:selectItem itemLabel="Nenhum Selecionado" itemValue="#{null}" />
+									<f:selectItems value="#{planoTratamentoMB.conveniosDisponiveis}"
+										var="convenio" itemLabel="#{convenio.dadosBasico.nome}"
+										itemValue="#{convenio}" />
+								</p:selectOneMenu>
+								<p:column />
 							</p:panelGrid>
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removePaddingUp removeSideGridPadding">
-								<p:commandButton process="@this" value="Editar Informações"
-									update=":lume:tabViewPaciente:pnEditaPlanoTratamento"
-									styleClass="NavyButton" icon="fa fa-eye"
-									oncomplete="PF('dlgEditaPlanoTratamento').show()"
+								<p:commandButton process="@this, tipoDoPlano, descricaoPTView, convenioPTView" 
+									value="Salvar" styleClass="NavyButton" icon="fa fa-save"
 									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+								<p:column />
 								<h:panelGroup rendered="#{planoTratamentoMB.temPermissaoExtra}">
 									<p:commandButton id="geraNegociacao" icon="fa fa-legal"
 										value="Orçamento" oncomplete="PF('dlgOrcamentos').show()"
@@ -769,19 +746,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										styleClass="NavyButton" process="@this"
 										disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 								</h:panelGroup>
-								<h:panelGroup rendered="#{planoTratamentoMB.admin}">
-									<p:commandButton id="devolucao" icon="White fa fa-times-circle"
-										update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:pgFinalizar, :lume:tabViewPaciente:pnViewPlanoTratamento,
-											:lume:tabViewPaciente:botoesFinalizaPT"
-										value="Encerrar Plano de Tratamento" process="@this"
-										styleClass="RedButton"
-										actionListener="#{planoTratamentoMB.actionFinalizar}"
-										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
-										<p:confirm header="Confirmação"
-											message="Deseja realmente encerrar este Plano de Tratamento?"
-											icon="fa fa-warning" />
-									</p:commandButton>
-								</h:panelGroup>
+								<p:commandButton styleClass="NavyButton" process="@this"
+									id="odontogramaOpensDlg99" title="Odontograma" icon="btnTooth"
+									actionListener="#{planoTratamentoMB.carregaTelaOdontograma}"
+									update=":lume:tabViewPaciente:odontogramPT, :lume:tabViewPaciente:odontogramPTHeader, :lume:tabViewPaciente:odontogramaControlButtons"
+									disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
+									value="Ver odontograma" />
 							</p:panelGrid>
 						</p:fieldset>
 
@@ -819,12 +789,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									:lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 								process="@this" styleClass="GreenButton"
 								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
-							<p:commandButton styleClass="NavyButton" process="@this"
-								id="odontogramaOpensDlg99" title="Odontograma" icon="btnTooth"
-								actionListener="#{planoTratamentoMB.carregaTelaOdontograma}"
-								update=":lume:tabViewPaciente:odontogramPT, :lume:tabViewPaciente:odontogramPTHeader, :lume:tabViewPaciente:odontogramaControlButtons"
-								disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
-								value="Ver odontograma" />
+							
 						</p:panelGrid>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
