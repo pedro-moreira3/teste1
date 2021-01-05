@@ -11,7 +11,7 @@ import com.twilio.twiml.messaging.*;
 import com.twilio.type.PhoneNumber;
 import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Body;
-import static spark.Spark.*;
+//import static spark.Spark.*;
 
 public class MessagesManager {
 
@@ -82,23 +82,23 @@ public class MessagesManager {
     }
     
     public void receiveMsgs() {
-        get("/", (req, res) -> "Olá");
-
-        post("/sms", (req, res) -> {
-            res.type("application/xml");
-            Body body = new Body
-                    .Builder("Resposta teste!")
-                    .build();
-            com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
-                    .Builder()
-                    .body(body)
-                    .build();
-            MessagingResponse twiml = new MessagingResponse
-                    .Builder()
-                    .message(sms)
-                    .build();
-            return twiml.toXml();
-        });
+//        get("/", (req, res) -> "Olá");
+//
+//        post("/sms", (req, res) -> {
+//            res.type("application/xml");
+//            Body body = new Body
+//                    .Builder("Resposta teste!")
+//                    .build();
+//            com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
+//                    .Builder()
+//                    .body(body)
+//                    .build();
+//            MessagingResponse twiml = new MessagingResponse
+//                    .Builder()
+//                    .message(sms)
+//                    .build();
+//            return twiml.toXml();
+//        });
     }
     
     public void listAllMessagesInHistory() {

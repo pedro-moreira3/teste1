@@ -668,8 +668,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void handleSelect(SelectEvent event) {
         Object object = event.getObject();
-        this.getEntity().setDadosBasico((DadosBasico) object);
-        Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
+        this.getEntity().setDadosBasico((DadosBasico) object);        
+        //Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
+        Motivo ultimoMotivo = MotivoSingleton.getInstance().findMotivoByDadosBasicos(this.getEntity().getDadosBasico(), 
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (ultimoMotivo != null) {  
             
             if(ultimoMotivo.getCategoria() != null && ultimoMotivo.getCategoria().getTipoCategoria() != null) {
