@@ -9,6 +9,9 @@ import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.twiml.messaging.*;
 import com.twilio.type.PhoneNumber;
+import com.twilio.twiml.MessagingResponse;
+import com.twilio.twiml.messaging.Body;
+//import static spark.Spark.*;
 
 public class MessagesManager {
 
@@ -79,17 +82,23 @@ public class MessagesManager {
     }
     
     public void receiveMsgs() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        ResourceSet<com.twilio.rest.conversations.v1.conversation.Webhook> webhooks =
-                com.twilio.rest.conversations.v1.conversation.Webhook.reader(sidWebhook)
-            .limit(20)
-            .read();
-
-        for(com.twilio.rest.conversations.v1.conversation.Webhook record : webhooks) {
-            System.out.println("------- REGISTRO ---------- ");
-            System.out.println("SID: " + record.getSid());
-            System.out.println("TARGET: " + record.getTarget() + "\n");
-        }
+//        get("/", (req, res) -> "Olá");
+//
+//        post("/sms", (req, res) -> {
+//            res.type("application/xml");
+//            Body body = new Body
+//                    .Builder("Resposta teste!")
+//                    .build();
+//            com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
+//                    .Builder()
+//                    .body(body)
+//                    .build();
+//            MessagingResponse twiml = new MessagingResponse
+//                    .Builder()
+//                    .message(sms)
+//                    .build();
+//            return twiml.toXml();
+//        });
     }
     
     public void listAllMessagesInHistory() {

@@ -75,6 +75,7 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
             
             this.m = MessagesManager.getInstance();
             m.configurationWebhook();
+            m.receiveMsgs();
             
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -98,12 +99,10 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
 
     public void testeTwilio() {
         try {
-            
             m.smsSender();
             m.configurationConversation();
             m.receiveMsgs();
             m.listAllMessagesInHistory();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }

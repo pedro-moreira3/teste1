@@ -43,6 +43,7 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.Retorno.StatusRetorno;
+import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
@@ -605,6 +606,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             }                            
         }
         return paraSubstituir;
+    }
+    
+    public boolean verificaPendenciaFinanceira(Paciente p) {
+        return PacienteSingleton.getInstance().getPendenciaFinanceiraPaciente(p);
     }
 
     private List<Agendamento> substituiAgendamentos(List<Agendamento> listaCriados ,List<Agendamento> paraSubstituir) {

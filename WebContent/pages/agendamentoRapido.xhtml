@@ -348,7 +348,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</p:commandButton>
 								<p:commandButton id="btnVerificarCobranca" icon="Red fa fa-money" styleClass="RedButton"
 								action="#{tabPacienteMB.loadPacienteNoFinanceiro(agendamento.paciente)}" 
-								rendered="#{agendamento.paciente.pendenciaFinanceiraBool}"
+								rendered="#{agendamentoRapidoMB.verificaPendenciaFinanceira(agendamento.paciente)}"
 								process="@this"
 								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 									oncomplete="PF('dlgFichaPaciente').show()"
