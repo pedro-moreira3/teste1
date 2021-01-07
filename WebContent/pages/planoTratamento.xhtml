@@ -791,7 +791,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									:lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 								process="@this" styleClass="GreenButton"
 								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
-							
 						</p:panelGrid>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -805,7 +804,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</f:facet>
 
 							<p:column headerText="Ações" styleClass="TexAlCenter" width="100">
-
 								<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 									process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
@@ -857,6 +855,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:tooltip for="denteRegiaoProc"
 									value="Odontograma #{plano.denteObj.odontograma.dataCadastroStrE}"
 									rendered="#{plano.denteObj != null}" position="bottom" />
+								<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
+									process="@this"
+									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
+									oncomplete="PF('dlgDetalhesProcedimento').show()" title="Detalhes"
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
+									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this" />
 							</p:column>
 							<p:column headerText="Face" width="100">
 								<h:outputText value="#{plano.label}" />
@@ -1161,6 +1165,99 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					styleClass="NavyButton" />
 			</p:panelGrid>
 		</p:outputPanel>
+	</p:dialog>
+	
+	<p:dialog id="detalhesProcedimento" widgetVar="dlgDetalhesProcedimento"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false" header="Detalhes e Diagnóstico do Procedimento"
+		width="50%">
+		<p:outputPanel id="pgDetalheProcedimento">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+
+					<p:remoteCommand name="onDentesRegiaoBlur" process="@this, :lume:tabViewPaciente:dentesOuRegioes"
+							actionListener="#{planoTratamentoMB.handleDentesRegioesSelects}"
+							update=":lume:tabViewPaciente:facesProcedimento, :lume:tabViewPaciente:pgDetalheProcedimento" />
+							
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-3, ui-g-9"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						
+						<h:outputText value="Selecione os Dentes/Regiões" />
+						<p:selectCheckboxMenu value="#{planoTratamentoMB.dentesRegioesEscolhidas}" id="dentesOuRegioes"
+							filterMatchMode="contains" filter="true" multiple="true" onHide="onDentesRegiaoBlur()"
+							emptyLabel="Selecione o Dente/Região">
+							<f:selectItems value="#{planoTratamentoMB.dentes}" />
+						</p:selectCheckboxMenu>
+
+						<h:outputText value="Selecione as Faces" />
+						<p:selectCheckboxMenu id="facesProcedimento"
+							filterMatchMode="contains" filter="true"
+							value="#{planoTratamentoMB.facesEscolhidas}"
+							disabled="#{planoTratamentoMB.disableFacesMulti}"
+							emptyLabel="Selecione as faces"
+							style="width: 100%;text-align: left" multiple="true">
+							<f:selectItems
+								value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
+								itemValue="#{face}" itemLabel="#{face}" />
+						</p:selectCheckboxMenu>
+						
+						<h:outputText value="Selecione os Diagnósticos" />
+						<p:selectCheckboxMenu
+							value="#{planoTratamentoMB.diagnosticosSelecionados}"
+							converter="statusDente" filter="true" multiple="true"
+							filterMatchMode="contains" autoWidth="false"
+							emptyLabel="Selecione um diagnóstico">
+							<f:selectItems value="#{planoTratamentoMB.statusDente}"
+								var="statusDente" itemLabel="#{statusDente.descricao}"
+								itemValue="#{statusDente}" />
+						</p:selectCheckboxMenu>
+						
+						<p:commandButton styleClass="GreenButton"
+							process="@this, :lume:tabViewPaciente:pgDetalheProcedimento"
+							value="Adicionar"
+							actionListener="#{planoTratamentoMB.actionAdicionaDiagnosticoDetalhesProcedimento}"
+							update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
+							oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
+				
+					</p:panelGrid>
+					
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="statusDenteRegiaoSelecionadosDetalhesProcedimento" var="regiao"
+						editable="true" widgetVar="dtStatusDenteRegiaoSelecionadosDetalhesProcedimento"
+						value="#{planoTratamentoMB.diagnosticos}" rows="10"
+						paginator="true" paginatorPosition="bottom">
+							<p:column sortBy="#{regiao.get().descricao}"
+								headerText="Dente/Região">
+								<h:outputText value="#{regiao.get().descricao}" />
+							</p:column>
+							<p:column sortBy="#{regiao.get().statusDente.descricao}"
+								headerText="Diagnóstico">
+								<h:outputText value="#{regiao.get().statusDente.descricao}" />
+							</p:column>
+							<p:column sortBy="#{regiao.get().facesArrayStr}"
+								headerText="Faces">
+								<h:outputText value="#{regiao.get().facesArrayStr}" />
+							</p:column>
+					</p:dataTable>
+					
+				</div>
+			</div>
+		</p:outputPanel>
+		<br />
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+				process="@this, :lume:tabViewPaciente:pgDetalheProcedimento"
+				value="Salvar"
+				actionListener="#{planoTratamentoMB.actionPersistDetalhesProcedimento}"
+				update=":lume:tabViewPaciente:pnViewPlanoTratamento"
+				oncomplete="PF('procedimentosTableInPT').filter()" />
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				process="@this" onclick="PF('dlgDetalhesProcedimento').hide();"
+				styleClass="NavyButton" />
+		</p:panelGrid>
 	</p:dialog>
 
 	<p:dialog id="orcamentos" widgetVar="dlgOrcamentos" responsive="true"
