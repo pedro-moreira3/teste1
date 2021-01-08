@@ -89,12 +89,6 @@ import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 /**
  * @author ricardo.poncio
  */
-/**
- * @author ricardo.poncio
- */
-/**
- * @author ricardo.poncio
- */
 @ManagedBean
 @ViewScoped
 public class FaturaPagtoMB extends LumeManagedBean<Fatura> {

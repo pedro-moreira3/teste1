@@ -226,20 +226,32 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="faturaOrigemDestino"
 												value="Origem/Destino:" />
 
-											<p:selectOneMenu id="faturaOrigemDestino"
-												converter="dadosBasico" value="#{relatorioFaturaMB.origem}"
-												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-												filter="true" filterMatchMode="contains">
+											<p:autoComplete queryDelay="1000"
+												value="#{relatorioFaturaMB.origem}"
+												id="faturaOrigemDestino"
+												completeMethod="#{relatorioFaturaMB.geraSugestoes}"
+												var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
+												converter="dadosBasico" size="46" minQueryLength="3"
+												dropdown="true">
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
 
-												<p:ajax event="itemSelect" process="@this" immediate="true" />
+											<ui:remove>
+												<p:selectOneMenu id="faturaOrigemDestino"
+													converter="dadosBasico" value="#{relatorioFaturaMB.origem}"
+													style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+													filter="true" filterMatchMode="contains">
 
-												<f:selectItem
-													itemLabel="Selecione um fornecedor, profissional ou paciente"
-													itemValue="#{null}" />
-												<f:selectItems value="#{relatorioFaturaMB.origens}" var="m"
-													itemLabel="#{m.nome}" itemValue="#{m}" />
+													<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-											</p:selectOneMenu>
+													<f:selectItem
+														itemLabel="Selecione um fornecedor, profissional ou paciente"
+														itemValue="#{null}" />
+													<f:selectItems value="#{relatorioFaturaMB.origens}" var="m"
+														itemLabel="#{m.nome}" itemValue="#{m}" />
+
+												</p:selectOneMenu>
+											</ui:remove>
 										</h:panelGroup>
 
 

@@ -386,16 +386,19 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionRemove(LancamentoContabil lc) {
         try {
             if (lc.getLancamento() != null) {
-                FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
-
+                if(lc.getLancamento().getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_PAGAMENTO) || 
+                        lc.getLancamento().getFatura().getTipoFatura().equals(Fatura.TipoFatura.FATURA_GENERICA_RECEBIMENTO)) {
+                    FaturaSingleton.getInstance().cancelarFatura(lc.getLancamento().getFatura(), UtilsFrontEnd.getProfissionalLogado());
+                }else {
+                    LancamentoSingleton.getInstance().inativaLancamento(lc.getLancamento(), UtilsFrontEnd.getProfissionalLogado());
+                }
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
-
             } else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), e.getMessage());
         }
         actionNew(null);
         geraLista();
