@@ -180,6 +180,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<String> facesEscolhidas;
     private List<StatusDente> diagnosticosSelecionados;
     private List<PlanoTratamentoProcedimentoRegiao> diagnosticos;
+    private PlanoTratamentoProcedimentoRegiao ptprSelecionado;
 
     //Personalizar
     private List<StatusDente> statusDente;
@@ -633,7 +634,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         
         //seta dentes/regioes
         this.diagnosticos = new ArrayList<>();
-        if (ptp.getRegioes() == null)
+        if (ptp.getRegioes() != null)
             this.diagnosticos = new ArrayList<>(ptp.getRegioes());
         
         //if (ptp.getDenteObj() != null)
@@ -1846,6 +1847,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionNewStatusDente() {
         statusDenteSelecionado = new StatusDente();
     }
+    
+    public void editaFacesDiagnostico(PlanoTratamentoProcedimentoRegiao ptpr) {
+        this.ptprSelecionado = ptpr;
+    }
+    
+    public void removeDiagnostico(PlanoTratamentoProcedimentoRegiao ptpr) {
+        ptpr.setRemovido(true);
+    }
+    
+    public void fechaTelaFacesDiagnostico() {
+        this.ptprSelecionado = null;
+    }
+    
+    public void actionPersistFacesDiagnostico() {
+        PrimeFaces.current().executeScript("PF('dlgFacesDetalhesProcedimento').hide()");
+    }
 
     public void handleDenteRegiaoSelected() {
         PlanoTratamentoProcedimentoRegiao.TipoRegiao local = isDenteOrRegiao(denteRegiaoEscolhida);
@@ -1997,8 +2014,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void actionPersistDetalhesProcedimento() {
         try {
+            if(this.diagnosticos != null)
+                this.diagnosticos.removeIf(diag -> diag.isRemovido());
             this.planoTratamentoProcedimentoSelecionado.setRegioes(this.diagnosticos);
-            actionPersistFaces(this.planoTratamentoProcedimentoSelecionado);
             actionPersist(null);
             
             PrimeFaces.current().executeScript("PF('dlgDetalhesProcedimento').hide()");
@@ -3022,6 +3040,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return diagnosticos;
     }
     
+    public List<PlanoTratamentoProcedimentoRegiao> getDiagnosticosLimpo() {
+        if (diagnosticos == null)
+            return diagnosticos;
+        return diagnosticos.stream().sorted().filter(diag -> !diag.isRemovido()).collect(Collectors.toList());
+    }
+    
     public void setDiagnosticos(List<PlanoTratamentoProcedimentoRegiao> diagnosticos) {
         this.diagnosticos = diagnosticos;
     }
@@ -3032,6 +3056,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setFacesEscolhidas(List<String> facesEscolhidas) {
         this.facesEscolhidas = facesEscolhidas;
+    }
+    
+    public PlanoTratamentoProcedimentoRegiao getPtprSelecionado() {
+        return ptprSelecionado;
+    }
+    
+    public void setPtprSelecionado(PlanoTratamentoProcedimentoRegiao ptprSelecionado) {
+        this.ptprSelecionado = ptprSelecionado;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

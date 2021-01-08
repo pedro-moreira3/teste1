@@ -112,6 +112,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 .justificativaExclusao .ui-panelgrid-cell:first-child {
 	margin-top: 8px;
 }
+
+.firstCellFullWidth .ui-panelgrid-cell {
+	width: 100%;
+}
+
+.firstCellFullWidth .ui-panelgrid-cell .ui-selectmanycheckbox {
+	width: 100%;
+}
 </style>
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
@@ -856,7 +864,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="Odontograma #{plano.denteObj.odontograma.dataCadastroStrE}"
 									rendered="#{plano.denteObj != null}" position="bottom" />
 								<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
-									process="@this"
+									process="@this" style="margin-left: 15px;"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgDetalhesProcedimento').show()" title="Detalhes"
 									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
@@ -1222,24 +1230,42 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				
 					</p:panelGrid>
 					
-					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="statusDenteRegiaoSelecionadosDetalhesProcedimento" var="regiao"
-						editable="true" widgetVar="dtStatusDenteRegiaoSelecionadosDetalhesProcedimento"
-						value="#{planoTratamentoMB.diagnosticos}" rows="10"
-						paginator="true" paginatorPosition="bottom">
-							<p:column sortBy="#{regiao.get().descricao}"
-								headerText="Dente/Região">
-								<h:outputText value="#{regiao.get().descricao}" />
-							</p:column>
-							<p:column sortBy="#{regiao.get().statusDente.descricao}"
-								headerText="Diagnóstico">
-								<h:outputText value="#{regiao.get().statusDente.descricao}" />
-							</p:column>
-							<p:column sortBy="#{regiao.get().facesArrayStr}"
-								headerText="Faces">
-								<h:outputText value="#{regiao.get().facesArrayStr}" />
-							</p:column>
-					</p:dataTable>
+					<p:outputPanel id="statusDenteRegiaoSelecionadosDetalhesProcedimento">
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							var="regiao"
+							editable="true" widgetVar="dtStatusDenteRegiaoSelecionadosDetalhesProcedimento"
+							value="#{planoTratamentoMB.diagnosticosLimpo}" rows="10"
+							paginator="true" paginatorPosition="bottom">
+							
+								<p:column>
+									<p:commandButton styleClass="NavyButton"
+										process="@this" icon="fa fa-trash"
+										actionListener="#{planoTratamentoMB.removeDiagnostico(regiao)}"
+										update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
+										oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
+								</p:column>
+							
+								<p:column sortBy="#{regiao.get().descricao}"
+									headerText="Dente/Região">
+									<h:outputText value="#{regiao.get().descricao}" />
+								</p:column>
+								<p:column sortBy="#{regiao.get().statusDente.descricao}"
+									headerText="Diagnóstico">
+									<h:outputText value="#{regiao.get().statusDente.descricao}" />
+								</p:column>
+								<p:column sortBy="#{regiao.get().facesArrayStr}"
+									headerText="Faces">
+									<h:outputText value="#{regiao.get().facesArrayStr}" />
+									<p:commandButton styleClass="NavyButton"
+										process="@this" icon="ui-icon-add"
+										actionListener="#{planoTratamentoMB.editaFacesDiagnostico(regiao)}"
+										update=":lume:tabViewPaciente:pgHeaderFaceDetalheProcedimento, :lume:tabViewPaciente:pgFaceDetalheProcedimento"
+										oncomplete="PF('dlgFacesDetalhesProcedimento').show()"
+										style="margin-left: 15px;" />
+								</p:column>
+								
+						</p:dataTable>
+					</p:outputPanel>
 					
 				</div>
 			</div>
@@ -1256,6 +1282,49 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				oncomplete="PF('procedimentosTableInPT').filter()" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgDetalhesProcedimento').hide();"
+				styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
+	
+	<p:dialog id="facesDetalhesProcedimento" widgetVar="dlgFacesDetalhesProcedimento"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false"
+		width="700px">
+		<p:ajax event="close" listener="#{planoTratamentoMB.fechaTelaFacesDiagnostico()}" />
+		<f:facet name="header">
+			<p:outputPanel id="pgHeaderFaceDetalheProcedimento">
+				<p:outputLabel value="Faces do #{planoTratamentoMB.ptprSelecionado.get().descricao}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel id="pgFaceDetalheProcedimento">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+				
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-3, ui-g-9"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding firstCellFullWidth">
+						
+						<p:selectManyCheckbox value="#{planoTratamentoMB.ptprSelecionado.get().facesArray}">
+					        <f:selectItems value="#{planoTratamentoMB.ptprSelecionado.get().facesPossiveis}" var="face" 
+					        	itemLabel="#{face}" itemValue="#{face}" />
+					    </p:selectManyCheckbox>
+				
+					</p:panelGrid>
+				
+				</div>
+			</div>
+		</p:outputPanel>
+		<br />
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+				actionListener="#{planoTratamentoMB.actionPersistFacesDiagnostico()}"
+				process="@this, :lume:tabViewPaciente:pgFaceDetalheProcedimento" value="Salvar"
+				update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
+				oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				process="@this" onclick="PF('dlgFacesDetalhesProcedimento').hide();"
 				styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
