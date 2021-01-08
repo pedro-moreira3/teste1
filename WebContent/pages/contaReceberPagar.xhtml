@@ -907,8 +907,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:outputLabel for="emailCadastro" value="Email : " />
 												<p:inputText id="emailCadastro"
 													value="#{lancamentoContabilMB.emailCadastro}"
-													maxlength="100" validatorMessage="E-mail inválido"
-													<!--required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" --> >
+													maxlength="100" validatorMessage="E-mail inválido">
 														<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
 												</p:inputText>
 												<p:message for="emailCadastro" styleClass="msg" />
