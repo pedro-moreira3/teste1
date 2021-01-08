@@ -654,7 +654,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText
-													value="#{lc.fatura.tipoFaturaconferenciaRecebimentoMB.somatorioValorConferidoConferencia}">
+													value="#{conferenciaRecebimentoMB.somatorioValorConferidoConferencia}">
 													<f:convertNumber currencySymbol="R$" type="currency"
 														minFractionDigits="2" />
 												</h:outputText>
@@ -908,7 +908,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:inputText id="emailCadastro"
 													value="#{lancamentoContabilMB.emailCadastro}"
 													maxlength="100" validatorMessage="E-mail inválido"
-													required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" >
+													<!--  required="#{lancamentoContabilMB.tipoCadastro ne 'FOR'}" -->>
 														<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
 												</p:inputText>
 												<p:message for="emailCadastro" styleClass="msg" />

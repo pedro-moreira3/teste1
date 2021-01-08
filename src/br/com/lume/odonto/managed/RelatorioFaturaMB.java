@@ -59,6 +59,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     private String tipoFatura;
 
     private DadosBasico origem;
+    
+    private List<DadosBasico> dadosBasicos;
 
     private List<SelectItem> origens;
 
@@ -72,10 +74,11 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     public RelatorioFaturaMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
-        geraListaOrigens();
+        geraListaSugestoes();
 
         this.statussFatura = Fatura.getStatusFaturaLista();
 
+        //origens = new ArrayList<SelectItem>();
         tipoFatura = "RP";
         atualizaTipoFatura();
     }
@@ -96,6 +99,35 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public List<Convenio> sugestoesConvenios(String query) {
         return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public void geraListaSugestoes() {
+        try {
+
+            this.dadosBasicos = Utils.geraListaSugestoesOrigens(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public List<DadosBasico> geraSugestoes(String query) {
+        List<DadosBasico> suggestions = new ArrayList<>();
+        if (query.length() >= 3) {
+            if(dadosBasicos == null ){
+                geraListaSugestoes();
+            }
+            for (DadosBasico d : dadosBasicos) {
+                if (Utils.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
+                    suggestions.add(d);
+                }
+            }
+        } else if (query.equals("")) {
+            suggestions = dadosBasicos;
+        }
+        // Collections.sort(suggestions);
+        return suggestions;
     }
 
     public void actionFiltrar(ActionEvent event) {
@@ -479,6 +511,14 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public List<SubStatusFatura> getListaSubStatusFatura() {
         return Arrays.asList(SubStatusFatura.values());
+    }
+
+    public List<DadosBasico> getDadosBasico() {
+        return dadosBasicos;
+    }
+
+    public void setDadosBasico(List<DadosBasico> dadosBasico) {
+        this.dadosBasicos = dadosBasico;
     }
 
 }
