@@ -1249,10 +1249,17 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									headerText="Dente/Região">
 									<h:outputText value="#{regiao.get().descricao}" />
 								</p:column>
+								
 								<p:column sortBy="#{regiao.get().statusDente.descricao}"
 									headerText="Diagnóstico">
-									<h:outputText value="#{regiao.get().statusDente.descricao}" />
+									<p:selectOneMenu value="#{regiao.get().statusDente}" converter="statusDente"
+										filter="true" filterMatchMode="containse" autoWidth="false">
+										<f:selectItem itemLabel="Selecione um Diagnóstico" itemValue="#{null}" />
+										<f:selectItems value="#{planoTratamentoMB.statusDente}" var="diagnostico"
+											itemLabel="#{diagnostico.descricao}" itemValue="#{diagnostico}" />
+									</p:selectOneMenu>
 								</p:column>
+								
 								<p:column sortBy="#{regiao.get().facesArrayStr}"
 									headerText="Faces">
 									<h:outputText value="#{regiao.get().facesArrayStr}" />
@@ -2231,48 +2238,37 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		responsive="true" width="800" modal="true" appendTo=":lume"
 		onHide="resize('#lume\\:tabViewPaciente\\:dlgProcedimento');">
 		<h:panelGroup id="pgProcedimentoDiagnostico">
+			<p:remoteCommand name="onBlurRegioesOdontograma" 
+				process="@this, :lume:tabViewPaciente:regioes"
+				update=":lume:tabViewPaciente:dtStatusDenteRegiaoSelecionados" />
+			<p:remoteCommand name="onBlurDentesOdontograma" 
+				process="@this, :lume:tabViewPaciente:dentesOdontograma"
+				update=":lume:tabViewPaciente:dtStatusDenteSelecionados" />
+		
 			<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
-				<h1>
-					<p:outputLabel
-						value="Dente #{planoTratamentoMB.denteSelecionado.descricao}" />
-				</h1>
+				<p:outputLabel for="dentesOdontograma" value="Dentes: " />
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid NoPaddingSides">
+					<p:selectCheckboxMenu id="dentesOdontograma" multiple="true" onHide="onBlurDentesOdontograma()"
+						value="#{planoTratamentoMB.dentesEscolhidasOdontograma}" filter="true"
+						filterMatchMode="contains" autoWidth="false" emptyLabel="Selecione um Dente">
+						<f:selectItems value="#{planoTratamentoMB.dentesPossiveisOdontograma}"
+							var="dente" itemLabel="#{dente}" itemValue="#{dente}" />
+					</p:selectCheckboxMenu>
+				</p:panelGrid>
+				<div class="SeparatorFull"></div>
+				<br />
 			</p:outputPanel>
-			<p:separator styleClass="SeparatorFull" />
 			<p:outputPanel rendered="#{planoTratamentoMB.enableRegioes}">
 				<p:outputLabel for="regioes" value="Regiões: " />
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid NoPaddingSides">
-					<p:selectOneMenu id="regioes"
-						value="#{planoTratamentoMB.regiaoSelecionada}" filter="true"
-						filterMatchMode="contains" autoWidth="false">
-						<p:ajax process="@this"
-							update=":lume:tabViewPaciente:dtStatusDenteRegiaoSelecionados" />
-						<f:selectItem itemLabel="Selecione uma região" itemValue="#{null}" />
-						<f:selectItem itemLabel="Arcada Superior/Inferior"
-							itemValue="Arcada Superior/Inferior" />
-						<f:selectItem itemLabel="Arcada Superior"
-							itemValue="Arcada Superior" />
-						<f:selectItem itemLabel="Arcada Inferior"
-							itemValue="Arcada Inferior" />
-						<f:selectItem itemLabel="Segmento Superior Direito"
-							itemValue="Segmento Superior Direito" />
-						<f:selectItem itemLabel="Segmento Superior Anterior"
-							itemValue="Segmento Superior Anterior" />
-						<f:selectItem itemLabel="Segmento Superior Esquerdo"
-							itemValue="Segmento Superior Esquerdo" />
-						<f:selectItem itemLabel="Segmento Inferior Direito"
-							itemValue="Segmento Inferior Direito" />
-						<f:selectItem itemLabel="Segmento Inferior Anterior"
-							itemValue="Segmento Inferior Anterior" />
-						<f:selectItem itemLabel="Segmento Inferior Esquerdo"
-							itemValue="Segmento Inferior Esquerdo" />
-						<f:selectItem itemLabel="Seio Maxilar Direito"
-							itemValue="Seio Maxilar Direito" />
-						<f:selectItem itemLabel="Seio Maxila Esquerdo"
-							itemValue="Seio Maxila Esquerdo" />
-						<f:selectItem itemLabel="Seio Maxilar Bilateral"
-							itemValue="Seio Maxilar Bilateral" />
-					</p:selectOneMenu>
+					<p:selectCheckboxMenu id="regioes" multiple="true" onHide="onBlurRegioesOdontograma()"
+						value="#{planoTratamentoMB.regioesEscolhidasOdontograma}" filter="true"
+						filterMatchMode="contains" autoWidth="false" emptyLabel="Selecione uma região">
+						<f:selectItems value="#{planoTratamentoMB.regioesPossiveisOdontograma}" 
+							var="#{regiao}" itemLabel="#{regiao}" itemValue="#{regiao}" />
+					</p:selectCheckboxMenu>
 				</p:panelGrid>
 				<div class="SeparatorFull"></div>
 				<br />
@@ -2308,8 +2304,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 					id="dtStatusDenteSelecionados" var="regiao" editable="true"
-					value="#{planoTratamentoMB.denteSelecionado.regioesFiltered}"
+					value="#{planoTratamentoMB.getDiagnosticosDentes()}"
 					rows="10" paginator="true" paginatorPosition="bottom">
+					<p:column sortBy="#{regiao.dente.descricaoCompleta}"
+						headerText="Dente">
+						<h:outputText value="#{regiao.dente.descricaoCompleta}" />
+					</p:column>
 					<p:column sortBy="#{regiao.statusDente.descricao}"
 						headerText="Diagnóstico">
 						<h:outputText value="#{regiao.statusDente.descricao}" />
@@ -2338,8 +2338,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:outputPanel rendered="#{planoTratamentoMB.enableRegioes}">
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 					id="dtStatusDenteRegiaoSelecionados" var="regiao" editable="true"
-					value="#{planoTratamentoMB.getDiagnosticosRegiao()}" rows="10"
+					value="#{planoTratamentoMB.getDiagnosticosRegioes()}" rows="10"
 					paginator="true" paginatorPosition="bottom">
+					<p:column sortBy="#{regiao.regiao}"
+						headerText="Região">
+						<h:outputText value="#{regiao.regiao}" />
+					</p:column>
 					<p:column sortBy="#{regiao.statusDente.descricao}"
 						headerText="Diagnóstico">
 						<h:outputText value="#{regiao.statusDente.descricao}" />
