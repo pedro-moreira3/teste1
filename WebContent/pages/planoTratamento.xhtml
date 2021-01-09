@@ -870,9 +870,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
 									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this" />
 							</p:column>
-							<p:column headerText="Face" width="100">
-								<h:outputText value="#{plano.label}" />
-							</p:column>
 
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
@@ -1263,7 +1260,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:column sortBy="#{regiao.get().facesArrayStr}"
 									headerText="Faces">
 									<h:outputText value="#{regiao.get().facesArrayStr}" />
-									<p:commandButton styleClass="NavyButton"
+									<p:commandButton styleClass="NavyButton" rendered="#{!planoTratamentoMB.escondeEditFaces(regiao)}"
 										process="@this" icon="ui-icon-add"
 										actionListener="#{planoTratamentoMB.editaFacesDiagnostico(regiao)}"
 										update=":lume:tabViewPaciente:pgHeaderFaceDetalheProcedimento, :lume:tabViewPaciente:pgFaceDetalheProcedimento"

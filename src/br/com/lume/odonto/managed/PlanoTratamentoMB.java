@@ -1044,6 +1044,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 "Dente ");
     }
     
+    public boolean escondeEditFaces(PlanoTratamentoProcedimentoRegiao regiao) {
+        return regiao.getTipoRegiao() == null || regiao.getTipoRegiao() != TipoRegiao.DENTE;
+    }
+    
     public boolean isDisableFacesMulti() {
         if (planoTratamentoProcedimentoSelecionado == null || 
                 this.procedimentoSelecionado == null || 
