@@ -1,7 +1,12 @@
 package br.com.lume.common.util;
 
+import java.io.IOException;
 import java.util.Arrays;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sound.midi.Soundbank;
 
 import com.twilio.Twilio;
@@ -13,7 +18,7 @@ import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Body;
 //import static spark.Spark.*;
 
-public class MessagesManager {
+public class MessagesManager extends HttpServlet{
 
     private static MessagesManager instance;
     private String sidWebhook;
@@ -79,6 +84,31 @@ public class MessagesManager {
         System.out.println("--------------- configurationConversation ----------------");
         System.out.println(webhook.getSid());
         sidWebhook = webhook.getSid();
+    }
+    
+    public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {        
+        Body body = new Body
+              .Builder("Resposta teste!")
+              .build();
+      
+        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
+              .Builder()
+              .body(body)
+              .build();
+        MessagingResponse twiml = new MessagingResponse
+              .Builder()
+              .message(sms)
+              .build();
+
+        twiml.toXml();
+        response.setContentType("application/xml");
+        response.getWriter().print(twiml.toXml());
+      }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        super.doPost(req, resp);
     }
     
     public void receiveMsgs() {
