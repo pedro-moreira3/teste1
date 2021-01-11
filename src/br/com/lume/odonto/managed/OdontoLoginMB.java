@@ -20,6 +20,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.MessagesManager;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Afiliacao;
@@ -90,6 +91,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
         //  System.out.println(profissionais);
 
         sistema = SistemaSingleton.getInstance().getBo().getSistemaBySigla(JSFHelper.getSistemaAtual());
+        MessagesManager.getInstance();
     }
 
     public String actionLogin() {
