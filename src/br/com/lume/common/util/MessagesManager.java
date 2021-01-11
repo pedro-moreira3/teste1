@@ -87,6 +87,7 @@ public class MessagesManager extends HttpServlet{
     }
     
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {        
+        System.out.println("------------Entrou aqui---------");
         Body body = new Body
               .Builder("Resposta teste!")
               .build();
