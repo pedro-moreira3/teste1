@@ -101,7 +101,7 @@ public class MessagesManager extends HttpServlet{
               .build();
 
         System.out.println(twiml.toXml());
-        response.setContentType("application/xml");
+        response.setContentType("text/xml");
         response.getWriter().print(twiml.toXml());
       }
     
