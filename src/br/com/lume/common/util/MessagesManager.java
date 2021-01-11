@@ -108,7 +108,23 @@ public class MessagesManager extends HttpServlet{
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
+        System.out.println("------------Entrou aqui---------");
+        Body body = new Body
+              .Builder("Resposta teste!")
+              .build();
+      
+        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
+              .Builder()
+              .body(body)
+              .build();
+        MessagingResponse twiml = new MessagingResponse
+              .Builder()
+              .message(sms)
+              .build();
+
+        System.out.println(twiml.toXml());
+        resp.setContentType("text/xml");
+        resp.getWriter().print(twiml.toXml());
         super.doPost(req, resp);
     }
     
