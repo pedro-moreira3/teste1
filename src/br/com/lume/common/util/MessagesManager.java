@@ -1,6 +1,8 @@
 package br.com.lume.common.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import javax.servlet.ServletException;
@@ -88,8 +90,16 @@ public class MessagesManager extends HttpServlet{
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("------------Entrou aqui---------");
+        System.out.println("------------Mensagem Twilio---------");
         System.out.println(req.toString());
+        
+        BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+        while(bff.ready()) {
+            System.out.println(bff.readLine());
+        }
+        
+        System.out.println("\n");
+        
         Body body = new Body
               .Builder("Resposta teste!")
               .build();
