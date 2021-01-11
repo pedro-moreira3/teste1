@@ -407,6 +407,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     @Override
     public void actionNew(ActionEvent event) {
         try {
+            tipo = "Pagar";
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             carrearListasPorTipoPagamento();
@@ -415,6 +416,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             tipoCategoria = null;
             categoria = null;
             formaPagamentoDigitacao = null;
+          
             getEntity().setDadosBasico(null);
             this.getEntity().setMotivo(null);
         } catch (Exception e) {
