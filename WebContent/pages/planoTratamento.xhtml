@@ -544,7 +544,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:outputLabel value="Tipo do Plano:" />
 							<h:panelGroup>
 								<p:selectOneRadio id="tipoDoNovoPlano" value="#{planoTratamentoMB.entity.ortodontico}">
-						            <f:selectItem itemLabel="Convencional" itemValue="#{false}" />
+						            <f:selectItem itemLabel="Clínica Geral" itemValue="#{false}" />
 						            <f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
 						        </p:selectOneRadio>
 							</h:panelGroup>
@@ -750,10 +750,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:column />
 								<h:panelGroup rendered="#{planoTratamentoMB.temPermissaoExtra}">
 									<p:commandButton id="geraNegociacao" icon="fa fa-legal"
-										value="Orçamento" oncomplete="PF('dlgOrcamentos').show()"
+										value="Orçamentos" oncomplete="PF('dlgOrcamentos').show()"
 										actionListener="#{planoTratamentoMB.carregaOrcamentos}"
 										update=":lume:tabViewPaciente:orcamentoViewTable"
-										styleClass="NavyButton" process="@this"
+										styleClass="NavyButton" process="@this" title="Orçamentos"
 										disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 								</h:panelGroup>
 								<p:commandButton styleClass="NavyButton" process="@this"
@@ -761,7 +761,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									actionListener="#{planoTratamentoMB.carregaTelaOdontograma}"
 									update=":lume:tabViewPaciente:odontogramPT, :lume:tabViewPaciente:odontogramPTHeader, :lume:tabViewPaciente:odontogramaControlButtons"
 									disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
-									value="Ver odontograma" />
+									value="Odontograma" />
 							</p:panelGrid>
 						</p:fieldset>
 
@@ -792,7 +792,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<p:commandButton icon="ui-icon-add" value="Novo Procedimento"
+							<p:commandButton icon="ui-icon-add" value="Adicionar Procedimento no Plano de Tratamento"
 								oncomplete="PF('dlgNovoProcedimento').show()"
 								actionListener="#{planoTratamentoMB.actionNewProcedimento}"
 								update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes,
@@ -1182,7 +1182,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:remoteCommand name="onDentesRegiaoBlur" process="@this, :lume:tabViewPaciente:dentesOuRegioes"
 							actionListener="#{planoTratamentoMB.handleDentesRegioesSelects}"
-							update=":lume:tabViewPaciente:facesProcedimento, :lume:tabViewPaciente:pgDetalheProcedimento" />
+							update=":lume:tabViewPaciente:pgDetalheProcedimento" />
 							
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-3, ui-g-9"
@@ -1195,17 +1195,21 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<f:selectItems value="#{planoTratamentoMB.dentes}" />
 						</p:selectCheckboxMenu>
 
-						<h:outputText value="Selecione as Faces" />
-						<p:selectCheckboxMenu id="facesProcedimento"
-							filterMatchMode="contains" filter="true"
-							value="#{planoTratamentoMB.facesEscolhidas}"
-							disabled="#{planoTratamentoMB.disableFacesMulti}"
-							emptyLabel="Selecione as faces"
-							style="width: 100%;text-align: left" multiple="true">
-							<f:selectItems
-								value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
-								itemValue="#{face}" itemLabel="#{face}" />
-						</p:selectCheckboxMenu>
+						<ui:remove>
+							<!-- Adicionar :lume:tabViewPaciente:facesProcedimento no
+								p:remoteCommand 'name="onDentesRegiaoBlur"' -->
+							<h:outputText value="Selecione as Faces" />
+							<p:selectCheckboxMenu id="facesProcedimento"
+								filterMatchMode="contains" filter="true"
+								value="#{planoTratamentoMB.facesEscolhidas}"
+								disabled="#{planoTratamentoMB.disableFacesMulti}"
+								emptyLabel="Selecione as faces"
+								style="width: 100%;text-align: left" multiple="true">
+								<f:selectItems
+									value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
+									itemValue="#{face}" itemLabel="#{face}" />
+							</p:selectCheckboxMenu>
+						</ui:remove>
 						
 						<h:outputText value="Selecione os Diagnósticos" />
 						<p:selectCheckboxMenu

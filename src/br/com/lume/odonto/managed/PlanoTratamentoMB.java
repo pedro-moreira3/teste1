@@ -1953,16 +1953,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 if (this.dentesSelecionados.get(i) == null)
                     continue;
                 Dente dente = this.dentesSelecionados.get(i);
-                if (dente.getRegioes() != null && !dente.getRegioes().isEmpty()) {
-                    for (RegiaoDente rd : dente.getRegioes()) {
-                        for (StatusDente sd: this.diagnosticosSelecionados) {
-                            if (rd.getStatusDente().equals(sd)) {
-                                this.addError("Diagnóstico já selecionado para o " + dente.getDescricao(), "");
-                                return;
-                            }
-                        }
+                if (dente.getRegioes() != null && !dente.getRegioes().isEmpty() && 
+                        this.diagnosticosSelecionados != null && !this.diagnosticosSelecionados.isEmpty()) {
+                    if (dente.getRegioes().stream()
+                            .filter(regiao -> !"S".equals(regiao.getExcluido()))
+                            .filter(regiao -> regiao.getStatusDente() != null)
+                            .filter(regiao -> this.diagnosticosSelecionados.stream().anyMatch(diag -> diag.getId() == regiao.getStatusDente().getId()))
+                            .count() > 0) {
+                        this.addError("Diagnóstico já selecionado para o " + dente.getDescricao(), "");
+                        return;
                     }
-                    if (dente.getRegioes().size() >= 4) {
+                    if (dente.getRegioes().stream()
+                            .filter(regiao -> !"S".equals(regiao.getExcluido()))
+                            .filter(regiao -> regiao.getStatusDente() != null)
+                            .count() >= 4) {
                         this.addError("Máximo 4 Diagnóstico por dente. (" + dente.getDescricao() + ")", "");
                         return;
                     }
@@ -1989,23 +1993,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             for (int i = 0; i < this.regioesSelecionadas.size(); i++) {
                 if (this.regioesSelecionadas.get(i) == null || this.regioesSelecionadas.get(i).trim().isEmpty())
                     continue;
-                String regiao = this.regioesSelecionadas.get(i);
+                String regiaoEscolhida = this.regioesSelecionadas.get(i);
                 if (getEntity().getOdontograma().getRegioesRegiao() != null && !getEntity().getOdontograma().getRegioesRegiao().isEmpty()) {
-                    for (RegiaoRegiao rd : getEntity().getOdontograma().getRegioesRegiao()) {
-                        if (this.diagnosticosSelecionados != null && rd.getRegiao().equals(regiao)) {
-                            for (StatusDente sd: this.diagnosticosSelecionados) {
-                                if (rd.getStatusDente().equals(sd)) {
-                                    this.addError("Diagnóstico já selecionado.", "");
-                                    return;
-                                }
-                            }
-                        }
-                        Long count = getEntity().getOdontograma().getRegioesRegiao().stream()
-                                .filter(diagnostico -> diagnostico.getRegiao().equals(regiao)).count();
-                        if (count >= 4) {
-                            this.addError("Máximo 4 Diagnóstico por região.", "");
-                            return;
-                        }
+                    if (getEntity().getOdontograma().getRegioesRegiao().stream()
+                            .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
+                            .filter(regiao -> !"S".equals(regiao.getExcluido()))
+                            .filter(regiao -> regiao.getStatusDente() != null)
+                            .filter(regiao -> Long.valueOf(regiao.getStatusDente().getId()) == Long.valueOf(statusDenteDenteSelecionado.getId()))
+                            .count() > 0) {
+                        this.addError("Diagnóstico já selecionado.", "Região " + regiaoEscolhida);
+                        return;
+                    }
+                    if (getEntity().getOdontograma().getRegioesRegiao().stream()
+                            .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
+                            .filter(regiao -> !"S".equals(regiao.getExcluido()))
+                            .filter(regiao -> regiao.getStatusDente() != null)
+                            .count() >= 4) {
+                        this.addError("Máximo 4 Diagnóstico por região.", "Região " + regiaoEscolhida);
+                        return;
                     }
                 } else {
                     getEntity().getOdontograma().setRegioesRegiao(new ArrayList<>());
@@ -2015,12 +2020,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     for (StatusDente sd: this.diagnosticosSelecionados)
                         this.diagnosticos.add(
                                 new PlanoTratamentoProcedimentoRegiao(
-                                        new RegiaoRegiao(sd, regiao, getEntity().getOdontograma()), 
+                                        new RegiaoRegiao(sd, regiaoEscolhida, getEntity().getOdontograma()), 
                                         this.planoTratamentoProcedimentoSelecionado));
                 } else {
                     this.diagnosticos.add(
                             new PlanoTratamentoProcedimentoRegiao(
-                                    new RegiaoRegiao(null, regiao, getEntity().getOdontograma()), 
+                                    new RegiaoRegiao(null, regiaoEscolhida, getEntity().getOdontograma()), 
                                     this.planoTratamentoProcedimentoSelecionado));
                 }
             }
@@ -2085,18 +2090,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 for (String regiaoEscolhida: regioesEscolhidasOdontograma) {
                     if (getEntity().getOdontograma().getRegioesRegiao() != null && !getEntity().getOdontograma().getRegioesRegiao().isEmpty()) {
                         if (getEntity().getOdontograma().getRegioesRegiao().stream()
+                                .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
                                 .filter(regiao -> !"S".equals(regiao.getExcluido()))
                                 .filter(regiao -> regiao.getStatusDente() != null)
                                 .filter(regiao -> Long.valueOf(regiao.getStatusDente().getId()) == Long.valueOf(statusDenteDenteSelecionado.getId()))
-                                .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
                                 .count() > 0) {
                             this.addError("Diagnóstico já selecionado.", "Região " + regiaoEscolhida);
                             return;
                         }
                         if (getEntity().getOdontograma().getRegioesRegiao().stream()
+                                .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
                                 .filter(regiao -> !"S".equals(regiao.getExcluido()))
                                 .filter(regiao -> regiao.getStatusDente() != null)
-                                .filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida))
                                 .count() >= 4) {
                             this.addError("Máximo 4 Diagnóstico por região.", "Região " + regiaoEscolhida);
                             return;
