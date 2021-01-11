@@ -86,26 +86,6 @@ public class MessagesManager extends HttpServlet{
         sidWebhook = webhook.getSid();
     }
     
-    public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {        
-        System.out.println("------------Entrou aqui---------");
-        Body body = new Body
-              .Builder("Resposta teste!")
-              .build();
-      
-        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
-              .Builder()
-              .body(body)
-              .build();
-        MessagingResponse twiml = new MessagingResponse
-              .Builder()
-              .message(sms)
-              .build();
-
-        System.out.println(twiml.toXml());
-        response.setContentType("text/xml");
-        response.getWriter().print(twiml.toXml());
-      }
-    
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("------------Entrou aqui---------");
