@@ -89,6 +89,7 @@ public class MessagesManager extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("------------Entrou aqui---------");
+        System.out.println(req.toString());
         Body body = new Body
               .Builder("Resposta teste!")
               .build();
