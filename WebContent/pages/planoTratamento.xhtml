@@ -866,8 +866,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
 									process="@this" style="margin-left: 15px;"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
-									oncomplete="PF('dlgDetalhesProcedimento').show()" title="Detalhes"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
+									oncomplete="PF('dlgDetalhesProcedimento').show();PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" 
+									title="Detalhes" disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
 									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this" />
 							</p:column>
 
