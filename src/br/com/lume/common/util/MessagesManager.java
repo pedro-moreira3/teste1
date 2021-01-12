@@ -1,7 +1,14 @@
 package br.com.lume.common.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sound.midi.Soundbank;
 
 import com.twilio.Twilio;
@@ -13,7 +20,7 @@ import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Body;
 //import static spark.Spark.*;
 
-public class MessagesManager {
+public class MessagesManager extends HttpServlet{
 
     private static MessagesManager instance;
     private String sidWebhook;
@@ -79,6 +86,37 @@ public class MessagesManager {
         System.out.println("--------------- configurationConversation ----------------");
         System.out.println(webhook.getSid());
         sidWebhook = webhook.getSid();
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("------------Mensagem Twilio---------");
+        System.out.println(req.toString());
+        
+        BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+        while(bff.ready()) {
+            System.out.println(bff.readLine());
+        }
+        
+        System.out.println("\n");
+        
+        Body body = new Body
+              .Builder("Resposta teste!")
+              .build();
+      
+        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
+              .Builder()
+              .body(body)
+              .build();
+        MessagingResponse twiml = new MessagingResponse
+              .Builder()
+              .message(sms)
+              .build();
+
+        System.out.println(twiml.toXml());
+        resp.setContentType("text/xml");
+        resp.getWriter().print(twiml.toXml());
+        super.doPost(req, resp);
     }
     
     public void receiveMsgs() {

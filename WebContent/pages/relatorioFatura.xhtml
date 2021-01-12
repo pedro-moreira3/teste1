@@ -235,24 +235,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												dropdown="true">
 												<p:ajax event="itemSelect" process="@this" />
 											</p:autoComplete>
-											
-
 
 											<ui:remove>
-											<p:selectOneMenu id="faturaOrigemDestino"
-												converter="dadosBasico" value="#{relatorioFaturaMB.origem}"
-												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-												filter="true" filterMatchMode="contains">
+												<p:selectOneMenu id="faturaOrigemDestino"
+													converter="dadosBasico" value="#{relatorioFaturaMB.origem}"
+													style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+													filter="true" filterMatchMode="contains">
 
-												<p:ajax event="itemSelect" process="@this" immediate="true" />
+													<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-												<f:selectItem
-													itemLabel="Selecione um fornecedor, profissional ou paciente"
-													itemValue="#{null}" />
-												<f:selectItems value="#{relatorioFaturaMB.origens}" var="m"
-													itemLabel="#{m.nome}" itemValue="#{m}" />
+													<f:selectItem
+														itemLabel="Selecione um fornecedor, profissional ou paciente"
+														itemValue="#{null}" />
+													<f:selectItems value="#{relatorioFaturaMB.origens}" var="m"
+														itemLabel="#{m.nome}" itemValue="#{m}" />
 
-											</p:selectOneMenu>
+												</p:selectOneMenu>
 											</ui:remove>
 										</h:panelGroup>
 

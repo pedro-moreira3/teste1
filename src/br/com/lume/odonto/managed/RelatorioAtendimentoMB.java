@@ -67,6 +67,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS AGENDAMENTOS
     private Profissional filtroPorProfissional;
     private Profissional filtroPorProfissionalUltAlteracao;
+    private Profissional filtroPorProfissionalUltAgendamento;
     private Paciente filtroPorPaciente;
 
     private Date dataInicio, dataFim;
@@ -102,7 +103,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         try {
 
              if(getDataInicio() == null && getDataFim() == null && filtroPorPaciente == null && 
-                     filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals("todos")) {
+                     filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals("todos") && filtroPorProfissionalUltAgendamento == null) {
                 this.addError("Erro na consulta", "Escolha pelo menos um filtro.");
                 return;
             }
@@ -119,10 +120,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 c.add(Calendar.DAY_OF_MONTH, +1);
                 dataFinal = c.getTime();
                 
+                
                 if (validarIntervaloDatas()) {
-
+                //    filtroPorProfissionalUltAgendamento
                     this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal, getFiltroPorProfissional(),
-                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
 
                     if (this.listaConvenios == null)
                         this.listaConvenios = new ArrayList<>();
@@ -136,7 +138,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 if (validarIntervaloDatas()) {
 
                     this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(this.dataInicio, this.dataFim, getFiltroPorProfissional(),
-                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
 
                     if (this.listaConvenios == null)
                         this.listaConvenios = new ArrayList<>();
@@ -614,5 +616,15 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public void setMostrarSomenteConsultaInicial(boolean mostrarSomenteConsultaInicial) {
         this.mostrarSomenteConsultaInicial = mostrarSomenteConsultaInicial;
+    }
+
+    
+    public Profissional getFiltroPorProfissionalUltAgendamento() {
+        return filtroPorProfissionalUltAgendamento;
+    }
+
+    
+    public void setFiltroPorProfissionalUltAgendamento(Profissional filtroPorProfissionalUltAgendamento) {
+        this.filtroPorProfissionalUltAgendamento = filtroPorProfissionalUltAgendamento;
     }
 }

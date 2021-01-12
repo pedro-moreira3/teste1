@@ -266,6 +266,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax event="itemSelect" process="@this" />
 											</p:autoComplete>
 										</h:panelGroup>
+										
+										<h:panelGroup>
+											<h:outputText for="filtroProfissionalUltAgendamento"
+												value="Ultimo agendamento realizado por:" />
+											<p:autoComplete id="filtroProfissionalUltAgendamento"
+												value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAgendamento}"
+												completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+												itemValue="#{p}" converter="profissional"
+												forceSelection="true" scrollHeight="400" queryDelay="1000"
+												dropdown="true">
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
+										</h:panelGroup>
+										
 
 										<h:panelGroup>
 
