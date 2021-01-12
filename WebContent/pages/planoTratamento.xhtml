@@ -1102,7 +1102,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						columnClasses="ui-g-3, ui-g-9"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Procedimento" />
-						<p:autoComplete dropdown="true" queryDelay="1000"
+						<p:autoComplete dropdown="true" queryDelay="1000" id="procedimentoSelecionado"
 							value="#{planoTratamentoMB.procedimentoSelecionado}"
 							completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
 							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
@@ -1157,11 +1157,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Continuar"
 					actionListener="#{planoTratamentoMB.salvarContinuar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado"
 					oncomplete="PF('procedimentosTableInPT').filter()" />
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
-					value="Salvar"
+					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
 					update=":lume:tabViewPaciente:pnViewPlanoTratamento"
 					oncomplete="PF('procedimentosTableInPT').filter()" />
