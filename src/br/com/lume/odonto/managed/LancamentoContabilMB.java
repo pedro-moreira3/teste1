@@ -405,7 +405,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 }
 
             } else {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+                lc.setExcluido("S");
+                lc.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                LancamentoContabilSingleton.getInstance().getBo().persist(lc);
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -419,6 +422,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionNew(ActionEvent event) {
         try {
             tipo = "Pagar";
+            recorrente = "N";
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             carrearListasPorTipoPagamento();
