@@ -731,12 +731,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             if (planoTratamentoProcedimentoSelecionado.getId() == 0) {
+                int sequencial = 1;
                 for (int i = 0; i < (getPtpInserirMuitasVezes() != null && getPtpInserirMuitasVezes().booleanValue() && 
                                         getPtpInserirQuantasVezes() != null && getPtpInserirQuantasVezes().intValue() > 0 ? 
                                                 getPtpInserirQuantasVezes().intValue() : 1); i++) {
                     planoTratamentoProcedimentoSelecionado.setId(0l);
                     planoTratamentoProcedimentoSelecionado.setDente(null);
                     planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
+                    if(planoTratamentoProcedimentoSelecionado.getPlanoTratamento().isOrtodontico()) {
+                        planoTratamentoProcedimentoSelecionado.setSequencial(sequencial);
+                        sequencial++;
+                    }
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
                 }
             }
