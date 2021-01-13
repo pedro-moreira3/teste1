@@ -47,11 +47,13 @@ body div.ui-widget-content.ui-tabs {
 				</p:tab>
 			</ui:remove>
 
-			<p:tab id="tab9" title="Manutenção Orto"
-				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
-				disabled="#{pacienteMB.entity.id == null}">
-				<ui:include src="ortodontia.xhtml" />
-			</p:tab>
+			<ui:remove>
+				<p:tab id="tab9" title="Manutenção Orto"
+					rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+					disabled="#{pacienteMB.entity.id == null}">
+					<ui:include src="ortodontia.xhtml" />
+				</p:tab>
+			</ui:remove>
 
 			<p:tab id="tab8" title="Plano de Tratamento"
 				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
