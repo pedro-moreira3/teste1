@@ -79,7 +79,7 @@ public class Exportacoes implements Serializable {
         HSSFSheet sheetTabela = workbook.createSheet(header);
 
         Row cabecalho = sheetTabela.createRow(0);
-        
+
         CellStyle styleTitulo = workbook.createCellStyle();
         CellStyle currencyFormat = workbook.createCellStyle();
         CellStyle styleRodape = workbook.createCellStyle();
@@ -129,9 +129,10 @@ public class Exportacoes implements Serializable {
                 }
 
                 if (obj != null) {
-                    if (obj instanceof BigDecimal) {
 
-                        BigDecimal valor = (BigDecimal) obj;
+                    if (obj instanceof BigDecimal || obj instanceof Double) {
+
+                        BigDecimal valor = (obj instanceof Double ? new BigDecimal((Double) obj) : (BigDecimal) obj);
                         valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
 
 //                        if(dadoColuna.getConverter() != null) {
@@ -336,9 +337,8 @@ public class Exportacoes implements Serializable {
                                         NumberConverter nc = (NumberConverter) valor.getConverter();
                                         if (nc.getCurrencySymbol().equals("R$")) {
                                             Locale ptBr = new Locale("pt", "BR");
-                                            String valorString = NumberFormat.getCurrencyInstance(ptBr).format(
-                                                    ((BigDecimal) valor.getValue()).doubleValue());
-                                            
+                                            String valorString = NumberFormat.getCurrencyInstance(ptBr).format(((BigDecimal) valor.getValue()).doubleValue());
+
                                             rodape += "R$ " + valorString;
                                         }
                                     } else {
