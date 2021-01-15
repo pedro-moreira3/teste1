@@ -459,7 +459,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionReativar(ActionEvent event)  {
         try {
             getEntity().setJustificativaReativacao(this.motivoReativacao); 
-            getEntity().setStatus(Status.ATIVO);
+            getEntity().setStatus("N");
             PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
             PrimeFaces.current().executeScript("PF('reativar').hide()");       
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
