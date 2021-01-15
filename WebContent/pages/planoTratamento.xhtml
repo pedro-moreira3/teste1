@@ -214,27 +214,32 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								action="#{planoTratamentoMB.carregaTelaOrcamento(planoTratamento)}"
 								update=":lume:tabViewPaciente:orcamentoViewTable"
 								styleClass="NavyButton" process="@this" />
-						</h:panelGroup>
-						<ui:remove>
-							<p:commandButton id="geraOrcamento" icon="White fa fa-money"
-								actionListener="#{planoTratamentoMB.preparaImprimirOrcamento(planoTratamento)}"
-								process="@this" oncomplete="PF('dlgGerarOrcamento').show()"
-								update=":lume:tabViewPaciente:pnConteudoImpressaoOrcamento, :lume:tabViewPaciente:mainViewPT"
-								styleClass="OrangeButton" title="Imprimir Orçamento">
-
-							</p:commandButton>
-						</ui:remove>
+						</h:panelGroup>						
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
 								update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:botoesFinalizaPT"
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
+								rendered="#{planoTratamento.status != 'S' and planoTratamento.status != 'E'}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
 							</p:commandButton>
+							
+							
+							<h:panelGroup rendered="#{planoTratamento.status == 'S'}">
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Reativar"
+										actionListener="#{planoTratamentoMB.actionReativar(planoTratamento)}"
+										update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:botoesFinalizaPT"
+										 process="@this" styleClass="NavyButton" >
+										 <p:confirm header="Confirmação"
+										message="Deseja realmente reativar este Plano de Tratamento?"
+										icon="fa fa-warning" />
+									</p:commandButton>
+								</h:panelGroup>
+							
 						</h:panelGroup>
 					</p:column>
 					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
@@ -357,6 +362,47 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this" styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
+	
+	
+	
+	
+	<p:dialog id="reativar" widgetVar="reativar"
+		header="Reativar Plano de Tratamento" responsive="true" modal="true"
+		appendTo=":lume" closable="false">
+		<p:outputPanel id="pgReativar">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
+						style="border:0px none; background-color:transparent;">
+
+					
+
+						<p:outputLabel for="motivoReativacao"
+							value="Motivo da Reativacao : " />
+						<p:inputTextarea id="motivoReativacao" rows="3" cols="33"
+							value="#{planoTratamentoMB.motivoReativacao}" maxlength="200" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:outputPanel>
+
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" layout="grid" id="botoesReativarPT"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="persistReativar" icon="White fa fa-save"
+				value="Salvar" actionListener="#{planoTratamentoMB.actionReativar}"
+				update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:pnViewPlanoTratamento"
+				oncomplete="handleDialogRequest(xhr, status, args);"
+				process="@this, :lume:tabViewPaciente:pgReativar, :lume:tabViewPaciente:botoesReativarPT"
+				styleClass="GreenButton" />
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				actionListener="#{planoTratamentoMB.actionCancelReativar}"
+				process="@this" styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
+	
 
 	<p:dialog widgetVar="dlg" header="Orçamento" id="dlgOrcamento"
 		resizable="true" modal="true" width="800" appendTo=":lume">
@@ -867,7 +913,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgDetalhesProcedimento').show();PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" 
 									title="Detalhes" disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
-									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this" />
+									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this,:lume:tabViewPaciente:detalhesProcedimento" />
 							</p:column>
 
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
@@ -1173,7 +1219,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	
 	<p:dialog id="detalhesProcedimento" widgetVar="dlgDetalhesProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
-		resizable="false" header="Detalhes e Diagnóstico do Procedimento"
+		resizable="false" header="Detalhes e Diagnóstico do Procedimento #{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.procedimento.descricao}"
 		width="50%">
 		<p:outputPanel id="pgDetalheProcedimento">
 			<div class="ui-g ui-fluid">
@@ -1189,7 +1235,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						
 						<h:outputText value="Selecione os Dentes/Regiões" />
 						<p:selectCheckboxMenu value="#{planoTratamentoMB.dentesRegioesEscolhidas}" id="dentesOuRegioes"
-							filterMatchMode="contains" filter="true" multiple="true" onHide="onDentesRegiaoBlur()"
+							filterMatchMode="contains" filter="true" multiple="true" onHide="onDentesRegiaoBlur()" 
 							emptyLabel="Selecione o Dente/Região">
 							<f:selectItems value="#{planoTratamentoMB.dentes}" />
 						</p:selectCheckboxMenu>

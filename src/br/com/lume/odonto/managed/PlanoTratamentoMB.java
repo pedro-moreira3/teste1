@@ -227,6 +227,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     private Boolean ptpInserirMuitasVezes;
     private Integer ptpInserirQuantasVezes;
+    
+    private String motivoReativacao;
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -446,6 +448,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         actionFinalizar((ActionEvent) null);
     }
+    
+    public void actionReativar(PlanoTratamento planoTratamento) throws Exception {
+        if (planoTratamento != null) {
+            setEntity(planoTratamento);
+            PrimeFaces.current().executeScript("PF('reativar').show()");   
+        }
+    }
+    
+    public void actionReativar(ActionEvent event)  {
+        try {
+            getEntity().setJustificativaReativacao(this.motivoReativacao); 
+            getEntity().setStatus(Status.ATIVO);
+            PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
+            PrimeFaces.current().executeScript("PF('reativar').hide()");       
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            this.motivoReativacao = null;
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+            e.printStackTrace();
+        }
+      
+    }    
 
     public void actionFinalizar(ActionEvent event) {
         try {
@@ -484,6 +508,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionCancelFinalizar() {
         this.justificativa = null;
         PrimeFaces.current().executeScript("PF('devolver').hide()");
+    }
+    
+    public void actionCancelReativar() {
+        this.motivoReativacao = null;
+        PrimeFaces.current().executeScript("PF('reativar').hide()");
     }
 
     public void actionPTInicial() {
@@ -3230,6 +3259,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setDentesEscolhidasOdontograma(List<String> dentesEscolhidasOdontograma) {
         this.dentesEscolhidasOdontograma = dentesEscolhidasOdontograma;
+    }
+
+    
+    public String getMotivoReativacao() {
+        return motivoReativacao;
+    }
+
+    
+    public void setMotivoReativacao(String motivoReativacao) {
+        this.motivoReativacao = motivoReativacao;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {
