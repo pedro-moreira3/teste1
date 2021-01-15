@@ -230,8 +230,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E' or 
-									planoTratamentoMB.validaPermissao(planoTratamento)}">
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
@@ -317,12 +316,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
 						style="border:0px none; background-color:transparent;">
 
-						<p:outputLabel for="justificativa" value="Justificativa : " />
+						<p:outputLabel for="justificativa" value="Motivo: " />
 						<p:selectOneMenu id="justificativa"
 							value="#{planoTratamentoMB.justificativa}" converter="dominio"
 							required="true">
 							<f:selectItem itemValue="#{null}"
-								itemLabel="Selecione uma justificativa" />
+								itemLabel="Selecione um motivo" />
 							<f:selectItems value="#{planoTratamentoMB.justificativas}"
 								var="justificativa" itemLabel="#{justificativa.nome}"
 								itemValue="#{justificativa}" />

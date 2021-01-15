@@ -397,14 +397,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return false;
     }
 
-    public boolean validaPermissao(PlanoTratamento pt) {
-        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
-        for (Orcamento o : orcs) {
-            if (o.isAprovado())
-                return true;
-        }
-        return false;
-    }
+//    public boolean validaPermissao(PlanoTratamento pt) {
+//        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
+//        for (Orcamento o : orcs) {
+//            if (o.isAprovado())
+//                return true;
+//        }
+//        return false;
+//    }
 
     public void carregarPlanosTratamento() {
         try {
