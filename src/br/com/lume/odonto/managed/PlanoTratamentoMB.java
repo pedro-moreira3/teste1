@@ -33,6 +33,7 @@ import org.primefaces.model.DualListModel;
 
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.exception.business.RepasseNaoPossuiRecebimentoException;
 import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -1106,7 +1107,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                     try {
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
-                    } catch (Exception e) {
+                    }catch (RepasseNaoPossuiRecebimentoException e) {
+                        addError("Atenção", e.getMessage());
+                    }catch (Exception e) {
                         e.printStackTrace();
                         addError("Erro ao salvar registro", e.getMessage());
                     }
