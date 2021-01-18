@@ -1085,7 +1085,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public boolean escondeEditFaces(PlanoTratamentoProcedimentoRegiao regiao) {
-        return regiao.getTipoRegiao() == null || regiao.getTipoRegiao() != TipoRegiao.DENTE;
+        boolean procedimentoTemFaces = false;
+        if(regiao.getPlanoTratamentoProcedimento().getProcedimento() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() != null &&
+                regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() == 0) {
+            procedimentoTemFaces = true;
+        }
+        return regiao.getTipoRegiao() == null || regiao.getTipoRegiao() != TipoRegiao.DENTE || procedimentoTemFaces;
     }
 
     public boolean isDisableFacesMulti() {
