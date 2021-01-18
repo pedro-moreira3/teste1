@@ -390,7 +390,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.getEntity().setBconvenio(true);
         abreNovoPtDialog();
         carregaConvenios();
-        getEntity().setDescricao("PT " + Utils.dateToString(new Date()));
+        getEntity().setDescricao("PT " + Utils.dateToStringSomenteDataBrasil(new Date()));
     }
 
     public boolean validaPermissaoExclusaoPTP(PlanoTratamentoProcedimento ptp) {
