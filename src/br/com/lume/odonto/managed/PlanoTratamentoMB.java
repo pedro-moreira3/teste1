@@ -729,6 +729,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
         this.procedimentoSelecionado = null;
         this.denteRegiaoEscolhida = null;
+        this.valorProc = new BigDecimal(0);
+        this.ptpInserirQuantasVezes = 1;
+        ptpInserirMuitasVezes = false;
         handleDenteRegiaoSelected();
     }
 
