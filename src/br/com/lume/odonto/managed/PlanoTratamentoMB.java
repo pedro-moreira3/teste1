@@ -229,6 +229,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Integer ptpInserirQuantasVezes;
 
     private String motivoReativacao;
+    
+    private BigDecimal valorProc = new BigDecimal(0);
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -668,6 +670,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         handleDenteRegiaoSelected();
         handleDentesRegioesSelects();
 
+        valorProc = ptp.getValorDesconto();
+        
         //seta dentes/regioes
         this.diagnosticos = new ArrayList<>();
         if (ptp.getRegioes() != null)
@@ -804,7 +808,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamento.isBconvenio() && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO))
             ptp.setConvenio(paciente.getConvenio());
 
-        BigDecimal valorConvenio = resolveDescontoConvenio(ptp);
+        
+        BigDecimal valorConvenio = new BigDecimal(0);
+        if(!valorProc.equals(new BigDecimal(0))) {
+            valorConvenio = valorProc;
+        }else {
+            valorConvenio = Utils.resolveDescontoConvenio(ptp);
+        }
+        
+       
         if (valorConvenio != null) {
             ptp.setValor(valorConvenio);
             ptp.setCodigoConvenio(procedimento.getCodigoConvenio());
@@ -816,23 +828,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setValorDesconto(ptp.getValor());
     }
 
-    private BigDecimal resolveDescontoConvenio(PlanoTratamentoProcedimento ptProcedimento) {
-        try {
-            PlanoTratamento pt = ptProcedimento.getPlanoTratamento();
-            Procedimento procedimento = ptProcedimento.getProcedimento();
-            Convenio convenio = pt.getConvenio();
-            if (pt.isBconvenio() && convenio != null && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime()) && convenio.getDataFimVigencia().after(
-                    Calendar.getInstance().getTime()) && convenio.getExcluido().equals(Status.NAO)) {
-                ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(convenio, procedimento);
-                if (convenio.getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || convenio.getTipo().equals(Convenio.CONVENIO_EMPRESA))
-                    return cp.getValor();
+    
+    public void populaValorProc() {
+        if (procedimentoSelecionado != null) {
+            BigDecimal valorConvenio = Utils.resolveDescontoConvenio(procedimentoSelecionado, getEntity());
+            if (valorConvenio != null) {
+                this.valorProc = valorConvenio;
+            } else {
+                this.valorProc =  procedimentoSelecionado.getValor();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-        }
-        // return ptProcedimento.getValor();
-        return null;
+        }      
     }
 
     // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
@@ -1064,7 +1069,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionNewProcedimento() {
         this.ptpInserirMuitasVezes = false;
         this.ptpInserirQuantasVezes = 1;
-
+        this.valorProc = new BigDecimal(0);
         this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
         this.procedimentoSelecionado = null;
         this.denteRegiaoEscolhida = null;
@@ -1107,9 +1112,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                     try {
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
-                    }catch (RepasseNaoPossuiRecebimentoException e) {
+                    } catch (RepasseNaoPossuiRecebimentoException e) {
                         addError("Atenção", e.getMessage());
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         addError("Erro ao salvar registro", e.getMessage());
                     }
@@ -1747,7 +1752,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         //else if (denteSelecionado != null && denteSelecionado.getDescricao() != null && !denteSelecionado.getDescricao().isEmpty())
         //    result = "Procedimentos do Dente " + denteSelecionado.getDescricao().trim();
         //else
-        result = "Procedimentos de Dente";
+        result = "Adicionar procedimento";
 
         if (pacienteMB != null && pacienteMB.getEntity() != null && pacienteMB.getEntity().getDadosBasico() != null && pacienteMB.getEntity().getDadosBasico().getNome() != null && !pacienteMB.getEntity().getDadosBasico().getNome().trim().isEmpty())
             if (getEntity() != null && getEntity().getDescricao() != null)
@@ -1812,8 +1817,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         List<PlanoTratamentoProcedimentoRegiao> listRegioes = new ArrayList<>(ptp.getRegioes());
         for (PlanoTratamentoProcedimentoRegiao planoTratamentoProcedimentoRegiao : listRegioes) {
             if (planoTratamentoProcedimentoRegiao.isAtivo()) {
-                if (planoTratamentoProcedimentoRegiao.get() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente() != null 
-                        && planoTratamentoProcedimentoRegiao.get().getStatusDente().getExcluido().equals(
+                if (planoTratamentoProcedimentoRegiao.get() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente().getExcluido().equals(
                         "N")) {
                     aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));
                 }
@@ -2283,7 +2287,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 BigDecimal valorDesconto = new BigDecimal(0);
                 BigDecimal valor = new BigDecimal(0);
 
-                if (ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
+                if (ptp.getConvenio() != null && ptp.getProcedimento() != null && ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
                     valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(ptp.getConvenio(), ptp.getProcedimento()).getValor();
                 else
                     valor = ptp.getProcedimento().getValor();
@@ -3237,6 +3241,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setMotivoReativacao(String motivoReativacao) {
         this.motivoReativacao = motivoReativacao;
+    }
+
+    
+    public BigDecimal getValorProc() {
+        return valorProc;
+    }
+
+    
+    public void setValorProc(BigDecimal valorProc) {
+        this.valorProc = valorProc;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

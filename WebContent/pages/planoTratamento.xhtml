@@ -1153,8 +1153,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 							converter="procedimento" forceSelection="true" scrollHeight="400"
 							minQueryLength="3">
-							<p:ajax event="itemSelect" process="@this"
-								update=":lume:tabViewPaciente:convenioInativo" />
+							<p:ajax event="itemSelect" process="@this,painelValor" listener="#{planoTratamentoMB.populaValorProc()}"
+								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
 						</p:autoComplete>
 					</p:panelGrid>
 
@@ -1167,6 +1167,19 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="Convênio inativo ou está fora da data de vigência. O valor original será considerado." />
 							</div>
 						</p:outputPanel>
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" layout="grid" id="painelValor"
+						columnClasses="ui-g-12"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:outputLabel value="Valor do procedimento" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
+						<p:inputNumber id="valorNovoPtp" value="#{planoTratamentoMB.valorProc}"
+									required="true" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="R$ " thousandSeparator="."
+									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
+								</p:inputNumber>
+						
+						
 					</p:panelGrid>
 
 					<p:panelGrid columns="1" layout="grid"
