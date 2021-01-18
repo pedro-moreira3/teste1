@@ -2164,16 +2164,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								update=":lume:tabViewPaciente:pgProcedimentoDiagnostico">
 								<f:param name="dente" value="#{procedimento.denteObj.descricao}" />
 							</p:commandLink>
-						</p:column>
-						<p:column sortBy="#{procedimento.facesSelecionadasStr}"
-							filterBy="#{procedimento.facesSelecionadasStr}"
-							filterMatchMode="contains" headerText="Face">
-							<h:outputText value="#{procedimento.facesSelecionadasStr}"
-								rendered="#{procedimento.procedimento.quantidadeFaces > 0}" />
-						</p:column>
+						</p:column>						
 						<p:column headerText="Diagnósticos">
 							<h:outputText escape="false"
-								value="#{planoTratamentoMB.diagnosticosDente(procedimento.denteObj.descricao,'position: inherit;')}" />
+								value="#{planoTratamentoMB.diagnosticosDente(procedimento,'position: inherit;')}" />
 						</p:column>
 						<p:column headerText="Dta. de Finalização"
 							sortBy="#{procedimento.dataFinalizado}"
