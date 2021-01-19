@@ -193,11 +193,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 				</p:panelGrid>
 
-				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-					id="dtPlanoTratamento" value="#{planoTratamentoMB.ptLazyModel}"
-					var="planoTratamento" rows="10" paginator="true"	
-					paginatorPosition="bottom" rowKey="#{planoTratamento}" lazy="true"
-					binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
+			
+					
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage="" lazy="true"
+							id="dtPlanoTratamento"
+							value="#{planoTratamentoMB.ptLazyModel}" var="planoTratamento"
+							rows="20" paginator="true" rowKey="#{planoTratamento}"
+							paginatorPosition="bottom"
+							binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
+					
 					<f:facet name="header">Planos de Tratamento</f:facet>
 
 					<p:column headerText="Ações" style="width:140px">
@@ -274,24 +278,24 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column filterBy="#{planoTratamento.valorAReceber}"
-						sortBy="#{planoTratamento.valorAReceber}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
-						filterMatchMode="contains" headerText="Valor à Receber">
-						<h:outputText value="#{planoTratamento.valorAReceber}">
-							<f:convertNumber currencySymbol="R$" type="currency"
-								locale="#{lumeSecurity.locale}" />
-						</h:outputText>
+					<p:column filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
+								sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"								
+								filterMatchMode="contains" headerText="Valor à Receber">
+								<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
 					</p:column>
-					<p:column filterBy="#{planoTratamento.valorAConferir}"
-						sortBy="#{planoTratamento.valorAConferir}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
+							
+					<p:column filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
+						sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"								
 						filterMatchMode="contains" headerText="Valor à Conferir">
-						<h:outputText value="#{planoTratamento.valorAConferir}">
+						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
-					</p:column>
+					</p:column>	
+					
 					<p:column filterBy="#{planoTratamento.valor}"
 						sortBy="#{planoTratamento.valor}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
@@ -1130,7 +1134,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pgProcedimento">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-
+					<p:outputLabel value="#{planoTratamentoMB.observacoesAdicionarProcedimento}" style="font-weight:bold;color:red" 
+						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}"/>
 					<p:panelGrid columns="4" layout="grid"
 						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -1146,7 +1151,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-3, ui-g-9"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<h:outputText value="Procedimento" />
+						<h:outputText value="Procedimento:" />
 						<p:autoComplete dropdown="true" queryDelay="1000" id="procedimentoSelecionado"
 							value="#{planoTratamentoMB.procedimentoSelecionado}"
 							completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
@@ -1155,11 +1160,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							minQueryLength="3">
 							<p:ajax event="itemSelect" process="@this,painelValor" listener="#{planoTratamentoMB.populaValorProc()}"
 								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
-						</p:autoComplete>
+						</p:autoComplete>						
 					</p:panelGrid>
 
 					<p:panelGrid columns="1" layout="grid" id="convenioInativo"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">						
 						<p:outputPanel
 							rendered="#{planoTratamentoMB.mostraMensagemConvenioNaoVigente}">
 							<div class="ConvenioInativo">
@@ -1172,7 +1177,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:panelGrid columns="1" layout="grid" id="painelValor"
 						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<p:outputLabel value="Valor do procedimento" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
+							<p:outputLabel value="Valor do procedimento:" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
 						<p:inputNumber id="valorNovoPtp" value="#{planoTratamentoMB.valorProc}"
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
@@ -1207,6 +1212,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			</div>
 		</p:outputPanel>
 		<br />
+	
 		<div class="SeparatorFull"></div>
 		<p:outputPanel id="pgProcedimentoBotoes">
 			<p:panelGrid columns="3" layout="grid"
@@ -1272,8 +1278,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<h:outputText value="Selecione os Diagnósticos" />
 						<p:selectCheckboxMenu
 							value="#{planoTratamentoMB.diagnosticosSelecionados}"
-							converter="statusDente" filter="true" multiple="true"
-							filterMatchMode="contains" autoWidth="false"
+							converter="statusDente"  multiple="true"
+							 autoWidth="false" filter="true" filterMatchMode="custom" filterFunction="contains"
 							emptyLabel="Selecione um diagnóstico">
 							<f:selectItems value="#{planoTratamentoMB.statusDente}"
 								var="statusDente" itemLabel="#{statusDente.descricao}"
@@ -1331,6 +1337,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:column>
 								
 						</p:dataTable>
+						<br/>
+						<h:outputText id="observacoesDetalhes" value="#{planoTratamentoMB.observacoesDetalhes}" style="font-weight:bold"/>
 					</p:outputPanel>
 					
 				</div>
@@ -2528,6 +2536,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				PF('evolucao').hide();
 			}
 		}
+		
+		//essas duas funcoes abaixo server para que a busca no selectCheckboxMenu fucione com ou sem acento
+		//TODO necessario colocar global para usar em todas as paginas.
+		function contains(itemLabel, filterValue) {
+		    return itemLabel.includes(filterValue) || specialCharacters(itemLabel).includes(filterValue);
+		}
+
+		function specialCharacters(input){
+		           var c=input.toLowerCase();
+		           return c.normalize("NFD").replace(/[\u0300-\u036f]/g, "");		        
+		}
+		
 	</script>
 
 </ui:composition>

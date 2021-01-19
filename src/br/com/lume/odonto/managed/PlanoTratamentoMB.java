@@ -229,8 +229,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Integer ptpInserirQuantasVezes;
 
     private String motivoReativacao;
-    
+
     private BigDecimal valorProc = new BigDecimal(0);
+
+    private String observacoesDetalhes;
+
+    private String observacoesAdicionarProcedimento;
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -671,7 +675,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         handleDentesRegioesSelects();
 
         valorProc = ptp.getValorDesconto();
-        
+
         //seta dentes/regioes
         this.diagnosticos = new ArrayList<>();
         if (ptp.getRegioes() != null)
@@ -689,6 +693,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
         }
         ptp.setFacesSelecionadas(faces);
+
+        observacoesDetalhes = "";
+        if (ptp.getProcedimento().getQuantidadeFaces() == 0) {
+            observacoesDetalhes = "Observação: Procedimento selecionado não possui faces configuradas em seu cadastro.";
+        }
     }
 
     public PlanoTratamentoProcedimentoRegiao.TipoRegiao isDenteOrRegiao(String denteOuRegiao) {
@@ -811,15 +820,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamento.isBconvenio() && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO))
             ptp.setConvenio(paciente.getConvenio());
 
-        
         BigDecimal valorConvenio = new BigDecimal(0);
-        if(!valorProc.equals(new BigDecimal(0))) {
+        if (!valorProc.equals(new BigDecimal(0))) {
             valorConvenio = valorProc;
-        }else {
+        } else {
             valorConvenio = Utils.resolveDescontoConvenio(ptp);
         }
-        
-       
+
         if (valorConvenio != null) {
             ptp.setValor(valorConvenio);
             ptp.setCodigoConvenio(procedimento.getCodigoConvenio());
@@ -831,16 +838,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setValorDesconto(ptp.getValor());
     }
 
-    
     public void populaValorProc() {
         if (procedimentoSelecionado != null) {
             BigDecimal valorConvenio = Utils.resolveDescontoConvenio(procedimentoSelecionado, getEntity());
             if (valorConvenio != null) {
                 this.valorProc = valorConvenio;
             } else {
-                this.valorProc =  procedimentoSelecionado.getValor();
+                this.valorProc = procedimentoSelecionado.getValor();
             }
-        }      
+        }
     }
 
     // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
@@ -1077,6 +1083,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.procedimentoSelecionado = null;
         this.denteRegiaoEscolhida = null;
         handleDenteRegiaoSelected();
+
+        observacoesAdicionarProcedimento = "";
+        if (getEntity() != null && getEntity().isBconvenio() && getEntity().getConvenio() != null) {
+            Long totalProcsConvenio = ProcedimentoSingleton.getInstance().getBo().countByConveio(getEntity().getConvenio().getId());
+            if (totalProcsConvenio == 0l) {
+                observacoesAdicionarProcedimento = "Observação: Esse convênio está sem procedimentos vinculados! Acesse o menu Configuraçoes -> " + "Convênio procedimento para vincular os procedimentos nesse convênio.";
+            }
+        }
+
     }
 
     public boolean isDisableFaces() {
@@ -1086,8 +1101,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public boolean escondeEditFaces(PlanoTratamentoProcedimentoRegiao regiao) {
         boolean procedimentoTemFaces = false;
-        if(regiao.getPlanoTratamentoProcedimento().getProcedimento() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() != null &&
-                regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() == 0) {
+        if (regiao.getPlanoTratamentoProcedimento().getProcedimento() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() == 0) {
             procedimentoTemFaces = true;
         }
         return regiao.getTipoRegiao() == null || regiao.getTipoRegiao() != TipoRegiao.DENTE || procedimentoTemFaces;
@@ -2261,6 +2275,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return false;
     }
 
+    public BigDecimal valorAReceber(PlanoTratamento pt) {
+        return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
+    }
+
+    public BigDecimal valorAConferir(PlanoTratamento pt) {
+        return FaturaItemSingleton.getInstance().valorAConferirDoPacienteFromPT(pt);
+    }
+
     //============================================== PERMISSOES ============================================== //
 
     // ================================================= TELA ================================================ //
@@ -3251,14 +3273,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.motivoReativacao = motivoReativacao;
     }
 
-    
     public BigDecimal getValorProc() {
         return valorProc;
     }
 
-    
     public void setValorProc(BigDecimal valorProc) {
         this.valorProc = valorProc;
+    }
+
+    public String getObservacoesDetalhes() {
+        return observacoesDetalhes;
+    }
+
+    public void setObservacoesDetalhes(String observacoesDetalhes) {
+        this.observacoesDetalhes = observacoesDetalhes;
+    }
+
+    public String getObservacoesAdicionarProcedimento() {
+        return observacoesAdicionarProcedimento;
+    }
+
+    public void setObservacoesAdicionarProcedimento(String observacoesAdicionarProcedimento) {
+        this.observacoesAdicionarProcedimento = observacoesAdicionarProcedimento;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {
