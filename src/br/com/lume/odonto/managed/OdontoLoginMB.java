@@ -118,7 +118,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
             
             
             // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
-            if (somaPerfis > 1) {
+            if (somaPerfis > 1 || profissionais.size() > 1) {
                 List<Login> logins = this.carregarLogins(pacientes, profissionais,usuariosAfiliados);
 
                 UtilsFrontEnd.setLogins(logins);
@@ -128,6 +128,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 return "";
             } else {
                 String perfilLogado = "";
+                
                 Profissional profissional = ProfissionalSingleton.getInstance().getBo().findByUsuario(userLogin);
                 
                 Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
