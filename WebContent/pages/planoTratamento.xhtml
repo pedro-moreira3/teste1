@@ -278,28 +278,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
-								sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"								
-								filterMatchMode="contains" headerText="Valor à Receber">
+					<p:column sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}" headerText="Valor à Receber">
 								<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 					</p:column>
 							
-					<p:column filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"								
-						filterMatchMode="contains" headerText="Valor à Conferir">
+					<p:column sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"	headerText="Valor à Conferir">
 						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
 					</p:column>	
 					
-					<p:column filterBy="#{planoTratamento.valor}"
-						sortBy="#{planoTratamento.valor}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
-						filterMatchMode="contains"
+					<p:column sortBy="#{planoTratamento.valor}"
+						rendered="#{planoTratamentoMB.temPermissaoExtra}"					
 						headerText="Valor Total dos Procedimentos">
 						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
