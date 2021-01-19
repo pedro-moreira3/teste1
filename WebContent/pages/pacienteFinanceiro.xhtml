@@ -286,7 +286,7 @@ hr.hrSaldo {
 
 	<p:outputPanel id="viewFatura">
 		<ui:include src="faturaViewPaciente.xhtml">
-			<ui:param name="showNewLancamento" value="" />
+			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
 		<p:remoteCommand name="onCloseFaturaView" process="@this"
 			update="dtLancamentosConferir,dtFaturas,dtLancamentosPendentes" />

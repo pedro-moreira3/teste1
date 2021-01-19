@@ -1455,7 +1455,7 @@ body .height31 input {
 										oncomplete="PF('dlgAjusteLancamento').show();"
 										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
 										rendered="#{l.validado == 'S' and l.lancamentoExtornado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
-										process="@this" update=":lume:pnlAjusteLancamento">
+										process="@this" update="@parent:@parent:@parent:@parent:@parent:pnlAjusteLancamento">
 									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar lançamento"

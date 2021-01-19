@@ -278,28 +278,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
-								sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"								
-								filterMatchMode="contains" headerText="Valor à Receber">
+					<p:column sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}" headerText="Valor à Receber">
 								<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 					</p:column>
 							
-					<p:column filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"								
-						filterMatchMode="contains" headerText="Valor à Conferir">
+					<p:column sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"	headerText="Valor à Conferir">
 						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
 					</p:column>	
 					
-					<p:column filterBy="#{planoTratamento.valor}"
-						sortBy="#{planoTratamento.valor}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
-						filterMatchMode="contains"
+					<p:column sortBy="#{planoTratamento.valor}"
+						rendered="#{planoTratamentoMB.temPermissaoExtra}"					
 						headerText="Valor Total dos Procedimentos">
 						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
@@ -334,8 +328,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<f:selectItems value="#{planoTratamentoMB.justificativas}"
 								var="justificativa" itemLabel="#{justificativa.nome}"
 								itemValue="#{justificativa}" />
-						</p:selectOneMenu>
-
+						</p:selectOneMenu>						
+						<p:message for="justificativa" styleClass="msg" />
 						<p:outputLabel for="retorno" value="Data retorno : " />
 						<p:calendar id="retorno" value="#{planoTratamentoMB.retorno}"
 							pattern="dd/MM/yyyy" showWeeksBar="false"
@@ -357,7 +351,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="persistDevolver" icon="White fa fa-save"
 				value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizar}"
-				update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:pnViewPlanoTratamento"
+				update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:pnViewPlanoTratamento,pgFinalizar"
 				oncomplete="handleDialogRequest(xhr, status, args);"
 				process="@this, :lume:tabViewPaciente:pgFinalizar, :lume:tabViewPaciente:botoesFinalizaPT"
 				styleClass="GreenButton" />
@@ -1060,21 +1054,29 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pnlJustificativaRemove">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-					<p:panelGrid columns="2" layout="grid"
+					<p:panelGrid columns="2" layout="grid" id="pnljustificativaExclusao"
 						columnClasses="ui-g-2,ui-g-10"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
-						<h:outputText style="margin-top: 8px" value="Justificativa: " />
+						
+							<p:outputLabel value="Justificativa:" for="justificativaExclusao"/>
 						<p:selectOneMenu
 							rendered="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado != null}"
-							converter="dominio"
+							converter="dominio" id="justificativaExclusao"
+							required="true"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.justificativaExclusaoDominio}">
 							<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
 							<f:selectItems
 								value="#{planoTratamentoMB.justificativasCancelamento}"
 								var="cancelamento" itemLabel="#{cancelamento.nome}"
 								itemValue="#{cancelamento}" />
-						</p:selectOneMenu>
+						</p:selectOneMenu>						
 					</p:panelGrid>
+					<p:panelGrid columns="1" layout="grid" id="pnljustificativaExclusaoMessage"
+						columnClasses="ui-g-12"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
+						<p:message for="justificativaExclusao" styleClass="msg" />
+					</p:panelGrid>
+					
 				</div>
 			</div>
 		</p:outputPanel>
@@ -1082,7 +1084,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<div class="SeparatorFull"></div>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="fa fa-persist" value="Salvar"
+			<p:commandButton icon="fa fa-persist" value="Salvar" update="pnljustificativaExclusao,pnljustificativaExclusaoMessage"
 				process="@this, :lume:tabViewPaciente:pnlJustificativaRemove"
 				actionListener="#{planoTratamentoMB.salvaJustificativaRemove}" 				
 					oncomplete="PF('procedimentosTableInPT').filter()"
@@ -1140,12 +1142,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Nro. Sequencial: " />
-						<p:inputText
+						<p:inputNumber maxValue="99" decimalPlaces="0"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.sequencial}" />
 						<h:outputText value="Prioridade: " />
-						<p:inputMask
-							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}"
-							maxlength="2" mask="9?9" />
+						<p:inputNumber maxValue="99" decimalPlaces="0"
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />	
+					
+							
 					</p:panelGrid>
 
 					<p:panelGrid columns="2" layout="grid"
@@ -1236,14 +1239,27 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:outputPanel>
 	</p:dialog>
 	
+	
+	
+	
+
+				
+	
+	
+	
+	
 	<p:dialog id="detalhesProcedimento" widgetVar="dlgDetalhesProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
 		resizable="false" header="Detalhes e Diagnóstico do Procedimento #{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.procedimento.descricao}"
 		width="50%">
-		<p:outputPanel id="pgDetalheProcedimento">
+		
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-
+			<p:outputPanel id="pgDetalheProcedimento" style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+			
+				<p:scrollPanel mode="native"
+						style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
+			
 					<p:remoteCommand name="onDentesRegiaoBlur" process="@this, :lume:tabViewPaciente:dentesOuRegioes"
 							actionListener="#{planoTratamentoMB.handleDentesRegioesSelects}"
 							update=":lume:tabViewPaciente:pgDetalheProcedimento" />
@@ -1340,10 +1356,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<br/>
 						<h:outputText id="observacoesDetalhes" value="#{planoTratamentoMB.observacoesDetalhes}" style="font-weight:bold"/>
 					</p:outputPanel>
-					
+					</p:scrollPanel>
+				</p:outputPanel>		
 				</div>
 			</div>
-		</p:outputPanel>
+	
 		<br />
 		<div class="SeparatorFull"></div>
 		<p:panelGrid columns="3" layout="grid"
@@ -1405,7 +1422,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 	<p:dialog id="orcamentos" widgetVar="dlgOrcamentos" responsive="true"
 		modal="true" appendTo=":lume" resizable="false"
-		header="Orçamentos para P.T. '#{planoTratamentoMB.entity.descricao}'"
+		header="Orçamentos"
 		width="70%">
 
 		<p:outputPanel style="max-height: 80vh">

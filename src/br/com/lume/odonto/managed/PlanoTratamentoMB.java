@@ -489,15 +489,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
 
-                boolean faturaInterrompida = false;
-                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
-                for (Orcamento orcamento : orcamentos) {
-                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
-                    if (!faturaInterrompida)
-                        faturaInterrompida = interrompida;
-                }
-                if (faturaInterrompida)
-                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
+//                boolean faturaInterrompida = false;
+//                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
+//                for (Orcamento orcamento : orcamentos) {
+//                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+//                    if (!faturaInterrompida)
+//                        faturaInterrompida = interrompida;
+//                }
+//                if (faturaInterrompida)
+//                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
             this.justificativa = null;
@@ -1009,6 +1009,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').hide()");
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        }  catch (RepasseNaoPossuiRecebimentoException e) {
+            addError("Atenção", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarSalvar", e);
