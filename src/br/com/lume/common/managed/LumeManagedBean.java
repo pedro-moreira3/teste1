@@ -8,6 +8,7 @@ import java.text.Collator;
 import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -75,6 +76,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private ByteArrayInputStream streamOut;
 
     private String videoLink;
+    
+    private HashMap<String, String> listVideos;
     
     @PostConstruct
     public void init() {
@@ -549,7 +552,17 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public void setVideoLink(String videoLink) {
         this.videoLink = videoLink;
-    }    
+    }
+
+    
+    public HashMap<String, String> getListVideos() {
+        return listVideos;
+    }
+
+    
+    public void setListVideos(HashMap<String, String> listVideos) {
+        this.listVideos = listVideos;
+    }
 
 
 }

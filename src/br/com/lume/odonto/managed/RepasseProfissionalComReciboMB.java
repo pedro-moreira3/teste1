@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -60,7 +61,6 @@ import br.com.lume.security.entity.Empresa;
  */
 /**
  * @author ricardo.poncio
- *
  */
 @ManagedBean
 @ViewScoped
@@ -87,7 +87,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private boolean validaExecucaoProcedimento;
 
     private List<PlanoTratamentoProcedimento> ptpsSelecionados;
-    
+
     private List<ProfissionalDiaria> diarias, diariasSelecionadas;
 
     private String descricao, observacao;
@@ -123,7 +123,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private RepasseFaturas repasseFatura;
 
     private Lancamento lancamentoDeducoes;
-    
+
     private boolean imprimirSemProcedimento = false;
 
     public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
@@ -147,20 +147,23 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             actionTrocaDatas(null);
             actionTrocaDatasDiaria(null);
 
-            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
-            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
-            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls) {
-            //    rrpl.setDados(new ReciboRepasseProfissionalLancamentoDadosImutaveis(rrpl));
-            //    ReciboRepasseProfissionalLancamentoDadosImutaveisSingleton.getInstance().getBo().persist(rrpl.getDados());
-            //}
-            //ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().mergeBatch(rrpls);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
-        //System.out.println("RepasseProfissionalComReciboMB" + new Timestamp(System.currentTimeMillis()));
+
+      
+
     }
     
+    @PostConstruct
+    public void init() {
+        HashMap<String, String> listVideos = new HashMap<String, String>();
+        listVideos.put("Como configurar o repasse", "https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1");
+        listVideos.put("Como pagar os profissionais", "https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1");
+        setListVideos(listVideos);
+    }
+
     public void prepararReciboDiaria() {
         this.descricao = null;
         this.observacao = null;
@@ -236,17 +239,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         setLancamentoParaRecibo(null);
         setDiariaParaRecibo(null);
     }
-    
+
     public void gerarRecibo() {
-        if(getLancamentoParaRecibo() != null)
+        if (getLancamentoParaRecibo() != null)
             gerarReciboLancamento();
-        else if(getDiariaParaRecibo() != null)
+        else if (getDiariaParaRecibo() != null)
             gerarReciboDiaria();
     }
 
     private void gerarReciboDiaria() {
         try {
-            for(ProfissionalDiaria diaria: diariaParaRecibo) {
+            for (ProfissionalDiaria diaria : diariaParaRecibo) {
                 if (ReciboRepasseProfissionalDiariaSingleton.getInstance().getBo().findReciboValidoForDiaria(diaria) != null) {
                     addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
                     return;
@@ -257,13 +260,13 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setDiariasSelecionadas(null);
             PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-            
+
             pesquisarDiaria();
         } catch (Exception e) {
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         }
     }
-    
+
     private void gerarReciboLancamento() {
         try {
             List<Lancamento> lancamentosParaGerarRecibo = new ArrayList<Lancamento>();
@@ -392,7 +395,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
-    
+
     public void actionTrocaDatasDiaria(AjaxBehaviorEvent event) {
         try {
             this.dataInicioDiaria = getDataInicio(filtroPeriodoDiaria.getRotulo());
@@ -405,9 +408,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void pesquisarDiaria() {
         try {
-            setDiarias(ProfissionalDiariaSingleton.getInstance()
-                    .getBo().listByFields(UtilsFrontEnd.getEmpresaLogada(), 
-                            profissionalDiaria, dataInicioDiaria, dataFimDiaria));
+            setDiarias(ProfissionalDiariaSingleton.getInstance().getBo().listByFields(UtilsFrontEnd.getEmpresaLogada(), profissionalDiaria, dataInicioDiaria, dataFimDiaria));
             getDiarias().stream().forEach(diaria -> diaria.loadPTPsDiaria());
         } catch (Exception e) {
             e.printStackTrace();
@@ -415,7 +416,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
         }
     }
-    
+
     public void pesquisar() {
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
@@ -583,10 +584,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
             this.pesquisar();
-        }catch (RepasseNaoPossuiRecebimentoException e) {
+        } catch (RepasseNaoPossuiRecebimentoException e) {
             this.addError("Erro", "Procedimento está executado e não está em nenhum orçamento!");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -651,10 +651,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
                     if (itemOrigem != null) {
                         valorProcedimento = itemOrigem.getValorComDesconto();
-                    } else if(ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                    } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
                         valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
-                    }else if(ptp != null && ptp.getProcedimento() != null) {
-                        valorProcedimento = ptp.getProcedimento().getValor();  
+                    } else if (ptp != null && ptp.getProcedimento() != null) {
+                        valorProcedimento = ptp.getProcedimento().getValor();
                     }
 
                     repasseFatura = repasse.getRepasseFaturas();
@@ -857,7 +857,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         } else {
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
-                           
+
                             addError("Cálculo", "Cálculo disponível somente após pagamento do paciente.");
                             return;
                         }
@@ -925,16 +925,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(new BigDecimal(0));
                             lancamentoCalculado.setDadosCalculoReducaoCustoDireto(new BigDecimal(0));
 
-                        }else {
+                        } else {
                             lancamentoCalculado.setDadosCalculoPercItemSemCusto(
                                     lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 6, BigDecimal.ROUND_HALF_UP));
-                            
+
                             lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
 
                             lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
                                     lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         }
-                        
+
                         lancamentoCalculado.setDadosCalculoValorARepassarSemCusto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().subtract(lancamentoCalculado.getDadosCalculoReducaoCustoDireto()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
@@ -1072,8 +1072,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo()
-                    .listDentistasByEmpresaERemuneracao(UtilsFrontEnd.getEmpresaLogada(), new String[] { Profissional.PORCENTAGEM, Profissional.PROCEDIMENTO });
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresaERemuneracao(UtilsFrontEnd.getEmpresaLogada(),
+                    new String[] { Profissional.PORCENTAGEM, Profissional.PROCEDIMENTO });
             for (Profissional p : profissionais) {
                 if (!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
                     if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
@@ -1089,24 +1089,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         return sugestoes;
     }
-    
+
     public List<Profissional> geraSugestoesProfissionalDiaria(String query) {
         try {
-            List<Profissional> profissionais = ProfissionalSingleton.getInstance()
-                    .getBo().listProfissionaisByRemuneracaoDiaria(UtilsFrontEnd.getEmpresaLogada());
-            if(query == null || query.trim().isEmpty())
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listProfissionaisByRemuneracaoDiaria(UtilsFrontEnd.getEmpresaLogada());
+            if (query == null || query.trim().isEmpty())
                 return profissionais;
-            return profissionais.stream()
-                .filter(profissional -> 
-                        Normalizer.normalize(profissional.getDadosBasico().getPrefixoNome(), Normalizer.Form.NFD)
-                            .replaceAll("[^\\p{ASCII}]", "")
-                            .toLowerCase().contains(
-                                    Normalizer.normalize(query, Normalizer.Form.NFD)
-                                        .replaceAll("[^\\p{ASCII}]", "")
-                                        .toLowerCase())
-                )
-                .sorted()
-                .collect(Collectors.toList());
+            return profissionais.stream().filter(
+                    profissional -> Normalizer.normalize(profissional.getDadosBasico().getPrefixoNome(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
+                            Normalizer.normalize(query, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase())).sorted().collect(Collectors.toList());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
@@ -1117,7 +1108,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void exportarTabela(String type) {
         exportarTabela("Repasse dos profissionais", tabelaRepasse, type);
     }
-    
+
     public void exportarTabelaDiaria(String type) {
         exportarTabela("Repasse dos profissionais por Diária", tabelaRepasseDiaria, type);
     }
@@ -1405,27 +1396,27 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void setLancamentoDeducoes(Lancamento lancamentoDeducoes) {
         this.lancamentoDeducoes = lancamentoDeducoes;
     }
-    
+
     public Date getDataInicioDiaria() {
         return dataInicioDiaria;
     }
 
     public void setDataInicioDiaria(Date dataInicioDiaria) {
         this.dataInicioDiaria = dataInicioDiaria;
-    }    
-    
+    }
+
     public Date getDataFimDiaria() {
         return dataFimDiaria;
     }
-    
+
     public void setDataFimDiaria(Date dataFimDiaria) {
         this.dataFimDiaria = dataFimDiaria;
     }
-       
+
     public PeriodoBusca getFiltroPeriodoDiaria() {
         return filtroPeriodoDiaria;
     }
-    
+
     public void setFiltroPeriodoDiaria(PeriodoBusca filtroPeriodoDiaria) {
         this.filtroPeriodoDiaria = filtroPeriodoDiaria;
     }
@@ -1433,51 +1424,49 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public Profissional getProfissionalDiaria() {
         return profissionalDiaria;
     }
-   
+
     public void setProfissionalDiaria(Profissional profissionalDiaria) {
         this.profissionalDiaria = profissionalDiaria;
     }
-    
+
     public DataTable getTabelaRepasseDiaria() {
         return tabelaRepasseDiaria;
     }
-   
+
     public void setTabelaRepasseDiaria(DataTable tabelaRepasseDiaria) {
         this.tabelaRepasseDiaria = tabelaRepasseDiaria;
     }
-    
+
     public List<ProfissionalDiaria> getDiarias() {
         return diarias;
     }
-    
+
     public void setDiarias(List<ProfissionalDiaria> diarias) {
         this.diarias = diarias;
     }
-    
+
     public List<ProfissionalDiaria> getDiariasSelecionadas() {
         return diariasSelecionadas;
     }
-   
+
     public void setDiariasSelecionadas(List<ProfissionalDiaria> diariasSelecionadas) {
         this.diariasSelecionadas = diariasSelecionadas;
     }
-    
+
     public List<ProfissionalDiaria> getDiariaParaRecibo() {
         return diariaParaRecibo;
     }
-   
+
     public void setDiariaParaRecibo(List<ProfissionalDiaria> diariaParaRecibo) {
         this.diariaParaRecibo = diariaParaRecibo;
     }
 
-    
     public boolean isImprimirSemProcedimento() {
         return imprimirSemProcedimento;
     }
 
-    
     public void setImprimirSemProcedimento(boolean imprimirSemProcedimento) {
         this.imprimirSemProcedimento = imprimirSemProcedimento;
     }
-            
+
 }

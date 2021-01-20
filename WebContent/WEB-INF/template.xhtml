@@ -301,6 +301,21 @@
 			</object>
 		</p:panel>		
 	</p:dialog>
+	
+	<p:dialog widgetVar="dlgListaVideos" responsive="true" modal="true" id="dlgListaVideos"
+		appendTo=":lume" resizable="false">
+		   <p:ajax event="close" update="painelVideoList" />
+		<f:facet name="header">
+			<h:outputText id="headerVideoTutorialList"
+				value="Videos Tutoriais" />				
+		</f:facet>
+		<p:panel id="painelVideoList" rendered="#{filaAtendimentoMB.listVideos != null and filaAtendimentoMB.listVideos.size() > 0}">
+			<ui:repeat value="#filaAtendimentoMB.listVideos.entrySet().toArray()}" var="entry">				
+				<h:link value="#{entry.key}" outcome="#{entry.value}"/>
+				<br />
+			</ui:repeat>
+		</p:panel>		
+	</p:dialog>
 
 	<p:confirmDialog global="true">
 		<p:commandButton value="Sim" type="button"
