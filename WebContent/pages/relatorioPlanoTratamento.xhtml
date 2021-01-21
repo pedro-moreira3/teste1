@@ -334,6 +334,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:selectManyCheckbox
 								value="#{relatorioPlanoTratamentoMB.status}" layout="grid"
 								columns="6">
+								<p:ajax process="@this" update="painelJustificativaEncerramento"/>
 								<f:selectItem itemLabel="Ativos" itemValue="N"
 									itemEscaped="false" />
 								<f:selectItem itemLabel="Encerrados" itemValue="S"
@@ -342,7 +343,23 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									itemEscaped="false" />
 							</p:selectManyCheckbox>
 						</p:outputPanel>
-
+						
+						<p:panelGrid columns="3" layout="grid" id="painelJustificativaEncerramento"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup rendered="#{relatorioPlanoTratamentoMB.status.contains('S')}">
+								<p:outputLabel for="justificativaEncerramento" value="Motivo de Encerramento: " />
+								<p:selectOneMenu id="justificativaEncerramento"
+									value="#{relatorioPlanoTratamentoMB.justificativa}" converter="dominio"
+									>
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um motivo" />
+									<f:selectItems value="#{relatorioPlanoTratamentoMB.justificativas}"
+										var="justificativa" itemLabel="#{justificativa.nome}"
+										itemValue="#{justificativa}" />
+								</p:selectOneMenu>
+							</h:panelGroup>	
+						</p:panelGrid>
+						
 						<div class="EmptyBox5"></div>
 
 						<div class="SeparatorFull"></div>
@@ -498,7 +515,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									onclick="PF('devolver').show();" title="Encerrar"
 									process="@this" styleClass="OrangeButton"
 									action="#{planoTratamentoMB.setEntity(m)}"
-									rendered="#{m.dataFinalizado == null and planoTratamentoMB.admin}" />
+									rendered="#{m.status ne 'S' and m.status ne 'E' and planoTratamentoMB.admin}" />
 
 								<ui:remove>
 									<p:button icon="White fa fa-eye" title="Visualizar"

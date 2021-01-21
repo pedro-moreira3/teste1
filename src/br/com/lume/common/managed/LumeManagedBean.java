@@ -8,8 +8,11 @@ import java.text.Collator;
 import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,6 +79,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     private String videoLink;
     
+    private Map <String, String> listaVideosTutorial = new LinkedHashMap <String, String>();
+    
     @PostConstruct
     public void init() {
         this.getEntity();
@@ -105,7 +110,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public LumeManagedBean(BO<E> bO) {
         this.restricaoBO = new RestricaoBO();
-        this.bO = bO;
+        this.bO = bO;      
     }
 
     public Class<E> getClazz() {
@@ -549,7 +554,15 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public void setVideoLink(String videoLink) {
         this.videoLink = videoLink;
-    }    
+    }
+    
+    public Map<String, String> getListaVideosTutorial() {
+        return listaVideosTutorial;
+    }
 
+    
+    public void setListaVideosTutorial(Map<String, String> listaVideosTutorial) {
+        this.listaVideosTutorial = listaVideosTutorial;
+    }
 
 }

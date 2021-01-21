@@ -19,10 +19,12 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -63,9 +65,18 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
     
+    private List<Dominio> justificativas;
+    private Dominio justificativa;
+    
     public RelatorioPlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());      
         this.setClazz(PlanoTratamento.class);
+        
+        try {
+            justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
+        } catch (Exception e) {   
+            e.printStackTrace();
+        }
         
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();
@@ -106,11 +117,11 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         }else if (inicioFinalizacao != null && fimFinalizacao != null && inicioFinalizacao.getTime() > fimFinalizacao.getTime()) {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-        }else if(inicio == null && fim == null && inicioFinalizacao == null && fimFinalizacao == null && paciente == null && profissional == null && convenio == null) {
+        }else if(inicio == null && fim == null && inicioFinalizacao == null && fimFinalizacao == null && paciente == null && profissional == null && convenio == null && status.isEmpty()) {
             this.addError("Escolha pelo menos um filtro para gerar o relatório.", "");
         }else {
             planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().filtraRelatorioPT
-                    (inicio, fim,inicioFinalizacao,fimFinalizacao, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,getConvenio(getFiltroPorConvenio()));
+                    (inicio, fim,inicioFinalizacao,fimFinalizacao, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,getConvenio(getFiltroPorConvenio()),justificativa);
         }
 
         this.sugestoesConvenios("todos");
@@ -363,6 +374,26 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
 
     public void setStatus(List<String> status) {
         this.status = status;
+    }
+
+    
+    public List<Dominio> getJustificativas() {
+        return justificativas;
+    }
+
+    
+    public void setJustificativas(List<Dominio> justificativas) {
+        this.justificativas = justificativas;
+    }
+
+    
+    public Dominio getJustificativa() {
+        return justificativa;
+    }
+
+    
+    public void setJustificativa(Dominio justificativa) {
+        this.justificativa = justificativa;
     }
 
 }

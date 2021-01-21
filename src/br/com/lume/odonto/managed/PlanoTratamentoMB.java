@@ -27,13 +27,13 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hpsf.Array;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.exception.business.RepasseNaoPossuiRecebimentoException;
 import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -43,6 +43,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
@@ -64,11 +65,11 @@ import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.OrcamentoPlanejamento;
-import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoRegiao;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RegiaoDente;
@@ -76,10 +77,13 @@ import br.com.lume.odonto.entity.RegiaoRegiao;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.entity.Tarifa;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoRegiao.TipoRegiao;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoRegiaoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -140,9 +144,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean incluirObservacoesCobranca = false;
 
     private boolean omitirProcedimentosNaoInclusos = false;
-    
+
     private boolean omitirDadosEmpresa = false;
-    
+
     private boolean omitirLogo = false;
 
     private String filtroStatus = "T";
@@ -165,11 +169,25 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Integer> grupoDente7 = new ArrayList<>();
     private List<Integer> grupoDente8 = new ArrayList<>();
 
+    private List<String> regioesPossiveisOdontograma;
+    private List<String> regioesEscolhidasOdontograma;
+    private List<String> dentesPossiveisOdontograma;
+    private List<String> dentesEscolhidasOdontograma;
+
     //Regiao/Dente Procedimento
     private boolean enableRegioes = false;
     private Dente denteSelecionado;
     private List<PlanoTratamentoProcedimento> procedimentosDente;
     private String regiaoSelecionada;
+
+    // Regiões/Dentes em Detalhes e Diagnostico do PTP
+    private List<Dente> dentesSelecionados;
+    private List<String> regioesSelecionadas;
+    private List<String> dentesRegioesEscolhidas;
+    private List<String> facesEscolhidas;
+    private List<StatusDente> diagnosticosSelecionados;
+    private List<PlanoTratamentoProcedimentoRegiao> diagnosticos;
+    private PlanoTratamentoProcedimentoRegiao ptprSelecionado;
 
     //Personalizar
     private List<StatusDente> statusDente;
@@ -206,6 +224,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private BigDecimal valorParcela;
     private BigDecimal diferencaCalculoParcelas = new BigDecimal(0);
 
+    private List<Convenio> conveniosDisponiveis;
+
+    private Boolean ptpInserirMuitasVezes;
+    private Integer ptpInserirQuantasVezes;
+
+    private String motivoReativacao;
+
+    private BigDecimal valorProc = new BigDecimal(0);
+
+    private String observacoesDetalhes;
+
+    private String observacoesAdicionarProcedimento;
+
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         setClazz(PlanoTratamento.class);
@@ -222,6 +253,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
 
         loadDentesCombo();
+        loadDentesERegioesOdontograma();
         loadGruposDentes();
         carregarStatusDente();
     }
@@ -344,6 +376,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 carregaDlgProcedimentos(getEntity());
                 PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').show()");
             }
+            
+            if(getEntity().getConvenio() != null && getEntity().getPaciente() != null) {
+                getEntity().getPaciente().setConvenio(getEntity().getConvenio());
+                PacienteSingleton.getInstance().getBo().persist(getEntity().getPaciente());
+            }
 
             carregarPlanosTratamento();
         } catch (Exception e) {
@@ -364,25 +401,25 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (!this.getEntity().isBconvenio())
             this.getEntity().setBconvenio(true);
         abreNovoPtDialog();
-
-        getEntity().setDescricao("PT " + Utils.dateToString(new Date()));
+        carregaConvenios();
+        getEntity().setDescricao("PT " + Utils.dateToStringSomenteDataBrasil(new Date()));
     }
-    
+
     public boolean validaPermissaoExclusaoPTP(PlanoTratamentoProcedimento ptp) {
-        if(OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp))
+        if (OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp))
             return true;
         return false;
     }
 
-    public boolean validaPermissao(PlanoTratamento pt) {
-        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
-        for(Orcamento o : orcs) {
-            if(o.isAprovado())
-                return true;
-        }
-        return false;
-    }
-    
+//    public boolean validaPermissao(PlanoTratamento pt) {
+//        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
+//        for (Orcamento o : orcs) {
+//            if (o.isAprovado())
+//                return true;
+//        }
+//        return false;
+//    }
+
     public void carregarPlanosTratamento() {
         try {
             planosTratamento = new ArrayList<>();
@@ -394,6 +431,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
+        }
+    }
+
+    public void carregaConvenios() {
+        try {
+            if (conveniosDisponiveis == null || conveniosDisponiveis.isEmpty())
+                conveniosDisponiveis = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        } catch (Exception e) {
+            log.error(e);
         }
     }
 
@@ -415,6 +461,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         actionFinalizar((ActionEvent) null);
     }
 
+    public void actionReativar(PlanoTratamento planoTratamento) throws Exception {
+        if (planoTratamento != null) {
+            setEntity(planoTratamento);
+            PrimeFaces.current().executeScript("PF('reativar').show()");
+        }
+    }
+
+    public void actionReativar(ActionEvent event) {
+        try {
+            getEntity().setJustificativaReativacao(this.motivoReativacao);
+            getEntity().setStatus("N");
+            PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
+            PrimeFaces.current().executeScript("PF('reativar').hide()");
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            this.motivoReativacao = null;
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+            e.printStackTrace();
+        }
+
+    }
+
     public void actionFinalizar(ActionEvent event) {
         try {
             if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
@@ -427,15 +495,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
 
-                boolean faturaInterrompida = false;
-                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
-                for (Orcamento orcamento : orcamentos) {
-                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
-                    if (!faturaInterrompida)
-                        faturaInterrompida = interrompida;
-                }
-                if (faturaInterrompida)
-                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
+//                boolean faturaInterrompida = false;
+//                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
+//                for (Orcamento orcamento : orcamentos) {
+//                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+//                    if (!faturaInterrompida)
+//                        faturaInterrompida = interrompida;
+//                }
+//                if (faturaInterrompida)
+//                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
             this.justificativa = null;
@@ -452,6 +520,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionCancelFinalizar() {
         this.justificativa = null;
         PrimeFaces.current().executeScript("PF('devolver').hide()");
+    }
+
+    public void actionCancelReativar() {
+        this.motivoReativacao = null;
+        PrimeFaces.current().executeScript("PF('reativar').hide()");
     }
 
     public void actionPTInicial() {
@@ -508,18 +581,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     /**
      * Mostra confirmação caso o proc esteja sendo executado mas não está orçado
+     * 
      * @return boolean
      */
-    private boolean validaProcOrcado(PlanoTratamentoProcedimento ptp) {        
+    private boolean validaProcOrcado(PlanoTratamentoProcedimento ptp) {
         List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
-        if(orcs != null && !orcs.isEmpty()) {
-            if(ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().isEmpty()) {
+        if (orcs != null && !orcs.isEmpty()) {
+            if (ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().isEmpty()) {
                 return true;
             }
         }
         return false;
     }
-    
+
     private boolean finalizaProcedimento() throws Exception {
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
@@ -557,7 +631,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamentoProcedimentoSelecionado.getJustificativaExclusaoDominio() == null) {
             addInfo("É preciso selecionar uma justificativa!", "");
             return;
-        }        
+        }
         onProcedimentoRemove(planoTratamentoProcedimentoSelecionado);
         carregarPlanoTratamentoProcedimentos();
         PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').hide()");
@@ -601,8 +675,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void editaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp) {
         setPlanoTratamentoProcedimentoSelecionado(ptp);
+        cleanDetalhesProcedimento();
 
         handleDenteRegiaoSelected();
+        handleDentesRegioesSelects();
+
+        valorProc = ptp.getValorDesconto();
+
+        //seta dentes/regioes
+        this.diagnosticos = new ArrayList<>();
+        if (ptp.getRegioes() != null)
+            this.diagnosticos = new ArrayList<>(ptp.getRegioes());
+
         //if (ptp.getDenteObj() != null)
         //    this.odontogramaSelecionado = ptp.getDenteObj().getOdontograma();
         this.procedimentoSelecionado = ptp.getProcedimento();
@@ -615,19 +699,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
         }
         ptp.setFacesSelecionadas(faces);
-    }
 
-    public Integer isDenteOrRegiao() {
-        return isDenteOrRegiao(planoTratamentoProcedimentoSelecionado);
-    }
-
-    public Integer isDenteOrRegiao(PlanoTratamentoProcedimento ptp) {
-        if (this.denteRegiaoEscolhida != null && this.denteRegiaoEscolhida.trim().startsWith("Dente ")) {
-            return new Integer(1);
-        } else if (this.denteRegiaoEscolhida != null && !this.denteRegiaoEscolhida.trim().isEmpty()) {
-            return new Integer(-1);
+        observacoesDetalhes = "";
+        if (ptp.getProcedimento().getQuantidadeFaces() == 0) {
+            observacoesDetalhes = "Observação: Procedimento selecionado não possui faces configuradas em seu cadastro.";
         }
-        return new Integer(0);
+    }
+
+    public PlanoTratamentoProcedimentoRegiao.TipoRegiao isDenteOrRegiao(String denteOuRegiao) {
+        if (denteOuRegiao != null && denteOuRegiao.trim().startsWith("Dente ")) {
+            return PlanoTratamentoProcedimentoRegiao.TipoRegiao.DENTE;
+        } else if (denteOuRegiao != null && !denteOuRegiao.trim().isEmpty()) {
+            return PlanoTratamentoProcedimentoRegiao.TipoRegiao.REGIAO;
+        }
+        return null;
     }
 
     public boolean isMostraMensagemConvenioNaoVigente() {
@@ -648,18 +733,27 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return false;
     }
 
+    public void salvar(ActionEvent event) {
+        actionAdicionarProcedimento(event);
+        PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
+    }
+
+    public void salvarContinuar(ActionEvent event) {
+        actionAdicionarProcedimento(event);
+
+        this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
+        this.procedimentoSelecionado = null;
+        this.denteRegiaoEscolhida = null;
+        this.valorProc = new BigDecimal(0);
+        this.ptpInserirQuantasVezes = 1;
+        ptpInserirMuitasVezes = false;
+        handleDenteRegiaoSelected();
+    }
+
     public void actionAdicionarProcedimento(ActionEvent event) {
         try {
-            boolean isDente = isDenteOrRegiao() == 1;
-            boolean isRegiao = isDenteOrRegiao() == -1;
+            PlanoTratamentoProcedimentoRegiao.TipoRegiao local = isDenteOrRegiao(this.denteRegiaoEscolhida);
 
-            if (planoTratamentoProcedimentoSelecionado.getId() == 0)
-                planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
-
-            if (isDente && getEntity().getOdontograma() == null) {
-                this.addInfo("Escolha um odontograma antes de adicionar um procedimento à um dente.", "");
-                return;
-            }
             if (this.procedimentoSelecionado == null) {
                 this.addInfo("Escolha um procedimento antes de salvar.", "");
                 return;
@@ -667,21 +761,40 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
                 atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado, getPaciente());
-            if (isDente) {
-                String denteDescricao = this.denteRegiaoEscolhida.trim().split("Dente ")[1];
-                Dente d = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
-                if (d == null) {
-                    d = new Dente(denteDescricao, getEntity().getOdontograma());
-                    DenteSingleton.getInstance().getBo().persist(d);
+            if (local != null) {
+                if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.DENTE) {
+                    if (getEntity().getOdontograma() == null) {
+                        this.addInfo("Escolha um odontograma antes de adicionar um procedimento à um dente.", "");
+                        return;
+                    }
+
+                    String denteDescricao = this.denteRegiaoEscolhida.trim().split("Dente ")[1];
+                    Dente d = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
+                    if (d == null) {
+                        d = new Dente(denteDescricao, getEntity().getOdontograma());
+                        DenteSingleton.getInstance().getBo().persist(d);
+                    }
+                    this.planoTratamentoProcedimentoSelecionado.setDenteObj(d);
+                } else if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.REGIAO) {
+                    this.planoTratamentoProcedimentoSelecionado.setRegiao(this.denteRegiaoEscolhida);
                 }
-                this.planoTratamentoProcedimentoSelecionado.setDenteObj(d);
-            } else if (isRegiao) {
-                this.planoTratamentoProcedimentoSelecionado.setRegiao(this.denteRegiaoEscolhida);
+                actionPersistFaces(planoTratamentoProcedimentoSelecionado);
             }
 
-            planoTratamentoProcedimentoSelecionado.setDente(null);
-            actionPersistFaces(planoTratamentoProcedimentoSelecionado);
-            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
+            if (planoTratamentoProcedimentoSelecionado.getId() == 0) {
+                int sequencial = 1;
+                for (int i = 0; i < (getPtpInserirMuitasVezes() != null && getPtpInserirMuitasVezes().booleanValue() && getPtpInserirQuantasVezes() != null && getPtpInserirQuantasVezes().intValue() > 0 ? getPtpInserirQuantasVezes().intValue() : 1); i++) {
+                    planoTratamentoProcedimentoSelecionado.setId(0l);
+                    planoTratamentoProcedimentoSelecionado.setDente(null);
+                    planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
+                    if (planoTratamentoProcedimentoSelecionado.getPlanoTratamento().isOrtodontico()) {
+                        planoTratamentoProcedimentoSelecionado.setSequencial(sequencial);
+                        sequencial++;
+                    }
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
+                }
+            }
+
             if (getEntity().getPlanoTratamentoProcedimentos() == null)
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
             getEntity().getPlanoTratamentoProcedimentos().add(this.planoTratamentoProcedimentoSelecionado);
@@ -691,7 +804,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("actionAdicionarProcedimento", e);
@@ -714,7 +826,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamento.isBconvenio() && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO))
             ptp.setConvenio(paciente.getConvenio());
 
-        BigDecimal valorConvenio = resolveDescontoConvenio(ptp);
+        BigDecimal valorConvenio = new BigDecimal(0);
+        if (!valorProc.equals(new BigDecimal(0))) {
+            valorConvenio = valorProc;
+        } else {
+            valorConvenio = Utils.resolveDescontoConvenio(ptp);
+        }
+
         if (valorConvenio != null) {
             ptp.setValor(valorConvenio);
             ptp.setCodigoConvenio(procedimento.getCodigoConvenio());
@@ -726,23 +844,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setValorDesconto(ptp.getValor());
     }
 
-    private BigDecimal resolveDescontoConvenio(PlanoTratamentoProcedimento ptProcedimento) {
-        try {
-            PlanoTratamento pt = ptProcedimento.getPlanoTratamento();
-            Procedimento procedimento = ptProcedimento.getProcedimento();
-            Convenio convenio = pt.getConvenio();
-            if (pt.isBconvenio() && convenio != null && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime()) && convenio.getDataFimVigencia().after(
-                    Calendar.getInstance().getTime()) && convenio.getExcluido().equals(Status.NAO)) {
-                ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(convenio, procedimento);
-                if (convenio.getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || convenio.getTipo().equals(Convenio.CONVENIO_EMPRESA))
-                    return cp.getValor();
+    public void populaValorProc() {
+        if (procedimentoSelecionado != null) {
+            BigDecimal valorConvenio = Utils.resolveDescontoConvenio(procedimentoSelecionado, getEntity());
+            if (valorConvenio != null) {
+                this.valorProc = valorConvenio;
+            } else {
+                this.valorProc = procedimentoSelecionado.getValor();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
-        // return ptProcedimento.getValor();
-        return null;
     }
 
     // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
@@ -847,6 +957,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaDlgProcedimentos(PlanoTratamento planoTratamento) throws Exception {
         justificativa = null;
+        carregaConvenios();
         setEntity(planoTratamento);
         atualizaTela(true);
     }
@@ -904,6 +1015,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').hide()");
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        }  catch (RepasseNaoPossuiRecebimentoException e) {
+            addError("Atenção", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarSalvar", e);
@@ -971,15 +1084,41 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionNewProcedimento() {
+        this.ptpInserirMuitasVezes = false;
+        this.ptpInserirQuantasVezes = 1;
+        this.valorProc = new BigDecimal(0);
         this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
         this.procedimentoSelecionado = null;
         this.denteRegiaoEscolhida = null;
         handleDenteRegiaoSelected();
+
+        observacoesAdicionarProcedimento = "";
+        if (getEntity() != null && getEntity().isBconvenio() && getEntity().getConvenio() != null) {
+            Long totalProcsConvenio = ProcedimentoSingleton.getInstance().getBo().countByConveio(getEntity().getConvenio().getId());
+            if (totalProcsConvenio == 0l) {
+                observacoesAdicionarProcedimento = "Observação: Esse convênio está sem procedimentos vinculados! Acesse o menu Configuraçoes -> " + "Convênio procedimento para vincular os procedimentos nesse convênio.";
+            }
+        }
+
     }
 
     public boolean isDisableFaces() {
         return planoTratamentoProcedimentoSelecionado == null || this.procedimentoSelecionado == null || this.procedimentoSelecionado.getQuantidadeFaces() == null || this.procedimentoSelecionado.getQuantidadeFaces() <= 0 || this.denteRegiaoEscolhida == null || this.denteRegiaoEscolhida.isEmpty() || !this.denteRegiaoEscolhida.startsWith(
                 "Dente ");
+    }
+
+    public boolean escondeEditFaces(PlanoTratamentoProcedimentoRegiao regiao) {
+        boolean procedimentoTemFaces = false;
+        if (regiao.getPlanoTratamentoProcedimento().getProcedimento() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() != null && regiao.getPlanoTratamentoProcedimento().getProcedimento().getQuantidadeFaces() == 0) {
+            procedimentoTemFaces = true;
+        }
+        return regiao.getTipoRegiao() == null || regiao.getTipoRegiao() != TipoRegiao.DENTE || procedimentoTemFaces;
+    }
+
+    public boolean isDisableFacesMulti() {
+        if (planoTratamentoProcedimentoSelecionado == null || this.procedimentoSelecionado == null || this.procedimentoSelecionado.getQuantidadeFaces() == null || this.procedimentoSelecionado.getQuantidadeFaces() <= 0)
+            return true;
+        return dentesSelecionados != null && !dentesSelecionados.isEmpty();
     }
     // ========================================= PLANO DE TRATAMENTO ========================================= //
 
@@ -1003,6 +1142,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                     try {
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                    } catch (RepasseNaoPossuiRecebimentoException e) {
+                        addError("Atenção", e.getMessage());
                     } catch (Exception e) {
                         e.printStackTrace();
                         addError("Erro ao salvar registro", e.getMessage());
@@ -1094,7 +1235,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionNewOrcamento() {
         try {
-            if(this.fazOrcamento()) {
+            if (this.fazOrcamento()) {
                 this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
                 this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
 
@@ -1112,10 +1253,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 populaDescontos();
 
                 PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");
-            }else {
-                this.addError("PERMISSÃO NEGADA", "Para fazer o orçamento, "
-                        + "você precisa ativar a caixa de seleção na tela de \"Configuração de Descontos\", "
-                        + "menu \"Cadastro de profissionais\".");
+            } else {
+                this.addError("PERMISSÃO NEGADA",
+                        "Para fazer o orçamento, " + "você precisa ativar a caixa de seleção na tela de \"Configuração de Descontos\", " + "menu \"Cadastro de profissionais\".");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1136,40 +1276,38 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return percent;
     }
 
-    
     private boolean validaOrcamentoMaiorPermitido() {
         BigDecimal valorDesconto = new BigDecimal(0);
         DescontoOrcamento descontoCadastrado = null;
-        if(!descontosDisponiveis.isEmpty()) {
-            if(numeroParcelaOrcamento == null) {
+        if (!descontosDisponiveis.isEmpty()) {
+            if (numeroParcelaOrcamento == null) {
                 return false;
             }
             descontoCadastrado = descontosDisponiveis.get(numeroParcelaOrcamento.intValue());
-            if(descontoCadastrado != null) {
+            if (descontoCadastrado != null) {
                 valorDesconto = descontoCadastrado.getDesconto();
-            }    
+            }
         }
-        if (orcamentoSelecionado.getDescontoTipo().equals(
-                "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
-           return true;         
+        if (orcamentoSelecionado.getDescontoTipo().equals("P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
+            return true;
         } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
             //orcamentoSelecionado.getValorTotal();
             //orcamentoSelecionado.getValorTotalSemDesconto();
             double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotalSemDesconto().doubleValue();
-            
-            if(descontoCadastrado != null) {
+
+            if (descontoCadastrado != null) {
                 valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
-            }else {
-                valorDesconto =  new BigDecimal(0);
+            } else {
+                valorDesconto = new BigDecimal(0);
             }
-            
+
             if (descontoEmPorcentagem > valorDesconto.doubleValue()) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public void validaDescontos() {
         mensagemCalculoOrcamento = "";
         //   mensagemCalculoOrcamentoDiferenca = "";
@@ -1185,8 +1323,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             if (descontosDisponiveis.containsKey(numeroParcelaOrcamento.intValue())) {
-                
-                if(validaOrcamentoMaiorPermitido()) {
+
+                if (validaOrcamentoMaiorPermitido()) {
                     this.addError("Erro", "Desconto maior que o permitido.");
                     orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
                 }
@@ -1342,8 +1480,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public boolean showProdutoNewPlanejamento() {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
             if (existeCadastroTarifa()) {
-                setTarifasNewPlanejamento(
-                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO));
+                setTarifasNewPlanejamento(TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
+                        FormaPagamento.RECEBIMENTO));
                 return true;
             } else {
                 getPlanejamentoAtual().setnParcela(1);
@@ -1407,7 +1545,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private void carregarDadosCabecalho() {
         Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
-        if(empresalogada != null) {
+        if (empresalogada != null) {
             nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
             endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
         }
@@ -1419,7 +1557,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaTelaOrcamento(PlanoTratamento planoTratamento) {
         try {
-            setEntity(planoTratamento);           
+            setEntity(planoTratamento);
             carregaOrcamentos();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1467,13 +1605,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             List<OrcamentoItem> itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
 
-          
-            if(validaOrcamentoMaiorPermitido()) {
+            if (validaOrcamentoMaiorPermitido()) {
                 this.addError("Erro", "Desconto maior que o permitido.");
                 return;
             }
-            
-            
+
             //verificando se os procedimentos ja estao aprovados em outro orcamento       
             if (itemsJaAprovados != null && itemsJaAprovados.size() > 0) {
                 List<String> procedimentos = new ArrayList<String>();
@@ -1536,8 +1672,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.imprimirSemValores = false;
             this.orcamentoSelecionado = orcamento;
             orcamentoSelecionado.setValorPago(getTotalPago());
-            
-            orcamentoSelecionado.getItens().sort((p1,p2) -> {
+
+            orcamentoSelecionado.getItens().sort((p1, p2) -> {
                 Integer i = p1.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial();
                 return i.compare(i, p2.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial());
             });
@@ -1556,13 +1692,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                 }
 
-             //   validaDescontos();
-            }else {
+                //   validaDescontos();
+            } else {
                 numeroParcelaOrcamento = null;
                 valorPrimeiraParcelaOrcamento = null;
                 valorParcela = null;
                 observacoesCobrancaOrcamento = null;
-                
+
             }
 
         }
@@ -1613,10 +1749,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             //  }
             //   }
 
-            if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0) ) != 0) {
+            if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento.add(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
             } else {
-                if(numeroParcelaOrcamento.compareTo(new BigDecimal(0)) == 0)
+                if (numeroParcelaOrcamento.compareTo(new BigDecimal(0)) == 0)
                     numeroParcelaOrcamento = new BigDecimal(1);
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
             }
@@ -1646,7 +1782,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         //else if (denteSelecionado != null && denteSelecionado.getDescricao() != null && !denteSelecionado.getDescricao().isEmpty())
         //    result = "Procedimentos do Dente " + denteSelecionado.getDescricao().trim();
         //else
-        result = "Procedimentos de Dente";
+        result = "Adicionar procedimento";
 
         if (pacienteMB != null && pacienteMB.getEntity() != null && pacienteMB.getEntity().getDadosBasico() != null && pacienteMB.getEntity().getDadosBasico().getNome() != null && !pacienteMB.getEntity().getDadosBasico().getNome().trim().isEmpty())
             if (getEntity() != null && getEntity().getDescricao() != null)
@@ -1704,6 +1840,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return "";
     }
 
+    public String diagnosticosDente(PlanoTratamentoProcedimento ptp, String extraStyle) {
+
+        StringBuilder aux = new StringBuilder();
+
+        List<PlanoTratamentoProcedimentoRegiao> listRegioes = new ArrayList<>(ptp.getRegioes());
+        for (PlanoTratamentoProcedimentoRegiao planoTratamentoProcedimentoRegiao : listRegioes) {
+            if (planoTratamentoProcedimentoRegiao.isAtivo()) {
+                if (planoTratamentoProcedimentoRegiao.get() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente().getExcluido().equals(
+                        "N")) {
+                    aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));
+                }
+
+            }
+        }
+        return aux.toString();
+
+    }
+
     public void carregaProcedimentos() {
         String strDente = JSFHelper.getRequestParameterMap("dente");
         try {
@@ -1713,6 +1867,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 denteSelecionado = new Dente(strDente, getEntity().getOdontograma());
                 DenteSingleton.getInstance().getBo().persist(denteSelecionado);
             }
+            this.dentesEscolhidasOdontograma = new ArrayList<>(Arrays.asList(denteSelecionado.getDescricaoCompleta()));
             carregarProcedimentos(denteSelecionado);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1789,21 +1944,41 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         statusDenteSelecionado = new StatusDente();
     }
 
+    public void editaFacesDiagnostico(PlanoTratamentoProcedimentoRegiao ptpr) {
+        this.ptprSelecionado = ptpr;
+    }
+
+    public void removeDiagnostico(PlanoTratamentoProcedimentoRegiao ptpr) {
+        ptpr.setAtivo(false);
+        ptpr.setDataAlteracaoStatus(new Date());
+        ptpr.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+        ptpr.get().setExcluido("S");
+        ptpr.get().setDataExclusao(new Date());
+        ptpr.get().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+    }
+
+    public void fechaTelaFacesDiagnostico() {
+        this.ptprSelecionado = null;
+    }
+
+    public void actionPersistFacesDiagnostico() {
+        PrimeFaces.current().executeScript("PF('dlgFacesDetalhesProcedimento').hide()");
+    }
+
     public void handleDenteRegiaoSelected() {
-        boolean isDente = isDenteOrRegiao(planoTratamentoProcedimentoSelecionado) == 1;
-        boolean isRegiao = isDenteOrRegiao(planoTratamentoProcedimentoSelecionado) == -1;
+        PlanoTratamentoProcedimentoRegiao.TipoRegiao local = isDenteOrRegiao(denteRegiaoEscolhida);
 
         try {
             this.denteSelecionado = null;
             this.regiaoSelecionada = null;
             this.enableRegioes = false;
 
-            if (isDente) {
+            if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.DENTE) {
                 String denteDescricao = this.denteRegiaoEscolhida.trim().split("Dente ")[1];
                 this.denteSelecionado = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
                 if (this.denteSelecionado == null)
                     this.denteSelecionado = new Dente(denteDescricao, getEntity().getOdontograma());
-            } else if (isRegiao) {
+            } else if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.REGIAO) {
                 this.regiaoSelecionada = this.denteRegiaoEscolhida;
                 this.enableRegioes = true;
             }
@@ -1814,50 +1989,180 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public void actionAdicionarStatusDente() {
+    public void cleanDetalhesProcedimento() {
+        this.diagnosticos = null;
+        this.dentesRegioesEscolhidas = null;
+        this.facesEscolhidas = null;
+        this.diagnosticosSelecionados = null;
+    }
+
+    public void handleDentesRegioesSelects() {
+        handleDentesRegioesSelects(false);
+    }
+
+    public void handleDentesRegioesSelects(boolean forcePersist) {
+        this.dentesSelecionados = new ArrayList<>();
+        this.regioesSelecionadas = new ArrayList<>();
+        if (dentesRegioesEscolhidas == null)
+            return;
+
         try {
-            if (denteSelecionado == null && !enableRegioes) {
-                this.addError("Escolha um dente ou região para inserir um diagnóstico.", "");
-                return;
-            }
-            if (denteSelecionado != null) {
-                if (denteSelecionado.getRegioes() != null && !denteSelecionado.getRegioes().isEmpty()) {
-                    for (RegiaoDente rd : denteSelecionado.getRegioes()) {
-                        if (rd.getStatusDente().equals(statusDenteDenteSelecionado)) {
-                            this.addError("Diagnóstico já selecionado.", "");
-                            return;
-                        }
+            for (String denteOuRegiao : dentesRegioesEscolhidas) {
+                PlanoTratamentoProcedimentoRegiao.TipoRegiao local = isDenteOrRegiao(denteOuRegiao);
+
+                if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.DENTE) {
+                    String denteDescricao = denteOuRegiao.trim().split("Dente ")[1];
+                    Dente denteEscolhido = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
+                    if (denteEscolhido == null) {
+                        denteEscolhido = new Dente(denteDescricao, getEntity().getOdontograma());
+                        DenteSingleton.getInstance().getBo().persist(denteEscolhido);
                     }
-                    if (denteSelecionado.getRegioes().size() >= 4) {
-                        this.addError("Máximo 4 Diagnóstico por dente.", "");
+                    this.dentesSelecionados.add(denteEscolhido);
+                } else if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.REGIAO) {
+                    String regiaoEscolhida = denteOuRegiao;
+                    this.regioesSelecionadas.add(regiaoEscolhida);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro", "Erro ao adicionar diagnósticos!");
+        }
+    }
+
+    public void actionAdicionaDiagnosticoDetalhesProcedimento() {
+        handleDentesRegioesSelects(true);
+        if (this.dentesSelecionados != null) {
+            for (int i = 0; i < this.dentesSelecionados.size(); i++) {
+                if (this.dentesSelecionados.get(i) == null)
+                    continue;
+                Dente dente = this.dentesSelecionados.get(i);
+                if (dente.getRegioes() != null && !dente.getRegioes().isEmpty() && this.diagnosticosSelecionados != null && !this.diagnosticosSelecionados.isEmpty()) {
+                    if (dente.getRegioes().stream().filter(regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).filter(
+                            regiao -> this.diagnosticosSelecionados.stream().anyMatch(diag -> diag.getId() == regiao.getStatusDente().getId())).count() > 0) {
+                        this.addError("Diagnóstico já selecionado para o " + dente.getDescricao(), "");
+                        return;
+                    }
+                    if (dente.getRegioes().stream().filter(regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).count() >= 4) {
+                        this.addError("Máximo 4 Diagnóstico por dente. (" + dente.getDescricao() + ")", "");
                         return;
                     }
 
                 } else {
-                    denteSelecionado.setRegioes(new ArrayList<>());
+                    dente.setRegioes(new ArrayList<>());
                 }
-                denteSelecionado.getRegioes().add(new RegiaoDente(statusDenteDenteSelecionado, 'C', denteSelecionado));
-                DenteSingleton.getInstance().getBo().persist(denteSelecionado);
-                denteSelecionado = DenteSingleton.getInstance().getBo().find(denteSelecionado);
-            } else if (enableRegioes) {
+
+                if (this.diagnosticosSelecionados != null && !this.diagnosticosSelecionados.isEmpty()) {
+                    for (StatusDente sd : this.diagnosticosSelecionados)
+                        this.diagnosticos.add(new PlanoTratamentoProcedimentoRegiao(new RegiaoDente(sd, 'C', dente, this.facesEscolhidas), this.planoTratamentoProcedimentoSelecionado));
+                } else {
+                    this.diagnosticos.add(new PlanoTratamentoProcedimentoRegiao(new RegiaoDente(null, 'C', dente, this.facesEscolhidas), this.planoTratamentoProcedimentoSelecionado));
+                }
+            }
+        }
+        if (this.regioesSelecionadas != null) {
+            for (int i = 0; i < this.regioesSelecionadas.size(); i++) {
+                if (this.regioesSelecionadas.get(i) == null || this.regioesSelecionadas.get(i).trim().isEmpty())
+                    continue;
+                String regiaoEscolhida = this.regioesSelecionadas.get(i);
                 if (getEntity().getOdontograma().getRegioesRegiao() != null && !getEntity().getOdontograma().getRegioesRegiao().isEmpty()) {
-                    for (RegiaoRegiao rd : getEntity().getOdontograma().getRegioesRegiao()) {
-                        if (rd.getStatusDente().equals(statusDenteDenteSelecionado) && rd.getRegiao().equals(regiaoSelecionada)) {
-                            this.addError("Diagnóstico já selecionado.", "");
-                            return;
-                        }
-                    }
-                    if (getEntity().getOdontograma().getRegioesRegiao().size() >= 4) {
-                        this.addError("Máximo 4 Diagnóstico por região.", "");
+                    if (getEntity().getOdontograma().getRegioesRegiao().stream().filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida)).filter(
+                            regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).filter(
+                                    regiao -> Long.valueOf(regiao.getStatusDente().getId()) == Long.valueOf(statusDenteDenteSelecionado.getId())).count() > 0) {
+                        this.addError("Diagnóstico já selecionado.", "Região " + regiaoEscolhida);
                         return;
                     }
-
+                    if (getEntity().getOdontograma().getRegioesRegiao().stream().filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida)).filter(
+                            regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).count() >= 4) {
+                        this.addError("Máximo 4 Diagnóstico por região.", "Região " + regiaoEscolhida);
+                        return;
+                    }
                 } else {
                     getEntity().getOdontograma().setRegioesRegiao(new ArrayList<>());
                 }
-                getEntity().getOdontograma().getRegioesRegiao().add(new RegiaoRegiao(statusDenteDenteSelecionado, regiaoSelecionada, getEntity().getOdontograma()));
-                OdontogramaSingleton.getInstance().getBo().persist(getEntity().getOdontograma());
-                getEntity().setOdontograma(OdontogramaSingleton.getInstance().getBo().find(getEntity().getOdontograma()));
+
+                if (this.diagnosticosSelecionados != null && !this.diagnosticosSelecionados.isEmpty()) {
+                    for (StatusDente sd : this.diagnosticosSelecionados)
+                        this.diagnosticos.add(new PlanoTratamentoProcedimentoRegiao(new RegiaoRegiao(sd, regiaoEscolhida, getEntity().getOdontograma()), this.planoTratamentoProcedimentoSelecionado));
+                } else {
+                    this.diagnosticos.add(new PlanoTratamentoProcedimentoRegiao(new RegiaoRegiao(null, regiaoEscolhida, getEntity().getOdontograma()), this.planoTratamentoProcedimentoSelecionado));
+                }
+            }
+        } else {
+            addError("", "É necessário selecionar um Dente/Região para adicionar!");
+        }
+    }
+
+    public void actionPersistDetalhesProcedimento() {
+        try {
+            this.planoTratamentoProcedimentoSelecionado.setRegioes(this.diagnosticos);
+            actionPersist(null);
+
+            PrimeFaces.current().executeScript("PF('dlgDetalhesProcedimento').hide()");
+            addInfo("", "Registro salvo com sucesso!");
+        } catch (Exception e) {
+            addError("Erro ao salvar registros!", e.getLocalizedMessage());
+        }
+    }
+
+    public void actionAdicionarStatusDente() {
+        if (statusDenteDenteSelecionado == null) {
+            this.addError("Erro", "É necessário escolher um diagnóstico!");
+            return;
+        }
+
+        try {
+            if (!enableRegioes && dentesEscolhidasOdontograma != null && !dentesEscolhidasOdontograma.isEmpty()) {
+                for (String denteStr : dentesEscolhidasOdontograma) {
+                    String denteDescricao = denteStr.split("Dente ")[1];
+                    Dente denteEscolhido = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
+                    if (denteEscolhido == null) {
+                        denteEscolhido = new Dente(denteDescricao, getEntity().getOdontograma());
+                    }
+
+                    if (denteEscolhido.getRegioes() != null && !denteEscolhido.getRegioes().isEmpty()) {
+                        if (denteEscolhido.getRegioes().stream().filter(regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).filter(
+                                regiao -> Long.valueOf(regiao.getStatusDente().getId()) == Long.valueOf(statusDenteDenteSelecionado.getId())).count() > 0) {
+                            this.addError("Diagnóstico já selecionado.", denteEscolhido.getDescricaoCompleta());
+                            return;
+                        }
+                        if (denteEscolhido.getRegioes().stream().filter(regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).count() >= 4) {
+                            this.addError("Máximo 4 Diagnóstico por dente.", denteEscolhido.getDescricaoCompleta());
+                            return;
+                        }
+                    } else {
+                        denteEscolhido.setRegioes(new ArrayList<>());
+                    }
+                    denteEscolhido.getRegioes().add(new RegiaoDente(statusDenteDenteSelecionado, 'C', denteEscolhido));
+                    DenteSingleton.getInstance().getBo().persist(denteEscolhido);
+                }
+            } else if (!enableRegioes && (dentesEscolhidasOdontograma == null || dentesEscolhidasOdontograma.isEmpty())) {
+                this.addError("Escolha ao menos um dente para inserir um diagnóstico.", "");
+                return;
+            } else if (enableRegioes && regioesEscolhidasOdontograma != null && !regioesEscolhidasOdontograma.isEmpty()) {
+                for (String regiaoEscolhida : regioesEscolhidasOdontograma) {
+                    if (getEntity().getOdontograma().getRegioesRegiao() != null && !getEntity().getOdontograma().getRegioesRegiao().isEmpty()) {
+                        if (getEntity().getOdontograma().getRegioesRegiao().stream().filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida)).filter(
+                                regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).filter(
+                                        regiao -> Long.valueOf(regiao.getStatusDente().getId()) == Long.valueOf(statusDenteDenteSelecionado.getId())).count() > 0) {
+                            this.addError("Diagnóstico já selecionado.", "Região " + regiaoEscolhida);
+                            return;
+                        }
+                        if (getEntity().getOdontograma().getRegioesRegiao().stream().filter(regiao -> regiao.getRegiao().equals(regiaoEscolhida)).filter(
+                                regiao -> !"S".equals(regiao.getExcluido())).filter(regiao -> regiao.getStatusDente() != null).count() >= 4) {
+                            this.addError("Máximo 4 Diagnóstico por região.", "Região " + regiaoEscolhida);
+                            return;
+                        }
+                    } else {
+                        getEntity().getOdontograma().setRegioesRegiao(new ArrayList<>());
+                    }
+                    getEntity().getOdontograma().getRegioesRegiao().add(new RegiaoRegiao(statusDenteDenteSelecionado, regiaoEscolhida, getEntity().getOdontograma()));
+                    OdontogramaSingleton.getInstance().getBo().persist(getEntity().getOdontograma());
+                    getEntity().setOdontograma(OdontogramaSingleton.getInstance().getBo().find(getEntity().getOdontograma()));
+                }
+            } else if (enableRegioes && (regioesEscolhidasOdontograma == null || regioesEscolhidasOdontograma.isEmpty())) {
+                this.addError("Escolha ao menos uma região para inserir um diagnóstico.", "");
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1919,6 +2224,42 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
         return null;
     }
+
+    public List<RegiaoDente> getDiagnosticosDentes() {
+        try {
+            if (this.dentesEscolhidasOdontograma != null)
+                return dentesEscolhidasOdontograma.stream().map(dente -> {
+                    try {
+                        return DenteSingleton.getInstance().getBo().findByDescAndOdontograma(dente.split("Dente ")[1], getEntity().getOdontograma()).getRegioes();
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }).filter(regioesDente -> regioesDente != null).flatMap(regioesDente -> regioesDente.stream()).filter(regiaoDente -> !"S".equals(regiaoDente.getExcluido())).collect(
+                        Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Erro no getDiagnosticosRegiao", e);
+        }
+        return null;
+    }
+
+    public List<RegiaoRegiao> getDiagnosticosRegioes() {
+        try {
+            if (this.regioesEscolhidasOdontograma != null)
+                return regioesEscolhidasOdontograma.stream().map(regiao -> {
+                    try {
+                        return RegiaoRegiaoSingleton.getInstance().getBo().findByDescAndOdontograma(regiao, getEntity().getOdontograma());
+                    } catch (Exception e) {
+                        return new ArrayList<RegiaoRegiao>();
+                    }
+                }).flatMap(listRegiao -> listRegiao.stream()).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Erro no getDiagnosticosRegiao", e);
+        }
+        return null;
+    }
+
     //============================================= ODONTOGRAMA ============================================== //
 
     //============================================== PERMISSOES ============================================== //
@@ -1940,6 +2281,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         OdontoPerfil.ADMINISTRADOR_CLINICA) || (orcamento && UtilsFrontEnd.getProfissionalLogado().isFazOrcamento()))
             return true;
         return false;
+    }
+
+    public BigDecimal valorAReceber(PlanoTratamento pt) {
+        return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
+    }
+
+    public BigDecimal valorAConferir(PlanoTratamento pt) {
+        return FaturaItemSingleton.getInstance().valorAConferirDoPacienteFromPT(pt);
     }
 
     //============================================== PERMISSOES ============================================== //
@@ -1976,23 +2325,23 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 BigDecimal valorDesconto = new BigDecimal(0);
                 BigDecimal valor = new BigDecimal(0);
 
-                if (ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
+                if (ptp.getConvenio() != null && ptp.getProcedimento() != null && ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
                     valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(ptp.getConvenio(), ptp.getProcedimento()).getValor();
                 else
                     valor = ptp.getProcedimento().getValor();
 
                 diferenca = valor.subtract(ptp.getValorDesconto());
 
-               // if (diferenca.doubleValue() > 0) {
+                // if (diferenca.doubleValue() > 0) {
                 //    valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
 
-                  //  if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
-                    //    this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "% no item " + ptp.getProcedimento().getDescricao());
-                   //     ptp.setValorDesconto(valor);
+                //  if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
+                //    this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "% no item " + ptp.getProcedimento().getDescricao());
+                //     ptp.setValorDesconto(valor);
 
-                   //     return false;
-                  //  }
-               // }
+                //     return false;
+                //  }
+                // }
 
                 //   }else {
                 //       this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
@@ -2074,7 +2423,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
-            
+
             PrimeFaces.current().executeScript("PF('procedimentosTableInPT').filter()");
         }
     }
@@ -2096,6 +2445,44 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getPaciente() != null) {
             odontogramas = OdontogramaSingleton.getInstance().getBo().listByPaciente(getPaciente());
         }
+    }
+
+    private String carregaDenteCartesiano(int i, int j) {
+        try {
+            String descricao = String.valueOf(i) + String.valueOf(j);
+            Dente dente = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(descricao, getEntity().getOdontograma());
+            if (dente == null)
+                dente = new Dente(descricao, getEntity().getOdontograma());
+            return dente.getDescricaoCompleta();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void loadDentesERegioesOdontograma() {
+        dentesEscolhidasOdontograma = null;
+        dentesPossiveisOdontograma = new ArrayList<>();
+        for (int i = 1; i <= 4; i++)
+            for (int j = 1; j <= 8; j++)
+                dentesPossiveisOdontograma.add(carregaDenteCartesiano(i, j));
+        for (int i = 5; i <= 8; i++)
+            for (int j = 1; j <= 5; j++)
+                dentesPossiveisOdontograma.add(carregaDenteCartesiano(i, j));
+
+        regioesEscolhidasOdontograma = null;
+        regioesPossiveisOdontograma = new ArrayList<>();
+        regioesPossiveisOdontograma.add("Arcada Superior/Inferior");
+        regioesPossiveisOdontograma.add("Arcada Superior");
+        regioesPossiveisOdontograma.add("Arcada Inferior");
+        regioesPossiveisOdontograma.add("Segmento Superior Direito");
+        regioesPossiveisOdontograma.add("Segmento Superior Anterior");
+        regioesPossiveisOdontograma.add("Segmento Superior Esquerdo");
+        regioesPossiveisOdontograma.add("Segmento Inferior Direito");
+        regioesPossiveisOdontograma.add("Segmento Inferior Anterior");
+        regioesPossiveisOdontograma.add("Segmento Inferior Esquerdo");
+        regioesPossiveisOdontograma.add("Seio Maxilar Direito");
+        regioesPossiveisOdontograma.add("Seio Maxila Esquerdo");
+        regioesPossiveisOdontograma.add("Seio Maxilar Bilateral");
     }
 
     private void loadDentesCombo() {
@@ -2172,8 +2559,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
-        if (getEntity() != null && getEntity().isBconvenio() && getPaciente().getConvenio() != null) {
-            return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(getPaciente().getConvenio().getId(), query);
+        if (getEntity() != null && getEntity().isBconvenio() && getEntity().getConvenio() != null) {
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(getEntity().getConvenio().getId(), query);
         } else {
             return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
@@ -2752,24 +3139,170 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.ptLazyModel = ptLazyModel;
     }
 
-    
     public boolean isOmitirDadosEmpresa() {
         return omitirDadosEmpresa;
     }
 
-    
     public void setOmitirDadosEmpresa(boolean omitirDadosEmpresa) {
         this.omitirDadosEmpresa = omitirDadosEmpresa;
     }
 
-    
     public boolean isOmitirLogo() {
         return omitirLogo;
     }
 
-    
     public void setOmitirLogo(boolean omitirLogo) {
         this.omitirLogo = omitirLogo;
+    }
+
+    public List<Convenio> getConveniosDisponiveis() {
+        return conveniosDisponiveis;
+    }
+
+    public void setConveniosDisponiveis(List<Convenio> conveniosDisponiveis) {
+        this.conveniosDisponiveis = conveniosDisponiveis;
+    }
+
+    public Boolean getPtpInserirMuitasVezes() {
+        return ptpInserirMuitasVezes;
+    }
+
+    public void setPtpInserirMuitasVezes(Boolean ptpInserirMuitasVezes) {
+        this.ptpInserirMuitasVezes = ptpInserirMuitasVezes;
+    }
+
+    public Integer getPtpInserirQuantasVezes() {
+        return ptpInserirQuantasVezes;
+    }
+
+    public void setPtpInserirQuantasVezes(Integer ptpInserirQuantasVezes) {
+        this.ptpInserirQuantasVezes = ptpInserirQuantasVezes;
+    }
+
+    public List<Dente> getDentesSelecionados() {
+        return dentesSelecionados;
+    }
+
+    public void setDentesSelecionados(List<Dente> dentesSelecionados) {
+        this.dentesSelecionados = dentesSelecionados;
+    }
+
+    public List<String> getRegioesSelecionadas() {
+        return regioesSelecionadas;
+    }
+
+    public void setRegioesSelecionadas(List<String> regioesSelecionadas) {
+        this.regioesSelecionadas = regioesSelecionadas;
+    }
+
+    public List<String> getDentesRegioesEscolhidas() {
+        return dentesRegioesEscolhidas;
+    }
+
+    public void setDentesRegioesEscolhidas(List<String> dentesRegioesEscolhidas) {
+        this.dentesRegioesEscolhidas = dentesRegioesEscolhidas;
+    }
+
+    public List<StatusDente> getDiagnosticosSelecionados() {
+        return diagnosticosSelecionados;
+    }
+
+    public void setDiagnosticosSelecionados(List<StatusDente> diagnosticosSelecionados) {
+        this.diagnosticosSelecionados = diagnosticosSelecionados;
+    }
+
+    public List<PlanoTratamentoProcedimentoRegiao> getDiagnosticos() {
+        return diagnosticos;
+    }
+
+    public List<PlanoTratamentoProcedimentoRegiao> getDiagnosticosLimpo() {
+        if (diagnosticos == null)
+            return diagnosticos;
+        return diagnosticos.stream().sorted().filter(diag -> diag.isAtivo()).collect(Collectors.toList());
+    }
+
+    public void setDiagnosticos(List<PlanoTratamentoProcedimentoRegiao> diagnosticos) {
+        this.diagnosticos = diagnosticos;
+    }
+
+    public List<String> getFacesEscolhidas() {
+        return facesEscolhidas;
+    }
+
+    public void setFacesEscolhidas(List<String> facesEscolhidas) {
+        this.facesEscolhidas = facesEscolhidas;
+    }
+
+    public PlanoTratamentoProcedimentoRegiao getPtprSelecionado() {
+        return ptprSelecionado;
+    }
+
+    public void setPtprSelecionado(PlanoTratamentoProcedimentoRegiao ptprSelecionado) {
+        this.ptprSelecionado = ptprSelecionado;
+    }
+
+    public List<String> getRegioesPossiveisOdontograma() {
+        return regioesPossiveisOdontograma;
+    }
+
+    public void setRegioesPossiveisOdontograma(List<String> regioesPossiveisOdontograma) {
+        this.regioesPossiveisOdontograma = regioesPossiveisOdontograma;
+    }
+
+    public List<String> getRegioesEscolhidasOdontograma() {
+        return regioesEscolhidasOdontograma;
+    }
+
+    public void setRegioesEscolhidasOdontograma(List<String> regioesEscolhidasOdontograma) {
+        this.regioesEscolhidasOdontograma = regioesEscolhidasOdontograma;
+    }
+
+    public List<String> getDentesPossiveisOdontograma() {
+        return dentesPossiveisOdontograma;
+    }
+
+    public void setDentesPossiveisOdontograma(List<String> dentesPossiveisOdontograma) {
+        this.dentesPossiveisOdontograma = dentesPossiveisOdontograma;
+    }
+
+    public List<String> getDentesEscolhidasOdontograma() {
+        return dentesEscolhidasOdontograma;
+    }
+
+    public void setDentesEscolhidasOdontograma(List<String> dentesEscolhidasOdontograma) {
+        this.dentesEscolhidasOdontograma = dentesEscolhidasOdontograma;
+    }
+
+    public String getMotivoReativacao() {
+        return motivoReativacao;
+    }
+
+    public void setMotivoReativacao(String motivoReativacao) {
+        this.motivoReativacao = motivoReativacao;
+    }
+
+    public BigDecimal getValorProc() {
+        return valorProc;
+    }
+
+    public void setValorProc(BigDecimal valorProc) {
+        this.valorProc = valorProc;
+    }
+
+    public String getObservacoesDetalhes() {
+        return observacoesDetalhes;
+    }
+
+    public void setObservacoesDetalhes(String observacoesDetalhes) {
+        this.observacoesDetalhes = observacoesDetalhes;
+    }
+
+    public String getObservacoesAdicionarProcedimento() {
+        return observacoesAdicionarProcedimento;
+    }
+
+    public void setObservacoesAdicionarProcedimento(String observacoesAdicionarProcedimento) {
+        this.observacoesAdicionarProcedimento = observacoesAdicionarProcedimento;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

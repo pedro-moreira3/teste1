@@ -171,7 +171,7 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
         try {
             this.pts = new ArrayList<>();
             if (this.paciente != null)
-                this.pts = PlanoTratamentoSingleton.getInstance().getBo().filtraRelatorioPT(null, null, null, null, null, UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(), this.paciente, null, null);
+                this.pts = PlanoTratamentoSingleton.getInstance().getBo().filtraRelatorioPT(null, null, null, null, null, UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(), this.paciente, null, null,null);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }

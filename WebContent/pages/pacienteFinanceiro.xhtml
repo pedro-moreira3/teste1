@@ -286,7 +286,7 @@ hr.hrSaldo {
 
 	<p:outputPanel id="viewFatura">
 		<ui:include src="faturaViewPaciente.xhtml">
-			<ui:param name="showNewLancamento" value="" />
+			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
 		<p:remoteCommand name="onCloseFaturaView" process="@this"
 			update="dtLancamentosConferir,dtFaturas,dtLancamentosPendentes" />
@@ -299,15 +299,7 @@ hr.hrSaldo {
 			<p:remoteCommand process="@this" name="onCloseFaturaView"/>
 	</p:outputPanel>	
 
-	<p:outputPanel id="resumoFinanceiro">
-		<p:outputPanel styleClass="BordNone">
-			<h1>
-				Resumo Financeiro - Paciente
-				<h:outputText value="#{pacienteMB.entity.dadosBasico.nome}" />
-			</h1>
-		</p:outputPanel>
-		<br />
-
+	<p:outputPanel id="resumoFinanceiro">		
 		<p:panel style="display:block;text-align:center;border:none;">
 			<p:panel
 				style="border:1px solid;width:30%;height:100px;text-align:center;display:inline-block;">
