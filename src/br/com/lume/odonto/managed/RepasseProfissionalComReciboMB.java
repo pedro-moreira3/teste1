@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,6 +138,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public RepasseProfissionalComReciboMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
+
         try {
             Empresa empresa = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             validaPagamentoPaciente = empresa.getValidarRepasseLancamentoOrigemValidadoBool();
@@ -152,16 +154,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
 
-      
-
     }
-    
-    @PostConstruct
-    public void init() {
-        HashMap<String, String> listVideos = new HashMap<String, String>();
-        listVideos.put("Como configurar o repasse", "https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1");
-        listVideos.put("Como pagar os profissionais", "https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1");
-        setListVideos(listVideos);
+
+    public void setVideos() {
+        //setListaVideosTutorial(new LinkedHashMap<String, String>());
+        getListaVideosTutorial().put("Como configurar o repasse", "https://www.youtube.com/v/CRJxEERXd4w?autoplay=1");
+        getListaVideosTutorial().put("Como realizar o repasse", "https://www.youtube.com/v/nq0tRYzVGpA?autoplay=1");
     }
 
     public void prepararReciboDiaria() {

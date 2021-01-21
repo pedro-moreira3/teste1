@@ -1362,7 +1362,6 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			</p:outputPanel>
 		</p:dialog>
 
-
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -1379,15 +1378,15 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										<h1>Repasse dos Profissionais</h1>								
 									</h:panelGroup>
 									<h:panelGroup>
-									<p:commandButton value="Video tutorial"
+									<ui:remove>
+									<p:commandButton value="Videos tutoriais"
 											icon="White fa fa-youtube-play White"
-											oncomplete="PF('dlgListaVideos').show()"											
-											process="@this" update="dlgListaVideos,painelVideoList"/>
-									</h:panelGroup>
-	
+											actionListener="#{repasseProfissionalComReciboMB.setVideos()}"	
+											oncomplete="PF('dlgListaVideos').show()"										
+											process="@this,painelVideoList" update="painelVideoList"/>
+									</ui:remove>		
+									</h:panelGroup>	
 						</p:panelGrid>	
-										
-										
 										<p:fieldset legend="Filtros">
 											<p:outputPanel id="filtros">
 												<p:panelGrid columns="3" layout="grid"

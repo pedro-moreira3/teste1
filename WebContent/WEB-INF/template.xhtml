@@ -287,7 +287,7 @@
 	
 	
 	
-		<p:dialog widgetVar="dlgVideo" responsive="true" modal="true"
+	<p:dialog widgetVar="dlgVideo" responsive="true" modal="true"
 		appendTo=":lume" resizable="false">
 		   <p:ajax event="close" update="painelVideo" />
 		<f:facet name="header">
@@ -302,21 +302,30 @@
 		</p:panel>		
 	</p:dialog>
 	
-	<p:dialog widgetVar="dlgListaVideos" responsive="true" modal="true" id="dlgListaVideos"
+	
+		<p:dialog widgetVar="dlgListaVideos" responsive="true" modal="true"
 		appendTo=":lume" resizable="false">
 		   <p:ajax event="close" update="painelVideoList" />
 		<f:facet name="header">
 			<h:outputText id="headerVideoTutorialList"
 				value="Videos Tutoriais" />				
 		</f:facet>
-		<p:panel id="painelVideoList" rendered="#{filaAtendimentoMB.listVideos != null and filaAtendimentoMB.listVideos.size() > 0}">
-			<ui:repeat value="#filaAtendimentoMB.listVideos.entrySet().toArray()}" var="entry">				
-				<h:link value="#{entry.key}" outcome="#{entry.value}"/>
-				<br />
-			</ui:repeat>
-		</p:panel>		
+		<p:outputPanel id="painelVideoList">		
+			<p:panel rendered="#{pacienteMB.listaVideosTutorial != null and pacienteMB.listaVideosTutorial.size() > 0}">
+			<p:outputLabel style="font-weight:bold;font-size:16px">Abaixo a lista de videos tutoriais!</p:outputLabel>
+				<br /><br />
+				<ui:repeat value="#{pacienteMB.listaVideosTutorial.entrySet().toArray()}" var="entry">					
+					<p:commandButton value="#{entry.key}"
+											icon="White fa fa-youtube-play White"
+											oncomplete="PF('dlgVideo').show()"
+											actionListener="#{filaAtendimentoMB.setVideoLink(entry.value)}"
+											process="@this,painelVideo" update="painelVideo" style="width:300px"/>
+					<br />
+					<br />
+				</ui:repeat>
+			</p:panel>		
+		</p:outputPanel>
 	</p:dialog>
-
 	<p:confirmDialog global="true">
 		<p:commandButton value="Sim" type="button"
 			styleClass="ui-confirmdialog-yes" icon="fa fa-check White" />

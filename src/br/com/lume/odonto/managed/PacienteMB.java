@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +190,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
-        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
+        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());     
         
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
@@ -244,6 +245,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             }
         }
+    }
+    
+    public void setVideos() {
+    //    setListaVideosTutorial(new LinkedHashMap <String, String>());
+        getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");
+        getListaVideosTutorial().put("Atualizar cadastro do paciente", "https://www.youtube.com/v/a1PS5p1OAAI?autoplay=1");                
     }
     
     public void salvarArquivoImportacao() {

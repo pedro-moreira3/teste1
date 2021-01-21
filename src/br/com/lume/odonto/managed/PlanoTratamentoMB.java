@@ -81,6 +81,7 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoRegiao.TipoRegiao;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoRegiaoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -374,6 +375,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(getEntity()));
                 carregaDlgProcedimentos(getEntity());
                 PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').show()");
+            }
+            
+            if(getEntity().getConvenio() != null && getEntity().getPaciente() != null) {
+                getEntity().getPaciente().setConvenio(getEntity().getConvenio());
+                PacienteSingleton.getInstance().getBo().persist(getEntity().getPaciente());
             }
 
             carregarPlanosTratamento();
