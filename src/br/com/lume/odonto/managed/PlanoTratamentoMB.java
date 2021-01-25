@@ -264,6 +264,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             renderizarValoresProcedimentos = false;
         }
     }
+    
+    public void setVideos() {
+        getListaVideosTutorial().clear();     
+        getListaVideosTutorial().put("Como utilizar o plano de tratamento", "https://www.youtube.com/v/SFJ3XrvCbt4?autoplay=1");                
+    }
+    
+    public void setVideosOrcamento() {
+        getListaVideosTutorial().clear();     
+        getListaVideosTutorial().put("Como gerar um orçamento", "https://www.youtube.com/v/MWZH_lOR6xI?autoplay=1");
+        getListaVideosTutorial().put("Realizando negociações", "https://www.youtube.com/v/3dPXE4cXt6M?autoplay=1");        
+    }
 
     //  public void incluirObservacoesCobrancaListener() {
     //   renderizarObservacoesCobranca = false;

@@ -311,15 +311,15 @@
 				value="Videos Tutoriais" />				
 		</f:facet>
 		<p:outputPanel id="painelVideoList">		
-			<p:panel rendered="#{pacienteMB.listaVideosTutorial != null and pacienteMB.listaVideosTutorial.size() > 0}">
+			<p:panel rendered="#{filaAtendimentoMB.listaVideosTutorial != null and filaAtendimentoMB.listaVideosTutorial.size() > 0}">
 			<p:outputLabel style="font-weight:bold;font-size:16px">Abaixo a lista de videos tutoriais!</p:outputLabel>
 				<br /><br />
-				<ui:repeat value="#{pacienteMB.listaVideosTutorial.entrySet().toArray()}" var="entry">					
+				<ui:repeat value="#{filaAtendimentoMB.listaVideosTutorial.entrySet().toArray()}" var="entry">					
 					<p:commandButton value="#{entry.key}"
 											icon="White fa fa-youtube-play White"
 											oncomplete="PF('dlgVideo').show()"
 											actionListener="#{filaAtendimentoMB.setVideoLink(entry.value)}"
-											process="@this,painelVideo" update="painelVideo" style="width:300px"/>
+											process="@this,painelVideo" update="painelVideo" style="width:400px"/>
 					<br />
 					<br />
 				</ui:repeat>

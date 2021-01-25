@@ -294,7 +294,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false);
-    }   
+    }  
+    
+    public void setVideos() {
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("Como fazer um agendamento", "https://www.youtube.com/v/9MqXHL6urTk?autoplay=1");
+        getListaVideosTutorial().put("Atualizando informações de agendamento", "https://www.youtube.com/v/Jw48ioxUdOg?autoplay=1");                
+    }
    
 
     public void carregarAgenda() {

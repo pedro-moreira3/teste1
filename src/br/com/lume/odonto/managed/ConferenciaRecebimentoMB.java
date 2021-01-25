@@ -66,6 +66,11 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         this.geraListaTarifa();
     }
 
+    public void setVideos() {        
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("Como conferir pagamentos e recebimentos", "https://www.youtube.com/v/V2-AwE7m8fQ?autoplay=1");              
+    }
+    
     public void carregarLancamentosConferencia() {
         this.setEntityList(null);
         try {

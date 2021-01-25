@@ -55,6 +55,11 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         this.carregarDatasIniciais();
         //this.filtra();
     }
+    
+    public void setVideos() {
+        getListaVideosTutorial().clear();     
+        getListaVideosTutorial().put("Como funciona o extrato", "https://www.youtube.com/v/SoUxFuxIxpg?autoplay=1");                
+    }
 
     public void onTabChange(TabChangeEvent event) {       
      //   if (event.getTab().getId().contains("tab4")) {

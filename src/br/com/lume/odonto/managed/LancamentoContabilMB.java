@@ -153,6 +153,13 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    
+    public void setVideos() {        
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("como criar pagamento/recebimento sem recorrência", "https://www.youtube.com/v/eA96HagTCtI?autoplay=1");
+        getListaVideosTutorial().put("como criar pagamento/recebimento com recorrência", "https://www.youtube.com/v/MOtuj1mdN8c?autoplay=1");                
+    }
 
 //    public void geraListaOrigens() {
 //        try {

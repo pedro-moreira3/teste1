@@ -25,14 +25,12 @@
 					<h:panelGroup>				
 						<h1>Paciente</h1>
 					</h:panelGroup>	
-					<h:panelGroup>
-					<ui:remove>
+					<h:panelGroup>					
 						<p:commandButton value="Videos tutoriais"
 						icon="White fa fa-youtube-play White"
 						oncomplete="PF('dlgListaVideos').show()"	
 						actionListener="#{pacienteMB.setVideos()}"									
-						process="@this,painelVideoList" update="painelVideoList"/>
-					</ui:remove>	
+						process="@this" update="painelVideoList"/>						
 					</h:panelGroup>
 				</p:panelGrid>
 					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
