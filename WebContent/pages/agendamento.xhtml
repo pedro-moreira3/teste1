@@ -548,8 +548,21 @@ div.ui-selectoneradio label {
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<h1 style="margin-bottom: 5px">Agendamento</h1>
+				<div class="card card-w-title">					
+					
+					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
+					<h:panelGroup>				
+						<h1>Agendamento</h1>
+					</h:panelGroup>	
+					<h:panelGroup>					
+						<p:commandButton value="Videos tutoriais"
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{agendamentoMB.setVideos()}"									
+						process="@this" update="painelVideoList"/>						
+					</h:panelGroup>
+				</p:panelGrid>
+					
 					<br />
 
 					<p:panel id="pnAgnd" styleClass="NoChildPadding"

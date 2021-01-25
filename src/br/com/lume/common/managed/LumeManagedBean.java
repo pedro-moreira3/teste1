@@ -43,6 +43,7 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
@@ -79,8 +80,6 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     private String videoLink;
     
-    private Map <String, String> listaVideosTutorial = new LinkedHashMap <String, String>();
-    
     @PostConstruct
     public void init() {
         this.getEntity();
@@ -94,6 +93,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     //    Iugu.getInstance().atualizaFaturas(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
     //    reloadViewSub();
  //   }
+    
+    public Map<String, String> getListaVideosTutorial() {
+        return Utils.getListaVideosTutorial();
+    }
     
     public void reloadViewSub() {
         try {
@@ -554,15 +557,6 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public void setVideoLink(String videoLink) {
         this.videoLink = videoLink;
-    }
-    
-    public Map<String, String> getListaVideosTutorial() {
-        return listaVideosTutorial;
-    }
-
-    
-    public void setListaVideosTutorial(Map<String, String> listaVideosTutorial) {
-        this.listaVideosTutorial = listaVideosTutorial;
     }
 
 }

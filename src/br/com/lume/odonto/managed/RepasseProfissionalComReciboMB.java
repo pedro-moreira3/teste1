@@ -157,9 +157,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     }
 
     public void setVideos() {
-        //setListaVideosTutorial(new LinkedHashMap<String, String>());
+        getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Como configurar o repasse", "https://www.youtube.com/v/CRJxEERXd4w?autoplay=1");
         getListaVideosTutorial().put("Como realizar o repasse", "https://www.youtube.com/v/nq0tRYzVGpA?autoplay=1");
+        getListaVideosTutorial();       
     }
 
     public void prepararReciboDiaria() {

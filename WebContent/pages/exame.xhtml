@@ -129,14 +129,27 @@
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
 			<div class="Card">
-
-				<p:panelGrid columns="4" layout="grid"
-					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
-					<p:commandButton id="newExame" icon="ui-icon-add" value="Novo"
+				
+				
+				<p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3" styleClass="ui-panelgrid-blank ui-fluid form-group">
+					<h:panelGroup>				
+						<p:commandButton id="newExame" icon="ui-icon-add" value="Novo"
 						actionListener="#{exameMB.actionNew}"
 						onsuccess="PF('dlgViewExame').show()"
 						update=":lume:tabViewPaciente:pnPrincipalExame" process="@this" />
+					</h:panelGroup>	
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup>					
+						<p:commandButton value="Videos tutoriais"
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{exameMB.setVideos()}"									
+						process="@this" update="painelVideoList"/>						
+					</h:panelGroup>
 				</p:panelGrid>
+				
+				
 				<div class="EmptyBox20"></div>
 
 				<p:outputPanel id="tbExame">

@@ -124,6 +124,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 			<p:outputPanel id="mainViewPT">
+			
+					<div style="width:100%;text-align: right;">
+						<p:commandButton value="Videos tutoriais" style="width:200px;margin-top:0px !important;margin-bottom:0px !important;padding:0px 0px !important;"
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{planoTratamentoMB.setVideos()}"									
+						process="@this" update="painelVideoList"/>
+					</div>
+					
+											
+				
+			
 				<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-6, ui-g-6"
@@ -1429,13 +1441,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:scrollPanel mode="native" style="border: none; overflow-x: none;">
 
 				<p:outputPanel id="orcamentoViewTable">
-					<p:panelGrid columns="2" layout="grid" id="botoesOrcamentoPT"
+					<p:panelGrid columns="3" layout="grid" id="botoesOrcamentoPT"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton id="newOrcamento" icon="ui-icon-add"
 							actionListener="#{planoTratamentoMB.actionNewOrcamento}"
 							update=":lume:tabViewPaciente:painelNegociacao,:lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
 							value="Novo Orçamento" process="@this" styleClass="NavyButton"
 							disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+					
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup>					
+						<p:commandButton value="Videos tutoriais"
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{planoTratamentoMB.setVideosOrcamento()}"									
+						process="@this" update="painelVideoList"/>						
+					</h:panelGroup>
 					</p:panelGrid>
 
 					<p:dataTable filterDelay="1500" reflow="true" style="height: 100%"

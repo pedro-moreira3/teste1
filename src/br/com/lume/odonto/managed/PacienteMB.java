@@ -248,7 +248,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
     
     public void setVideos() {
-    //    setListaVideosTutorial(new LinkedHashMap <String, String>());
+        getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");
         getListaVideosTutorial().put("Atualizar cadastro do paciente", "https://www.youtube.com/v/a1PS5p1OAAI?autoplay=1");                
     }

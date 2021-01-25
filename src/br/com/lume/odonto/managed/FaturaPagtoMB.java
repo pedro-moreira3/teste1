@@ -230,6 +230,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         updateWichScreenOpenForFaturaView();
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
+    
+    public void setVideos() {        
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("Como fazer o recebimento", "https://www.youtube.com/v/LeKXFc8hKgo?autoplay=1");
+        getListaVideosTutorial().put("Paciente indeciso? Faça várias negociações!", "https://www.youtube.com/v/4KPlYGfPr50?autoplay=1");                
+    }
 
     public void updateWichScreenOpenForFaturaView() {
         try {

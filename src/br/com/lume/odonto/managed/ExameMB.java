@@ -64,6 +64,11 @@ public class ExameMB extends LumeManagedBean<Exame> {
         super(ExameSingleton.getInstance().getBo());
         this.setClazz(Exame.class);
     }
+    
+    public void setVideos() {
+        getListaVideosTutorial().clear();     
+        getListaVideosTutorial().put("Como incluir exames do paciente", "https://www.youtube.com/v/KAVfeQtVuD0?autoplay=1");                
+    }
 
     public StreamedContent getArquivoGenerico(byte[] file, String nome) {
         StreamedContent arquivo = null;

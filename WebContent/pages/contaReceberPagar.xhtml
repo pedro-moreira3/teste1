@@ -79,8 +79,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:tab id="tab1" title="Pagamentos/Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
+								
 
-									<h1>Pagamentos/Recebimentos</h1>
+								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>				
+										<h1>Pagamentos/Recebimentos</h1>
+									</h:panelGroup>	
+									<h:panelGroup>					
+										<p:commandButton value="Videos tutoriais"
+										icon="White fa fa-youtube-play White"
+										oncomplete="PF('dlgListaVideos').show()"	
+										actionListener="#{lancamentoContabilMB.setVideos()}"									
+										process="@this" update="painelVideoList"/>						
+									</h:panelGroup>
+								</p:panelGrid>
 
 									<div class="EmptyBox20"></div>
 
@@ -363,6 +375,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<div class="ui-g-12 ui-lg-12">
 
 									<p:outputPanel styleClass="BordNone">
+										
+										
+										
+								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>				
 										<h1>
 											Conferência de Recebimentos/Pagamentos
 											<h:outputLabel class="fa fa-question" id="tooltipTitulo"
@@ -372,6 +389,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												e também consultar os lançamentos conforme os filtros."
 												position="bottom" style="width:30%;" />
 										</h1>
+									</h:panelGroup>	
+									<h:panelGroup>					
+										<p:commandButton value="Videos tutoriais"
+										icon="White fa fa-youtube-play White"
+										oncomplete="PF('dlgListaVideos').show()"	
+										actionListener="#{conferenciaRecebimentoMB.setVideos()}"									
+										process="@this" update="painelVideoList"/>						
+									</h:panelGroup>
+								</p:panelGrid>
+										
 										<div class="SeparatorFull"></div>
 									</p:outputPanel>
 									<br />
@@ -720,7 +747,25 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:outputPanel id="pnExtratoDetalhado" styleClass="BordNone">
 
 										<p:outputPanel styleClass="BordNone">
-											<h1>Extrato Financeiro</h1>
+											
+											
+								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup>				
+										<h1>
+											Extrato Financeiro											
+										</h1>
+									</h:panelGroup>	
+									<h:panelGroup>					
+										<p:commandButton value="Videos tutoriais"
+										icon="White fa fa-youtube-play White"
+										oncomplete="PF('dlgListaVideos').show()"	
+										actionListener="#{relatorioContabilDetalhadoMB.setVideos()}"									
+										process="@this" update="painelVideoList"/>						
+									</h:panelGroup>
+								</p:panelGrid>
+											
+											
+											
 											<div class="SeparatorFull"></div>
 										</p:outputPanel>
 										<p:panelGrid columns="4"
