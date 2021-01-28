@@ -364,7 +364,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="4" layout="grid"
+						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
@@ -377,14 +377,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Limpar"
 								actionListener="#{relatorioPlanoTratamentoMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
-
-							<ui:remove>
-								<p:commandButton immediate="true" value="Excel" ajax="false"
-									icon="White fa fa-file-excel-o" styleClass="GreenButton">
-									<p:dataExporter encoding="iso-8859-1" type="xls"
-										target="dtPrincipal" fileName="planoTratamento" />
-								</p:commandButton>
-							</ui:remove>
+							
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
