@@ -197,8 +197,16 @@
 			ga('send', 'pageview');
 
 			
-			function startTimer() {
-				PF('loading').show();
+			function startTimer() {				
+				
+				//para customizar o loading das telas
+				if(window.location.href.includes("emissaoDocumento")){
+					
+				}else{
+					PF('loading').show();	
+				}
+				
+				
 				//  ajaxInProgress = setTimeout(function () {
 		        //        PF('loading').show();
 		        //    }, 500);
