@@ -507,7 +507,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:commandButton icon="White fa fa-times-circle"
 									onclick="PF('devolver').show();" title="Encerrar"
 									process="@this" styleClass="OrangeButton"
-									action="#{planoTratamentoMB.setEntity(m)}"
+									action="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
 									rendered="#{m.status ne 'S' and m.status ne 'E' and planoTratamentoMB.admin}" />
 
 								<ui:remove>
@@ -518,43 +518,61 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 						</p:dataTable>
-					</p:outputPanel>
+					</p:outputPanel>					
+					
+						<p:dialog id="devolver" widgetVar="devolver"
+		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
+		appendTo=":lume" closable="false">
+		<p:outputPanel id="pgFinalizar">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
+						style="border:0px none; background-color:transparent;">
 
-					<p:dialog id="devolver" widgetVar="devolver" header="Finalizar"
-						responsive="true" modal="true">
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
-							layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
+						<p:outputLabel for="justificativa" value="Motivo: " />
+						<p:selectOneMenu id="justificativa"
+							value="#{planoTratamentoMB.justificativa}" converter="dominio"
+							required="true">
+							<f:selectItem itemValue="#{null}"
+								itemLabel="Selecione um motivo" />
+							<f:selectItems value="#{planoTratamentoMB.justificativas}"
+								var="justificativa" itemLabel="#{justificativa.nome}"
+								itemValue="#{justificativa}" />
+						</p:selectOneMenu>						
+						<p:message for="justificativa" styleClass="msg" />
+						<p:outputLabel for="retorno" value="Data retorno : " />
+						<p:calendar id="retorno" value="#{planoTratamentoMB.retorno}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}" navigator="true"
+							yearRange="-0:+1" mindate="#{odontoMB.sysdate}" mask="true">
+						</p:calendar>
 
-							<p:outputLabel for="justificativa" value="Justificativa : " />
-							<p:selectOneMenu id="justificativa"
-								value="#{planoTratamentoMB.justificativa}" converter="dominio"
-								required="true">
-								<f:selectItem itemValue="#{null}"
-									itemLabel="Selecione uma justificativa" />
-								<f:selectItems value="#{planoTratamentoMB.justificativas}"
-									var="justificativa" itemLabel="#{justificativa.nome}"
-									itemValue="#{justificativa}" />
-							</p:selectOneMenu>
+						<p:outputLabel for="observacoesretornopt"
+							value="Observações do Retorno : " />
+						<p:inputTextarea id="observacoesretornopt" rows="3" cols="33"
+							value="#{planoTratamentoMB.observacoesRetorno}" maxlength="200" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:outputPanel>
 
-							<p:outputLabel for="retorno" value="Data retorno : " />
-							<p:calendar id="retorno" value="#{planoTratamentoMB.retorno}"
-								pattern="dd/MM/yyyy" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}" navigator="true"
-								yearRange="-0:+1" mindate="#{odontoMB.sysdate}" mask="true">
-							</p:calendar>
-						</p:panelGrid>
-
-						<div class="SeparatorFull"></div>
-						<div class="Container100 Responsive100">
-							<p:commandButton id="persistDevolver" icon="White fa fa-save"
-								value="Salvar"
-								actionListener="#{planoTratamentoMB.actionFinalizar}"
-								process="@this, :lume:justificativa"
-								oncomplete="handleDialogRequest(xhr, status, args)"
-								styleClass="GreenButton" />
-						</div>
-					</p:dialog>
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" layout="grid" id="botoesFinalizaPT"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="persistDevolver" icon="White fa fa-save"
+				value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizar}"
+				update=":lume:tabViewPaciente:mainViewPT, pgFinalizar, dtPrincipal"
+				oncomplete="handleDialogRequest(xhr, status, args);"
+				process="@this, pgFinalizar, botoesFinalizaPT,"
+				styleClass="GreenButton" />
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				actionListener="#{planoTratamentoMB.actionCancelFinalizar}"
+				process="@this" styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
+					
 
 				</div>
 			</div>

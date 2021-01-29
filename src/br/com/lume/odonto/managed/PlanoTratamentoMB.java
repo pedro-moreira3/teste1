@@ -478,6 +478,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().executeScript("PF('reativar').show()");
         }
     }
+    
+    public void setEntityFromRelatorio(PlanoTratamento planoTratamento) {
+       setEntity(planoTratamento);
+       if (this.pacienteMB == null) {
+           this.pacienteMB = new PacienteMB();           
+       }
+       this.pacienteMB.setEntity(planoTratamento.getPaciente());
+    }
 
     public void actionReativar(ActionEvent event) {
         try {
