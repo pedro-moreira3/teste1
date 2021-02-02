@@ -741,7 +741,287 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</div>
 						</p:tab>
 
-						<p:tab id="tab4" title="Extrato">
+						<p:tab id="tab4" title="Ajuste de contrato por IGPM">
+							<div class="ui-g ui-fluid">
+								<div class="ui-g-12 ui-lg-12">
+
+									<p:outputPanel styleClass="BordNone">
+										<h1>
+											Ajuste de contrato por IGPM
+											<h:outputLabel class="fa fa-question" id="tooltipTituloIGPM"
+												style="font-size:24px; margin-left:10px;" />
+											<p:tooltip for="tooltipTituloIGPM"
+												value="Nessa tela você pode aplicar o reajuste de valores por IGPM, para os planos de tratamento que
+												 dependam do mesmo, e também é possível consultar os planos que já possuem e que não possuem reajuste."
+												position="bottom" style="width:30%;" />
+										</h1>
+										<div class="SeparatorFull"></div>
+									</p:outputPanel>
+									<br />
+
+									<p:panelGrid columns="3" layout="grid" id="filtrosIGPM"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+										<h:panelGroup>
+											<p:outputLabel for="listaPeriodoIGPM"
+												value="Período de aniversário dos planos:" />
+											<p:selectOneMenu id="listaPeriodoIGPM"
+												value="#{ajusteIGPMMB.periodoPt}">
+
+												<p:ajax process="@this"
+													listener="#{ajusteIGPMMB.actionTrocaDatas}" />
+												<f:selectItem itemValue="1" itemLabel="Hoje" />
+												<f:selectItem itemValue="9" itemLabel="Mês Atual" />
+												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
+												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
+												<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
+												<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
+												<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
+												<f:selectItem itemValue="7" itemLabel="Mês anterior" />
+												<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<ui:remove>
+										<h:panelGroup id="dataInicioIGPM">
+											<p:outputLabel for="dataInicialIGPM"
+												value="Data de criação de:" />
+											<p:calendar id="dataInicialIGPM"
+												value="#{ajusteIGPMMB.dataInicial}" autocomplete="false"
+												locale="#{lumeSecurity.locale}" mask="true">
+												<p:ajax process="@this" />
+											</p:calendar>
+										</h:panelGroup>
+
+										<h:panelGroup id="dataFimIGPM">
+											<p:outputLabel for="dataFinalIGPM"
+												value="Data de criação até:" />
+											<p:calendar id="dataFinalIGPM"
+												value="#{ajusteIGPMMB.dataFinal}" autocomplete="false"
+												locale="#{lumeSecurity.locale}" mask="true">
+												<p:ajax process="@this" />
+											</p:calendar>
+										</h:panelGroup>
+										</ui:remove>
+
+										<h:panelGroup>
+											<h:outputText for="filtroPacienteIGPM" value="Paciente:" />
+											<p:autoComplete id="filtroPacienteIGPM"
+												value="#{ajusteIGPMMB.filtroPorPaciente}"
+												completeMethod="#{ajusteIGPMMB.sugestoesPacientes}" var="p"
+												itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												converter="paciente" forceSelection="true"
+												scrollHeight="400" minQueryLength="3" queryDelay="1000">
+
+												<p:column headerText="Código" style="text-align: center;">
+													<h:outputText value="#{p.codigo}" />
+												</p:column>
+												<p:column headerText="Nome">
+													<h:outputText value="#{p.dadosBasico.nome}" />
+												</p:column>
+												<p:column headerText="Celular">
+													<h:outputText value="#{p.dadosBasico.celular}" />
+												</p:column>
+												<p:column headerText="Nome da Mãe">
+													<h:outputText value="#{p.nomeMae}" />
+												</p:column>
+
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
+										</h:panelGroup>
+
+									</p:panelGrid>
+
+									<p:outputPanel style="margin:20px;">
+
+										<h:panelGroup style="margin-top:10px;">
+											<h:outputLabel value="Período de reajuste: " />
+
+											<p:selectManyCheckbox value="#{ajusteIGPMMB.periodoReajuste}"
+												layout="grid" columns="6">
+												<f:selectItem itemLabel="Anual" itemValue="A"
+													itemEscaped="false" />
+												<f:selectItem itemLabel="Semestral" itemValue="S"
+													itemEscaped="false" />
+
+												<p:ajax process="@this"/>
+											</p:selectManyCheckbox>
+										</h:panelGroup>
+
+										<h:panelGroup style="margin-top:10px;display:block;">
+											<h:outputLabel value="Mostrar os planos: " />
+
+											<p:selectManyCheckbox value="#{ajusteIGPMMB.statusReajuste}"
+												layout="grid" columns="6">
+												<f:selectItem itemLabel="Já reajustados" itemValue="S"
+													itemEscaped="false" />
+												<f:selectItem itemLabel="À reajustar" itemValue="E"
+													itemEscaped="false" />
+
+												<p:ajax process="@this" />
+											</p:selectManyCheckbox>
+
+											<p:selectManyCheckbox value="#{ajusteIGPMMB.tipoPlano}"
+												layout="grid" columns="6">
+												<f:selectItem itemLabel="Ortodôntico" itemValue="O"
+													itemEscaped="false" />
+												<f:selectItem itemLabel="Clínica geral" itemValue="N"
+													itemEscaped="false" />
+
+												<p:ajax process="@this" />
+											</p:selectManyCheckbox>
+										</h:panelGroup>
+									</p:outputPanel>
+
+									<p:panelGrid columns="3" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+										<h:panelGroup>
+											<p:commandButton value="Pesquisar"
+												action="#{ajusteIGPMMB.carregarPlanos}"
+												oncomplete="PF('dtPlanos').filter()"
+												icon="White fa fa-search" update="dtPlanos" process="@this"
+												styleClass="NavyButton" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:commandButton value="Reajustar planos selecionados"
+												actionListener="#{ajusteIGPMMB.reajusteMultiplosPlanos}"
+												oncomplete="PF('dlgAplicarIGPM').show();"
+												icon="White fa fa-dollar"
+												update="dtPlanos,:lume:dlgAplicarIGPM"
+												process="@this,dtPlanos" styleClass="NavyButton" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:splitButton icon="White fa fa fa-file-excel-o"
+												value="Exportar tabela para Excel"
+												styleClass="GreenSplitButton"
+												actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('xls')}"
+												ajax="false" process="dtPlanos,@this" update="@this"
+												immediate="true"
+												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+												<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+
+												<p:menuitem value="Exportar tabela para PDF"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('pdf')}"
+													ajax="false" process="dtPlanos" immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+												</p:menuitem>
+												<p:menuitem value="Exportar tabela para CSV"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('csv')}"
+													ajax="false" process="dtPlanos,@this" immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+												</p:menuitem>
+											</p:splitButton>
+										</h:panelGroup>
+
+									</p:panelGrid>
+
+									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+										id="dtPlanos" value="#{ajusteIGPMMB.entityList}" var="pt"
+										rows="15" paginator="true" paginatorPosition="bottom"
+										widgetVar="dtPlanos" rowKey="#{pt}"
+										selection="#{ajusteIGPMMB.planos}"
+										binding="#{ajusteIGPMMB.tabelaPlanosIgpm}">
+
+										<f:facet name="header">Planos de tratamento</f:facet>
+
+										<p:column selectionMode="multiple"
+											style="width:16px;text-align:center">
+										</p:column>
+
+										<p:column headerText="Ações" exportable="false">
+											<p:commandButton icon="fa fa-dollar" process="@this"
+												oncomplete="PF('dlgAplicarIGPM').show();"
+												styleClass="NavyButton" title="Aplicar reajuste"
+												update=":lume:pnReajuste"
+												actionListener="#{ajusteIGPMMB.carregarProcedimentos(pt)}" />
+
+											<p:commandButton icon="fa fa-edit" process="@this"
+												oncomplete="PF('dlgAplicarIGPM').show();"
+												styleClass="OrangeButton" title="Editar reajuste"
+												update=":lume:pnReajuste"
+												actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
+
+										</p:column>
+										<p:column filterBy="#{pt.paciente.dadosBasico.nome}"
+											sortBy="#{pt.paciente.dadosBasico.nome}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											filterMatchMode="contains" headerText="Paciente">
+
+											<p:commandLink value="#{pt.paciente.dadosBasico.nome}"
+												process="@this" title="#{pt.paciente.id}"
+												actionListener="#{tabPacienteMB.loadPaciente(pt.paciente)}"
+												oncomplete="PF('dlgFichaPaciente').show()"
+												update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+										</p:column>
+										<p:column filterBy="#{pt.descricao}" sortBy="#{pt.descricao}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											filterMatchMode="contains" headerText="Plano de tratamento">
+											<h:outputText value="#{pt.descricao}" title="#{pt.id}" />
+										</p:column>
+
+										<p:column filterBy="#{pt.tipoPlano}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											sortBy="#{pt.tipoPlano}" filterMatchMode="contains"
+											headerText="Tipo do plano">
+											<h:outputText value="#{pt.tipoPlano}" />
+										</p:column>
+										<p:column headerText="Criado por"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											filterBy="#{pt.profissional.dadosBasico.nome}"
+											sortBy="#{pt.profissional.dadosBasico.nome}"
+											filterMatchMode="contains">
+											<h:outputText value="#{pt.profissional.dadosBasico.nome}" />
+										</p:column>
+										<p:column filterBy="#{pt.dataHoraStr}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											filterMatchMode="contains" headerText="Data de Criação"
+											sortBy="#{pt.dataHoraStrOrd}">
+											<h:outputText value="#{pt.dataHoraStr}" />
+										</p:column>
+										<p:column filterBy="#{ajusteIGPMMB.dataAprovacaoOrc(pt)}"
+											filterMatchMode="contains"
+											headerText="Data de aprovação orçamento"
+											sortBy="#{ajusteIGPMMB.dataAprovacaoOrc(pt)}">
+											<h:outputText value="#{ajusteIGPMMB.dataAprovacaoOrc(pt)}" />
+										</p:column>
+										<p:column headerText="Status" sortBy="#{pt.statusDescritivo}"
+											filterBy="#{pt.statusDescritivo}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
+											<p:outputLabel value="#{pt.statusDescritivo}" />
+										</p:column>
+
+										<p:column headerText="Data ultimo reajuste"
+											sortBy="#{ajusteIGPMMB.ultimoReajuste(pt)}"
+											filterBy="#{ajusteIGPMMB.ultimoReajuste(pt)}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
+											<p:outputLabel value="#{ajusteIGPMMB.ultimoReajuste(pt)}" />
+										</p:column>
+
+										<p:column filterBy="#{ajusteIGPMMB.valorProcedimentos(pt)}"
+											sortBy="#{ajusteIGPMMB.valorProcedimentos(pt)}"
+											filterMatchMode="contains"
+											headerText="Valor Total dos Procedimentos">
+											<h:outputText value="#{ajusteIGPMMB.valorProcedimentos(pt)}">
+												<f:convertNumber currencySymbol="R$" type="currency"
+													locale="#{lumeSecurity.locale}" />
+											</h:outputText>
+										</p:column>
+									</p:dataTable>
+
+								</div>
+							</div>
+						</p:tab>
+
+						<p:tab id="tab5" title="Extrato">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 									<p:outputPanel id="pnExtratoDetalhado" styleClass="BordNone">
@@ -1126,6 +1406,153 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					</p:dialog>
 
+					<p:dialog id="dlgAplicarIGPM" widgetVar="dlgAplicarIGPM"
+						width="100%" height="100%" responsive="true" appendTo=":lume"
+						modal="true" header="Aplicar reajuste por IGPM" resizable="false">
+
+						<p:outputPanel id="pnReajuste">
+							<p:scrollPanel>
+								<p:panelGrid id="pnNovoReajusteOrcamento" columns="2"
+									layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+									<h:panelGroup>
+										<p:outputLabel value="Informe o percentual de reajuste:"
+											style="display:inline-block;width:80%;" />
+										<p:inputNumber id="valorIGPM"
+											value="#{ajusteIGPMMB.indiceReajuste}" symbol="%"
+											maxlength="100" decimalPlaces="2" symbolPosition="s"
+											style="display:inline-block;width:80%;">
+											<p:ajax
+												process="@this,tbViewProcedimentoOrcamento,resultadoIGPM"
+												update="tbViewProcedimentoOrcamento,resultadoIGPM" />
+										</p:inputNumber>
+
+										<h:outputLabel class="fa fa-question" id="tooltipIGPM"
+											style="font-size:24px; margin-left:10px;" />
+										<p:tooltip for="tooltipIGPM"
+											value="Indice em percentual do IGPM atual."
+											style="width:10%;" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:outputLabel value="Desconto de IGPM:"
+											style="display:inline-block;width:60%;" />
+										<p:inputNumber id="descontoIGPM"
+											value="#{ajusteIGPMMB.descontoReajuste}" symbol="%"
+											maxlength="100" decimalPlaces="2" symbolPosition="s"
+											style="display:inline-block;width:80%;">
+											<p:ajax
+												process="@this,tbViewProcedimentoOrcamento,resultadoIGPM"
+												update="tbViewProcedimentoOrcamento,resultadoIGPM" />
+										</p:inputNumber>
+										<h:outputLabel class="fa fa-question" id="tooltipIGPMDesconto"
+											style="font-size:24px; margin-left:10px;" />
+										<p:tooltip for="tooltipIGPMDesconto"
+											value="Desconto em percentual do IGPM atual a ser aplicado."
+											style="width:10%;" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:outputLabel value="Reajuste a aplicar:" />
+										<p:inputNumber id="resultadoIGPM"
+											value="#{ajusteIGPMMB.resultadoReajuste()}" symbol="%"
+											maxlength="100" decimalPlaces="2" symbolPosition="s"
+											disabled="true">
+										</p:inputNumber>
+									</h:panelGroup>
+
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+									<p:dataTable filterDelay="1500" reflow="true"
+										emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
+										id="tbViewProcedimentoOrcamento"
+										widgetVar="tbViewProcedimentoOrcamento" var="procedimento"
+										value="#{ajusteIGPMMB.itensOrcamentos}"
+										selection="#{ajusteIGPMMB.itensOrcamentosReajuste}" rows="10"
+										paginator="true" paginatorPosition="bottom">
+										<f:facet name="header">
+											<h:outputText value="Procedimentos" />
+										</f:facet>
+										<p:column headerText="Paciente" filterMatchMode="contains"
+											filterBy="#{ajusteIGPMMB.nomePacientePTP(procedimento)}"
+											sortBy="#{ajusteIGPMMB.nomePacientePTP(procedimento)}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											rendered="#{ajusteIGPMMB.renderedDadosMultiplos}">
+											<div style="width: 100%; text-align: left">
+												<h:outputText
+													value="#{ajusteIGPMMB.nomePacientePTP(procedimento)}" />
+											</div>
+										</p:column>
+										<p:column headerText="Plano de tratamento"
+											filterMatchMode="contains"
+											filterBy="#{ajusteIGPMMB.nomePlanoTratamentoPTP(procedimento)}"
+											sortBy="#{ajusteIGPMMB.nomePlanoTratamentoPTP(procedimento)}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
+											rendered="#{ajusteIGPMMB.renderedDadosMultiplos}">
+											<div style="width: 100%; text-align: left">
+												<h:outputText
+													value="#{ajusteIGPMMB.nomePlanoTratamentoPTP(procedimento)}" />
+											</div>
+										</p:column>
+										<p:column headerText="Procedimento" filterMatchMode="contains"
+											filterBy="#{procedimento.descricao}"
+											sortBy="#{procedimento.descricao}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
+											<div style="width: 100%; text-align: left">
+												<h:outputText value="#{procedimento.descricao}" />
+											</div>
+										</p:column>
+										<p:column headerText="Valor Original"
+											filterMatchMode="contains" style="width: 200px;"
+											filterBy="#{procedimento.valorOriginal}"
+											sortBy="#{procedimento.valorOriginal}">
+											<h:outputText value="#{procedimento.valorOriginal}">
+												<f:convertNumber currencySymbol="R$" type="currency" />
+											</h:outputText>
+										</p:column>
+										<p:column headerText="Valor com reajuste"
+											filterMatchMode="contains" style="width: 200px;"
+											filterBy="#{ajusteIGPMMB.valorProcReajustado(procedimento)}"
+											sortBy="#{ajusteIGPMMB.valorProcReajustado(procedimento)}">
+											<h:outputText
+												value="#{ajusteIGPMMB.valorProcReajustado(procedimento)}">
+												<f:convertNumber currencySymbol="R$" type="currency" />
+											</h:outputText>
+										</p:column>
+										<p:column headerText="Incluso?" width="50">
+											<p:selectBooleanCheckbox value="#{procedimento.procedimentoInclusoReajuste}">
+												<p:ajax process="@this"/>
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:dataTable>
+
+								</p:panelGrid>
+
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<p:commandButton value="Aplicar reajuste" icon="fa fa-save"
+										styleClass="GreenButton" process="@this,pnReajuste"
+										update=":lume:tv:dtPlanos"
+										actionListener="#{ajusteIGPMMB.aplicarReajuste}"
+										oncomplete="PF('dlgAplicarIGPM').hide();">
+									</p:commandButton>
+
+									<h:panelGroup></h:panelGroup>
+
+									<p:commandButton value="Fechar" icon="fa fa-close"
+										styleClass="NavyButton"
+										oncomplete="PF('dlgAplicarIGPM').hide();"
+										actionListener="#{ajusteIGPMMB.closeDlg}" process="@this" />
+								</p:panelGrid>
+							</p:scrollPanel>
+						</p:outputPanel>
+
+					</p:dialog>
+					
 
 				</div>
 			</div>
