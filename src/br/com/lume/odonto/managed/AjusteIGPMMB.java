@@ -249,7 +249,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
             this.orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(pt);
             for (Orcamento orc : this.orcamentos) {
                 itens.addAll(orc.getItens());
-                //itens.removeIf((oi) -> (oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getDataFinalizado() != null));
+                itens.removeIf((oi) -> !oi.isIncluso());
             }
             for(OrcamentoItem oi : itens) {
                 if(oi.getValorReajustado() != null && oi.getValorReajustado().compareTo(BigDecimal.ZERO) > 0) {
