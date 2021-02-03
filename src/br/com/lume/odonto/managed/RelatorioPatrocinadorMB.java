@@ -83,7 +83,7 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
             
             if(afiliacao.getModalidadeContrato().equals("Mensal")) {
                 calculaRelatorioMensal();
-            }else if(afiliacao.getModalidadeContrato().equals("Comissao")) {
+            }else if(afiliacao.getModalidadeContrato().equals("Comissao") || afiliacao.getModalidadeContrato().equals("Pré")) {
                 calculaRelatorioComissao();
             }
             
