@@ -1498,6 +1498,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													value="#{ajusteIGPMMB.nomePlanoTratamentoPTP(procedimento)}" />
 											</div>
 										</p:column>
+										<p:column headerText="Orçamento" filterMatchMode="contains"
+											filterBy="#{procedimento.orcamento.descricao}"
+											sortBy="#{procedimento.orcamento.descricao}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
+											<div style="width: 100%; text-align: left">
+												<h:outputText value="#{procedimento.orcamento.descricao}" />
+											</div>
+										</p:column>
+										<p:column headerText="Data de criação do orçamento" filterMatchMode="contains"
+											filterBy="#{procedimento.orcamento.dataCriacaoStr}"
+											sortBy="#{procedimento.orcamento.dataCriacaoStr}"
+											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
+											<div style="width: 100%; text-align: left">
+												<h:outputText value="#{procedimento.orcamento.dataCriacaoStr}" />
+											</div>
+										</p:column>
 										<p:column headerText="Procedimento" filterMatchMode="contains"
 											filterBy="#{procedimento.descricao}"
 											sortBy="#{procedimento.descricao}"
