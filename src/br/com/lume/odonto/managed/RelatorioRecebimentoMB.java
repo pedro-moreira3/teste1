@@ -190,8 +190,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     
     public String tipoPessoa(Lancamento lancamento) throws Exception {
         
-        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
-        
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);        
        
         if(lc != null) {
             TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());   
@@ -205,7 +204,6 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 }
             }
         }
-        
         
         return "Paciente";
     }

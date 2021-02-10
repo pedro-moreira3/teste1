@@ -97,6 +97,37 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="true" />
 							</h:panelGroup>
+							
+							
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoAReceberPagamento"
+									value="Período da data de pagamento:" />
+								<p:selectOneMenu id="filtroPeriodoAReceberPagamento"
+									value="#{relatorioPagamentoMB.periodoBuscaPagamento}"
+									converter="enumPeriodoBusca">
+									<p:ajax process="@this" update="inicioPagamento fimPagamento"
+										listener="#{relatorioPagamentoMB.actionTrocaDatasPagamento}" />
+									<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+										var="periodo" itemValue="#{periodo}"
+										itemLabel="#{periodo.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="inicioPagamento" value="Data de pagamento inicio: " />
+								<p:calendar id="inicioPagamento" value="#{relatorioPagamentoMB.inicioPagamento}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="false" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="fimPagamento" value="Data de pagamento fim: " />
+								<p:calendar id="fimPagamento" value="#{relatorioPagamentoMB.fimPagamento}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="false" />
+							</h:panelGroup>
+							
+							
 
 							<h:panelGroup>
 											<p:outputLabel for="faturaOrigemDestino"
@@ -250,6 +281,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								headerText="Data crédito">
 								<h:outputText value="#{lancamento.dataCreditoStr}"
 									title="#{lancamento.id}" />
+							</p:column>
+							<p:column
+								filterBy="#{relatorioPagamentoMB.tipoPessoa(lancamento)}"
+								sortBy="#{relatorioPagamentoMB.tipoPessoa(lancamento)}"
+								filterFunction="#{relatorioPagamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Tipo do Destino">
+								<h:outputText
+									value="#{relatorioPagamentoMB.tipoPessoa(lancamento)}" />
 							</p:column>
 							<p:column
 								filterBy="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}"

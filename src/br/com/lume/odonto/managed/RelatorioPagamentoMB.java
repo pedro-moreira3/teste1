@@ -24,6 +24,8 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton.TipoPessoa;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -58,8 +60,10 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
 
     private List<Lancamento> lancamentos = new ArrayList<>();
 
-    private Date inicio, fim;
+    private Date inicio, fim, inicioPagamento, fimPagamento;
     private PeriodoBusca periodoBusca;
+
+    private PeriodoBusca periodoBuscaPagamento;
 
     private StatusLancamento status;
     private SubStatusLancamento[] subStatus;
@@ -140,12 +144,37 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public String tipoPessoa(Lancamento lancamento) throws Exception {
+        
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);        
+       
+        if(lc != null) {
+            TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());   
+            if(tipo != null) {
+                if (tipo.equals(TipoPessoa.PROFISSIONAL)) {
+                  return "Profissional";
+                } else if (tipo.equals(TipoPessoa.PACIENTE)) {
+                  return "Paciente";
+                } else if (tipo.equals(TipoPessoa.FORNECEDOR)) {
+                    return "Fornecedor";
+                }
+            }
+        }
+        
+        return "Fornecedor";
+    }
 
     public void filtra() {
         try {
-            if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
+
+            if (this.inicio == null && this.fim == null && this.inicioPagamento == null && this.fimPagamento == null) {
+                this.addError("Selecione o período de crédito ou o período de pagamento.", "");
+            } else if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            } else {
+            } else if (this.inicioPagamento != null && this.fimPagamento != null && this.inicioPagamento.getTime() > this.fimPagamento.getTime()) {
+                this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
+            }else {
                 this.lancamentos = new ArrayList<>();
 
                 this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
@@ -153,7 +182,7 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
 
                 List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosPagamento(this.inicio, this.fim, origemFiltro, formaPagamento,
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.inicioPagamento, this.fimPagamento);
 
                 for (Lancamento l : lancamentosFiltrados) {
                     boolean addLancamento = false;
@@ -204,6 +233,8 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
     public void actionNew(ActionEvent arg0) {
         this.inicio = null;
         this.fim = null;
+        this.inicioPagamento = null;
+        this.fimPagamento = null;
         this.status = null;
         super.actionNew(arg0);
     }
@@ -228,6 +259,16 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
         try {
             setInicio(UtilsPadraoRelatorio.getDataInicio(getPeriodoBusca()));
             setFim(UtilsPadraoRelatorio.getDataFim(getPeriodoBusca()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public void actionTrocaDatasPagamento() {
+        try {
+            setInicioPagamento(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaPagamento()));
+            setFimPagamento(UtilsPadraoRelatorio.getDataFim(getPeriodoBuscaPagamento()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -407,6 +448,30 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
 
     public void setOrigemFiltro(DadosBasico origemFiltro) {
         this.origemFiltro = origemFiltro;
+    }
+
+    public Date getInicioPagamento() {
+        return inicioPagamento;
+    }
+
+    public void setInicioPagamento(Date inicioPagamento) {
+        this.inicioPagamento = inicioPagamento;
+    }
+
+    public PeriodoBusca getPeriodoBuscaPagamento() {
+        return periodoBuscaPagamento;
+    }
+
+    public void setPeriodoBuscaPagamento(PeriodoBusca periodoBuscaPagamento) {
+        this.periodoBuscaPagamento = periodoBuscaPagamento;
+    }
+
+    public Date getFimPagamento() {
+        return fimPagamento;
+    }
+
+    public void setFimPagamento(Date fimPagamento) {
+        this.fimPagamento = fimPagamento;
     }
 
 }
