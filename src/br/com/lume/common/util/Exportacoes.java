@@ -637,7 +637,7 @@ public class Exportacoes implements Serializable {
     
     private ByteArrayInputStream exportarTabelaRelatorioRepasse(String header, DataTable tabela, 
             List<RepasseFaturasLancamento> repasses) throws Exception {
-        int colunasValidas = 23;
+        int colunasValidas = 24;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheetTabela = workbook.createSheet(header);
@@ -647,6 +647,7 @@ public class Exportacoes implements Serializable {
         colunasValores.add("Forma de pagamento (paciente)");
         colunasValores.add("Valor do procedimento");
         colunasValores.add("Deduções");
+        colunasValores.add("Valor com deduções");
         colunasValores.add("Percentual de repasse");
         colunasValores.add("Valor para repasse por parcela");
         colunasValores.add("Parcela");
@@ -683,21 +684,41 @@ public class Exportacoes implements Serializable {
             }
             
             if(rfl.getFaturaItem() != null) {
-                FaturaItem item = FaturaItemSingleton.getInstance().getBo().find(rfl.getFaturaItem());
-                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(item);
-                if(ptp != null) {
-                    colunasValoresCarregados.add((ptp.getValorDesconto() != null ? ptp.getValorDesconto() : ptp.getValor()));
+                BigDecimal valorProcedimento = new BigDecimal(0);
+                PlanoTratamentoProcedimento ptp = rfl.getRepasseFaturas().getPlanoTratamentoProcedimento();
+                FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+                
+                if (itemOrigem != null) {
+                    valorProcedimento = itemOrigem.getValorComDesconto();
+                } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                    valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
+                } else if (ptp != null && ptp.getProcedimento() != null) {
+                    valorProcedimento = ptp.getProcedimento().getValor();
                 }
+                
+                colunasValoresCarregados.add(valorProcedimento);
+                
             }else {
                 colunasValoresCarregados.add(new BigDecimal(0));
             }
             colunasValoresCarregados.add(new Object());
-            colunasValoresCarregados.add(rfl.getRepasseFaturas().getValorCalculo());
+            
+            if(rfl.getLancamentoOrigem() != null && rfl.getLancamentoOrigem().getDadosCalculoRecebidoMenosReducao() != null) {
+                colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoRecebidoMenosReducao());
+            }else {
+                colunasValoresCarregados.add("");
+            }
+            
+            if(rfl.getRepasseFaturas().getValorCalculo() != null) {
+                colunasValoresCarregados.add(rfl.getRepasseFaturas().getValorCalculo());
+            }else {
+                colunasValoresCarregados.add("");
+            }
             colunasValoresCarregados.add(rfl.getLancamentoRepasse().getValor());
             if(rfl.getLancamentoOrigem() != null) {
-                colunasValoresCarregados.add(new BigDecimal(rfl.getLancamentoOrigem().getNumeroParcela()));
+                colunasValoresCarregados.add("(" + rfl.getLancamentoOrigem().getNumeroParcela() + "/" + rfl.getLancamentoOrigem().getParcelaMaxima() + ")");
             }else {
-                colunasValoresCarregados.add(new Object());
+                colunasValoresCarregados.add("");
             }
             //colunasValoresCarregados.add(new BigDecimal(1));
             colunasValoresCarregados.add(RepasseFaturasSingleton.getInstance().valorDisponivelParaRepasse(rfl, 
@@ -730,7 +751,7 @@ public class Exportacoes implements Serializable {
                 linhaRodape = sheetTabela.createRow(i + 3);
             }
 
-            for (int j = 0; j < colunasValidas; j++) {
+            for (int j = 1; j < colunasValidas; j++) {
                 
                 if (i == 0) {
 
@@ -744,7 +765,7 @@ public class Exportacoes implements Serializable {
                     Cell celula = cabecalho.createCell(j);
                     Cell celula2 = cabecalho2.createCell(j);
                     
-                    if(j > 6 && j <= 16) {
+                    if(j > 6 && j <= 17) {
                         
                         if(deducoes > 0 && bDeducoes) {
                             if(deducoes == 4) {
@@ -785,20 +806,20 @@ public class Exportacoes implements Serializable {
                 
                 Cell celula = linhaPlanilha.createCell(j);
                 
-                if(j < 7 || j > 16 ){
+                if(j < 7 || j > 17 ){
                     HtmlOutputText dadoColuna = null;
                     Object obj = null;
                     if(i == 0) {
-                        obj = tabelaColunas.get((cont + deducoes >= 15 ? j-(cont-1) : j-cont)).getSortBy();
+                        obj = tabelaColunas.get(( j<17 ? j-cont : j-(cont-1))).getSortBy();
                     }else {
-                        obj = tabelaColunas.get((cont + deducoes >= 15 ? j-(cont+1) : j-cont)).getSortBy();
+                        obj = tabelaColunas.get(( j<17 ? j-cont : j-(cont-1))).getSortBy();
                     }
 
                     List children = null;
                     if(i == 0) {
                         children = tabelaColunas.get((cont + deducoes >= 15 ? j-(cont-1) : j-cont)).getChildren();
                     }else {
-                        children = tabelaColunas.get((cont + deducoes >= 15 ? j-(cont+1) : j-cont)).getChildren();
+                        children = tabelaColunas.get(j-cont).getChildren();
                     }
                     
                     if (children != null && !children.isEmpty()) {
@@ -840,7 +861,7 @@ public class Exportacoes implements Serializable {
 
                         }
                     }
-                }else if(j > 6 && j < 16) {
+                }else if(j > 6 && j < 18) {
                     Object obj = null;
                     
                     if(i == 0) {

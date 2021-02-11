@@ -1,30 +1,24 @@
 package br.com.lume.odonto.managed;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
-import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
@@ -39,8 +33,6 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
-import br.com.lume.security.EmpresaSingleton;
-import br.com.lume.security.entity.Empresa;
 
 @Named
 @ViewScoped
@@ -138,6 +130,22 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                             l.setDadosCalculoPercCustoDireto(new BigDecimal(0));
                             l.setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
                         }
+                        
+                        if(l.getDadosCalculoValorTaxa() == null)
+                            l.setDadosCalculoValorTaxa(BigDecimal.ZERO);
+                        if(l.getDadosCalculoValorTarifa() == null)
+                            l.setDadosCalculoValorTarifa(BigDecimal.ZERO);
+                        if(l.getDadosCalculoValorTributo() == null)
+                            l.setDadosCalculoValorTributo(BigDecimal.ZERO);
+                        if(l.getDadosCalculoValorCustoDiretoRateado() == null)
+                            l.setDadosCalculoValorCustoDiretoRateado(BigDecimal.ZERO);
+                        
+                        l.setDadosCalculoTotalReducao(
+                                l.getDadosCalculoValorTaxa().add(l.getDadosCalculoValorTarifa()).add(
+                                        l.getDadosCalculoValorTributo()).add(l.getDadosCalculoValorCustoDiretoRateado()));
+
+                        l.setDadosCalculoRecebidoMenosReducao(
+                                l.getValor().subtract(l.getDadosCalculoTotalReducao()));
                         
                     }
                     
