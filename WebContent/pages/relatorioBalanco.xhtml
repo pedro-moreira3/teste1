@@ -417,26 +417,31 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<f:facet name="header">
 									<p:row>
 										<p:column>
-											<h:outputText id="teste" value="Forma de pagamento (paciente)"
+											<h:outputText value="Valor do procedimento "
 												style="font-weight:bold;" />
 										</p:column>
 
 										<p:column>
-											<h:outputText value="Valor do procedimento "
+											<h:outputText id="teste" value="Forma de pagamento (paciente)"
+												style="font-weight:bold;" />
+										</p:column>
+										
+										<p:column>
+											<h:outputText value="Valor parcela de pagamento (paciente)"
 												style="font-weight:bold;" />
 										</p:column>
 
 										<p:column colspan="4">
 											<h:outputText value="Deduções" style="font-weight:bold;" />
 										</p:column>
-
-										<p:column
-											rendered="#{rfl.repasseFaturas.tipoCalculo eq 'POR'}">
-											<h:outputText value="Percentual de repasse "
-												style="font-weight:bold;" />
+										
+										<p:column >
+											<h:outputText value="Valor com deduções" style="font-weight:bold;" />
 										</p:column>
+
 									</p:row>
 									<p:row>
+										<p:column></p:column>
 										<p:column></p:column>
 										<p:column></p:column>
 										<p:column>
@@ -453,10 +458,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												style="font-weight:bold;" />
 										</p:column>
 										<p:column></p:column>
+										
 									</p:row>
 								</f:facet>
 
 								<p:row>
+									<p:column>
+										<h:outputText
+											value="#{relatorioRepasseMB.valorProcedimento(rfl)}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</p:column>
+
 									<p:column>
 										<h:outputText
 											value="#{rfl.lancamentoOrigem.formaPagamentoStr}" />
@@ -464,7 +478,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									<p:column>
 										<h:outputText
-											value="#{rfl.faturaItem.origemOrcamento.orcamentoItem.origemProcedimento.planoTratamentoProcedimento.valorDescontoStr}" />
+											value="#{rfl.lancamentoOrigem.valor}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
 									</p:column>
 
 									<p:column>
@@ -498,10 +515,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									<p:column>
 										<h:outputText
-											value="#{relatorioRepasseMB.valorPercentual(rfl.repasseFaturas.valorCalculo)}">
-											<f:convertNumber maxFractionDigits="2" type="percent" />
+											value="#{rfl.lancamentoOrigem.dadosCalculoRecebidoMenosReducao}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
 										</h:outputText>
 									</p:column>
+									
 								</p:row>
 
 							</p:panelGrid>
@@ -509,6 +528,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:panelGrid style="margin-top:10px;">
 								<f:facet name="header">
 									<p:row>
+										<p:column
+											rendered="#{rfl.repasseFaturas.tipoCalculo eq 'POR'}">
+											<h:outputText value="Percentual de repasse "
+												style="font-weight:bold;" />
+										</p:column>
+									
 										<p:column>
 											<h:outputText value="Valor para repasse por parcela"
 												style="font-weight:bold;" />
@@ -526,6 +551,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</f:facet>
 								<p:row>
 									<p:column>
+										<h:outputText
+											value="#{relatorioRepasseMB.valorPercentual(rfl.repasseFaturas.valorCalculo)}">
+											<f:convertNumber maxFractionDigits="2" type="percent" />
+										</h:outputText>
+									</p:column>
+								
+									<p:column>
 										<h:outputText value="#{rfl.lancamentoRepasse.valor}" >
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
@@ -533,7 +565,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:column>
 
 									<p:column>
-										<h:outputText value="#{rfl.lancamentoOrigem.numeroParcela}" />
+										<h:outputText value="#{relatorioRepasseMB.parcela(rfl)}" />
 									</p:column>
 
 									<p:column>

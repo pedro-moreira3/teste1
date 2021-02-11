@@ -637,15 +637,16 @@ public class Exportacoes implements Serializable {
     
     private ByteArrayInputStream exportarTabelaRelatorioRepasse(String header, DataTable tabela, 
             List<RepasseFaturasLancamento> repasses) throws Exception {
-        int colunasValidas = 24;
+        int colunasValidas = 25;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheetTabela = workbook.createSheet(header);
         
         List<Object> colunasValoresCarregados = new ArrayList<Object>();
         List<String> colunasValores = new ArrayList<String>();
-        colunasValores.add("Forma de pagamento (paciente)");
         colunasValores.add("Valor do procedimento");
+        colunasValores.add("Forma de pagamento (paciente)");
+        colunasValores.add("Valor parcela de pagamento (paciente)");
         colunasValores.add("Deduções");
         colunasValores.add("Valor com deduções");
         colunasValores.add("Percentual de repasse");
@@ -676,12 +677,6 @@ public class Exportacoes implements Serializable {
             
             RepasseFaturasLancamento rfl = repasses.get(i);
             colunasValoresCarregados.clear();
-            if(rfl.getLancamentoOrigem() != null) {
-                String f = rfl.getLancamentoOrigem().getFormaPagamentoStr();
-                colunasValoresCarregados.add(( f != null ? f : ""));
-            }else {
-                colunasValoresCarregados.add("");
-            }
             
             if(rfl.getFaturaItem() != null) {
                 BigDecimal valorProcedimento = new BigDecimal(0);
@@ -701,6 +696,20 @@ public class Exportacoes implements Serializable {
             }else {
                 colunasValoresCarregados.add(new BigDecimal(0));
             }
+            
+            if(rfl.getLancamentoOrigem() != null) {
+                String f = rfl.getLancamentoOrigem().getFormaPagamentoStr();
+                colunasValoresCarregados.add(( f != null ? f : ""));
+            }else {
+                colunasValoresCarregados.add("");
+            }
+            
+            if(rfl.getLancamentoOrigem() != null) {
+                colunasValoresCarregados.add(rfl.getLancamentoOrigem().getValor());
+            }else {
+                colunasValoresCarregados.add("");
+            }
+            
             colunasValoresCarregados.add(new Object());
             
             if(rfl.getLancamentoOrigem() != null && rfl.getLancamentoOrigem().getDadosCalculoRecebidoMenosReducao() != null) {
@@ -716,7 +725,7 @@ public class Exportacoes implements Serializable {
             }
             colunasValoresCarregados.add(rfl.getLancamentoRepasse().getValor());
             if(rfl.getLancamentoOrigem() != null) {
-                colunasValoresCarregados.add("(" + rfl.getLancamentoOrigem().getNumeroParcela() + "/" + rfl.getLancamentoOrigem().getParcelaMaxima() + ")");
+                colunasValoresCarregados.add("(" + rfl.getLancamentoOrigem().getNumeroParcela() + "/" + rfl.getLancamentoOrigem().getParcelaTotal() + ")");
             }else {
                 colunasValoresCarregados.add("");
             }
@@ -765,11 +774,11 @@ public class Exportacoes implements Serializable {
                     Cell celula = cabecalho.createCell(j);
                     Cell celula2 = cabecalho2.createCell(j);
                     
-                    if(j > 6 && j <= 17) {
+                    if(j > 6 && j <= 18) {
                         
                         if(deducoes > 0 && bDeducoes) {
                             if(deducoes == 4) {
-                                sheetTabela.addMergedRegion(new CellRangeAddress(0, 0, 9, 12));
+                                sheetTabela.addMergedRegion(new CellRangeAddress(0, 0, 10, 13));
                                 cont += (deducoes);
                                 bDeducoes = false;
                             }else {
@@ -800,13 +809,13 @@ public class Exportacoes implements Serializable {
                 }
                 
                 if(i == 1) {
-                    if((j<9 || j >12))
+                    if((j<10 || j >13))
                         sheetTabela.addMergedRegion(new CellRangeAddress(0, 1, j, j));
                 }
                 
                 Cell celula = linhaPlanilha.createCell(j);
                 
-                if(j < 7 || j > 17 ){
+                if(j < 7 || j > 18 ){
                     HtmlOutputText dadoColuna = null;
                     Object obj = null;
                     if(i == 0) {
@@ -861,16 +870,16 @@ public class Exportacoes implements Serializable {
 
                         }
                     }
-                }else if(j > 6 && j < 18) {
+                }else if(j > 6 && j < 19) {
                     Object obj = null;
                     
                     if(i == 0) {
-                        if(deducoes > 1 && (cont-1) <= 3 && (cont-1) <= 7) {
+                        if(deducoes > 1 && (cont-1) <= 4 && (cont-1) <= 8) {
                             obj = colunasValoresCarregados.get( colunasValoresCarregados.size()-deducoes );
                         }
                         
                         if(deducoes < 2 || (cont-1) + deducoes >= 11){
-                            if((cont-1) == 2) {
+                            if((cont-1) == 3) {
                                 obj = colunasValoresCarregados.get(colunasValoresCarregados.size()-deducoes);
                             }else {
                                 obj = colunasValoresCarregados.get(((cont-1)-(deducoes)));
@@ -888,7 +897,7 @@ public class Exportacoes implements Serializable {
                             }
                         }
                         if(deducoes < 1 || cont + deducoes >= 11){
-                            if(cont == 2) {
+                            if(cont == 3) {
                                 deducoes++;
                                 obj = colunasValoresCarregados.get(colunasValoresCarregados.size()-deducoes);
                             }else { 
@@ -936,7 +945,7 @@ public class Exportacoes implements Serializable {
                 }
 
                 if ((tableCount - i) == 1) {
-                    UIComponent component = tabelaColunas.get(( j>16 ? j-10 : 0 )).getFacet("footer");
+                    UIComponent component = tabelaColunas.get(( j>18 ? j-12 : 0 )).getFacet("footer");
                     if (component != null) {
                         Cell celulaRodape = linhaRodape.createCell(j);
 

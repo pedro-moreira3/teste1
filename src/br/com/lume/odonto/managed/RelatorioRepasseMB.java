@@ -18,7 +18,9 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
@@ -195,6 +197,31 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao pesquisar.");
             e.printStackTrace();
             this.log.error(e);
+        }
+    }
+    
+    public String parcela(RepasseFaturasLancamento rfl) {
+        return "("+rfl.getLancamentoOrigem().getNumeroParcela()+"/"+rfl.getLancamentoOrigem().getParcelaTotal()+")";
+    }
+    
+    public BigDecimal valorProcedimento(RepasseFaturasLancamento rfl) {
+        if(rfl.getFaturaItem() != null) {
+            BigDecimal valorProcedimento = new BigDecimal(0);
+            PlanoTratamentoProcedimento ptp = rfl.getRepasseFaturas().getPlanoTratamentoProcedimento();
+            FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+            
+            if (itemOrigem != null) {
+                valorProcedimento = itemOrigem.getValorComDesconto();
+            } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
+            } else if (ptp != null && ptp.getProcedimento() != null) {
+                valorProcedimento = ptp.getProcedimento().getValor();
+            }
+            
+            return valorProcedimento;
+            
+        }else {
+            return new BigDecimal(0);
         }
     }
     
