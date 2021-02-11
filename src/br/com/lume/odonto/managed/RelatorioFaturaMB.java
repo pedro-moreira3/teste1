@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -276,6 +277,18 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public String valorConferidoFatura(Fatura fatura) {
         return formatValue(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO).doubleValue());
+    }
+    
+    public String valorAPlanejar(Fatura fatura) {
+        BigDecimal retorno = fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO)
+                .add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO)));
+            
+        if(retorno.compareTo(new BigDecimal(0)) > 0) {
+            return formatValue(retorno.doubleValue());
+        }else {
+            return formatValue(0);  
+        }        
+      
     }
 
     public String formatValue(double value) {
