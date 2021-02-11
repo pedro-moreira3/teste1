@@ -201,7 +201,11 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     }
     
     public String parcela(RepasseFaturasLancamento rfl) {
-        return "("+rfl.getLancamentoOrigem().getNumeroParcela()+"/"+rfl.getLancamentoOrigem().getParcelaTotal()+")";
+        if(rfl.getLancamentoOrigem() != null) {
+            return "("+rfl.getLancamentoOrigem().getNumeroParcela()+"/"+rfl.getLancamentoOrigem().getParcelaTotal()+")";
+        }else {
+            return "";
+        }
     }
     
     public BigDecimal valorProcedimento(RepasseFaturasLancamento rfl) {
