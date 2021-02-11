@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
@@ -18,6 +19,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -37,6 +39,8 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.entity.Empresa;
 
 @Named
 @ViewScoped
@@ -72,8 +76,6 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     public RelatorioRepasseMB() {
         super(RepasseFaturasLancamentoSingleton.getInstance().getBo());
         this.setClazz(RepasseFaturasLancamento.class);
-        this.inicio = Utils.getPrimeiroDiaMesCorrente();
-        this.fim = Calendar.getInstance().getTime();
         carregarStatusLancamentos();
     }
 
@@ -109,39 +111,71 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                     this.getEntityList().removeIf((rfl) -> !rfl.getLancamentoRepasse().getStatusCompleto().contains(statusPagamento));
                 }
                 
-                this.getEntityList().forEach((rfl) -> {
-                    if(!repasses.contains(rfl.getRepasseFaturas()))
-                        repasses.add(rfl.getRepasseFaturas());
-                });
-                
-                for (RepasseFaturas rf : repasses) {
-                    if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
-                        BigDecimal valorRestante = new BigDecimal(0);
-                        if(rf.getFaturaRepasse().getItensFiltered() != null && rf.getFaturaRepasse().getItensFiltered().size() > 0) {
-                            valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();    
+                for(RepasseFaturasLancamento rfl : this.getEntityList()) {
+                    //Preenche os valores das deduções e afins para mostrar na tela
+                    if(rfl.getLancamentoOrigem() != null) {
+                        Lancamento l = rfl.getLancamentoOrigem();
+                        
+                        l.setDadosCalculoPercTaxa((l.getTarifa() != null && l.getTarifa().getTaxa() != null ? l.getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
+                        l.setDadosCalculoValorTaxa(l.getDadosCalculoPercTaxa().multiply(l.getValor()));
+                        
+                        if (l.getTarifa() != null && l.getTarifa().getTarifa() != null) {
+                            l.setDadosCalculoValorTarifa(l.getTarifa().getTarifa());
+                        }
+                        l.setDadosCalculoPercTributo(l.getTributoPerc());
+                        l.setDadosCalculoValorTributo(
+                                l.getTributoPerc().multiply(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
+
+                        l.setDadosTabelaValorTotalCustosDiretos(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        if (l.getDadosTabelaValorTotalCustosDiretos() != null && l.getDadosTabelaValorTotalCustosDiretos().compareTo(
+                                new BigDecimal(0)) != 0) {
+                            l.setDadosCalculoPercCustoDireto(
+                                    l.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP));
+                            l.setDadosCalculoValorCustoDiretoRateado(
+                                    l.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP).multiply(
+                                            l.getValor()));
+                        } else {
+                            l.setDadosCalculoPercCustoDireto(new BigDecimal(0));
+                            l.setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
                         }
                         
-                        BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
-
-                        if (valorRepassado == null)
-                            valorRepassado = new BigDecimal(0);
-
-                        if (rf.getFaturaRepasse().isValorRestanteIgnoradoAjusteManual()) {
-                            if (valorRestante != null && valorRestante.compareTo(valorRepassado) > 0)
-                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
-                            else
-                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
-                        } else if (valorRestante == null || valorRestante.compareTo(new BigDecimal(0)) == 0) {
-                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
-                        } else {
-                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
-                        }
-
-                    } else {
-                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
                     }
-                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
-                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
+                    
+                    if(!repasses.contains(rfl.getRepasseFaturas())) {
+                        repasses.add(rfl.getRepasseFaturas());
+                        
+                        RepasseFaturas rf = rfl.getRepasseFaturas();
+                        
+                        if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
+                            BigDecimal valorRestante = new BigDecimal(0);
+                            if(rf.getFaturaRepasse().getItensFiltered() != null && rf.getFaturaRepasse().getItensFiltered().size() > 0) {
+                                valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();    
+                            }
+                            
+                            BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
+
+                            if (valorRepassado == null)
+                                valorRepassado = new BigDecimal(0);
+                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+
+                            if (rf.getFaturaRepasse().isValorRestanteIgnoradoAjusteManual()) {
+                                if (valorRestante != null && valorRestante.compareTo(valorRepassado) > 0)
+                                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
+                                else
+                                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+                            } else if (valorRestante == null || valorRestante.compareTo(new BigDecimal(0)) == 0) {
+                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+                            } else {
+                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+                            }
+
+                        } else {
+                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+                        }
+                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
+                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
+                    }
+                    
                 }
                 
             }
@@ -154,6 +188,10 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
             e.printStackTrace();
             this.log.error(e);
         }
+    }
+    
+    public BigDecimal valorPercentual(BigDecimal v) {
+        return v.divide(BigDecimal.valueOf(100));
     }
     
     private void ajustarHorariosDatas() {
@@ -194,6 +232,10 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
             this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
             this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
         }
+    }
+    
+    public BigDecimal valorDisponivelRepasse(RepasseFaturasLancamento rfl) {
+        return RepasseFaturasSingleton.getInstance().valorDisponivelParaRepasse(rfl, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     public void carregarStatusLancamentos() {
@@ -351,7 +393,8 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     }
 
     public void exportarTabela(String type) {
-        exportarTabela("Relatório de repasses", tabelaRelatorio, type);
+        this.exportarTabelaRepasse("Relatório de repasses", tabelaRelatorio, 
+                this.getEntityList(), type);
     }
 
     public Date getInicio() {

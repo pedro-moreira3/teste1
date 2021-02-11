@@ -741,13 +741,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</div>
 						</p:tab>
 
-						<p:tab id="tab4" title="Ajuste de contrato por IGPM">
+						<p:tab id="tab4" title="Reajuste de contratos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 
 									<p:outputPanel styleClass="BordNone">
 										<h1>
-											Ajuste de contrato por IGPM
+											Reajuste de contratos
 											<h:outputLabel class="fa fa-question" id="tooltipTituloIGPM"
 												style="font-size:24px; margin-left:10px;" />
 											<p:tooltip for="tooltipTituloIGPM"
@@ -870,6 +870,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												<p:ajax process="@this" />
 											</p:selectManyCheckbox>
+											
+											<ui:remove>
+											<p:selectManyCheckbox value="#{ajusteIGPMMB.mostrarPlanosIgpm}"
+												layout="grid" columns="6">
+												<f:selectItem itemLabel="Planos que usam IGPM" itemValue="S"
+													itemEscaped="false" />
+												<f:selectItem itemLabel="Planos que não usam IGPM" itemValue="N"
+													itemEscaped="false" />
+
+												<p:ajax process="@this" />
+											</p:selectManyCheckbox>
+											</ui:remove>
 										</h:panelGroup>
 									</p:outputPanel>
 
@@ -948,6 +960,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												styleClass="OrangeButton" title="Editar reajuste"
 												update=":lume:pnReajuste"
 												actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
+												
+											<ui:remove>
+											<p:commandButton icon="fa fa-edit" process="@this"
+												oncomplete="PF('dlgAplicarIGPM').show();"
+												styleClass="OrangeButton" title="Não se aplica"
+												update=":lume:pnReajuste"
+												actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
+											</ui:remove>
 
 										</p:column>
 										<p:column filterBy="#{pt.paciente.dadosBasico.nome}"
@@ -1415,8 +1435,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:panelGrid id="pnNovoReajusteOrcamento" columns="2"
 									layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group">
-
+									
 									<h:panelGroup>
+										<p:outputLabel for="tipoReajuste" value="Tipo de reajuste:"
+											style="display:inline-block;width:80%;" />
+										<p:selectOneMenu id="tipoReajuste" value="#{ajusteIGPMMB.tipoRejusteSelecionado}">
+											<f:selectItem itemLabel="Reajuste por valor" itemValue="V" />
+											<f:selectItem itemLabel="Reajuste por porcentagem" itemValue="P" />
+											<p:ajax process="@this,pnReajuste" update="pnReajuste"/>
+										</p:selectOneMenu>
+									</h:panelGroup>
+									
+									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
 										<p:outputLabel value="Informe o percentual de reajuste:"
 											style="display:inline-block;width:80%;" />
 										<p:inputNumber id="valorIGPM"
@@ -1434,8 +1464,27 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											value="Indice em percentual do IGPM atual."
 											style="width:10%;" />
 									</h:panelGroup>
+									
+									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
+										<p:outputLabel value="Informe o valor de reajuste:"
+											style="display:inline-block;width:80%;" />
+										<p:inputNumber id="valorIGPMV"
+											value="#{ajusteIGPMMB.indiceReajuste}" symbol="R$"
+											maxlength="100" decimalPlaces="2"
+											style="display:inline-block;width:80%;">
+											<p:ajax
+												process="@this,tbViewProcedimentoOrcamento,resultadoIGPM"
+												update="tbViewProcedimentoOrcamento,resultadoIGPM" />
+										</p:inputNumber>
 
-									<h:panelGroup>
+										<h:outputLabel class="fa fa-question" id="tooltipIGPMV"
+											style="font-size:24px; margin-left:10px;" />
+										<p:tooltip for="tooltipIGPMV"
+											value="Indice em percentual do IGPM atual."
+											style="width:10%;" />
+									</h:panelGroup>
+
+									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
 										<p:outputLabel value="Desconto de IGPM:"
 											style="display:inline-block;width:60%;" />
 										<p:inputNumber id="descontoIGPM"
@@ -1449,6 +1498,24 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<h:outputLabel class="fa fa-question" id="tooltipIGPMDesconto"
 											style="font-size:24px; margin-left:10px;" />
 										<p:tooltip for="tooltipIGPMDesconto"
+											value="Desconto em percentual do IGPM atual a ser aplicado."
+											style="width:10%;" />
+									</h:panelGroup>
+									
+									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
+										<p:outputLabel value="Desconto de IGPM:"
+											style="display:inline-block;width:60%;" />
+										<p:inputNumber id="descontoIGPMV"
+											value="#{ajusteIGPMMB.descontoReajuste}" symbol="R$"
+											maxlength="100" decimalPlaces="2"
+											style="display:inline-block;width:80%;">
+											<p:ajax
+												process="@this,tbViewProcedimentoOrcamento,resultadoIGPM"
+												update="tbViewProcedimentoOrcamento,resultadoIGPM" />
+										</p:inputNumber>
+										<h:outputLabel class="fa fa-question" id="tooltipIGPMDescontoV"
+											style="font-size:24px; margin-left:10px;" />
+										<p:tooltip for="tooltipIGPMDescontoV"
 											value="Desconto em percentual do IGPM atual a ser aplicado."
 											style="width:10%;" />
 									</h:panelGroup>

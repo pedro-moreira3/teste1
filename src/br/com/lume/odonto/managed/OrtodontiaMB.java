@@ -602,7 +602,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             
             PlanoTratamento pt = this.getEntity();
             
-            IndiceReajuste reajuste = IndiceReajusteSingleton.getInstance().criaReajusteByPT(pt, UtilsFrontEnd.getProfissionalLogado(), this.indiceReajuste, null);
+            IndiceReajuste reajuste = IndiceReajusteSingleton.getInstance().criaReajusteByPT(pt, UtilsFrontEnd.getProfissionalLogado(), this.indiceReajuste, null, null);
             orcamentoSelecionado = OrcamentoSingleton.getInstance().aplicarReajuste(this.getOrcamentoSelecionado(), reajuste, UtilsFrontEnd.getProfissionalLogado());
             
             orcamentoSelecionado.setIndiceReajuste(reajuste);

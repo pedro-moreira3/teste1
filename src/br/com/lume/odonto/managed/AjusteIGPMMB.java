@@ -12,36 +12,20 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.faturamento.FaturaItemSingleton;
-import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.indiceReajuste.IndiceReajusteSingleton;
-import br.com.lume.lancamento.LancamentoSingleton;
-import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
-import br.com.lume.odonto.entity.DadosBasico;
-import br.com.lume.odonto.entity.Fatura;
-import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.IndiceReajuste;
-import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
-import br.com.lume.odonto.entity.Tarifa;
-import br.com.lume.orcamento.OrcamentoItemSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -58,10 +42,17 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
     private BigDecimal indiceReajuste;
     private BigDecimal descontoReajuste;
     private BigDecimal resultadoReajuste;
+    
+    private String tipoRejusteSelecionado = "P";
+    
+    private BigDecimal valorReajuste;
+    private BigDecimal valorReajusteDesconto;
+    
     private boolean renderedDadosMultiplos;
     private boolean telaEditar = false;
     
     private List<String> statusReajuste = new ArrayList<String>();
+    private List<String> mostrarPlanosIgpm = new ArrayList<String>();
     private List<String> periodoReajuste = new ArrayList<String>();
     private List<String> tipoPlano = new ArrayList<String>();
     private List<PlanoTratamento> planos = new ArrayList<PlanoTratamento>();
@@ -77,6 +68,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         this.setClazz(PlanoTratamento.class);
         this.actionTrocaDatas();
         this.periodoReajuste.add("A");
+        this.mostrarPlanosIgpm.add("S");
     }
 
     public void actionTrocaDatas() {
@@ -102,8 +94,8 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregarPlanos() {
-        this.setEntityList(PlanoTratamentoSingleton.getInstance().getBo().listPlanoTratamentoParaIGPM(dataInicial, dataFinal, null,null, filtroPorPaciente, tipoPlano, 
-                periodoReajuste, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+        this.setEntityList(PlanoTratamentoSingleton.getInstance().getBo().listPlanoTratamentoParaIGPM(dataInicial, dataFinal, filtroPorPaciente, tipoPlano, 
+                periodoReajuste, mostrarPlanosIgpm, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         
 //        if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
 //            for(PlanoTratamento pt : this.getEntityList()) {
@@ -157,6 +149,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         this.orcamentos = new ArrayList<Orcamento>();
         this.indiceReajuste = new BigDecimal(0);
         this.descontoReajuste = new BigDecimal(0);
+        this.tipoRejusteSelecionado = "P";
         telaEditar = false;
 
         if (pt != null) {
@@ -183,6 +176,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
             this.orcamentos = new ArrayList<Orcamento>();
             this.indiceReajuste = new BigDecimal(0);
             this.descontoReajuste = new BigDecimal(0);
+            this.tipoRejusteSelecionado = "P";
 
             for(PlanoTratamento pt : this.planos) {
                 if(IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste.get(0))){
@@ -225,9 +219,13 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         BigDecimal reajuste = resultadoReajuste();
         if (reajuste != null && reajuste.compareTo(BigDecimal.ZERO) > 0 && oi.isProcedimentoInclusoReajuste()) {
             //ValorProc = ValorProc + (ValorProc * (percentualReajuste/100))
-            return oi.getValor().add(
-                    oi.getValor().multiply(
-                            (reajuste.divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP))));
+            if(tipoRejusteSelecionado.equals("V")) {
+                return oi.getValor().subtract(resultadoReajuste());
+            }else {
+                return oi.getValor().add(
+                        oi.getValor().multiply(
+                                (reajuste.divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP))));
+            }
         }
         return null;
     }
@@ -285,6 +283,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         IndiceReajuste r = IndiceReajusteSingleton.getInstance().ultimoReajuste(pt);
         this.indiceReajuste = r.getReajuste();
         this.descontoReajuste = r.getDescontoReajuste();
+        this.tipoRejusteSelecionado = r.getTipoReajuste();
         
         if (pt != null) {
             this.orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(pt);
@@ -318,6 +317,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
                     BigDecimal indiceAntigo = indice.getReajusteInDecimal();
                     indice.setReajuste(resultadoReajuste());
                     indice.setDescontoReajuste(this.descontoReajuste);
+                    indice.setTipoReajuste(tipoRejusteSelecionado);
                     
                     itensOrcamentos.removeIf((oi) -> !oi.isProcedimentoInclusoReajuste());
                     IndiceReajusteSingleton.getInstance().getBo().merge(indice);
@@ -347,7 +347,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
                     
                     for(PlanoTratamento pt : this.planos) {
                         IndiceReajuste indice = IndiceReajusteSingleton.getInstance().criaReajusteByPT(
-                                pt, UtilsFrontEnd.getProfissionalLogado(), resultadoReajuste(), this.descontoReajuste);
+                                pt, UtilsFrontEnd.getProfissionalLogado(), resultadoReajuste(), this.descontoReajuste, tipoRejusteSelecionado);
                         
                         if(pt.getReajustes() == null) {
                             pt.setReajustes(new ArrayList<IndiceReajuste>());
@@ -383,7 +383,8 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
                     itensOrcamentos.removeIf((oi) -> !oi.isProcedimentoInclusoReajuste());
                     
                     IndiceReajuste indice = IndiceReajusteSingleton.getInstance().criaReajusteByPT(
-                            this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), resultadoReajuste(), this.descontoReajuste);
+                            this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), resultadoReajuste(), this.descontoReajuste, 
+                            tipoRejusteSelecionado);
                     
                     if(this.getEntity().getReajustes() == null) {
                         this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
@@ -550,6 +551,38 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setTelaEditar(boolean telaEditar) {
         this.telaEditar = telaEditar;
+    }
+
+    public List<String> getMostrarPlanosIgpm() {
+        return mostrarPlanosIgpm;
+    }
+
+    public void setMostrarPlanosIgpm(List<String> mostrarPlanosIgpm) {
+        this.mostrarPlanosIgpm = mostrarPlanosIgpm;
+    }
+
+    public BigDecimal getValorReajuste() {
+        return valorReajuste;
+    }
+
+    public void setValorReajuste(BigDecimal valorReajuste) {
+        this.valorReajuste = valorReajuste;
+    }
+
+    public BigDecimal getValorReajusteDesconto() {
+        return valorReajusteDesconto;
+    }
+
+    public void setValorReajusteDesconto(BigDecimal valorReajusteDesconto) {
+        this.valorReajusteDesconto = valorReajusteDesconto;
+    }
+
+    public String getTipoRejusteSelecionado() {
+        return tipoRejusteSelecionado;
+    }
+
+    public void setTipoRejusteSelecionado(String tipoRejusteSelecionado) {
+        this.tipoRejusteSelecionado = tipoRejusteSelecionado;
     }
 
 }
