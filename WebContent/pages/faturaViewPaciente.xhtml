@@ -1331,6 +1331,7 @@ body .height31 input {
 										process="@this"
 										update="@parent:@parent:@parent:@parent:@parent:pnlfaturaView"
 										title="Cancelar Negociação"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 										actionListener="#{faturaPagtoMB.actionCancelaNegociacao(negociacao)}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
@@ -1338,6 +1339,7 @@ body .height31 input {
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton icon="fa fa-check" styleClass="GreenButton"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 										process="@this" disabled="#{negociacao.status.rotulo != 'AA'}"
 										update="@parent:@parent:@parent:@parent:@parent:@parent:@parent:@parent:pnlAprovaNegociacao"
 										title="Confirmar Negociação"
