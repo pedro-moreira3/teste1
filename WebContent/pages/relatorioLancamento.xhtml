@@ -102,7 +102,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceberPagamento"
-									value="Período da data de pagamento:" />
+									value="Período da data de recebimento:" />
 								<p:selectOneMenu id="filtroPeriodoAReceberPagamento"
 									value="#{relatorioRecebimentoMB.periodoBuscaPagamento}"
 									converter="enumPeriodoBusca">
@@ -115,14 +115,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicioPagamento" value="Data de pagamento inicio: " />
+								<h:outputText for="inicioPagamento" value="Data de recebimento inicio: " />
 								<p:calendar id="inicioPagamento" value="#{relatorioRecebimentoMB.inicioPagamento}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="fimPagamento" value="Data de pagamento fim: " />
+								<h:outputText for="fimPagamento" value="Data de recebimento fim: " />
 								<p:calendar id="fimPagamento" value="#{relatorioRecebimentoMB.fimPagamento}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
