@@ -268,6 +268,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void setVideos() {
         getListaVideosTutorial().clear();     
         getListaVideosTutorial().put("Como utilizar o plano de tratamento", "https://www.youtube.com/v/SFJ3XrvCbt4?autoplay=1");                
+        getListaVideosTutorial().put("Encerrar e reativar planos de tratamento", "https://www.youtube.com/v/fIzAePpEQQs?autoplay=1");
     }
     
     public void setVideosOrcamento() {

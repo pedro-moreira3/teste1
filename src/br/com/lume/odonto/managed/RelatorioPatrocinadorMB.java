@@ -83,7 +83,7 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
             
             if(afiliacao.getModalidadeContrato().equals("Mensal")) {
                 calculaRelatorioMensal();
-            }else if(afiliacao.getModalidadeContrato().equals("Comissao")) {
+            }else if(afiliacao.getModalidadeContrato().equals("Comissao") || afiliacao.getModalidadeContrato().equals("Pré")) {
                 calculaRelatorioComissao();
             }
             
@@ -123,12 +123,29 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
         }
         clinicas = empresasPagaramMesReferencia;
         
-        BigDecimal totalAPagar =  totalRecebido.multiply(afiliacao.getPercentual()).divide(new BigDecimal(100));
+        BigDecimal totalAPagar;
+        if(afiliacao.getModalidadeContrato().equals("Comissao")) {
+            totalAPagar =  totalRecebido.multiply(afiliacao.getPercentual()).divide(new BigDecimal(100));
+        }else {
+            totalAPagar =  totalRecebido;
+        }
+        
+      
         
         setRodape("Total de clientes: " + clinicas.size() + ". Valor mensal pago pelo cliente: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal()));
-        setRodape2("Valor total pago: R$ " + new DecimalFormat("#,##0.00").format(totalRecebido) +
-                ". Comissão:" + new DecimalFormat("#").format(afiliacao.getPercentual())  + 
-                "%. "  );
+      
+        
+        if(afiliacao.getModalidadeContrato().equals("Comissao")) {
+            setRodape2("Valor total pago: R$ " + new DecimalFormat("#,##0.00").format(totalRecebido) +
+                    ". Comissão:" + new DecimalFormat("#").format(afiliacao.getPercentual())  + 
+                    "%. "  );
+        }else {
+            setRodape2("Valor total pago: R$ " + new DecimalFormat("#,##0.00").format(totalRecebido) +
+                    " "  );
+        }
+        
+        
+        
         setRodape3("Valor à pagar para o patrocinador: R$ " + new DecimalFormat("#,##0.00").format(totalAPagar));
     }
     

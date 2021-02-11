@@ -47,6 +47,7 @@ import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
@@ -372,6 +373,28 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             this.exportacao = Exportacoes.getInstance();
             arq = (this.exportacao.exportarTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
+
+        } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
+            e.printStackTrace();
+        }
+    }
+    
+    public void exportarTabelaRepasse(String header, DataTable tabela, List<RepasseFaturasLancamento> repasses, String type) {
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
 
             if (type.equals("xls"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));

@@ -166,15 +166,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 }
 </style>
 
-		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="#{faturaPagtoMB.faturaViewImportName}">
-				<ui:param name="showNewLancamento" value="N" />
-				<ui:param name="faturaGenerica" value="F" />
+			<p:outputPanel id="viewFatura">
+			<ui:include src="faturaViewPaciente.xhtml">
+				<ui:param name="showNewLancamento" value="F" />
 			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update="dtPrincipal" />
 		</p:outputPanel>
-		<p:remoteCommand name="onCloseFaturaView" process="@this"
-			update=":lume:dtPrincipal, :lume:dtPrincipal"
-			actionListener="#{relatorioFaturaMB.actionFiltrar}" />
+
+
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"	 />
+
 
 
 		<div class="ui-g ui-fluid">
@@ -399,7 +401,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.visualizaFatura(m)}"
 											oncomplete="PF('dlgFaturaView').show();"
-											update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+											update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
 									</p:commandButton>
 									<p:tooltip for="btnView" value="Visualizar fatura" />
@@ -454,24 +456,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								<h:outputText value="#{relatorioFaturaMB.tipoSaldoFatura(m)}" />
 
-							</p:column>
-
-							<p:column headerText="Valor à Receber"
-								sortBy="#{relatorioFaturaMB.valorReceberFatura(m)}"
-								filterMatchMode="contains"
-								filterBy="#{relatorioFaturaMB.valorReceberFatura(m)}">
-
-								<h:outputText value="#{relatorioFaturaMB.valorReceberFatura(m)}" />
-
-							</p:column>
-
-							<p:column headerText="Valor Recebido"
-								sortBy="#{relatorioFaturaMB.valorRecebidoFatura(m)}"
-								filterMatchMode="contains"
-								filterBy="#{relatorioFaturaMB.valorRecebidoFatura(m)}">
-								<h:outputText
-									value="#{relatorioFaturaMB.valorRecebidoFatura(m)}" />
-							</p:column>
+							</p:column>							
 
 							<p:column headerText="Valor à Conferir"
 								sortBy="#{relatorioFaturaMB.valorConferirFatura(m)}"
@@ -496,12 +481,29 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{relatorioFaturaMB.valorFatura(m)}" />
 
 							</p:column>
+							
+							<p:column headerText="Valor Planejamento Pendente"
+								sortBy="#{relatorioFaturaMB.valorAPlanejar(m)}"
+								filterMatchMode="contains"
+								filterBy="#{relatorioFaturaMB.valorAPlanejar(m)}">
 
+								<h:outputText value="#{relatorioFaturaMB.valorAPlanejar(m)}" />
+
+							</p:column>							
+							
 							<p:column headerText="Status da Fatura"
-								sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
-								filterBy="#{m.statusFaturaCompleto}">
+								sortBy="#{m.statusFaturaString}" filterMatchMode="contains"
+								filterBy="#{m.statusFaturaString}">
 
-								<h:outputText value="#{m.statusFaturaCompleto}" />
+								<h:outputText value="#{m.statusFaturaString}" />
+
+							</p:column>
+							
+							<p:column headerText="Sub Status da Fatura"
+								sortBy="#{m.subStatusFaturaString}" filterMatchMode="contains"
+								filterBy="#{m.subStatusFaturaString}">
+
+								<h:outputText value="#{m.subStatusFaturaString}" />
 
 							</p:column>
 

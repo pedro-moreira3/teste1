@@ -88,15 +88,46 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText for="inicio" value="Data de crédito inicio: " />
 								<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									required="true" />
+									required="false" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
 								<h:outputText for="fim" value="Data de crédito fim: " />
 								<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									required="true" />
+									required="false" />
 							</h:panelGroup>
+							
+							
+							
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoAReceberPagamento"
+									value="Período da data de recebimento:" />
+								<p:selectOneMenu id="filtroPeriodoAReceberPagamento"
+									value="#{relatorioRecebimentoMB.periodoBuscaPagamento}"
+									converter="enumPeriodoBusca">
+									<p:ajax process="@this" update="inicioPagamento fimPagamento"
+										listener="#{relatorioRecebimentoMB.actionTrocaDatasPagamento}" />
+									<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+										var="periodo" itemValue="#{periodo}"
+										itemLabel="#{periodo.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="inicioPagamento" value="Data de recebimento inicio: " />
+								<p:calendar id="inicioPagamento" value="#{relatorioRecebimentoMB.inicioPagamento}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="false" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="fimPagamento" value="Data de recebimento fim: " />
+								<p:calendar id="fimPagamento" value="#{relatorioRecebimentoMB.fimPagamento}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="false" />
+							</h:panelGroup>
+							
 
 							<h:panelGroup>
 								<h:outputText for="filtroPaciente" value="Paciente:" />
@@ -187,7 +218,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Pesquisar"
 								actionListener="#{relatorioRecebimentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal"
-								process="@this,inicio,fim,filtroPaciente,subStatusRecebimento,status"
+								process="@this,inicio,fim,filtroPaciente,subStatusRecebimento,status,inicioPagamento,fimPagamento"
 								styleClass="OrangeButton" />
 
 							<ui:remove>
@@ -249,7 +280,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<p:column filterBy="#{lancamento.dataPagamentoStr}"
 								sortBy="#{lancamento.dataPagamentoStrOrd}"
-								filterMatchMode="contains" headerText="Data pagamento">
+								filterMatchMode="contains" headerText="Data recebimento">
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.dataCreditoStr}"
@@ -257,6 +288,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								headerText="Data crédito">
 								<h:outputText value="#{lancamento.dataCreditoStr}"
 									title="#{lancamento.id}" />
+							</p:column>
+							<p:column
+								filterBy="#{relatorioRecebimentoMB.tipoPessoa(lancamento)}"
+								sortBy="#{relatorioRecebimentoMB.tipoPessoa(lancamento)}"
+								filterFunction="#{relatorioRecebimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Tipo da Origem">
+								<h:outputText
+									value="#{relatorioRecebimentoMB.tipoPessoa(lancamento)}" />
 							</p:column>
 							<p:column
 								filterBy="#{relatorioRecebimentoMB.dadosBasicosFromLancamento(lancamento)}"
@@ -338,11 +377,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											minFractionDigits="2" />
 									</h:outputText>
 								</f:facet>
-							</p:column>
-							<p:column filterBy="#{lancamento.statusCompleto}"
-								sortBy="#{lancamento.statusCompleto}" filterMatchMode="contains"
+							</p:column>							
+							<p:column filterBy="#{lancamento.status.descricao}"
+								sortBy="#{lancamento.status.descricao}" filterMatchMode="contains"
 								headerText="Status">
-								<h:outputText value="#{lancamento.statusCompleto}" />
+								<h:outputText value="#{lancamento.status.descricao}" />
+							</p:column>
+							<p:column filterBy="#{lancamento.subStatusDescricao}"
+								sortBy="#{lancamento.subStatusDescricao}" filterMatchMode="contains"
+								headerText="Sub Status">
+								<h:outputText value="#{lancamento.subStatusDescricao}" />
 							</p:column>
 						</p:dataTable>
 					</p:outputPanel>
