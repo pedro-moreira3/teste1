@@ -413,7 +413,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:column>
 
 										<p:column>
-											<h:outputText id="teste" value="Forma de pagamento (paciente)"
+											<h:outputText value="Forma de pagamento (paciente)"
 												style="font-weight:bold;" />
 										</p:column>
 										
@@ -519,8 +519,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:panelGrid style="margin-top:10px;">
 								<f:facet name="header">
 									<p:row>
-										<p:column
-											rendered="#{rfl.repasseFaturas.tipoCalculo eq 'POR'}">
+										<p:column>
 											<h:outputText value="Percentual de repasse "
 												style="font-weight:bold;" />
 										</p:column>
