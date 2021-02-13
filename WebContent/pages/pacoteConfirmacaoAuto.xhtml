@@ -1,0 +1,277 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+-	<ui:define name="content">
+		<style>
+*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/*--------------------------------------*/
+
+.pacotes .pacote, .pacotesContratados .pacoteContratado {
+	position: relative;
+	display: inline-flex;
+	width: calc(32%);
+	height: 120px;
+	padding: 0px;
+	padding-left: 20px;
+	padding-right: 20px;
+	border-radius: 4px;
+	border: solid 1px black;
+}
+
+.pacotes .pacote:hover, .pacotesContratados .pacoteContratado:hover {
+	background-color: #f2f2f2;
+}
+
+.pacotes .pacote:not(:last-child), .pacotesContratados .pacoteContratado:not(:last-child) {
+	margin-right: 10px;
+}
+
+.pacotes .pacote .quantidadeMensagens, 
+	.pacotes .pacote .valorPacote,
+	.pacotes .pacote .comprar,
+	.pacotesContratados .pacoteContratado .textoMensagensContratadas, 
+	.pacotesContratados .pacoteContratado .quantidadeMensagensCompradas,
+	.pacotesContratados .pacoteContratado .comprarMais {
+	position: absolute;
+	display: block;
+	text-align: center;
+	width: calc(100% - 40px);
+}
+
+.pacotes .pacote .quantidadeMensagens {
+	height: 35px;
+	line-height: 35px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.pacotes .pacote .valorPacote {
+	height: 30px;
+	line-height: 30px;
+	top: 35px;
+}
+
+.pacotes .pacote .comprar {
+	height: 30px;
+	line-height: 30px;
+	top: 75px;
+}
+
+/*-----------------------------------------*/
+
+.pacotesContratados .pacoteContratado {
+	width: calc(49%);
+	height: 130px;
+}
+
+.pacotesContratados .pacoteContratado .textoMensagensContratadas {
+	height: 35px;
+	line-height: 35px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.pacotesContratados .pacoteContratado .quantidadeMensagensCompradas {
+	height: 35px;
+	line-height: 35px;
+	font-size: 18px;
+	font-weight: bold;
+	top: 35px;
+}
+
+.pacotesContratados .pacoteContratado .comprarMais {
+	height: 30px;
+	line-height: 30px;
+	top: 80px;
+}
+
+</style>
+		<script>
+			function resize(dialog) {
+				//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+		</script>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Confirmação Automárica de Consultas</h1>
+
+					<p:separator styleClass="SeparatorFull" />
+
+					<p:tabView id="tabViewRepasseProfissional"  binding="#{pacoteConfirmacaoAutoMB.tabView}" dynamic="true"
+						style="padding-right: 20px; padding-left: 20px;">
+					
+						<p:ajax event="tabChange" listener="#{pacoteConfirmacaoAutoMB.onTabChange}"
+							update=":lume:tabViewRepasseProfissional" />
+					
+						<p:tab title="Contratação">
+							<br />
+							<p:outputLabel
+								value="A confirmação automática de consultas é incrível para confirmar as consultas de seus pacientes sem a necessidade de que seus atendentes precisem falar com um paciente de cada vez" />
+							<br />
+							<br />
+							<p:outputLabel style="font-weight: bold; font-size: 20px;"
+								value="Como Funciona" />
+							<br />
+							<br />
+							<p:outputLabel
+								value="O sistema envia automaticamente por WhatsApp ou SMS uma mensagem para seu paciente, X horas antes do horário de consulta. Seu paciente pode confirmar ou cancelar o horário marcado e o status do agendamento é alterado automaticamente na sua agenda!" />
+							<br />
+							<p:outputLabel
+								value="A cada envio de mensagem e a cada resposta do paciente, o sistema irá descontar uma unidade do seu saldo de mensagens." />
+							<br />
+							<br />
+							<p:outputLabel style="font-weight: bold; font-size: 20px;"
+								value="Pacotes de WhatsApp" />
+							<br />
+							<br />
+							<div class="pacotes">
+								<ui:repeat var="pacote"
+									value="#{pacoteConfirmacaoAutoMB.pacotesWpp}">
+									<div class="pacote">
+										<p:outputLabel styleClass="quantidadeMensagens"
+											value="#{pacote.quantidadeMensagens} mensagens" />
+										<p:outputLabel styleClass="valorPacote"
+											value="#{pacote.precoPacote}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</p:outputLabel>
+										<p:commandButton value="Comprar" styleClass="comprar" actionListener="#{pacoteConfirmacaoAutoMB.contratar(pacote)}"
+											process="@this"
+											style="width: 200px; left: 50%; transform: translateX(-50%)">
+											<p:confirm header="Compra de Pacote de Mensagens" message="#{pacoteConfirmacaoAutoMB.getMensagemConfirmacao(pacote)}" icon="pi pi-exclamation-triangle"/>
+										</p:commandButton>
+									</div>
+								</ui:repeat>
+							</div>
+							<br />
+							<br />
+							<p:outputLabel style="font-weight: bold; font-size: 20px;"
+								value="Pacotes de SMS" />
+							<br />
+							<br />
+							<div class="pacotes">
+								<ui:repeat var="pacote"
+									value="#{pacoteConfirmacaoAutoMB.pacotesSMS}">
+									<div class="pacote">
+										<p:outputLabel styleClass="quantidadeMensagens"
+											value="#{pacote.quantidadeMensagens} mensagens" />
+										<p:outputLabel styleClass="valorPacote"
+											value="#{pacote.precoPacote}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</p:outputLabel>
+										<p:commandButton value="Comprar" styleClass="comprar" actionListener="#{pacoteConfirmacaoAutoMB.contratar(pacote)}"
+											process="@this"
+											style="width: 200px; left: 50%; transform: translateX(-50%)">
+											<p:confirm header="Compra de Pacote de Mensagens" message="#{pacoteConfirmacaoAutoMB.getMensagemConfirmacao(pacote)}" icon="pi pi-exclamation-triangle"/>
+										</p:commandButton>
+									</div>
+								</ui:repeat>
+							</div>
+						</p:tab>
+						<p:tab title="Configurações">
+							<br />
+							<div class="pacotesContratados">
+								<div class="pacoteContratado">
+									<p:outputLabel styleClass="textoMensagensContratadas"
+										value="Saldo de Mensagens de WhatsApp" />
+									<p:outputLabel styleClass="quantidadeMensagensCompradas"
+										value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensWhatsApp} mensagens" />
+									<p:commandButton value="Comprar Mais" process="@this"
+										styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
+										style="width: 200px; left: 50%; transform: translateX(-50%)">
+									</p:commandButton>
+								</div>
+								<div class="pacoteContratado">
+									<p:outputLabel styleClass="textoMensagensContratadas"
+										value="Saldo de Mensagens de SMS" />
+									<p:outputLabel styleClass="quantidadeMensagensCompradas"
+										value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensSMS} mensagens" />
+									<p:commandButton value="Comprar Mais" process="@this"
+										styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
+										style="width: 200px; left: 50%; transform: translateX(-50%)">
+									</p:commandButton>
+								</div>
+							</div>
+							<br />
+							<p:outputLabel value="Abaixo exemplo de mensagem de confirmação de consulta. A maensagem enviada é padronizada pelo WhatsApp e não pode ser alterada." />
+							<br /><br />
+							<p:inputTextarea />
+							<br /><br />
+							<p:selectBooleanCheckbox value="#{pacoteConfirmacaoAutoMB.detail.enviarNomeDentista}" itemLabel="Enviar nome do dentista na mensagem de confirmação"
+								style="width: 100%" />
+							<br /><br />
+							<p:outputLabel value="Configuração de Prioridade" style="font-size: 16px; font-weight: bold" />
+							<br /><br />
+							<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.prioridadeEnvio}" 
+								layout="grid" columns="1" styleClass="grid-radio">
+            					<f:selectItem itemLabel="Utilizar primeiro o pacote de WhatsApp" itemValue="#{null}" />
+            					<f:selectItem itemLabel="Utilizar primeiro o pacote de SMS" itemValue="#{null}" />
+        					</p:selectOneRadio>
+							<br /><br />
+							<p:outputLabel value="Enviar mensagem quantas horas antes da consulta?" 
+								style="font-size: 16px; font-weight: bold" />
+							<br /><br />
+							<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.tempoEnvioAntesConsulta}" 
+								layout="grid" columns="2" styleClass="grid-radio">
+            					<f:selectItem itemLabel="24h" itemValue="24" />
+            					<f:selectItem itemLabel="48h" itemValue="48" />
+        					</p:selectOneRadio>
+        					<br /><br />
+							<p:selectBooleanCheckbox value="#{!pacoteConfirmacaoAutoMB.detail.ativo}" 
+								itemLabel="Inativar envio de mensagens de confirmação de consulta"
+								style="width: 100%" />
+							<br /><br />
+							<p:outputLabel value="Observação: Caso queira desabilitar o envio para um paciente específico, entre no cadastro do seu paciente e desabilite o envio de mensagens."
+								style="font-size: 16px; font-weight: bold" />
+							<br /><br />
+							<p:panelGrid columns="6" layout="grid" id="buttonViewFatura"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+								<p:column />
+								<p:column />
+								<p:column />
+								<p:column />
+								<p:column />
+								<p:commandButton value="Salvar configurações" process="@this"
+									actionListener="#{pacoteConfirmacaoAutoMB.salvar()}">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:tab>
+						<p:tab title="Histórico de Mensagens">
+						</p:tab>
+					</p:tabView>
+
+				</div>
+			</div>
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Confirmar" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Fechar" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<script type="text/javascript">
+		</script>
+
+	</ui:define>
+</ui:composition>
