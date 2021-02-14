@@ -189,59 +189,64 @@
 						</p:tab>
 						<p:tab title="Configurações">
 							<br />
-							<div class="pacotesContratados">
-								<div class="pacoteContratado">
-									<p:outputLabel styleClass="textoMensagensContratadas"
-										value="Saldo de Mensagens de WhatsApp" />
-									<p:outputLabel styleClass="quantidadeMensagensCompradas"
-										value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensWhatsApp} mensagens" />
-									<p:commandButton value="Comprar Mais" process="@this"
-										styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
-										style="width: 200px; left: 50%; transform: translateX(-50%)">
-									</p:commandButton>
+							<p:outputPanel id="pacotesContratados">
+								<div class="pacotesContratados">
+									<div class="pacoteContratado">
+										<p:outputLabel styleClass="textoMensagensContratadas"
+											value="Saldo de Mensagens de WhatsApp" />
+										<p:outputLabel styleClass="quantidadeMensagensCompradas"
+											value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensWhatsApp} mensagens" />
+										<p:commandButton value="Comprar Mais" process="@this"
+											styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
+											style="width: 200px; left: 50%; transform: translateX(-50%)">
+										</p:commandButton>
+									</div>
+									<div class="pacoteContratado">
+										<p:outputLabel styleClass="textoMensagensContratadas"
+											value="Saldo de Mensagens de SMS" />
+										<p:outputLabel styleClass="quantidadeMensagensCompradas"
+											value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensSMS} mensagens" />
+										<p:commandButton value="Comprar Mais" process="@this"
+											styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
+											style="width: 200px; left: 50%; transform: translateX(-50%)">
+										</p:commandButton>
+									</div>
 								</div>
-								<div class="pacoteContratado">
-									<p:outputLabel styleClass="textoMensagensContratadas"
-										value="Saldo de Mensagens de SMS" />
-									<p:outputLabel styleClass="quantidadeMensagensCompradas"
-										value="#{pacoteConfirmacaoAutoMB.detail.saldoMensagensSMS} mensagens" />
-									<p:commandButton value="Comprar Mais" process="@this"
-										styleClass="comprarMais" actionListener="#{pacoteConfirmacaoAutoMB.comprarMais()}"
-										style="width: 200px; left: 50%; transform: translateX(-50%)">
-									</p:commandButton>
-								</div>
-							</div>
+							</p:outputPanel>
 							<br />
-							<p:outputLabel value="Abaixo exemplo de mensagem de confirmação de consulta. A maensagem enviada é padronizada pelo WhatsApp e não pode ser alterada." />
-							<br /><br />
-							<p:inputTextarea />
-							<br /><br />
-							<p:selectBooleanCheckbox value="#{pacoteConfirmacaoAutoMB.detail.enviarNomeDentista}" itemLabel="Enviar nome do dentista na mensagem de confirmação"
-								style="width: 100%" />
-							<br /><br />
-							<p:outputLabel value="Configuração de Prioridade" style="font-size: 16px; font-weight: bold" />
-							<br /><br />
-							<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.prioridadeEnvio}" 
-								layout="grid" columns="1" styleClass="grid-radio">
-            					<f:selectItem itemLabel="Utilizar primeiro o pacote de WhatsApp" itemValue="#{null}" />
-            					<f:selectItem itemLabel="Utilizar primeiro o pacote de SMS" itemValue="#{null}" />
-        					</p:selectOneRadio>
-							<br /><br />
-							<p:outputLabel value="Enviar mensagem quantas horas antes da consulta?" 
-								style="font-size: 16px; font-weight: bold" />
-							<br /><br />
-							<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.tempoEnvioAntesConsulta}" 
-								layout="grid" columns="2" styleClass="grid-radio">
-            					<f:selectItem itemLabel="24h" itemValue="24" />
-            					<f:selectItem itemLabel="48h" itemValue="48" />
-        					</p:selectOneRadio>
-        					<br /><br />
-							<p:selectBooleanCheckbox value="#{!pacoteConfirmacaoAutoMB.detail.ativo}" 
-								itemLabel="Inativar envio de mensagens de confirmação de consulta"
-								style="width: 100%" />
-							<br /><br />
-							<p:outputLabel value="Observação: Caso queira desabilitar o envio para um paciente específico, entre no cadastro do seu paciente e desabilite o envio de mensagens."
-								style="font-size: 16px; font-weight: bold" />
+							<p:outputPanel id="configuracaoPacotes">
+								<p:outputLabel value="Abaixo exemplo de mensagem de confirmação de consulta. A maensagem enviada é padronizada pelo WhatsApp e não pode ser alterada." />
+								<br /><br />
+								<p:inputTextarea value="#{pacoteConfirmacaoAutoMB.detail.mensagemPadraoConfirmacao}" />
+								<br /><br />
+								<p:selectBooleanCheckbox value="#{pacoteConfirmacaoAutoMB.detail.enviarNomeDentista}" itemLabel="Enviar nome do dentista na mensagem de confirmação"
+									style="width: 100%" />
+								<br /><br />
+								<p:outputLabel value="Configuração de Prioridade" style="font-size: 16px; font-weight: bold" />
+								<br /><br />
+								<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.prioridadeEnvio}" 
+									layout="grid" columns="1" styleClass="grid-radio" converter="enumPrioridadeEnvio">
+									<f:selectItems value="#{pacoteConfirmacaoAutoMB.prioridadesEnvio}" 
+										var="prioridade" itemValue="#{prioridade}" 
+										itemLabel="Utilizar primeiro o pacote de #{prioridade.descricao}" />
+	        					</p:selectOneRadio>
+								<br /><br />
+								<p:outputLabel value="Enviar mensagem quantas horas antes da consulta?" 
+									style="font-size: 16px; font-weight: bold" />
+								<br /><br />
+								<p:selectOneRadio value="#{pacoteConfirmacaoAutoMB.detail.tempoEnvioAntesConsulta}" 
+									layout="grid" columns="2" styleClass="grid-radio">
+	            					<f:selectItem itemLabel="24h" itemValue="24" />
+	            					<f:selectItem itemLabel="48h" itemValue="48" />
+	        					</p:selectOneRadio>
+	        					<br /><br />
+								<p:selectBooleanCheckbox value="#{pacoteConfirmacaoAutoMB.detail.inativo}" 
+									itemLabel="Inativar envio de mensagens de confirmação de consulta"
+									style="width: 100%" />
+								<br /><br />
+								<p:outputLabel value="Observação: Caso queira desabilitar o envio para um paciente específico, entre no cadastro do seu paciente e desabilite o envio de mensagens."
+									style="font-size: 16px; font-weight: bold" />
+							</p:outputPanel>
 							<br /><br />
 							<p:panelGrid columns="6" layout="grid" id="buttonViewFatura"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -250,12 +255,56 @@
 								<p:column />
 								<p:column />
 								<p:column />
-								<p:commandButton value="Salvar configurações" process="@this"
+								<p:commandButton value="Salvar configurações" 
+									process="@this,
+												:lume:tabViewRepasseProfissional:configuracaoPacotes"
+									update=":lume:tabViewRepasseProfissional:pacotesContratados,
+												:lume:tabViewRepasseProfissional:configuracaoPacotes"
 									actionListener="#{pacoteConfirmacaoAutoMB.salvar()}">
 								</p:commandButton>
 							</p:panelGrid>
 						</p:tab>
 						<p:tab title="Histórico de Mensagens">
+						</p:tab>
+						<p:tab title="Histórico de Contratações">	
+							<br />					
+							<p:dataTable value="#{pacoteConfirmacaoAutoMB.contratacoes}" var="contratacao"
+								reflow="true" emptyMessage="Sem contratações recentes."
+								rows="20" paginator="true" rowKey="#{contratacao}" paginatorPosition="bottom">
+								<f:facet name="header">Contratações</f:facet>
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}"
+									sortBy="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}" filterMatchMode="contains"
+									headerText="Tipo do Pacote">
+									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}" />
+								</p:column>
+								<p:column filterBy="#{contratacao.dataContratacaoStr}"
+									sortBy="#{contratacao.dataContratacaoStr}" filterMatchMode="contains"
+									headerText="Data Contratação">
+									<h:outputText value="#{contratacao.dataContratacaoStr}" />
+								</p:column>
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens}"
+									sortBy="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens}" filterMatchMode="contains"
+									headerText="Quantidade de Mensagens">
+									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens} mensagens" />
+								</p:column>
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.precoPacote}"
+									sortBy="#{contratacao.pacoteConfirmacaoAuto.precoPacote}" filterMatchMode="contains"
+									headerText="Valor do Pacote">
+									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.precoPacote}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterBy="#{contratacao.faturaUrl}"
+									sortBy="#{contratacao.faturaUrl}" filterMatchMode="contains"
+									headerText="URL da Fatura">
+									<h:outputText value="#{contratacao.faturaUrl}" />
+								</p:column>
+								<p:column filterBy="#{contratacao.status.descricao}"
+									sortBy="#{contratacao.status.descricao}" filterMatchMode="contains"
+									style="color: #{contratacao.cor}" headerText="Status">
+									<h:outputText value="#{contratacao.status.descricao}" />
+								</p:column>
+							</p:dataTable>
 						</p:tab>
 					</p:tabView>
 

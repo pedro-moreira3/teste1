@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -15,10 +16,15 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.integracao.ContratacaoPacoteConfirmacaoAutoSingleton;
 import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
 import br.com.lume.integracao.PacoteConfirmacaoAutoSingleton;
+import br.com.lume.odonto.entity.ContratacaoPacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto;
+import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto.PrioridadeEnvio;
 import br.com.lume.odonto.entity.PacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.PacoteConfirmacaoAuto.TipoPacote;
 
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAuto> {
@@ -28,6 +34,7 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     private Logger log = Logger.getLogger(PacoteConfirmacaoAutoMB.class);
     private List<PacoteConfirmacaoAuto> pacotesWpp, pacotesSMS;
     private DetailPacoteConfirmacaoAuto detail;
+    private List<ContratacaoPacoteConfirmacaoAuto> contratacoes;
 
     private TabView tabView;
 
@@ -43,10 +50,20 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
         return "Confirma contratação do pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + "?";
     }
 
+    public void salvar() {
+        try {
+            DetailPacoteConfirmacaoAutoSingleton.getInstance().getBo().persist(detail);
+            detail = DetailPacoteConfirmacaoAutoSingleton.getInstance().getBo().find(detail);
+            addInfo("Sucesso!", "Dados salvos com sucesso.");
+        } catch (Exception e) {
+            addError("Erro!", "Falha ao salvar os dados. Contate o suporte.");
+        }
+    }
+
     public void contratar(PacoteConfirmacaoAuto pacote) {
         try {
             ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().contrataNovoPacote(pacote, UtilsFrontEnd.getProfissionalLogado());
-            addInfo("Sucesso!", "Contratado pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + ".");
+            addInfo("Sucesso!", "Contratado pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + ". Aguardando pagamento...");
         } catch (Exception e) {
             addError("Erro!", "Falha ao contratar plano. Contate o suporte.");
         }
@@ -64,7 +81,13 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
             } catch (Exception e) {
                 addError("Erro!", "Falha ao carregar configurações da empresa!");
             }
+        } else if ("Histórico de Contratações".equals(event.getTab().getTitle())) {
+            contratacoes = ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().getBo().getContratacoes(UtilsFrontEnd.getEmpresaLogada());
         }
+    }
+
+    public List<PrioridadeEnvio> getPrioridadesEnvio() {
+        return Arrays.asList(PrioridadeEnvio.values());
     }
 
     public List<PacoteConfirmacaoAuto> getPacotesWpp() {
@@ -97,6 +120,14 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
     public void setDetail(DetailPacoteConfirmacaoAuto detail) {
         this.detail = detail;
+    }
+
+    public List<ContratacaoPacoteConfirmacaoAuto> getContratacoes() {
+        return contratacoes;
+    }
+
+    public void setContratacoes(List<ContratacaoPacoteConfirmacaoAuto> contratacoes) {
+        this.contratacoes = contratacoes;
     }
 
 }
