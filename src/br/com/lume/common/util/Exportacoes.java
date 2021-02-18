@@ -300,7 +300,7 @@ public class Exportacoes implements Serializable {
 
                         tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
 
-                        Font fonte = new Font(Font.BOLD, 10, Font.BOLD);
+                        Font fonte = new Font(Font.BOLD, 6, Font.BOLD);
 
                         PdfPCell celula = new PdfPCell(new Phrase(tituloTabela, fonte));
                         celula.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -313,7 +313,7 @@ public class Exportacoes implements Serializable {
                 }
 
                 HashMap<Integer, UIComponent> footer = new HashMap<Integer, UIComponent>();
-                Font fonte = new Font(5, 10);
+                Font fonte = new Font(5, 6);
 
                 for (int j = 0; j < colunasValidas.size(); j++) {
 
@@ -746,7 +746,7 @@ public class Exportacoes implements Serializable {
                 colunasValoresCarregados.add(BigDecimal.ZERO);
                 colunasValoresCarregados.add(BigDecimal.ZERO);
                 colunasValoresCarregados.add(BigDecimal.ZERO);
-            }           
+            }
             
             tabela.setRowIndex(i);
             tabela.getRowData();
@@ -1010,6 +1010,254 @@ public class Exportacoes implements Serializable {
         return null;
     }
 
+    
+    
+    private ByteArrayInputStream exportarTabelaRepassePDF(String header, DataTable table, 
+            List<RepasseFaturasLancamento> repasses) {
+        try {
+            int colunasValidas = 24;
+            Document documento = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
+            PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
+
+            documento.open();
+
+            documento.newPage();
+            
+            List<Object> colunasValoresCarregados = new ArrayList<Object>();
+            List<String> colunasValores = new ArrayList<String>();
+            colunasValores.add("Valor do procedimento");
+            colunasValores.add("Forma de pagamento (paciente)");
+            colunasValores.add("Valor parcela de pagamento (paciente)");
+            //colunasValores.add("Deduções");
+            colunasValores.add("Taxas");
+            colunasValores.add("Tarifas");
+            colunasValores.add("Tributos");
+            colunasValores.add("Custos diretos");            
+            colunasValores.add("Valor com deduções");
+            colunasValores.add("Percentual de repasse");
+            colunasValores.add("Valor para repasse por parcela");
+            colunasValores.add("Parcela");
+            colunasValores.add("Valor disponível para repasse");
+
+            PdfPTable tabelaPDF = new PdfPTable(colunasValidas);
+            tabelaPDF.setWidthPercentage(100f);
+
+            int cont = 0, deducoes = 0;
+            boolean bDeducoes = true;
+            
+            int tableCount = table.getRowCount();
+
+            for (int i = 0; i < tableCount; i++) {
+
+                table.setRowIndex(i);
+                table.getRowData();
+
+                List<UIColumn> tabelaColunas = table.getColumns();
+                
+                cont = deducoes = 0;
+                bDeducoes = true;
+
+                //Construção do cabeçalho
+                if (i == 0) {
+
+                    StringBuilder string = new StringBuilder();
+                    Empresa empresa = UtilsFrontEnd.getEmpresaLogada();
+
+                    string.append(empresa.getEmpStrEndereco());
+                    string.append(" " + empresa.getEmpStrCidade());
+                    string.append("/" + empresa.getEmpChaUf());
+                    string.append(" - " + empresa.getEmpChaFone() + "\n\n");
+
+                    documento.addTitle(header);
+
+                    documento.add(new Paragraph(empresa.getEmpStrNmefantasia()));
+                    documento.add(new Paragraph(string.toString()));
+
+                    for (int j = 0; j < colunasValidas; j++) {
+                        String tituloTabela = "";
+                        
+                        if(j > 6 && j <= 18) {                            
+                            tituloTabela = colunasValores.get(cont++);
+                            
+                        }else {
+                            tituloTabela = tabelaColunas.get(j-cont).getHeaderText();
+                        }
+
+                        Font fonte = new Font(Font.BOLD, 5, Font.BOLD);
+
+                        PdfPCell celula = new PdfPCell(new Phrase(tituloTabela, fonte));
+                        celula.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        celula.setBorderWidth(1);
+                        //celula.setColspan(tabelaColunas.get(colunasValidas.get(j)).getColspan());
+
+                        tabelaPDF.addCell(celula);
+                    }
+                    cont = 0;
+                }
+
+                HashMap<Integer, UIComponent> footer = new HashMap<Integer, UIComponent>();
+                Font fonte = new Font(5, 5);
+                
+                RepasseFaturasLancamento rfl = repasses.get(i);
+                colunasValoresCarregados.clear();
+                
+                if(rfl.getFaturaItem() != null) {
+                    BigDecimal valorProcedimento = new BigDecimal(0);
+                    PlanoTratamentoProcedimento ptp = rfl.getRepasseFaturas().getPlanoTratamentoProcedimento();
+                    FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+                    
+                    if (itemOrigem != null) {
+                        valorProcedimento = itemOrigem.getValorComDesconto();
+                    } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                        valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
+                    } else if (ptp != null && ptp.getProcedimento() != null) {
+                        valorProcedimento = ptp.getProcedimento().getValor();
+                    }
+                    
+                    colunasValoresCarregados.add(valorProcedimento);
+                    
+                }else {
+                    colunasValoresCarregados.add(new BigDecimal(0));
+                }
+                
+                if(rfl.getLancamentoOrigem() != null) {
+                    String f = rfl.getLancamentoOrigem().getFormaPagamentoStr();
+                    colunasValoresCarregados.add(( f != null ? f : ""));
+                }else {
+                    colunasValoresCarregados.add("");
+                }
+                
+                if(rfl.getLancamentoOrigem() != null) {
+                    colunasValoresCarregados.add(rfl.getLancamentoOrigem().getValor());
+                }else {
+                    colunasValoresCarregados.add("");
+                }
+                
+                if(rfl.getLancamentoOrigem() != null) {
+                    if(rfl.getLancamentoOrigem().getDadosCalculoValorTaxa() != null)
+                        colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoValorTaxa());
+                    if(rfl.getLancamentoOrigem().getDadosCalculoValorTarifa() != null)
+                        colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoValorTarifa());
+                    if(rfl.getLancamentoOrigem().getDadosCalculoValorTributo() != null)
+                        colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoValorTributo());
+                    if(rfl.getLancamentoOrigem().getDadosCalculoValorCustoDiretoRateado() != null)
+                        colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoValorCustoDiretoRateado());
+                }else {
+                    colunasValoresCarregados.add(BigDecimal.ZERO);
+                    colunasValoresCarregados.add(BigDecimal.ZERO);
+                    colunasValoresCarregados.add(BigDecimal.ZERO);
+                    colunasValoresCarregados.add(BigDecimal.ZERO);
+                }
+                
+                if(rfl.getLancamentoOrigem() != null && rfl.getLancamentoOrigem().getDadosCalculoRecebidoMenosReducao() != null) {
+                    colunasValoresCarregados.add(rfl.getLancamentoOrigem().getDadosCalculoRecebidoMenosReducao());
+                }else {
+                    colunasValoresCarregados.add("");
+                }
+                
+                if(rfl.getRepasseFaturas().getValorCalculo() != null) {
+                    colunasValoresCarregados.add(rfl.getRepasseFaturas().getValorCalculo());
+                }else {
+                    colunasValoresCarregados.add("");
+                }
+                colunasValoresCarregados.add(rfl.getLancamentoRepasse().getValor());
+                if(rfl.getLancamentoOrigem() != null) {
+                    colunasValoresCarregados.add("(" + rfl.getLancamentoOrigem().getNumeroParcela() + "/" + rfl.getLancamentoOrigem().getParcelaTotal() + ")");
+                }else {
+                    colunasValoresCarregados.add("");
+                }
+                //colunasValoresCarregados.add(new BigDecimal(1));
+                colunasValoresCarregados.add(RepasseFaturasSingleton.getInstance().valorDisponivelParaRepasse(rfl, 
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                
+                
+
+                for (int j = 0; j < colunasValidas; j++) {
+                    PdfPCell celula = null;
+                    
+                    if(j > 6 && j <= 18) {
+                        celula = new PdfPCell(new Phrase(this.formatar(colunasValoresCarregados.get(cont++)), fonte));
+                    }else {
+                        celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(j-cont).getSortBy()), fonte));
+                    }
+                    celula.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                    tabelaPDF.addCell(celula);
+
+                    if ((tableCount - i) == 1) {
+                        UIComponent component = tabelaColunas.get(j-cont).getFacet("footer");
+                        if (component != null && !component.getChildren().isEmpty()) {
+                            footer.put(j, component);
+                        }
+                    }
+
+                }
+
+                //CONSTRÓI O RODAPÉ DA TABELA
+                if (!footer.isEmpty()) {
+                    for (int j = 0; j < colunasValidas; j++) {
+
+                        if(j < 7 && j > 18) {
+                            if (footer.containsKey(j)) {
+                                String rodape = "";
+                                List components = footer.get(j).getChildren();
+                                for (Object c : components) {
+                                    if (c instanceof HtmlOutputText) {
+                                        HtmlOutputText valor = (HtmlOutputText) c;
+
+                                        if (valor.getConverter() != null) {
+                                            NumberConverter nc = (NumberConverter) valor.getConverter();
+                                            if (nc.getCurrencySymbol().equals("R$")) {
+                                                Locale ptBr = new Locale("pt", "BR");
+                                                String valorString = NumberFormat.getCurrencyInstance(ptBr).format(((BigDecimal) valor.getValue()).doubleValue());
+
+                                                rodape += "R$ " + valorString;
+                                            }
+                                        } else {
+                                            rodape += (String) valor.getValue();
+                                        }
+                                    }
+                                }
+
+                                PdfPCell celulaRodape = new PdfPCell(new Phrase(rodape, fonte));
+                                celulaRodape.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                                tabelaPDF.addCell(celulaRodape);
+                            } else {
+                                PdfPCell celulaRodape = new PdfPCell(new Phrase("", fonte));
+                                celulaRodape.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                                tabelaPDF.addCell(celulaRodape);
+                            }
+                        }
+                        
+                    }
+                }
+
+            }
+
+            documento.add(tabelaPDF);
+            documento.close();
+
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+
+            outputData.flush();
+            outputData.close();
+
+            return inputData;
+
+        } catch (Exception e) {
+            this.log.error("Erro ao exportar Tabela Pdf", e);
+        }
+
+        return null;
+
+    }
+    
+    
+    
+    
     private ArrayList<Integer> validarColunas(DataTable tabela) {
 
         ArrayList<Integer> colunasValidas = new ArrayList<Integer>();
@@ -1089,6 +1337,8 @@ public class Exportacoes implements Serializable {
             switch (type) {
                 case "xls":
                     return this.exportarTabelaRelatorioRepasse(header, table, repasses);
+                case "pdf":
+                    return this.exportarTabelaRepassePDF(header, table, repasses);
             }
         }
 

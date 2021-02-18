@@ -391,17 +391,20 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public void exportarTabelaRepasse(String header, DataTable tabela, List<RepasseFaturasLancamento> repasses, String type) {
 
-        ByteArrayInputStream arq;
+        ByteArrayInputStream arq = null;
         try {
             this.exportacao = Exportacoes.getInstance();
-            arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
 
-            if (type.equals("xls"))
+            if (type.equals("xls")) {
+                arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
-            else if (type.equals("pdf"))
+            }else if (type.equals("pdf")) {
+                arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
-            else
+            }
+            else {
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+            }
 
             arq.close();
 
