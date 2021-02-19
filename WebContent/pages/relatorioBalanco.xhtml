@@ -389,8 +389,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Data de pagamento">
-							<h:outputText value="#{rfl.lancamentoRepasse.dataPagamentoStr}"
-								title="#{rfl.id}" />
+							<h:outputText rendered="#{rfl.lancamentoRepasse.statusSemSubStatus eq 'Pago'}" value="#{rfl.lancamentoRepasse.dataPagamentoStr}"
+								/>
 						</p:column>
 
 						<p:column sortBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
