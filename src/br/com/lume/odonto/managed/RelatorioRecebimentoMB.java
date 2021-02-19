@@ -161,7 +161,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 this.setSomatorioValorConferirConferencia(new BigDecimal(0));
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
                 
-                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosPagamento(this.inicio, this.fim, origemFiltro, formaPagamento,
+                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosRecebimento(this.inicio, this.fim, origemFiltro, formaPagamento,
                         UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.inicioPagamento, this.fimPagamento);
                 
                 for (Lancamento l : lancamentosFiltrados) {
