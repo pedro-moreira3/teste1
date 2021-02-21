@@ -130,30 +130,24 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							
 
 							<h:panelGroup>
-								<h:outputText for="filtroPaciente" value="Paciente:" />
-								<p:autoComplete id="filtroPaciente"
-									value="#{relatorioRecebimentoMB.filtroPorPaciente}"
-									completeMethod="#{relatorioRecebimentoMB.sugestoesPacientes}"
-									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="paciente" forceSelection="true" scrollHeight="400"
-									minQueryLength="3" queryDelay="1000" dropdown="true">
+											<p:outputLabel for="faturaOrigemDestino"
+												value="Origem (Fornecedor, Profissional, Paciente):" />
 
-									<p:column headerText="CÃ³digo" style="text-align: center;">
-										<h:outputText value="#{p.codigo}" />
-									</p:column>
-									<p:column headerText="Nome">
-										<h:outputText value="#{p.dadosBasico.nome}" />
-									</p:column>
-									<p:column headerText="Celular">
-										<h:outputText value="#{p.dadosBasico.celular}" />
-									</p:column>
-									<p:column headerText="Nome da MÃ£e">
-										<h:outputText value="#{p.nomeMae}" />
-									</p:column>
+											<p:selectOneMenu id="faturaOrigemDestino"
+												converter="dadosBasico" value="#{relatorioRecebimentoMB.origemFiltro}"
+												style="min-width:0px;"
+												filter="true" filterMatchMode="contains">
 
-									<p:ajax event="itemSelect" process="@this" />
-								</p:autoComplete>
-							</h:panelGroup>
+												<p:ajax event="itemSelect" process="@this" immediate="true" />
+
+												<f:selectItem
+													itemLabel="Selecione a Origem/Destino"
+													itemValue="#{null}" />
+												<f:selectItems value="#{relatorioRecebimentoMB.origens}" var="m"
+													itemLabel="#{m.nome}" itemValue="#{m}" />
+
+											</p:selectOneMenu>
+										</h:panelGroup>
 
 							<h:panelGroup>
 								<p:outputLabel for="status" value="Status do Recebimento: " />
@@ -218,7 +212,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Pesquisar"
 								actionListener="#{relatorioRecebimentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal"
-								process="@this,inicio,fim,filtroPaciente,subStatusRecebimento,status,inicioPagamento,fimPagamento"
+								process="@this,inicio,fim,faturaOrigemDestino,subStatusRecebimento,status,inicioPagamento,fimPagamento"
 								styleClass="OrangeButton" />
 
 							<ui:remove>

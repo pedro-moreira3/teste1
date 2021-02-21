@@ -1,0 +1,517 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	padding: 8px;
+}
+
+.ggl-tooltip span {
+	font-weight: bold;
+}
+
+.chartCadeiras>div, .chartProfissionais>div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.6px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
+		<script>
+			function resize(dialog) {
+				//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+		</script>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Relatório de Pacientes</h1>
+
+					<p:separator styleClass="SeparatorFull" />
+
+					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="false"
+						toggleSpeed="500">
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período da data de cadastro:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioPacienteMB.filtroPeriodo}">
+									<p:ajax process="@this" update="inicioFiltro, fimFiltro"
+										listener="#{relatorioPacienteMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicioFiltro" value="Data de cadastro de:" />
+								<p:calendar id="inicioFiltro"
+									value="#{relatorioPacienteMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fimFiltro" value="Data de cadastro até:" />
+								<p:calendar id="fimFiltro"
+									value="#{relatorioPacienteMB.fim}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroStatusPaciente"
+									value="Status dos Pacientes" />
+
+								<p:selectOneMenu id="filtroStatusPaciente"
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroStatusPaciente}">
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<f:selectItem itemLabel="Ativos" itemValue="A" />
+									<f:selectItem itemLabel="Inativos" itemValue="I" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroConvenio"
+									value="Convênio:" />
+
+								<p:selectOneMenu id="filtroConvenio"
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorConvenio}">
+									<f:selectItem itemLabel="Todos" itemValue="todos" />
+									<f:selectItems
+										value="#{relatorioPacienteMB.listaConvenios}"
+										var="agendamento" itemLabel="#{agendamento}"
+										itemValue="#{agendamento}" />
+								</p:selectOneMenu>
+							</h:panelGroup>							
+
+						</p:panelGrid>
+
+						<div class="EmptyBox5"></div>
+
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								value="Pesquisar"
+								actionListener="#{relatorioPacienteMB.actionFiltrar}"
+								update=":lume:dtPrincipalRelatorio" tabindex="1"
+								process="@this,:lume:filtroRelatorio" styleClass="OrangeButton" />							
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioPacienteMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipalRelatorio,@this"
+									update="@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioPacienteMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioPacienteMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipalRelatorio,@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioPacienteMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioPacienteMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipalRelatorio,@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioPacienteMB.arquivoDownload}" />
+									</p:menuitem>
+
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+					<p:outputPanel>
+						<p:dataTable id="dtPrincipalRelatorio"
+							widgetVar="dtPrincipalRelatorio"
+							value="#{relatorioPacienteMB.pacientes}" var="p"
+							rowKey="#{p}" rows="10" paginator="true"
+							paginatorPosition="bottom" reflow="true" emptyMessage=""
+							selection="#{relatorioPacienteMB.entity}"
+							selectionMode="single" filterDelay="1000"
+							binding="#{relatorioPacienteMB.tabelaRelatorio}">
+							<f:facet name="header">	                			
+								<div id="wrapper" style="display: flex;">
+									<div id="left" style="flex: 0 0 95%">Pacientes</div>
+									<div id="right" style="flex: 0 0 1%;">
+								  		<p:commandButton id="toggler" type="button" value="Colunas"/>
+	                    				<p:columnToggler datasource="dtPrincipalRelatorio" trigger="toggler"/>
+									</div>
+								</div>
+
+							</f:facet>
+							<p:column sortBy="#{p.dadosBasico.nome}"
+								filterBy="#{p.dadosBasico.nome}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Nome">
+								<p:commandLink value="#{p.dadosBasico.nome}" process="@this"
+									title="#{p.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(p)}"
+									oncomplete="PF('dlgFichaPaciente').show();"
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+							</p:column>
+							<p:column filterBy="#{p.statusDescritivo}"
+								sortBy="#{p.statusDescritivo}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Status">
+								<h:outputText value="#{p.statusDescritivo}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.nomePreferencial}" visible="false"
+								sortBy="#{p.dadosBasico.nomePreferencial}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Nome Preferencial">
+								<h:outputText value="#{p.dadosBasico.nomePreferencial}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.celular}"
+								sortBy="#{p.dadosBasico.celular}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Celular">
+								<h:outputText value="#{p.dadosBasico.celular}" />
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									rendered="#{p.dadosBasico.telefoneStr != null}"
+									onclick="window.open('#{relatorioPacienteMB.getUrlWpp(p)}'); return false;"
+									styleClass="GreenButton" style="margin-left:10px;" />
+								<p:tooltip for="whats" value="Enviar mensagem" />
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.telefone}" visible="false"
+								sortBy="#{p.dadosBasico.telefone}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Telefone">
+								<h:outputText value="#{p.dadosBasico.telefone}" />								
+							</p:column>
+							<p:column filterBy="#{p.convenio.dadosBasico.nome}"
+								sortBy="#{p.convenio.dadosBasico.nome}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Convênio">
+								<h:outputText value="#{p.convenio.dadosBasico.nome}" />
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.documento}" visible="false"
+								sortBy="#{p.dadosBasico.documento}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="CPF">
+								<h:outputText value="#{p.dadosBasico.documento}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.rg}" visible="false"
+								sortBy="#{p.dadosBasico.rg}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="RG">
+								<h:outputText value="#{p.dadosBasico.rg}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.sexo}"
+								sortBy="#{p.dadosBasico.sexo}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Sexo">
+								<h:outputText value="#{p.dadosBasico.sexo}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.dataNascimento}"
+								sortBy="#{p.dadosBasico.dataNascimento}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Data Nascimento">
+								<h:outputText
+									value="#{relatorioPacienteMB.formatarDataSemHora(p.dadosBasico.dataNascimento)}" />						
+							</p:column>
+							<p:column filterBy="#{p.nomeMae}" visible="false"
+								sortBy="#{p.nomeMae}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Nome da Mãe">
+								<h:outputText value="#{p.nomeMae}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.profissao}" visible="false"
+								sortBy="#{p.dadosBasico.profissao}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Profissão">
+								<h:outputText value="#{p.dadosBasico.profissao}" />								
+							</p:column>							
+							<p:column filterBy="#{p.dadosBasico.email}"
+								sortBy="#{p.dadosBasico.email}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="E-mail">
+								<h:outputText value="#{p.dadosBasico.email}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.enderecoCompletoFormatado}"
+								sortBy="#{p.dadosBasico.enderecoCompletoFormatado}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Endereço">
+								<h:outputText value="#{p.dadosBasico.enderecoCompletoFormatado}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.particularidades}" visible="false"
+								sortBy="#{p.dadosBasico.particularidades}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Particularidades">
+								<h:outputText value="#{p.dadosBasico.particularidades}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.empresaOndeTrabalha}" visible="false"
+								sortBy="#{p.dadosBasico.empresaOndeTrabalha}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Empresa Onde Trabalha">
+								<h:outputText value="#{p.dadosBasico.empresaOndeTrabalha}" />								
+							</p:column>
+							<p:column filterBy="#{p.numeroPlano}" visible="false"
+								sortBy="#{p.numeroPlano}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Carteira do Convênio">
+								<h:outputText value="#{p.numeroPlano}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.responsavel}" visible="false"
+								sortBy="#{p.dadosBasico.responsavel}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Responsável">
+								<h:outputText value="#{p.dadosBasico.responsavel}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.cpfresponsavel}" visible="false"
+								sortBy="#{p.dadosBasico.cpfresponsavel}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="CPF Responsável">
+								<h:outputText value="#{p.dadosBasico.cpfresponsavel}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.rgResponsavel}" visible="false"
+								sortBy="#{p.dadosBasico.rgResponsavel}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="RG Responsável">
+								<h:outputText value="#{p.dadosBasico.rgResponsavel}" />								
+							</p:column>
+							<p:column filterBy="#{p.dadosBasico.telefoneResponsavel}" visible="false"
+								sortBy="#{p.dadosBasico.telefoneResponsavel}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Telefone Responsável">
+								<h:outputText value="#{p.dadosBasico.telefoneResponsavel}" />								
+							</p:column>
+							
+						</p:dataTable>
+					</p:outputPanel>
+
+					<p:dialog widgetVar="eventDialog" header="Agendamento"
+						resizable="false" id="pnAgendamento" responsive="true"
+						position="10,10" modal="true"
+						style="position:absolute !important;" appendToBody="true">
+
+						<div class="Container100 Responsive100 NoIndent">
+							<div class="Container100 ui-fluid NoPadding">
+								<div class="Card" style="margin-top: -35px">
+
+									<ui:include src="dlgagendamento.xhtml" />
+
+									<p:separator styleClass="SeparatorFull" />
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
+										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+											<p:commandButton id="persist" icon="White fa fa-save"
+												process=":lume:pnAgendamento, @this" value="Salvar"
+												rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+												actionListener="#{agendamentoMB.actionPersist}"
+												update=":lume:pnAgendamento"
+												oncomplete="handleDialogRequest(xhr, status, args);PF('dtPrincipalRelatorio').filter()"
+												styleClass="GreenButton" />
+
+										</h:panelGroup>
+										<p:commandButton icon="White fa fa-close" value="Fechar"
+											process="@this" onclick="PF('eventDialog').hide()" />
+									</p:panelGrid>
+
+								</div>
+							</div>
+						</div>
+					</p:dialog>					
+
+				
+
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}			
+
+			//]]>
+		</script>
+
+	</ui:define>
+</ui:composition>

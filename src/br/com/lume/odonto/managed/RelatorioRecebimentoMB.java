@@ -11,6 +11,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
@@ -28,9 +30,12 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.odonto.entity.DadosBasico;
+import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Lancamento.SubStatusLancamento;
@@ -62,7 +67,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     private StatusLancamento status;
     private SubStatusLancamento[] subStatus;
     private List<SubStatusLancamento> listaSubStatus;
-    private Paciente filtroPorPaciente;
+   
     private BigDecimal somatorioValorConferirConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorConferidoConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorTotalConferencia = new BigDecimal(0);
@@ -71,6 +76,10 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     private List<Tarifa> tarifas = new ArrayList<>();
 
     private BigDecimal somaValor = new BigDecimal(0);
+    
+    private List<SelectItem> origens;
+
+    private DadosBasico origemFiltro;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -80,6 +89,59 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
         this.setClazz(RelatorioRecebimento.class);
         this.geraListaTarifa();
+        this.geraListaOrigens();
+    }
+    
+    public void geraListaOrigens() {
+        try {
+
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+
+            SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
+            SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
+            SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");
+
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
+
+            SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
+            SelectItem itensFornecedores[] = new SelectItem[fornecedores.size()];
+            SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
+
+            for (int i = 0; i < fornecedores.size(); i++) {
+
+                itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
+
+            }
+
+            for (int i = 0; i < profissionais.size(); i++) {
+                if (profissionais.get(i).getDadosBasico() != null) {
+                    itensProfissionais[i] = new SelectItem(profissionais.get(i).getDadosBasico(), profissionais.get(i).getDadosBasico().getNome());
+                }
+            }
+
+            for (int i = 0; i < pacientes.size(); i++) {
+                if (pacientes.get(i).getDadosBasico() != null) {
+                    itensPacientes[i] = new SelectItem(pacientes.get(i).getDadosBasico(), pacientes.get(i).getDadosBasico().getNome());
+                }
+            }
+
+            listaProfissionais.setSelectItems(itensProfissionais);
+            listaFornecedores.setSelectItems(itensFornecedores);
+            listaPacientes.setSelectItems(itensPacientes);
+
+            if (this.origens == null)
+                this.setOrigens(new ArrayList<SelectItem>());
+
+            this.origens.add(listaProfissionais);
+            this.origens.add(listaPacientes);
+            this.origens.add(listaFornecedores);
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
     }
 
     public void filtra() {
@@ -99,7 +161,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 this.setSomatorioValorConferirConferencia(new BigDecimal(0));
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
                 
-                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltros(this.inicio, this.fim, filtroPorPaciente, formaPagamento,
+                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosRecebimento(this.inicio, this.fim, origemFiltro, formaPagamento,
                         UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.inicioPagamento, this.fimPagamento);
                 
                 for (Lancamento l : lancamentosFiltrados) {
@@ -206,10 +268,6 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         }
         
         return "Paciente";
-    }
-    
-    public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
     }
 
     public void actionTrocaDatas() {
@@ -347,14 +405,6 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.listaSubStatus = listaSubStatus;
     }
     
-    public Paciente getFiltroPorPaciente() {
-        return filtroPorPaciente;
-    }
-
-    public void setFiltroPorPaciente(Paciente filtroPorPaciente) {
-        this.filtroPorPaciente = filtroPorPaciente;
-    }
-
     public BigDecimal getSomatorioValorConferirConferencia() {
         return somatorioValorConferirConferencia;
     }
@@ -431,6 +481,26 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     
     public void setFimPagamento(Date fimPagamento) {
         this.fimPagamento = fimPagamento;
+    }
+
+    
+    public List<SelectItem> getOrigens() {
+        return origens;
+    }
+
+    
+    public void setOrigens(List<SelectItem> origens) {
+        this.origens = origens;
+    }
+
+    
+    public DadosBasico getOrigemFiltro() {
+        return origemFiltro;
+    }
+
+    
+    public void setOrigemFiltro(DadosBasico origemFiltro) {
+        this.origemFiltro = origemFiltro;
     }
 
 }
