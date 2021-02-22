@@ -62,8 +62,12 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
     public void contratar(PacoteConfirmacaoAuto pacote) {
         try {
-            ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().contrataNovoPacote(pacote, UtilsFrontEnd.getProfissionalLogado());
-            addInfo("Sucesso!", "Contratado pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + ". Aguardando pagamento...");
+            if(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco() == null || UtilsFrontEnd.getEmpresaLogada().getIdIugu() == null) {
+                addError("Erro!", "Antes de comprar pacotes de mensagens, é necessário contratar o sistema intelidente.");
+            }else {
+                ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().contrataNovoPacote(pacote, UtilsFrontEnd.getProfissionalLogado());
+                addInfo("Sucesso!", "Contratado pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + ". Aguardando pagamento...");
+            }
         } catch (Exception e) {
             addError("Erro!", "Falha ao contratar plano. Contate o suporte.");
         }
