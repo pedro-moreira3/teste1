@@ -8,7 +8,7 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 -	<ui:define name="content">
 		<style>
-*, *:before, *:after {
+*:not(.ui-radiobutton-box), *:not(.ui-radiobutton-box):before, *:not(.ui-radiobutton-box):after {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -272,22 +272,22 @@
 								reflow="true" emptyMessage="Sem contratações recentes."
 								rows="20" paginator="true" rowKey="#{contratacao}" paginatorPosition="bottom">
 								<f:facet name="header">Contratações</f:facet>
-								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}"
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}" width="10%"
 									sortBy="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}" filterMatchMode="contains"
 									headerText="Tipo do Pacote">
 									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.tipoPacote.descricao}" />
 								</p:column>
-								<p:column filterBy="#{contratacao.dataContratacaoStr}"
+								<p:column filterBy="#{contratacao.dataContratacaoStr}" width="15%"
 									sortBy="#{contratacao.dataContratacaoStr}" filterMatchMode="contains"
 									headerText="Data Contratação">
 									<h:outputText value="#{contratacao.dataContratacaoStr}" />
 								</p:column>
-								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens}"
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens}" width="15%"
 									sortBy="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens}" filterMatchMode="contains"
 									headerText="Quantidade de Mensagens">
 									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.quantidadeMensagens} mensagens" />
 								</p:column>
-								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.precoPacote}"
+								<p:column filterBy="#{contratacao.pacoteConfirmacaoAuto.precoPacote}" width="15%"
 									sortBy="#{contratacao.pacoteConfirmacaoAuto.precoPacote}" filterMatchMode="contains"
 									headerText="Valor do Pacote">
 									<h:outputText value="#{contratacao.pacoteConfirmacaoAuto.precoPacote}">
@@ -297,9 +297,9 @@
 								<p:column filterBy="#{contratacao.faturaUrl}"
 									sortBy="#{contratacao.faturaUrl}" filterMatchMode="contains"
 									headerText="URL da Fatura">
-									<h:outputText value="#{contratacao.faturaUrl}" />
+									<a href="#{contratacao.faturaUrl}" target="__blank">#{contratacao.faturaUrl}</a>
 								</p:column>
-								<p:column filterBy="#{contratacao.status.descricao}"
+								<p:column filterBy="#{contratacao.status.descricao}" width="10%"
 									sortBy="#{contratacao.status.descricao}" filterMatchMode="contains"
 									style="color: #{contratacao.cor}" headerText="Status">
 									<h:outputText value="#{contratacao.status.descricao}" />
