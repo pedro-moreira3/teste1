@@ -836,16 +836,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup style="margin-top:10px;">
 											<h:outputLabel value="Período de reajuste: " />
-
-											<p:selectManyCheckbox value="#{ajusteIGPMMB.periodoReajuste}"
+											
+											<p:selectOneRadio value="#{ajusteIGPMMB.periodoReajuste}" unselectable="true" 
 												layout="grid" columns="6">
 												<f:selectItem itemLabel="Anual" itemValue="A"
 													itemEscaped="false" />
 												<f:selectItem itemLabel="Semestral" itemValue="S"
 													itemEscaped="false" />
-
-												<p:ajax process="@this"/>
-											</p:selectManyCheckbox>
+													
+												<p:ajax process="@this" />
+											</p:selectOneRadio>
 										</h:panelGroup>
 
 										<h:panelGroup style="margin-top:10px;display:block;">
