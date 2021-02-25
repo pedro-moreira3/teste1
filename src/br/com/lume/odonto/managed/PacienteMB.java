@@ -96,6 +96,7 @@ import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.pergunta.PerguntaSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Usuario;
 
@@ -146,6 +147,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<String> errosCarregarPaciente;
 
     private boolean visivelDadosPaciente = true;
+    
+    private boolean empresaTemPacoteDados;
 
     private List<Agendamento> historicoAgendamentos;
 
@@ -197,7 +200,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         
         try {
             indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+            empresaTemPacoteDados = EmpresaSingleton.getInstance().isEmpresatemPacoteMensagens(UtilsFrontEnd.getEmpresaLogada());
         } catch (Exception e1) {
+            e1.printStackTrace();
             log.error("Erro no PacienteMB", e1);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -205,9 +210,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         try {
             listaEstadoCivil = DominioSingleton.getInstance().getBo().listByObjeto("estado_civil");
         } catch (Exception e1) {
+            e1.printStackTrace();
             log.error("Erro no PacienteMB", e1);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
+        
+           
         
         if (url.contains("paciente.jsf")) {
             pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
@@ -1452,6 +1460,16 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setMostraLogoCentral(boolean mostraLogoCentral) {
         this.mostraLogoCentral = mostraLogoCentral;
+    }
+
+    
+    public boolean isEmpresaTemPacoteDados() {
+        return empresaTemPacoteDados;
+    }
+
+    
+    public void setEmpresaTemPacoteDados(boolean empresaTemPacoteDados) {
+        this.empresaTemPacoteDados = empresaTemPacoteDados;
     }
 
 }

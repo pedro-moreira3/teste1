@@ -490,6 +490,39 @@
 						</p:panelGrid>
 					</p:fieldset>
 				</p:panelGrid>
+				
+				
+				<p:panelGrid columns="2" rendered="#{pacienteMB.empresaTemPacoteDados}"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
+					<p:column></p:column>
+					<p:fieldset legend="Confirmação automática de consulta" toggleable="true"
+						collapsed="false">
+						
+
+						<p:panelGrid columns="1"
+							columnClasses="ui-grid-col-12"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="enviaConfirmacaoWhats" value="Enviar mernsagem automática por WhatsApp para esse paciente?"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectBooleanCheckbox id="enviaConfirmacaoWhats"
+								value="#{pacienteMB.entity.enviaConfirmacaoWhats}" />
+						</p:panelGrid>
+						<p:panelGrid columns="1"
+							columnClasses="ui-grid-col-12"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="enviaConfirmacaoSms" value="Enviar mernsagem automática por SMS para esse paciente?"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectBooleanCheckbox id="enviaConfirmacaoSms"
+								value="#{pacienteMB.entity.enviaConfirmacaoSms}" />
+						</p:panelGrid>
+					</p:fieldset>
+				</p:panelGrid>
+				
+				
 			</p:outputPanel>
 		</div>
 	</div>

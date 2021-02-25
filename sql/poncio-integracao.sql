@@ -69,3 +69,8 @@ SELECT
 FROM OBJETO_PROFISSIONAL OP
 LEFT JOIN SEG_OBJETO O ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_CAMINHO = 'faturaPagto.jsf';
+
+---
+alter table paciente add column envia_confirmacao_whats boolean default true;
+
+alter table paciente add column envia_confirmacao_sms boolean default true;
