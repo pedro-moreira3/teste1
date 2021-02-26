@@ -494,6 +494,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" headerText="Status">
 								<h:outputText value="#{m.statusDescritivo}" title="#{m.id}" />
 							</p:column>
+							<p:column filterBy="#{relatorioPlanoTratamentoMB.possuiOrcamento(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.possuiOrcamento(m)}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Possui orçamento?">
+								<h:outputText value="#{relatorioPlanoTratamentoMB.possuiOrcamento(m)}" title="#{m.id}" />
+							</p:column>
 							<p:column filterBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"
 								sortBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"								
 								filterMatchMode="contains" headerText="Valor à Receber">
