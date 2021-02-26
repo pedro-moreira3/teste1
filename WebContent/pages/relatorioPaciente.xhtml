@@ -327,6 +327,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									oncomplete="PF('dlgFichaPaciente').show();"
 									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 							</p:column>
+							<p:column filterBy="#{p.dataCriacao}"
+								sortBy="#{p.dataCriacao}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Data de Cadastro">
+								<h:outputText
+									value="#{relatorioPacienteMB.formatarDataSemHora(p.dataCriacao)}" />						
+							</p:column>
 							<p:column filterBy="#{p.statusDescritivo}"
 								sortBy="#{p.statusDescritivo}"
 								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
