@@ -175,24 +175,24 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-					
 
 
-<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
-									styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>
-										<h1>Relatório de Planos de Tratamento											
-										</h1>									
-									</h:panelGroup>
-									<h:panelGroup>
-									<p:commandButton value="Video tutorial"
-											icon="White fa fa-youtube-play White"
-											oncomplete="PF('dlgVideo').show()"
-											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/tQelOgVBIBA?autoplay=1')}"
-											process="@this,painelVideo" update="painelVideo"/>
-									</h:panelGroup>
-	
-						</p:panelGrid>	
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-10,ui-grid-col-2"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup>
+								<h1>Relatório de Planos de Tratamento</h1>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Video tutorial"
+									icon="White fa fa-youtube-play White"
+									oncomplete="PF('dlgVideo').show()"
+									actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/tQelOgVBIBA?autoplay=1')}"
+									process="@this,painelVideo" update="painelVideo" />
+							</h:panelGroup>
+
+						</p:panelGrid>
 
 
 						<p:separator styleClass="SeparatorFull" />
@@ -352,7 +352,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:selectManyCheckbox
 								value="#{relatorioPlanoTratamentoMB.status}" layout="grid"
 								columns="6">
-								<p:ajax process="@this" update="painelJustificativaEncerramento"/>
+								<p:ajax process="@this" update="painelJustificativaEncerramento" />
 								<f:selectItem itemLabel="Ativos" itemValue="N"
 									itemEscaped="false" />
 								<f:selectItem itemLabel="Encerrados" itemValue="S"
@@ -361,23 +361,27 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									itemEscaped="false" />
 							</p:selectManyCheckbox>
 						</p:outputPanel>
-						
-						<p:panelGrid columns="3" layout="grid" id="painelJustificativaEncerramento"
+
+						<p:panelGrid columns="3" layout="grid"
+							id="painelJustificativaEncerramento"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup rendered="#{relatorioPlanoTratamentoMB.status.contains('S')}">
-								<p:outputLabel for="justificativaEncerramento" value="Motivo de Encerramento: " />
+							<h:panelGroup
+								rendered="#{relatorioPlanoTratamentoMB.status.contains('S')}">
+								<p:outputLabel for="justificativaEncerramento"
+									value="Motivo de Encerramento: " />
 								<p:selectOneMenu id="justificativaEncerramento"
-									value="#{relatorioPlanoTratamentoMB.justificativa}" converter="dominio"
-									>
+									value="#{relatorioPlanoTratamentoMB.justificativa}"
+									converter="dominio">
 									<f:selectItem itemValue="#{null}"
 										itemLabel="Selecione um motivo" />
-									<f:selectItems value="#{relatorioPlanoTratamentoMB.justificativas}"
+									<f:selectItems
+										value="#{relatorioPlanoTratamentoMB.justificativas}"
 										var="justificativa" itemLabel="#{justificativa.nome}"
 										itemValue="#{justificativa}" />
 								</p:selectOneMenu>
-							</h:panelGroup>	
+							</h:panelGroup>
 						</p:panelGrid>
-						
+
 						<div class="EmptyBox5"></div>
 
 						<div class="SeparatorFull"></div>
@@ -395,7 +399,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Limpar"
 								actionListener="#{relatorioPlanoTratamentoMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
-							
+
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -441,6 +445,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							binding="#{relatorioPlanoTratamentoMB.tabelaRelatorio}">
 
 							<f:facet name="header">Planos de Tratamentos</f:facet>
+
+							<p:column exportable="false" headerText="Ações">
+								<p:commandButton icon="White fa fa-times-circle"
+									onclick="PF('devolver').show();" title="Encerrar"
+									process="@this" styleClass="OrangeButton"
+									action="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
+									rendered="#{m.status ne 'S' and m.status ne 'E' and planoTratamentoMB.admin}" />
+
+								<ui:remove>
+									<p:button icon="White fa fa-eye" title="Visualizar"
+										onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
+								</ui:remove>
+
+							</p:column>
 
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"
@@ -500,51 +518,43 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" headerText="Possui orçamento?">
 								<h:outputText value="#{relatorioPlanoTratamentoMB.possuiOrcamento(m)}" title="#{m.id}" />
 							</p:column>
-							<p:column filterBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"
-								sortBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"								
+							
+							<ui:remove>
+							<p:column
+								filterBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"
 								filterMatchMode="contains" headerText="Valor à Receber">
-								<h:outputText value="#{relatorioPlanoTratamentoMB.valorAReceber(m)}">
+								<h:outputText
+									value="#{relatorioPlanoTratamentoMB.valorAReceber(m)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
-							
-							<p:column filterBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"
-								sortBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"								
+
+							<p:column
+								filterBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"
 								filterMatchMode="contains" headerText="Valor à Conferir">
-								<h:outputText value="#{relatorioPlanoTratamentoMB.valorAConferir(m)}">
+								<h:outputText
+									value="#{relatorioPlanoTratamentoMB.valorAConferir(m)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
-							</p:column>	
-							<p:column filterBy="#{m.valor}"
-								sortBy="#{m.valor}"								
-								filterMatchMode="contains" headerText="Valor Total dos Procedimentos">
+							</p:column>
+							<p:column filterBy="#{m.valor}" sortBy="#{m.valor}"
+								filterMatchMode="contains"
+								headerText="Valor Total dos Procedimentos">
 								<h:outputText value="#{m.valor}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
-							</p:column>	
-
-
-							<p:column exportable="false">
-								<p:commandButton icon="White fa fa-times-circle"
-									onclick="PF('devolver').show();" title="Encerrar"
-									process="@this" styleClass="OrangeButton"
-									action="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
-									rendered="#{m.status ne 'S' and m.status ne 'E' and planoTratamentoMB.admin}" />
-
-								<ui:remove>
-									<p:button icon="White fa fa-eye" title="Visualizar"
-										onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
-								</ui:remove>
-
 							</p:column>
+							</ui:remove>
 
 						</p:dataTable>
-					</p:outputPanel>					
-					
-						<p:dialog id="devolver" widgetVar="devolver"
+					</p:outputPanel>
+
+					<p:dialog id="devolver" widgetVar="devolver"
 		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
 		appendTo=":lume" closable="false">
 		<p:outputPanel id="pgFinalizar">

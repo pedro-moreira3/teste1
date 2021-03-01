@@ -511,6 +511,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{procedimento.dentistaExecutor.dadosBasico.prefixoNome}" />
 							</p:column>
 
+							<ui:remove>
 							<p:column
 								filterBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
 								sortBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
@@ -520,6 +521,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{procedimento.finalizadoPorProfissional.dadosBasico.prefixoNome}" />
 							</p:column>
+							</ui:remove>
 
 							<p:column filterBy="#{procedimento.planoTratamento.descricao}"
 								sortBy="#{procedimento.planoTratamento.descricao}"
@@ -561,7 +563,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioProcedimentoMB.formatarData(procedimento.dataFinalizado)}" />
 							</p:column>
 
-
+							<ui:remove>
 							<p:column filterBy="#{procedimento.planoTratamento.inicio}"
 								sortBy="#{procedimento.planoTratamento.inicio}"
 								filterMatchMode="contains" headerText="Inicio do tratamento">
@@ -575,7 +577,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
 							</p:column>
-
+							
 							<p:column
 								filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
 								sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
@@ -584,8 +586,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
 							</p:column>
-
-							<ui:remove>
+							
+							
 								<p:column>
 									<p:commandButton icon="White fa fa-eye" width="5%">
 										<f:setPropertyActionListener value="#{procedimento}"
