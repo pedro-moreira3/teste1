@@ -254,7 +254,9 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
                                 this.lancamentosPendentes.add(l);
                                 valorAReceber = valorAReceber.add( (l.getValorComDesconto() != null ?
                                         l.getValorComDesconto() : l.getValor()) );
-                            } else if (l.getStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_VALIDAR)) {
+                            } else if (l.getStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_VALIDAR) &&
+                                    !l.getLancamentoExtornado().equals("S")
+                                    ) {
                                 this.lancamentosAConferir.add(l);
                             }
                         }

@@ -53,7 +53,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
     
     private List<String> statusReajuste = new ArrayList<String>();
     private List<String> mostrarPlanosIgpm = new ArrayList<String>();
-    private List<String> periodoReajuste = new ArrayList<String>();
+    private String periodoReajuste = "";
     private List<String> tipoPlano = new ArrayList<String>();
     private List<PlanoTratamento> planos = new ArrayList<PlanoTratamento>();
     private List<Orcamento> orcamentos = new ArrayList<Orcamento>();
@@ -67,7 +67,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamento.class);
         this.actionTrocaDatas();
-        this.periodoReajuste.add("A");
+        this.periodoReajuste = "A";
         this.mostrarPlanosIgpm.add("S");
     }
 
@@ -105,7 +105,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
 //            }
 //        }
         
-        if(statusReajuste != null && !statusReajuste.isEmpty()) {
+        if(statusReajuste != null && !statusReajuste.isEmpty() && statusReajuste.size() == 1) {
             if(statusReajuste.contains("N")) {
                 this.getEntityList().removeIf((pt) -> (pt.getReajustes() != null || !pt.getReajustes().isEmpty()));
             }
@@ -115,7 +115,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
             if(statusReajuste.contains("E")) {
                 List<PlanoTratamento> pts = new ArrayList<PlanoTratamento>();
                 for(PlanoTratamento pt : this.getEntityList()) {
-                    if(!IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste.get(0))) {
+                    if(!IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste)) {
                         pts.add(pt);
                     }
                 }
@@ -153,7 +153,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         telaEditar = false;
 
         if (pt != null) {
-            if(IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste.get(0))){
+            if(IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste)){
                 listaProcedimentos(pt);
             }else {
                 addWarn("Não é possível reajustar esse plano de tratamento", "É necessário cumprir o período de reajuste.");
@@ -179,7 +179,7 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
             this.tipoRejusteSelecionado = "P";
 
             for(PlanoTratamento pt : this.planos) {
-                if(IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste.get(0))){
+                if(IndiceReajusteSingleton.getInstance().validaReajusteProcedimentos(pt, periodoReajuste)){
                     listaProcedimentos(pt);
                 }else {
                     addWarn("Não é possível reajustar o plano de tratamento \"" + pt.getDescricao() + " \"", "É necessário cumprir o período de reajuste.");
@@ -529,11 +529,11 @@ public class AjusteIGPMMB extends LumeManagedBean<PlanoTratamento> {
         this.renderedDadosMultiplos = renderedDadosMultiplos;
     }
 
-    public List<String> getPeriodoReajuste() {
+    public String getPeriodoReajuste() {
         return periodoReajuste;
     }
 
-    public void setPeriodoReajuste(List<String> periodoReajuste) {
+    public void setPeriodoReajuste(String periodoReajuste) {
         this.periodoReajuste = periodoReajuste;
     }
 

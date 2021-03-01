@@ -35,6 +35,7 @@ import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalDiaria;
@@ -719,10 +720,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 }
             }
             if (lancamentosDeOrigem != null) {
-                for (Lancamento lancamento : lancamentosDeOrigem) {
+                for (Lancamento lancamento : lancamentosDeOrigem) {                  
                     lancamento.setDadosCalculoPercPagtoFaturaStr(String.format("R$ %.2f", lancamento.getValor()) + " (" + String.format("%.2f%%",
                             lancamento.getValor().divide(valorTotalFatura, 2).multiply(BigDecimal.valueOf(100))) + ")");
+                   
                 }
+                
+                lancamentosDeOrigem.removeIf((lancamento) -> (!lancamento.getAtivoStr().equals("Sim") || lancamento.getLancamentoExtornado().equals("S") ||
+                        (lancamento.getLancamentosContabeis() != null && lancamento.getLancamentosContabeis().size() > 0 &&
+                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE))
+                        ));
+                
             }
 
             setValorRepassar(ptp.getValorDisponivel());
@@ -1021,7 +1029,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(
                     new BigDecimal(0)) == 0) && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
-            } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
+            } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0
+                    && ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PROCEDIMENTO)) {
                 pendencias.add("Procedimento com valor de repasse zerado;");
             }
         }

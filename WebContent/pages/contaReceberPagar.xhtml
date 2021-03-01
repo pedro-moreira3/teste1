@@ -740,9 +740,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</div>
 							</div>
 						</p:tab>
-
-						<ui:remove>
-						<p:tab id="tab4" title="Reajuste de contratos">
+					
+						<p:tab id="tab4" title="Reajuste de contratos" rendered="false">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 
@@ -837,16 +836,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup style="margin-top:10px;">
 											<h:outputLabel value="Período de reajuste: " />
-
-											<p:selectManyCheckbox value="#{ajusteIGPMMB.periodoReajuste}"
+											
+											<p:selectOneRadio value="#{ajusteIGPMMB.periodoReajuste}" unselectable="true" 
 												layout="grid" columns="6">
 												<f:selectItem itemLabel="Anual" itemValue="A"
 													itemEscaped="false" />
 												<f:selectItem itemLabel="Semestral" itemValue="S"
 													itemEscaped="false" />
-
-												<p:ajax process="@this"/>
-											</p:selectManyCheckbox>
+													
+												<p:ajax process="@this" />
+											</p:selectOneRadio>
 										</h:panelGroup>
 
 										<h:panelGroup style="margin-top:10px;display:block;">
@@ -1041,7 +1040,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</div>
 							</div>
 						</p:tab>
-						</ui:remove>
 
 						<p:tab id="tab5" title="Extrato">
 							<div class="ui-g ui-fluid">
@@ -1428,7 +1426,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					</p:dialog>
 
-					<ui:remove>
 					<p:dialog id="dlgAplicarIGPM" widgetVar="dlgAplicarIGPM"
 						width="100%" height="100%" responsive="true" appendTo=":lume"
 						modal="true" header="Aplicar reajuste por IGPM" resizable="false">
@@ -1638,7 +1635,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:outputPanel>
 
 					</p:dialog>
-					</ui:remove>
 
 				</div>
 			</div>
