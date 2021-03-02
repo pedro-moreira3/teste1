@@ -14,13 +14,17 @@ import org.primefaces.event.TabChangeEvent;
 import br.com.lume.common.iugu.Iugu;
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.integracao.ContratacaoPacoteConfirmacaoAutoSingleton;
 import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
+import br.com.lume.integracao.HistoricoMensagemIntegracaoSingleton;
 import br.com.lume.integracao.PacoteConfirmacaoAutoSingleton;
+import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.ContratacaoPacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto.PrioridadeEnvio;
+import br.com.lume.odonto.entity.HistoricoMensagemIntegracao;
 import br.com.lume.odonto.entity.PacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.PacoteConfirmacaoAuto.TipoPacote;
 
@@ -37,6 +41,8 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     private List<PacoteConfirmacaoAuto> pacotesWpp, pacotesSMS;
     private DetailPacoteConfirmacaoAuto detail;
     private List<ContratacaoPacoteConfirmacaoAuto> contratacoes;
+    
+    private List<HistoricoMensagemIntegracao> mensagensEnviadas;
 
     private TabView tabView;
     
@@ -80,6 +86,15 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     public String getMensagemConfirmacao(PacoteConfirmacaoAuto pacote) {
         return "Confirma contratação do pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + "?";
     }
+    
+    public String getStatusAgendamentoDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
 
     public void salvar() {
         try {
@@ -117,6 +132,8 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
             } catch (Exception e) {
                 addError("Erro!", "Falha ao carregar configurações da empresa!");
             }
+        }else if ("Histórico de Mensagens".equals(event.getTab().getTitle())) {
+            mensagensEnviadas = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().getMensagensFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
         } else if ("Histórico de Contratações".equals(event.getTab().getTitle())) {
             contratacoes = ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().getBo().getContratacoes(UtilsFrontEnd.getEmpresaLogada());
         }
@@ -185,6 +202,16 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     
     public void setListaFaturasEmAberto(List<ContratacaoPacoteConfirmacaoAuto> listaFaturasEmAberto) {
         this.listaFaturasEmAberto = listaFaturasEmAberto;
+    }
+
+    
+    public List<HistoricoMensagemIntegracao> getMensagensEnviadas() {
+        return mensagensEnviadas;
+    }
+
+    
+    public void setMensagensEnviadas(List<HistoricoMensagemIntegracao> mensagensEnviadas) {
+        this.mensagensEnviadas = mensagensEnviadas;
     }
 
 }

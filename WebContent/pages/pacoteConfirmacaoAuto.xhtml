@@ -243,7 +243,7 @@
 							<p:outputPanel id="configuracaoPacotes">
 								<p:outputLabel value="Abaixo exemplo de mensagem de confirmação de consulta. A maensagem enviada é padronizada pelo WhatsApp e não pode ser alterada." />
 								<br /><br />
-								<p:inputTextarea value="#{pacoteConfirmacaoAutoMB.detail.mensagemPadraoConfirmacao}" />
+								<p:inputTextarea value="#{pacoteConfirmacaoAutoMB.detail.mensagemPadraoConfirmacao}" disabled="true"/>
 								<br /><br />
 								<p:selectBooleanCheckbox value="#{pacoteConfirmacaoAutoMB.detail.enviarNomeDentista}" itemLabel="Enviar nome do dentista na mensagem de confirmação"
 									style="width: 100%" />
@@ -291,6 +291,42 @@
 							</p:panelGrid>
 						</p:tab>
 						<p:tab title="Histórico de Mensagens">
+						<br />					
+							<p:dataTable value="#{pacoteConfirmacaoAutoMB.mensagensEnviadas}" var="contratacao"
+								reflow="true" emptyMessage="Sem mensagens enviadas."
+								rows="20" paginator="true" rowKey="#{mensagem}" paginatorPosition="bottom">
+								<f:facet name="header">Mensagens enviadas</f:facet>
+								<p:column filterBy="#{mensagem.metodoEnvio}" width="10%"
+									sortBy="#{mensagem.metodoEnvio}" filterMatchMode="contains"
+									headerText="Tipo do Pacote">
+									<h:outputText value="#{mensagem.metodoEnvio}" />
+								</p:column>
+								<p:column filterBy="#{mensagem.dataCriacaoStr}" width="15%"
+									sortBy="#{mensagem.dataCriacaoStr}" filterMatchMode="contains"
+									headerText="Data de Envio">
+									<h:outputText value="#{mensagem.dataCriacaoStr}" />
+								</p:column>
+								<p:column filterBy="#{mensagem.paciente.dadosBasico.nome}" width="15%"
+									sortBy="#{mensagem.paciente.dadosBasico.nome}" filterMatchMode="contains"
+									headerText="Paciente">
+									<h:outputText value="#{mensagem.paciente.dadosBasico.nome}" />
+								</p:column>
+								<p:column filterBy="#{mensagem.respostaPaciente}" width="15%"
+									sortBy="#{mensagem.respostaPaciente}" filterMatchMode="contains"
+									headerText="Resposta do Paciente">
+									<h:outputText value="#{mensagem.respostaPaciente}" />
+								</p:column>
+								<p:column filterBy="#{pacoteConfirmacaoAutoMB.getStatusAgendamentoDescricao(mensagem.agendamento)}" width="15%"
+									sortBy="#{pacoteConfirmacaoAutoMB.getStatusAgendamentoDescricao(mensagem.agendamento)}" filterMatchMode="contains"
+									headerText="Status do agendamento">
+									<h:outputText value="#{pacoteConfirmacaoAutoMB.getStatusAgendamentoDescricao(mensagem.agendamento)}" />
+								</p:column>
+								<p:column filterBy="#{mensagem.agendamento.inicioStr}" width="15%"
+									sortBy="#{mensagem.agendamento.inicioStr}" filterMatchMode="contains"
+									headerText="Data do agendamento">
+									<h:outputText value="#{mensagem.agendamento.inicioStr}" />
+								</p:column>
+							</p:dataTable>
 						</p:tab>
 						<p:tab title="Histórico de Contratações">	
 							<br />					

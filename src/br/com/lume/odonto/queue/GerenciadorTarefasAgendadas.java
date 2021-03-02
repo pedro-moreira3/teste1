@@ -15,11 +15,18 @@ public class GerenciadorTarefasAgendadas implements ServletContextListener, Seri
     //20 em 20 minutos
     private static final long TEMPO_CONSUMO_ATUALIZACAO_FATURAS = GerenciadorTarefasAgendadas.minutesToMillis(20);
     private AtualizacaoFaturas atualizacaoFaturas = new AtualizacaoFaturas();
+    private EnvioMensagensConfirmacao envioMensagensConfirmacao = new EnvioMensagensConfirmacao();
 
+    //60 em 60 minutos
+    private static final long TEMPO_CONSUMO_MENSAGENS_AUTOMATICAS = GerenciadorTarefasAgendadas.minutesToMillis(1);
+    
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
         Timer time = new Timer(true);
         time.scheduleAtFixedRate(atualizacaoFaturas, 0, TEMPO_CONSUMO_ATUALIZACAO_FATURAS);
+        
+        Timer time2 = new Timer(true);
+        time2.scheduleAtFixedRate(envioMensagensConfirmacao, 0, TEMPO_CONSUMO_MENSAGENS_AUTOMATICAS);
     }
 
     public static boolean isWithinRange(int horaIni, int horaFim) {
