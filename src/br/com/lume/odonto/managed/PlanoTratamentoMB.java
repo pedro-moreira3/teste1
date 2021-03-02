@@ -258,6 +258,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         carregarStatusDente();
     }
 
+    public void actionNaoAprovaOrcamento() {
+        
+    }
+    
     public void imprimirSemValoresListener() {
         renderizarValoresProcedimentos = true;
         if (imprimirSemValores) {
