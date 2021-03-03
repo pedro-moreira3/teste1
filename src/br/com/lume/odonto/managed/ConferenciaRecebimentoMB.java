@@ -26,6 +26,7 @@ import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
+import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
@@ -86,6 +87,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicos(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList() != null) {
+                getEntityList().removeIf((lancamento) -> lancamento.getLancamentoExtornado().equals("S") ||
+                        (lancamento.getLancamentosContabeis() != null && lancamento.getLancamentosContabeis().size() > 0 &&
+                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE)));
+                
                 getEntityList().forEach(lancamento -> {
                     lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
                     lancamento.calculaStatusESubStatus();
