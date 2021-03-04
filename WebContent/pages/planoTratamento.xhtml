@@ -1484,7 +1484,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton icon="fa fa-trash" process="@this"
 								actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:tbViewOrcamento"
-								styleClass="NavyButton" title="Cancelar Orçamento">
+								styleClass="NavyButton" title="Cancelar Orçamento"
+								rendered="#{orcamento.isAprovado()}">
 								<p:confirm header="Confirmação"
 									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 							</p:commandButton>
@@ -1859,9 +1860,43 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="OrangeButton"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
+			<p:commandButton icon="White fa fa-gear" value="Não aprovar Orçamento"
+				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
+				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
+				styleClass="RedButton"
+				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').show()"
+				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
+					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
 				styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgJustificativaNaoAprovarOrcamento" id="dlgJustificativaNaoAprovarOrcamento"
+		appendTo=":lume" modal="true" closable="false" width="50%">
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<h:panelGroup>
+				<p:outputLabel value="Informe a justificativa:"/>
+				<p:inputText value="#{planoTratamentoMB.orcamentoSelecionado.justificativaNaoAprovacao}" >
+					<p:ajax process="@this"/>
+				</p:inputText>
+			</h:panelGroup>
+		</p:panelGrid>
+		
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton value="Salvar" icon="fa fa-save" 
+				actionListener="#{planoTratamentoMB.actionNaoAprovaOrcamento()}"
+				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').hide();"
+				styleClass="GreenButton" process="@this">
+			</p:commandButton>
+			<h:panelGroup></h:panelGroup>
+			<p:commandButton value="Cancelar" icon="fa fa-close" 
+				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').hide();"
+				styleClass="RedButton" process="@this">
+			</p:commandButton>
 		</p:panelGrid>
 	</p:dialog>
 

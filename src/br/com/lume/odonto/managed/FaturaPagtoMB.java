@@ -331,20 +331,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void carregarAjuste(Lancamento lancamento) {
-        if (isAdmin() && lancamento.getValidadoPorProfissional() != null) {
-            this.ajustarLancamento = new Lancamento();
-            this.extornarLancamento = lancamento;
+        try{
+            if (isAdmin() && lancamento.getValidadoPorProfissional() != null) {
+                this.ajustarLancamento = new Lancamento();
+                this.extornarLancamento = lancamento;
 
-            this.ajustarLancamento.setFormaPagamento(lancamento.getFormaPagamento());
-            this.ajustarLancamento.setValor(lancamento.getValor());
-            this.ajustarLancamento.setTarifa(lancamento.getTarifa());
-            this.ajustarLancamento.setValorDesconto(lancamento.getValorDesconto());
-            this.ajustarLancamento.setDataPagamento(lancamento.getDataPagamento());
-            this.ajustarLancamento.setDataCredito(lancamento.getDataCredito());
-            this.ajustarLancamento.setId(lancamento.getId());
-            editarLancamentoAtualizarFormasPagamentoDisponiveis(lancamento.getFatura().getTipoFaturaSigla());
-        } else {
-            this.addError("Permissão negada", Mensagens.getMensagem(Mensagens.PERMISSAO_NEGADA));
+                this.ajustarLancamento.setFormaPagamento(lancamento.getFormaPagamento());
+                this.ajustarLancamento.setValor(lancamento.getValor());
+                this.ajustarLancamento.setTarifa(lancamento.getTarifa());
+                this.ajustarLancamento.setValorDesconto(lancamento.getValorDesconto());
+                this.ajustarLancamento.setDataPagamento(lancamento.getDataPagamento());
+                this.ajustarLancamento.setDataCredito(lancamento.getDataCredito());
+                this.ajustarLancamento.setId(lancamento.getId());
+                editarLancamentoAtualizarFormasPagamentoDisponiveis(lancamento.getFatura().getTipoFaturaSigla());
+            } else {
+                this.addError("Permissão negada", Mensagens.getMensagem(Mensagens.PERMISSAO_NEGADA));
+            }
+        }catch (Exception e) {
+            this.addError("Falha ao carregar dados de ajuste", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
 
