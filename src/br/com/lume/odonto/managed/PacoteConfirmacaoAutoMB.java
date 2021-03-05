@@ -41,14 +41,13 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     private List<PacoteConfirmacaoAuto> pacotesWpp, pacotesSMS;
     private DetailPacoteConfirmacaoAuto detail;
     private List<ContratacaoPacoteConfirmacaoAuto> contratacoes;
-    
+
     private List<HistoricoMensagemIntegracao> mensagensEnviadas;
 
     private TabView tabView;
-    
+
     private boolean temFaturaAberta = false;
     List<ContratacaoPacoteConfirmacaoAuto> listaFaturasEmAberto;
-    
 
     public PacoteConfirmacaoAutoMB() {
         super(new PacoteConfirmacaoAutoSingleton().getBo());
@@ -56,37 +55,37 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
         this.pacotesWpp = PacoteConfirmacaoAutoSingleton.getInstance().getBo().getPacotes(TipoPacote.WhatsAPP);
         this.pacotesSMS = PacoteConfirmacaoAutoSingleton.getInstance().getBo().getPacotes(TipoPacote.SMS);
-        
+
         verificaFaturaPendentes();
     }
-    
+
     public void verificaFaturaPendentes() {
-        this.temFaturaAberta = false; 
+        this.temFaturaAberta = false;
         this.listaFaturasEmAberto = ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().getBo().getContratacoesNaoPagas(UtilsFrontEnd.getEmpresaLogada());
-        if(this.listaFaturasEmAberto  != null && this.listaFaturasEmAberto.size() > 0 ) {
-            this.temFaturaAberta = true; 
+        if (this.listaFaturasEmAberto != null && this.listaFaturasEmAberto.size() > 0) {
+            this.temFaturaAberta = true;
             for (ContratacaoPacoteConfirmacaoAuto faturaEmAberto : this.listaFaturasEmAberto) {
-                InvoiceResponse fatura =  Iugu.getInstance().buscaFatura(faturaEmAberto.getFaturaId());
+                InvoiceResponse fatura = Iugu.getInstance().buscaFatura(faturaEmAberto.getFaturaId());
                 if (fatura != null && "paid".equals(fatura.getStatus())) {
                     //se a fatura foi paga, tem que atualizar o saldo de mensagens da empresa                    
                     try {
-                        DetailPacoteConfirmacaoAutoSingleton.getInstance().atualizaDadosComContratacao(faturaEmAberto);               
+                        DetailPacoteConfirmacaoAutoSingleton.getInstance().atualizaDadosComContratacao(faturaEmAberto);
                         faturaEmAberto.setPagamentoProcessado(true);
                         ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().getBo().persist(faturaEmAberto);
-                    } catch (Exception e) {                       
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }                   
-            }           
-            
+                }
+            }
+
         }
-      
+
     }
 
     public String getMensagemConfirmacao(PacoteConfirmacaoAuto pacote) {
         return "Confirma contratação do pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + "?";
     }
-    
+
     public String getStatusAgendamentoDescricao(Agendamento agendamento) {
         try {
             return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
@@ -98,6 +97,13 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
     public void salvar() {
         try {
+            if (detail.getEnviarNomeDentista()) {
+                detail.setMensagemPadraoConfirmacao("Olá <nome_paciente>! Você tem consulta na <nome_clinica> dia 10/10/2020 às 15:00 horas. Para confirmar responda SIM ou NÃO.");
+            } else {
+                detail.setMensagemPadraoConfirmacao(
+                        "Olá <nome_paciente>! Você tem consulta na <nome_clinica> com o Dr(a). <nome_dentista> dia  10/10/2020 às 15:00 horas. Para confirmar responda SIM ou NÃO.");
+            }
+
             DetailPacoteConfirmacaoAutoSingleton.getInstance().getBo().persist(detail);
             detail = DetailPacoteConfirmacaoAutoSingleton.getInstance().getBo().find(detail);
             addInfo("Sucesso!", "Dados salvos com sucesso.");
@@ -108,9 +114,9 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
     public void contratar(PacoteConfirmacaoAuto pacote) {
         try {
-            if(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco() == null || UtilsFrontEnd.getEmpresaLogada().getIdIugu() == null) {
+            if (UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco() == null || UtilsFrontEnd.getEmpresaLogada().getIdIugu() == null) {
                 addError("Erro!", "Antes de comprar pacotes de mensagens, é necessário contratar o sistema intelidente.");
-            }else {
+            } else {
                 ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().contrataNovoPacote(pacote, UtilsFrontEnd.getProfissionalLogado());
                 addInfo("Sucesso!", "Contratado pacote de " + pacote.getQuantidadeMensagens() + " mensagens de " + pacote.getTipoPacote().getDescricao() + ". Verifique o aviso em vermelho.");
                 verificaFaturaPendentes();
@@ -132,7 +138,7 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
             } catch (Exception e) {
                 addError("Erro!", "Falha ao carregar configurações da empresa!");
             }
-        }else if ("Histórico de Mensagens".equals(event.getTab().getTitle())) {
+        } else if ("Histórico de Mensagens".equals(event.getTab().getTitle())) {
             mensagensEnviadas = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().getMensagensFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
         } else if ("Histórico de Contratações".equals(event.getTab().getTitle())) {
             contratacoes = ContratacaoPacoteConfirmacaoAutoSingleton.getInstance().getBo().getContratacoes(UtilsFrontEnd.getEmpresaLogada());
@@ -184,32 +190,26 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
         this.contratacoes = contratacoes;
     }
 
-    
     public boolean isTemFaturaAberta() {
         return temFaturaAberta;
     }
 
-    
     public void setTemFaturaAberta(boolean temFaturaAberta) {
         this.temFaturaAberta = temFaturaAberta;
     }
 
-    
     public List<ContratacaoPacoteConfirmacaoAuto> getListaFaturasEmAberto() {
         return listaFaturasEmAberto;
     }
 
-    
     public void setListaFaturasEmAberto(List<ContratacaoPacoteConfirmacaoAuto> listaFaturasEmAberto) {
         this.listaFaturasEmAberto = listaFaturasEmAberto;
     }
 
-    
     public List<HistoricoMensagemIntegracao> getMensagensEnviadas() {
         return mensagensEnviadas;
     }
 
-    
     public void setMensagensEnviadas(List<HistoricoMensagemIntegracao> mensagensEnviadas) {
         this.mensagensEnviadas = mensagensEnviadas;
     }

@@ -19,33 +19,36 @@ import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
 import br.com.lume.odonto.entity.Avisos;
 import br.com.lume.odonto.entity.Avisos.TIPO_AVISO;
+import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
 @ViewScoped
-public class AvisosMB extends LumeManagedBean<Avisos>{
+public class AvisosMB extends LumeManagedBean<Avisos> {
 
     private static final long serialVersionUID = 1L;
     private Logger log = Logger.getLogger(AvisosMB.class);
-    
-    @Inject @Push
+
+    @Inject
+    @Push
     private PushContext atualizarAvisos;
-    
-    private String idEmpresaParaSocket; 
-    
+
+    private String idEmpresaParaSocket;
+
     public AvisosMB() {
         super(AvisosSingleton.getInstance().getBo());
         this.setClazz(Avisos.class);
-        
+
         idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-        
+
         carregarAvisos();
     }
-    
+
     public void testeEmail() {
         try {
             EnviaEmail.envioResetSenha(UsuarioSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario()));
@@ -56,100 +59,109 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
     }
 
     public void redireciona(Avisos aviso) {
-        if(aviso.getTipoAviso().equals(TIPO_AVISO.CONTRATACAO)) {
-            
-            if(UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() == null || UtilsFrontEnd.getEmpresaLogada().getEmpChaCep().equals("")) {
+        if (aviso.getTipoAviso().equals(TIPO_AVISO.CONTRATACAO)) {
+
+            if (UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() == null || UtilsFrontEnd.getEmpresaLogada().getEmpChaCep().equals("")) {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Antes de contratar o serviço, favor preencher o CEP da empresa em Administrativo, Cadastro da clínica");
                 return;
             }
-            
+
             PrimeFaces.current().executeScript("PF('dlgContratacao').show();");
-        }else {
+        } else {
             JSFHelper.redirect(aviso.getLink());
         }
     }
 
     public void carregarAvisos() {
         try {
-            this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada(), 
-                    UtilsFrontEnd.getProfissionalLogado()));            
+            this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado()));
             final Empresa emp = UtilsFrontEnd.getEmpresaLogada();
-          //  final Empresa emp2 = emp;
-            Thread th = new Thread(new Runnable() {                  
-                 @Override
-                 public void run() {
-                     try {
-                         EmpresaSingleton.getInstance().carregarStatusFaturas(emp);                       
-                        
-                            if (Iugu.getInstance().isSuspenso(emp.getAssinaturaIuguBanco())) {
+            //  final Empresa emp2 = emp;
+            Thread th = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        EmpresaSingleton.getInstance().carregarStatusFaturas(emp);
+
+                        if (Iugu.getInstance().isSuspenso(emp.getAssinaturaIuguBanco())) {
+                            Avisos aviso = new Avisos();
+                            aviso.setTitulo("Regularização de assinatura");
+                            aviso.setAviso("Entre em contato com o suporte para regularização.");
+                            aviso.setTipoAviso(TIPO_AVISO.INFORMACAO);
+                            aviso.setLink("mensal.jsf");
+                            getEntityList().add(aviso);
+
+                            atualizarAvisos.send(emp.getEmpIntCod());
+                        }
+                        DetailPacoteConfirmacaoAuto detalheContratacaopacote = DetailPacoteConfirmacaoAutoSingleton.getInstance().getDadosFromEmpresa(emp);
+                        if (detalheContratacaopacote != null) {
+                            if ((detalheContratacaopacote.getSaldoMensagensSMS() != 0 && detalheContratacaopacote.getSaldoMensagensSMS() < 50)
+                                    || (detalheContratacaopacote.getSaldoMensagensWhatsApp() != 0 && detalheContratacaopacote.getSaldoMensagensWhatsApp() < 50)) {
                                 Avisos aviso = new Avisos();
-                                aviso.setTitulo("Regularização de assinatura");
-                                aviso.setAviso("Entre em contato com o suporte para regularização.");
+                                aviso.setTitulo("Pacote de mensagens");
+                                aviso.setAviso("Atenção! Sua clínica está com poucas mensagens disponíveis para envio de confirmação automática de consulta. Clique aqui para verificar!");
                                 aviso.setTipoAviso(TIPO_AVISO.INFORMACAO);
-                                aviso.setLink("mensal.jsf");
-                                getEntityList().add(aviso);                               
-                                
+                                aviso.setLink("pacoteConfirmacaoAuto.jsf");
+                                getEntityList().add(aviso);
+
                                 atualizarAvisos.send(emp.getEmpIntCod());
-                             } 
-                            
-                         
-                     } catch (Exception e) {
-                         LogIntelidenteSingleton.getInstance().makeLog(e);
-                         e.printStackTrace();
-                     }
-                 }
-             });
-            
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        LogIntelidenteSingleton.getInstance().makeLog(e);
+                        e.printStackTrace();
+                    }
+                }
+            });
+
             if (emp.getAssinaturaIuguBanco() != null && emp.getIdIugu() != null && !emp.getIdIugu().equals("")) {
                 th.start();
             }
-            
+
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Falha ao carregar avisos.");
             e.printStackTrace();
         }
     }
-    
+
     public void contratarServico() {
         try {
-            if(isAdmin()) {
+            if (isAdmin()) {
                 boolean status = EmpresaSingleton.getInstance().criarUsuarioAssinaturaIugu(UtilsFrontEnd.getEmpresaLogada());
                 carregarAvisos();
-                if(status) {
+                if (status) {
                     this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Serviço contratado ! Para visualizar as faturas, acesse o menu Financeiro-Mensalidades.");
                     JSFHelper.redirect("mensal.jsf");
-                }else {
+                } else {
                     this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível contratar o serviço.");
                 }
-            }else {
+            } else {
                 this.addError(Mensagens.getMensagem(Mensagens.USUARIO_SEM_PERFIL), "Permissão negada.");
             }
-        }catch (IuguDadosObrigatoriosException e) {
+        } catch (IuguDadosObrigatoriosException e) {
             this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Dados da empresa insuficientes para contratação.");
-        }catch (Exception e) {
+        } catch (Exception e) {
             this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível contratar o serviço. Verifique o CEP da sua empresa em administrativo, cadastro da clínica");
             e.printStackTrace();
         }
     }
 
-    
     public PushContext getAtualizarAvisos() {
         return atualizarAvisos;
     }
 
-    
     public void setAtualizarAvisos(PushContext atualizarAvisos) {
         this.atualizarAvisos = atualizarAvisos;
     }
 
-    
     public String getIdEmpresaParaSocket() {
         return idEmpresaParaSocket;
     }
 
-    
     public void setIdEmpresaParaSocket(String idEmpresaParaSocket) {
         this.idEmpresaParaSocket = idEmpresaParaSocket;
     }
-    
+
 }

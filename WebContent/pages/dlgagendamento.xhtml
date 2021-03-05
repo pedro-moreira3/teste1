@@ -812,6 +812,14 @@
 				<p:message for="descricao" styleClass="msg" />
 			</h:panelGroup>
 		</p:panelGrid>
+		
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid" rendered="#{agendamentoMB.entity.mensagemConfirmacaoAutomaticaEnviada}">
+			<h:panelGroup styleClass="lumeField labelInline">
+				<p:outputLabel  style="font-weight:bold;font-size:16px" value="Atenção! Mensagem automatica de confirmação de consulta já enviada para esse agendamento." />				
+			
+			</h:panelGroup>
+		</p:panelGrid>
 
 	</p:fieldset>
 
