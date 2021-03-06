@@ -280,13 +280,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:column>
 
 						<p:column
-							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricaoCompleta}"
-							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricaoCompleta}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.descricaoCompletaComFace}"
+							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.descricaoCompletaComFace}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Procedimento">
 							<h:outputText
-								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricaoCompleta}"
+								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.descricaoCompletaComFace}"
 								title="#{rfl.id}" />
 						</p:column>
 
