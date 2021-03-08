@@ -85,11 +85,14 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             this.dataCreditoInicial = c.getTime();
 
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicos(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
-                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             if (getEntityList() != null) {
-                getEntityList().removeIf((lancamento) -> lancamento.getLancamentoExtornado().equals("S") ||
-                        (lancamento.getLancamentosContabeis() != null && lancamento.getLancamentosContabeis().size() > 0 &&
-                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE)));
+                
+//                getEntityList().removeIf((lancamento) -> lancamento.getLancamentoExtornado().equals("S") ||
+//                        (lancamento.getLancamentosContabeis() != null && lancamento.getLancamentosContabeis().size() > 0 &&
+//                                lancamento.getLancamentosContabeis().get(0).getMotivo() != null &&   
+//                                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla() != null &&
+//                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE)));
                 
                 getEntityList().forEach(lancamento -> {
                     lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
