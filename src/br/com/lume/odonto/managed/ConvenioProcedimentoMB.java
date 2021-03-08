@@ -75,7 +75,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
             ano = Calendar.getInstance().get(Calendar.YEAR);
-            carregarRelatorio();
+          //  carregarRelatorio();
 
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
