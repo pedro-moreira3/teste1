@@ -640,7 +640,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         if(ptp.getPlanoTratamento().isOrtodontico() && !EmpresaSingleton.getInstance()
                                 .isValidarRepasseLancamentoOrigemValidadoOrtodontico(ptp.getPlanoTratamento().getPaciente().getIdEmpresa())) {
                             lancamentosDeOrigem = new ArrayList<Lancamento>();
-                            lancamentosDeOrigem.add(repasseFaturas.getFaturaOrigem().getLancamentos().get(0));
+                            if(repasseFaturas.getFaturaOrigem().getLancamentos() != null && !repasseFaturas.getFaturaOrigem().getLancamentos().isEmpty()) {
+                                lancamentosDeOrigem.add(repasseFaturas.getFaturaOrigem().getLancamentos().get(0));
+                            }
                         }else {
                             lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
                         }
@@ -686,28 +688,29 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(new BigDecimal(0));
                         lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(new BigDecimal(0));
                         lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(new BigDecimal(0));
-
-                        lancamentosDeOrigem.get(cont).setDadosCalculoPercTaxa(
-                                (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTaxa() != null ? lancamentosDeOrigem.get(
-                                        cont).getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
-                        //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
-                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor()));
-                        if (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
-                        }
-                        lancamentosDeOrigem.get(cont).setDadosCalculoPercTributo(lancamentosDeOrigem.get(cont).getTributoPerc());
-                        lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(
-                                lancamentosDeOrigem.get(cont).getTributoPerc().multiply(lancamentosDeOrigem.get(cont).getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
-
+                        
+                        if ((this.validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
+                            lancamentosDeOrigem.get(cont).setDadosCalculoPercTaxa(
+                                    (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTaxa() != null ? lancamentosDeOrigem.get(
+                                            cont).getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
+                            //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor()));
+                            if (lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
+                                lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
+                            }
+                            lancamentosDeOrigem.get(cont).setDadosCalculoPercTributo(lancamentosDeOrigem.get(cont).getTributoPerc());
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(
+                                    lancamentosDeOrigem.get(cont).getTributoPerc().multiply(lancamentosDeOrigem.get(cont).getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));     
+                        }                        
+                        
                         lancamentosDeOrigem.get(cont).setDadosTabelaValorTotalCustosDiretos(ptp.getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(
                                 new BigDecimal(0)) != 0) {
                             lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
-                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP));
+                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(lancamentosDeOrigem.get(cont).getValor(), 4, BigDecimal.ROUND_HALF_UP));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(
-                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                            lancamentosDeOrigem.get(cont).getValor()));
+                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos());
                         } else {
                             lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(new BigDecimal(0));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
