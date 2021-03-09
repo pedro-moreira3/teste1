@@ -792,7 +792,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterMatchMode="contains" headerText="Procedimento" width="15%"
 								filterBy="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}"
 								sortBy="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}">
-								<h:outputText
+								<h:outputText title="#{reciboLancamento.lancamento.id}"
 									value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" />
 							</p:column>
 							<p:column rendered="#{reciboLancamento.dados != null}"
@@ -906,18 +906,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								
 							</p:column>
 
-							<p:column rendered="#{reciboLancamento.dados == null}"
-								filterMatchMode="contains" headerText="Pago?"
-								filterBy="#{reciboLancamento.lancamento.validadoStr}"
-								sortBy="#{reciboLancamento.lancamento.validadoStr}" width="10%">
-								<h:outputText value="#{reciboLancamento.lancamento.validadoStr}" />
-							</p:column>
-							<p:column rendered="#{reciboLancamento.dados != null}"
-								filterMatchMode="contains" headerText="Pago?"
-								filterBy="#{reciboLancamento.dados.lancamentoPago}"
-								sortBy="#{reciboLancamento.dados.lancamentoPago}" width="10%">
-								<h:outputText value="#{reciboLancamento.dados.lancamentoPago}" />
-							</p:column>
+							
 						</p:dataTable>
 						
 						<p:dataTable 
