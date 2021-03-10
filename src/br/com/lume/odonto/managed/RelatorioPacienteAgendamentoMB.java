@@ -191,7 +191,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                     (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente
                                             ,this.filtroPorProfissional);   
                         }
-                        pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null);
+                        pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null || paciente.getUltimoAgendamento() == null);
                     }
                     
                     if(getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {

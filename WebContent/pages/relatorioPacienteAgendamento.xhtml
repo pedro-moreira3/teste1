@@ -288,7 +288,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:panelGrid>
 						<p:outputPanel style="margin:20px;">
 							<h:outputLabel value="Mostrar os pacientes: " />
+							<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;" onclick="PF('tTipo').show()"/>
+								<p:tooltip for="tooltipTipo" id="tTipo" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('relatorioPacienteAgendamento', 'pacientes')}" />
+							
+							
 							<br />
+								
 							<p:selectManyCheckbox
 								value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}"
 								layout="grid" columns="6">
@@ -302,7 +307,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
 									process="@this,pnFiltroStatusRelatorio"
 									update="pnFiltroStatusRelatorio" />
-							</p:selectManyCheckbox>
+							</p:selectManyCheckbox>							
+							
+							
 						</p:outputPanel>
 						<p:outputPanel id="pnFiltroStatusRelatorio" style="margin:20px;">
 
