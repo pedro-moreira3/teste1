@@ -435,12 +435,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 //                setEntityList(semPendencias);
 //            }            
 
+            
+            
             //novaLista.addAll(getEntityList());
             if (getEntityList() != null && getEntityList().size() > 0) {
 
                 List<PlanoTratamentoProcedimento> removerPtp = new ArrayList<PlanoTratamentoProcedimento>();
                 List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
                 for (PlanoTratamentoProcedimento ptp : getEntityList()) {
+                  
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                         if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
@@ -631,7 +634,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         }
                     });
                 int cont = 0;
-                for (Lancamento lancamento : fatura.getLancamentos()) {
+                for (Lancamento lancamento : fatura.getLancamentos()) {                 
                     repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
                     if (repasse == null) {
                         repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseFromRepasseFaturas(repasseFaturas);
@@ -676,8 +679,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentosDeOrigem.sort(new Comparator<Lancamento>() {
 
                             @Override
-                            public int compare(Lancamento o1, Lancamento o2) {
-                                return Long.compare(o1.getId(), o2.getId());
+                            public int compare(Lancamento o1, Lancamento o2) {                                
+                                return o1.getDataPagamento().compareTo(o2.getDataPagamento());                                
+                           
                             }
                         });
 
@@ -719,7 +723,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentosDeOrigem.get(cont).setDadosCalculoTotalReducao(
                                 lancamentosDeOrigem.get(cont).getDadosCalculoValorTaxa().add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTarifa()).add(
                                         lancamentosDeOrigem.get(cont).getDadosCalculoValorTributo()).add(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado()));
-
+                        
                         lancamentosDeOrigem.get(cont).setDadosCalculoRecebidoMenosReducao(
                                 lancamentosDeOrigem.get(cont).getValor().subtract(lancamentosDeOrigem.get(cont).getDadosCalculoTotalReducao()));
 

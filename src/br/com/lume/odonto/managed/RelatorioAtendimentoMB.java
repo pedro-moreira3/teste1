@@ -124,8 +124,15 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 if (validarIntervaloDatas()) {
                 //    filtroPorProfissionalUltAgendamento
                     this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal, getFiltroPorProfissional(),
-                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
 
+                   Convenio convenio = this.getConvenio(getFiltroPorConvenio());
+                    if(convenio != null && convenio.getId() != 0) {                      
+                        getListaAtendimentos().removeIf(agendamento -> agendamento.getPlanoTratamento() == null ||  agendamento.getPlanoTratamento().getConvenio() == null ||
+                                !agendamento.getPlanoTratamento().getConvenio().equals(convenio)                                
+                                );   
+                    }
+                    
                     if (this.listaConvenios == null)
                         this.listaConvenios = new ArrayList<>();
 
@@ -138,8 +145,10 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 if (validarIntervaloDatas()) {
 
                     this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(this.dataInicio, this.dataFim, getFiltroPorProfissional(),
-                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
 
+                    this.getConvenio(getFiltroPorConvenio());
+                    
                     if (this.listaConvenios == null)
                         this.listaConvenios = new ArrayList<>();
 
