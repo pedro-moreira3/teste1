@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -722,6 +723,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 //this.refreshEntity();
             }
             validaHabilitaSalvar();
+            this.refreshEntity();
             //carregarScheduleTarefas();
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
@@ -2325,5 +2327,4 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //    public void setSomeChannel(PushContext someChannel) {
 //        this.someChannel = someChannel;
 //    }
-
 }
