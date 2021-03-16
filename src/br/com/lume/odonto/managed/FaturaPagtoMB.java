@@ -1099,8 +1099,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true, true);
+          //  updateValues(getEntity(), true, true);
 
+            pesquisar();
+            
             PrimeFaces.current().executeScript("PF('dlgNovoLancamento').hide()");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

@@ -315,7 +315,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0) {
 
                 if (getPaciente() == null) {
-                    setaFinalizacoesProcedimentos();
+                 //   setaFinalizacoesProcedimentos();
                     addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
                     return;
                 }
@@ -330,7 +330,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 if (!verificaAgendamento()) {
                     log.error(OdontoMensagens.getMensagem("erro.plano.utilizado"));
-                    setaFinalizacoesProcedimentos();
+                 //   setaFinalizacoesProcedimentos();
                     return;
                 }
 
