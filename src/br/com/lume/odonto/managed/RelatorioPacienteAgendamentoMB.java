@@ -187,11 +187,11 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                     
                     if(getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
                         if(pacientes.isEmpty() && !getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
-                            this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
+                            this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamentoFuturo
                                     (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente
                                             ,this.filtroPorProfissional);   
                         }
-                        pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null || paciente.getUltimoAgendamento() == null);
+                       // pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null || paciente.getUltimoAgendamento() == null);
                     }
                     
                     if(getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {
