@@ -880,8 +880,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									update=":lume:tabViewPaciente:pnlListaAgendamento, :lume:tabViewPaciente:pnlListaAgendamentoHeader">
 								</p:commandButton>
 								<p:commandButton icon="fa fa-times-circle White"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S' 
-										planoTratamentoMB.isAdministradorClinica()}"
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S' ||
+										!planoTratamentoMB.isTemPermissaoExtra()}"
 									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
 									process="@this" title="Cancelar" styleClass="RedButton"
 									update=":lume:tabViewPaciente:pnlJustificativaRemoveHeader, :lume:tabViewPaciente:pnlJustificativaRemove" />
