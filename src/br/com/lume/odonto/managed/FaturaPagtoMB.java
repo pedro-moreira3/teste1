@@ -296,6 +296,31 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public void cancelarItem(FaturaItem item) {
+        if(item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isFinalizado()) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não é possível cancelar um item de procedimento já executado.");
+        }else if(!item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isCancelado()){
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário cancelar o procedimento no plano de tratamento.");
+        }else {
+            try {
+                FaturaItemSingleton.getInstance().inativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
+                updateValues(this.getEntity());
+            } catch (Exception e) {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao inativar fatura.");
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public void ativarItem(FaturaItem item) {
+        try {
+            FaturaItemSingleton.getInstance().ativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao ativar fatura.");
+            e.printStackTrace();
+        }
+    }
+    
     public void cancelaLancamento(Lancamento l) {
         try {
             if (l.getValidadoPorProfissional() == null) {

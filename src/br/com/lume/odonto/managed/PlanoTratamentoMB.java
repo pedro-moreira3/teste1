@@ -122,10 +122,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Orcamento> orcamentos;
     private Orcamento orcamentoSelecionado;
     private OrcamentoPlanejamento planejamentoAtual;
+    private boolean showProcedimentosCancelados;
 
     private List<Dominio> formasPagamentoNewPlanejamento;
     private List<Tarifa> tarifasNewPlanejamento;
     private List<Integer> parcelasNewPlanejamento;
+    private List<OrcamentoItem> procedimentosOrcSelecionado;
 
     private BigDecimal valorDescontoAlterar;
 
@@ -1696,11 +1698,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.imprimirSemValores = false;
             this.orcamentoSelecionado = orcamento;
             orcamentoSelecionado.setValorPago(getTotalPago());
-
+            
             orcamentoSelecionado.getItens().sort((p1, p2) -> {
                 Integer i = p1.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial();
                 return i.compare(i, p2.getOrigemProcedimento().getPlanoTratamentoProcedimento().getSequencial());
             });
+            
+            //procedimentosOrcSelecionado = orcamentoSelecionado.getItens();
 
             NegociacaoOrcamento negociacaOrcamento = NegociacaoOrcamentoSingleton.getInstance().getBo().getNegociacaoFromOrcamento(orcamentoSelecionado);
             populaDescontos();
@@ -1725,6 +1729,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             }
 
+        }
+    }
+    
+    public void updateListaProcedimentos() {
+        if(this.procedimentosOrcSelecionado != null) {
+            this.procedimentosOrcSelecionado = orcamentoSelecionado.getItens();
+            if(!this.showProcedimentosCancelados) {
+                procedimentosOrcSelecionado.removeIf((proc) -> !proc.isAtivo());
+            }
         }
     }
 
@@ -3327,6 +3340,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setObservacoesAdicionarProcedimento(String observacoesAdicionarProcedimento) {
         this.observacoesAdicionarProcedimento = observacoesAdicionarProcedimento;
+    }
+
+    public boolean isShowProcedimentosCancelados() {
+        return showProcedimentosCancelados;
+    }
+
+    public void setShowProcedimentosCancelados(boolean showProcedimentosCancelados) {
+        this.showProcedimentosCancelados = showProcedimentosCancelados;
+    }
+
+    public List<OrcamentoItem> getProcedimentosOrcSelecionado() {
+        return procedimentosOrcSelecionado;
+    }
+
+    public void setProcedimentosOrcSelecionado(List<OrcamentoItem> procedimentosOrcSelecionado) {
+        this.procedimentosOrcSelecionado = procedimentosOrcSelecionado;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

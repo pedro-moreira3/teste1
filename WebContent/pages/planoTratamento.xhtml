@@ -881,7 +881,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:commandButton>
 								<p:commandButton icon="fa fa-times-circle White"
 									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S' 
-										|| planoTratamentoMB.validaPermissaoExclusaoPTP(plano)}"
+										planoTratamentoMB.isAdministradorClinica()}"
 									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
 									process="@this" title="Cancelar" styleClass="RedButton"
 									update=":lume:tabViewPaciente:pnlJustificativaRemoveHeader, :lume:tabViewPaciente:pnlJustificativaRemove" />
@@ -1648,6 +1648,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</div>
 					</p:outputPanel>
 					<br />
+
 					<p:dataTable filterDelay="1500" reflow="true"
 						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
 						id="tbViewProcedimentoOrcamento" widgetVar="tbViewOrcamento"
