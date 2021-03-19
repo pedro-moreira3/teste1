@@ -1283,11 +1283,26 @@ body .height31 input {
 								</p:panel>
 							</p:panelGrid>
 
-							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							<p:dataTable id="dtItensFatura" filterDelay="1500" reflow="true" emptyMessage=""
 								value="#{faturaPagtoMB.entity.itensFiltered}" var="fi" rows="20"
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
 
+								<p:column headerText="Ações" style="width:80px !important;"
+									rendered="#{faturaPagtoMB.isAdmin()}">
+									<p:commandButton icon="fa fa-times-circle White" 
+										actionListener="#{faturaPagtoMB.cancelarItem(fi)}"
+										styleClass="RedButton" title="Cancelar item"
+										process="@this" update="dtItensFatura,@parent:@parent:@parent:@parent:@parent:pnlfaturaView">
+										<p:confirm header="Confirmar" message="Deseja realmente cancelar esse item da fatura ?"/>
+									</p:commandButton>
+									<p:commandButton icon="White fa fa-chain White"
+										actionListener="#{faturaPagtoMB.ativarItem(fi)}"
+										styleClass="NavyButton" title="Ativar item"
+										rendered="#{fi.ativo == 'N'}"
+										process="@this" update="dtItensFatura"/>
+								</p:column>
+			
 								<p:column sortBy="#{fi.descricaoItem}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
 									headerText="Descrição">
