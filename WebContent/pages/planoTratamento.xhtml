@@ -290,15 +290,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column sortBy="#{planoTratamentoMB.valorAReceber}" headerText="Valor à Receber">
-								<h:outputText value="#{planoTratamentoMB.valorAReceber}">
+					<p:column sortBy="#{planoTratamento.valorReceber}" headerText="Valor à Receber">
+								<h:outputText value="#{planoTratamento.valorReceber}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 					</p:column>
 							
-					<p:column sortBy="#{planoTratamentoMB.valorAConferir}"	headerText="Valor à Conferir">
-						<h:outputText value="#{planoTratamentoMB.valorAConferir}">
+					<p:column sortBy="#{planoTratamento.valorConferir}"	headerText="Valor à Conferir">
+						<h:outputText value="#{planoTratamento.valorConferir}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
