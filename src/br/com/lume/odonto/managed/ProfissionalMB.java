@@ -337,13 +337,13 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 }
             } else {
                 // Trocou o email
-                Usuario usuarioAtual = UsuarioSingleton.getInstance().getBo().find(getEntity().getIdUsuario());
-                if (usuarioAtual != null && !getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
-                    if (usuario.getUsuIntCod() == 0) {
-                        UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
-                        usuario = usuarioAtual;
-                    }
-                }
+                //Usuario usuarioAtual = UsuarioSingleton.getInstance().getBo().find(getEntity().getIdUsuario());
+                //if (usuarioAtual != null && !getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
+                //    if (usuario.getUsuIntCod() == 0) {
+                //        UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
+                //        usuario = usuarioAtual;
+                //    }
+                //}
             }
             this.getEntity().setIdUsuario(usuario.getUsuIntCod());
             this.getEntity().setPerfil(perfil.getPerStrDes());

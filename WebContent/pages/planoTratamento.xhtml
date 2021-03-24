@@ -207,9 +207,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 			
 					
-				<p:dataTable filterDelay="1500" reflow="true" emptyMessage="" lazy="true"
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPlanoTratamento"
-							value="#{planoTratamentoMB.ptLazyModel}" var="planoTratamento"
+							value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento"
 							rows="20" paginator="true" rowKey="#{planoTratamento}"
 							paginatorPosition="bottom"
 							binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
@@ -290,15 +290,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}" headerText="Valor à Receber">
-								<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
+					<p:column sortBy="#{planoTratamentoMB.valorAReceber}" headerText="Valor à Receber">
+								<h:outputText value="#{planoTratamentoMB.valorAReceber}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 					</p:column>
 							
-					<p:column sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"	headerText="Valor à Conferir">
-						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
+					<p:column sortBy="#{planoTratamentoMB.valorAConferir}"	headerText="Valor à Conferir">
+						<h:outputText value="#{planoTratamentoMB.valorAConferir}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
