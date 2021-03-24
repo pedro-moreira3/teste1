@@ -571,7 +571,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     @Override
     public void actionPersist(ActionEvent event) {
 
-        if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
+        if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null)
+                || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
 
             //itens para adicionar
             List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
@@ -604,10 +605,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 getEntity().setCadeira(cadeiraDentroAgenda);
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissionalDentroAgenda);
-                    this.getEntity().setPaciente(pacienteSelecionado);
-                    this.getEntity().setDataAgendamento(new Date());
-                    this.getEntity().setAgendador(UtilsFrontEnd.getProfissionalLogado());
+                    this.getEntity().setPaciente(pacienteSelecionado);                   
                 }
+                if(getEntity().getDataAgendamento() == null) {
+                    this.getEntity().setDataAgendamento(new Date());    
+                }
+                if(this.getEntity().getAgendador() == null) {
+                    this.getEntity().setAgendador(UtilsFrontEnd.getProfissionalLogado());    
+                }
+                
+                
 
                 if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) {
                     if (justificativa != null) {
@@ -759,11 +766,25 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) {
 
                 Agendamento agendamento = new Agendamento();
-                agendamento.setAgendador(this.getEntity().getAgendador());
+                if(this.getEntity().getAgendador() == null) {
+                    agendamento.setAgendador(UtilsFrontEnd.getProfissionalLogado());
+                }else {
+                    agendamento.setAgendador(this.getEntity().getAgendador());  
+                }
+                if(agendamento.getDataAgendamento() == null) {
+                    agendamento.setDataAgendamento(new Date());
+                }else {
+                    agendamento.setDataAgendamento(this.getEntity().getDataAgendamento());
+                }
+             
+                agendamento.setDataUltAlteracao(new Date());
+                agendamento.setProfissionalUltAlteracao(UtilsFrontEnd.getProfissionalLogado());
+              
+                
                 agendamento.setFim(this.getFim());
                 agendamento.setInicio(this.getInicio());
                 agendamento.setOrigemAgendamento(OrigemAgendamentoSingleton.getInstance().getBo().findByDescricao("Remarcacao"));
-                agendamento.setDataAgendamento(this.getEntity().getDataAgendamento());
+             
                 agendamento.setPaciente(this.getEntity().getPaciente());
                 agendamento.setProfissional(this.getEntity().getProfissional());
                 //agendamento.setPlanoTratamentoProcedimentosAgendamento(this.getEntity().getPlanoTratamentoProcedimentosAgendamento());
