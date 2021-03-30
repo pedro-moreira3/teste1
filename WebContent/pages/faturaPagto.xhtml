@@ -15,22 +15,47 @@
 		</p:outputPanel>
 
 
-		<p:remoteCommand name="onHidePacienteFicha" process="@this"	 />
+		<p:dialog id="dlgAlterarItem" widgetVar="dlgAlterarItem"
+			appendTo=":lume" modal="true" width="300px" height="200px">
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank ui-fluid form-group">
+				<p:inputNumber id="valortroca"
+					value="#{faturaPagtoMB.itemAlteracao.valorComDesconto}"
+					maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+					thousandSeparator=".">
+					<p:ajax process="@this" />
+				</p:inputNumber>
+			</p:panelGrid>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank ui-fluid form-group">
+				<p:commandButton icon="White fa fa-save" value="Salvar"
+					actionListener="#{faturaPagtoMB.alterarItem}"
+					oncomplete="PF('dlgAlterarItem').hide();" styleClass="GreenButton"
+					process="@this" />
+				<p:commandButton icon="fa fa-close" value="Fechar"
+					styleClass="NavyButton" process="@this"
+					oncomplete="PF('dlgAlterarItem').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					
-					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
-						<h:panelGroup>				
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-10,ui-grid-col-2"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<h:panelGroup>
 							<h1>Recebimento dos Pacientes</h1>
-						</h:panelGroup>	
-						<h:panelGroup>					
+						</h:panelGroup>
+						<h:panelGroup>
 							<p:commandButton value="Videos tutoriais"
-							icon="White fa fa-youtube-play White"
-							oncomplete="PF('dlgListaVideos').show()"	
-							actionListener="#{faturaPagtoMB.setVideos()}"									
-							process="@this" update="painelVideoList"/>						
+								icon="White fa fa-youtube-play White"
+								oncomplete="PF('dlgListaVideos').show()"
+								actionListener="#{faturaPagtoMB.setVideos()}" process="@this"
+								update="painelVideoList" />
 						</h:panelGroup>
 					</p:panelGrid>
 					<p:separator styleClass="SeparatorFull" />

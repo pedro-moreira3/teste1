@@ -174,6 +174,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private NegociacaoFatura negociacaoConfirmacao;
     private List<LancamentoParcelaInfo> negociacaoParcelas;
     private String negociacaoMensagemCalculo, negociacaoMensagemErroCalculo;
+    
+    private BigDecimal valorAlteracaoItem;
+    private FaturaItem itemAlteracao;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -304,11 +307,48 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }else {
             try {
                 FaturaItemSingleton.getInstance().inativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
+                addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 updateValues(this.getEntity());
             } catch (Exception e) {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao inativar fatura.");
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao inativar item da fatura.");
                 e.printStackTrace();
             }
+        }
+    }
+    
+    public void carregaItem(FaturaItem item) {
+        this.itemAlteracao = item;
+    }
+    
+    public void persistAlteracaoValorItem(FaturaItem item) {
+        try {
+            FaturaItem itemBanco = FaturaItemSingleton.getInstance().getBo().find(item);
+            
+            if(itemBanco.getValorAlterado() == null) {
+                item.setValorAlterado(itemBanco.getValorComDesconto());
+            }
+            
+            item.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+            item.setDataAlteracaoStatus(new Date());
+            
+            FaturaItemSingleton.getInstance().getBo().merge(item);
+            this.updateValues(getEntity());
+            
+            addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao alterar valor do item da fatura.");
+            e.printStackTrace();
+        }
+    }
+    
+    public void alterarItem() {
+        try {
+            FaturaItemSingleton.getInstance().getBo().persist(itemAlteracao);
+            addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            updateValues(this.getEntity());
+        } catch (Exception e) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao alterar item.");
+            e.printStackTrace();
         }
     }
     
@@ -2667,6 +2707,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setLancamentoContabilEditarItem(LancamentoContabil lancamentoContabilEditarItem) {
         this.lancamentoContabilEditarItem = lancamentoContabilEditarItem;
+    }
+
+    public BigDecimal getValorAlteracaoItem() {
+        return valorAlteracaoItem;
+    }
+
+    public void setValorAlteracaoItem(BigDecimal valorAlteracaoItem) {
+        this.valorAlteracaoItem = valorAlteracaoItem;
+    }
+
+    public FaturaItem getItemAlteracao() {
+        return itemAlteracao;
+    }
+
+    public void setItemAlteracao(FaturaItem itemAlteracao) {
+        this.itemAlteracao = itemAlteracao;
     }
 
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------    

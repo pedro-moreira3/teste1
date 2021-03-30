@@ -10,9 +10,11 @@ body .ui-selectoneradio td label {
 	width: calc(100% - 44px) !important;
 	margin-top: 10% !important;
 }
+
 .option {
 	display: inline-flex;
 }
+
 .helper {
 	margin-left: 10px;
 	font-weight: bold;
@@ -104,8 +106,7 @@ body .ui-selectoneradio td label {
 					<p:outputLabel for="perfil" value="Perfil :" />
 					<p:selectOneMenu id="perfil" required="true"
 						value="#{profissionalMB.perfil}" converter="perfil">
-						<p:ajax
-							update="pgPerfil,:lume:tabView:objetosPerfil"
+						<p:ajax update="pgPerfil,:lume:tabView:objetosPerfil"
 							process="@this,pgPerfil"
 							listener="#{profissionalMB.carregarObjetosPerfisProfissional}" />
 						<f:selectItem itemValue="#{null}" itemLabel="Selecione um Perfil" />
@@ -129,8 +130,7 @@ body .ui-selectoneradio td label {
 							itemValue="#{tp.nome}" itemLabel="#{tp.nome}" />
 					</p:selectOneMenu>
 
-					<p:outputLabel for="nome" value="Nome: "
-						rendered="true" />
+					<p:outputLabel for="nome" value="Nome: " rendered="true" />
 					<p:inputText id="nome"
 						value="#{profissionalMB.entity.dadosBasico.nome}" required="true"
 						maxlength="200" />
@@ -240,32 +240,32 @@ body .ui-selectoneradio td label {
 		</p:panelGrid>
 
 		<ui:remove>
-		<p:panelGrid id="pgFazOrcamento" columns="2"
-			columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
-			styleClass="ui-panelgrid-blank"
-			style="border:0px none; background-color:transparent;">
-			<p:column></p:column>
-			<p:fieldset legend="Orçamento" toggleable="false" collapsed="false">
-				<p:panelGrid columns="4"
-					columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-					layout="grid" styleClass="ui-panelgrid-blank"
-					style="border:0px none; background-color:transparent;">
+			<p:panelGrid id="pgFazOrcamento" columns="2"
+				columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+				styleClass="ui-panelgrid-blank"
+				style="border:0px none; background-color:transparent;">
+				<p:column></p:column>
+				<p:fieldset legend="Orçamento" toggleable="false" collapsed="false">
+					<p:panelGrid columns="4"
+						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+						layout="grid" styleClass="ui-panelgrid-blank"
+						style="border:0px none; background-color:transparent;">
 
-					<p:outputLabel id="lbfazOrcamento" for="fazOrcamento"
-						value="Faz Orçamento? : "
-						rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
-					<p:selectBooleanCheckbox id="fazOrcamento"
-						value="#{profissionalMB.entity.fazOrcamento}"
-						rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
+						<p:outputLabel id="lbfazOrcamento" for="fazOrcamento"
+							value="Faz Orçamento? : "
+							rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
+						<p:selectBooleanCheckbox id="fazOrcamento"
+							value="#{profissionalMB.entity.fazOrcamento}"
+							rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
 
-					<p:outputLabel id="lbdesconto" for="desconto"
-						value="Desconto(%) : " />
-					<p:inputMask id="desconto" mask="9?9"
-						value="#{profissionalMB.entity.desconto}" maxlength="2">
-					</p:inputMask>
-				</p:panelGrid>
-			</p:fieldset>
-		</p:panelGrid>
+						<p:outputLabel id="lbdesconto" for="desconto"
+							value="Desconto(%) : " />
+						<p:inputMask id="desconto" mask="9?9"
+							value="#{profissionalMB.entity.desconto}" maxlength="2">
+						</p:inputMask>
+					</p:panelGrid>
+				</p:fieldset>
+			</p:panelGrid>
 		</ui:remove>
 
 		<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
@@ -318,14 +318,22 @@ body .ui-selectoneradio td label {
 						value="#{profissionalMB.entity.tipoRemuneracao}"
 						layout="responsive" columns="1">
 						<p:ajax process="@this" update="pgRemuneracao" />
-						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Procedimento   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="PRO" itemEscaped="false" 
+						<f:selectItem
+							itemLabel="&lt;div class=&quot;option&quot;&gt;   Procedimento   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;"
+							itemValue="PRO" itemEscaped="false"
 							itemDescription="Selecione essa opção para profissionais que recebem por procedimento. Sempre que existir um procedimento executado por esse profissional, o valor preenchido já ficará disponível para repasse" />
-						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Porcentagem   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="POR" itemEscaped="false" 
+						<f:selectItem
+							itemLabel="&lt;div class=&quot;option&quot;&gt;   Porcentagem   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;"
+							itemValue="POR" itemEscaped="false"
 							itemDescription="Selecione essa opção para profissionais que recebem por porcentual. Sempre que existir um procedimento executado por esse profissional, será calculado o valor de repasse com base no percentual de remuneração" />
-						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Fixo   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="FIX" itemEscaped="false" 
-							itemDescription="Selecione essa opção para profissionais que recebem de forma fixa. Coloque a data de remuneração e o valor nos dados abaixo para controle" />					
-						<f:selectItem itemLabel="&lt;div class=&quot;option&quot;&gt;   Diária   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;" itemValue="DIA" itemEscaped="false"
-							itemDescription="Selecione essa opção para profissionais que recebem fixo por dia. Sempre que existir um procedimento executado por esse profissional nesse dia, o valor preenchido já ficará disponível para repasse" />				
+						<f:selectItem
+							itemLabel="&lt;div class=&quot;option&quot;&gt;   Fixo   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;"
+							itemValue="FIX" itemEscaped="false"
+							itemDescription="Selecione essa opção para profissionais que recebem de forma fixa. Coloque a data de remuneração e o valor nos dados abaixo para controle" />
+						<f:selectItem
+							itemLabel="&lt;div class=&quot;option&quot;&gt;   Diária   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;"
+							itemValue="DIA" itemEscaped="false"
+							itemDescription="Selecione essa opção para profissionais que recebem fixo por dia. Sempre que existir um procedimento executado por esse profissional nesse dia, o valor preenchido já ficará disponível para repasse" />
 					</p:selectOneRadio>
 				</p:panelGrid>
 
@@ -371,8 +379,9 @@ body .ui-selectoneradio td label {
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}">
 						<f:validateLongRange minimum="1" maximum="31" />
 					</p:inputText>
-					
-					<p:outputLabel for="valorRemuneracaoDia" value="Valor Remuneração Integral : "
+
+					<p:outputLabel for="valorRemuneracaoDia"
+						value="Valor Remuneração Integral : "
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
 					<p:inputNumber id="valorRemuneracaoDia"
 						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
@@ -380,13 +389,14 @@ body .ui-selectoneradio td label {
 						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
 						thousandSeparator="."
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
-					<p:outputLabel for="valorRemuneracaoReduzidaDia" value="Valor Remuneração Reduzida : "
+					<p:outputLabel for="valorRemuneracaoReduzidaDia"
+						value="Valor Remuneração Reduzida : "
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
 					<p:inputNumber id="valorRemuneracaoReduzidaDia"
 						required="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}"
-						value="#{profissionalMB.entity.valorRemuneracaoReduzida}" maxlength="13"
-						maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-						thousandSeparator="."
+						value="#{profissionalMB.entity.valorRemuneracaoReduzida}"
+						maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+						symbol="R$ " thousandSeparator="."
 						rendered="#{profissionalMB.entity.tipoRemuneracao == 'DIA'}" />
 				</p:panelGrid>
 			</p:fieldset>
@@ -406,7 +416,7 @@ body .ui-selectoneradio td label {
 				process=":lume:tabView:pnPrincipal,:lume:tabView:pnPerfilProfissional"
 				styleClass="GreenButton" />
 			<p:commandButton id="delete" icon="White fa fa-trash-o"
-				value="Excluir" actionListener="#{profissionalMB.actionRemove}"
+				onclick="PF('dlg').show();" value="Excluir"
 				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
 				process="@this" disabled="#{profissionalMB.desabilitaExcluir}"
 				styleClass="RedButton" />
@@ -459,21 +469,46 @@ body .ui-selectoneradio td label {
 		</p:panelGrid>
 	</p:outputPanel>
 
+	<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
+		<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-6, ui-g-6"
+			styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+			<h:panelGroup styleClass="md-combo">
+				<p:outputLabel for="statusProfissionais"
+					value="Status dos Profissionais: " />
+				<p:selectOneMenu id="statusProfissionais"
+					value="#{profissionalMB.filtroStatus}">
+					<f:selectItem itemLabel="Ativos" itemValue="A" />
+					<f:selectItem itemLabel="Inativos" itemValue="I" />
+					<f:selectItem itemLabel="Todos" itemValue="T" />
+					<p:ajax listener="#{profissionalMB.carregarProfissionais}"
+						process="@this" update="dtPrincipal"
+						oncomplete="PF('dtPrincipal').filter();" />
+				</p:selectOneMenu>
+			</h:panelGroup>
+		</p:panelGrid>
+	</p:fieldset>
+	<br />
+
 	<div class="EmptyBox20"></div>
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 		id="dtPrincipal" value="#{profissionalMB.profissionais}"
-		widgetVar="dtPrincipal"
-		var="profissional" rows="7" paginator="true"
+		widgetVar="dtPrincipal" var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
 		rowKey="#{profissional}" paginatorPosition="bottom"
 		binding="#{profissionalMB.tabelaProfissional}">
-		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
+
+		<p:ajax event="rowSelect" update=":lume:tabView"
+			oncomplete="PF('dtPrincipal').filter();"
 			listener="#{profissionalMB.carregaTela}" />
-		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
+		<p:ajax event="rowSelect" update=":lume:tabView"
+			oncomplete="PF('dtPrincipal').filter();"
 			listener="#{profissionalPontoMB.carregarPontos}" />
-		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
+		<p:ajax event="rowSelect" update=":lume:tabView"
+			oncomplete="PF('dtPrincipal').filter();"
 			listener="#{profissionalDescontoMB.carregarDescontos}" />
+
 		<f:facet name="header">Profissional</f:facet>
+
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"
 			sortBy="#{profissional.dadosBasico.nomeLimpo}"
@@ -513,7 +548,7 @@ body .ui-selectoneradio td label {
 			filterMatchMode="contains" headerText="Status"
 			sortBy="#{profissional.statusDescricao}">
 			<h:outputText value="#{profissional.statusDescricao}" />
-		</p:column>		
+		</p:column>
 	</p:dataTable>
 
 	<p:dialog id="dlg" widgetVar="dlg" header="Inativar" responsive="true"
@@ -532,21 +567,22 @@ body .ui-selectoneradio td label {
 			<p:message for="justificativa" styleClass="msg" />
 		</h:panelGroup>
 		<div class="SeparatorFull"></div>
-		<div class="Container50 Responsive100">
-			<p:commandButton id="persistInativar" icon="White fa fa-chain-broken"
-				value="Inativar" actionListener="#{profissionalMB.actionInativar}"
-				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa"
-				process="@this,:lume:tabView:pnJustificativa"
-				oncomplete="handleDialogRequest(xhr, status, args)"
-				styleClass="GreenButton" />
-		</div>
-		<div class="Container50 Responsive100">
-			<p:commandButton id="cancelarInativar" icon="White fa fa-trash-o"
-				value="Cancelar"
-				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa"
-				process="@this,:lume:tabView:pnJustificativa"
-				oncomplete="PF('dlg').hide()" styleClass="RedButton" />
-		</div>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+				<p:commandButton id="persistInativar"
+					icon="White fa fa-chain-broken" value="Inativar"
+					actionListener="#{profissionalMB.actionInativar}"
+					update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa"
+					process="@this,:lume:tabView:pnJustificativa"
+					oncomplete="handleDialogRequest(xhr, status, args)"
+					styleClass="GreenButton" />
+				<p:commandButton id="cancelarInativar" icon="White fa fa-trash-o"
+					value="Cancelar"
+					update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa"
+					process="@this,:lume:tabView:pnJustificativa"
+					oncomplete="PF('dlg').hide()" styleClass="RedButton" />
+		</p:panelGrid>
 	</p:dialog>
 
 	<p:dialog id="dlgAtivar" widgetVar="dlgAtivar" header="Ativar"

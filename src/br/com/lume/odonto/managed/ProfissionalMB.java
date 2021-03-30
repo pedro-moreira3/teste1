@@ -115,6 +115,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private DefaultStreamedContent scFoto;
 
     private boolean renderedPhotoCam;
+    
+    private String filtroStatus = "A";
 
     private byte[] data;
 
@@ -135,7 +137,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 this.setPossuiFiliais(true);
             }
             especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            //profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            carregarProfissionais();
             this.carregaPerfis();
             if (this.isProfissionalIndividual()) {
                 this.setEntity(UtilsFrontEnd.getProfissionalLogado());
@@ -145,6 +148,20 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
     }
 
+    public void carregarProfissionais() {
+        try {
+            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if(filtroStatus.equals("A")) {
+                profissionais.removeIf((p) -> p.getStatus().equals("I"));
+            }else if(filtroStatus.equals("I")) {
+                profissionais.removeIf((p) -> p.getStatus().equals("A"));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
     public void actionBiometria(ActionEvent event) {
         applet = true;
     }
@@ -526,7 +543,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
            // } else {
            //     this.addError("Erro ao inativar profissional", "");
            // }
-
+                
+            this.carregarProfissionais();
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -775,6 +793,14 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void setTabelaProfissional(DataTable tabelaProfissional) {
         this.tabelaProfissional = tabelaProfissional;
+    }
+
+    public String getFiltroStatus() {
+        return filtroStatus;
+    }
+
+    public void setFiltroStatus(String filtroStatus) {
+        this.filtroStatus = filtroStatus;
     }
 
 }
