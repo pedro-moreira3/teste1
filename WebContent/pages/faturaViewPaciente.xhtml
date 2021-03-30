@@ -1296,11 +1296,12 @@ body .height31 input {
 										process="@this" update="dtItensFatura,@parent:@parent:@parent:@parent:@parent:pnlfaturaView">
 										<p:confirm header="Confirmar" message="Deseja realmente cancelar esse item da fatura ?"/>
 									</p:commandButton>
-									<p:commandButton icon="White fa fa-chain White"
-										actionListener="#{faturaPagtoMB.ativarItem(fi)}"
-										styleClass="NavyButton" title="Ativar item"
-										rendered="#{fi.ativo == 'N'}"
-										process="@this" update="dtItensFatura"/>
+									<ui:remove>
+									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+										oncomplete="PF('@parent:@parent:@parent:@parent:@parent:dlgAlterarItem').show();"
+										title="Alterar item"
+										process="@this" update="dlgAlterarItem"/>
+									</ui:remove>
 								</p:column>
 			
 								<p:column sortBy="#{fi.descricaoItem}"
@@ -1325,7 +1326,15 @@ body .height31 input {
 								<p:column sortBy="#{fi.valorComDesconto}"
 									filterMatchMode="contains" filterBy="#{fi.valorComDesconto}"
 									headerText="Valor com desconto" width="100">
-									<h:outputText value="#{fi.valorComDesconto}">
+									
+									<p:inputNumber id="valortroca" value="#{fi.valorComDesconto}"
+										maxlength="13" maxValue="9999999999.99"
+										decimalSeparator="," symbol="R$ " thousandSeparator="."
+										rendered="#{faturaPagtoMB.isAdmin()}">
+										<p:ajax process="@this" listener="#{faturaPagtoMB.persistAlteracaoValorItem(fi)}"/>
+									</p:inputNumber>
+									
+									<h:outputText value="#{fi.valorComDesconto}" rendered="#{!faturaPagtoMB.isAdmin()}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
