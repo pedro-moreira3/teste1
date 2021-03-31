@@ -24,3 +24,6 @@ WHERE O.OBJ_STR_DES = 'Paciente';
 --TODO colocar nas ultimas atualizaçoes
 
 ALTER TABLE ORCAMENTO ADD COLUMN JUSTIFICATIVA_NAO_APROVACAO varchar;
+alter table plano_tratamento add column valor_receber numeric;
+alter table plano_tratamento add column valor_conferir numeric;
+alter table plano_tratamento add column valor_procedimentos numeric;
