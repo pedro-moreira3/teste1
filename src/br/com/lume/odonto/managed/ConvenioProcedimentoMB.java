@@ -56,7 +56,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     private List<Procedimento> procedimentos;
 
-    private List<RelatorioConvenioProcedimento> relatorioConvenioProcedimentos;
+    private List<ConvenioProcedimento> relatorioConvenioProcedimentos;
 
     private Integer mes, ano;
     
@@ -156,7 +156,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void carregarRelatorio() {
         try {
-            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listRelatorioConvenioProcedimentoByEmpresa(mes, ano, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listConvenioProcedimentoByEmpresa(mes, ano, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error("Erro no carregarRelatorio", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -286,11 +286,11 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         this.convenioProcedimentosFora = convenioProcedimentosFora;
     }
 
-    public List<RelatorioConvenioProcedimento> getRelatorioConvenioProcedimentos() {
+    public List<ConvenioProcedimento> getRelatorioConvenioProcedimentos() {
         return relatorioConvenioProcedimentos;
     }
 
-    public void setRelatorioConvenioProcedimentos(List<RelatorioConvenioProcedimento> relatorioConvenioProcedimentos) {
+    public void setRelatorioConvenioProcedimentos(List<ConvenioProcedimento> relatorioConvenioProcedimentos) {
         this.relatorioConvenioProcedimentos = relatorioConvenioProcedimentos;
     }
 

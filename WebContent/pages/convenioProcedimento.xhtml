@@ -220,14 +220,20 @@
                             </p:fieldset>
                             <br />
 
-                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRelatorioConvenioProcedimento" value="#{convenioProcedimentoMB.relatorioConvenioProcedimentos}" var="cp"
-                                paginatorPosition="bottom" rows="15" paginator="true" binding="#{convenioProcedimentoMB.tabelaRelatorioConvenio}">
+                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRelatorioConvenioProcedimento"
+                            	value="#{convenioProcedimentoMB.relatorioConvenioProcedimentos}" 
+                            	var="cp" paginatorPosition="bottom" rows="15" paginator="true"
+                            	binding="#{convenioProcedimentoMB.tabelaRelatorioConvenio}">
+                                
                                 <f:facet name="header">Procedimentos por convênio</f:facet>
-                                <p:column filterBy="#{cp.descricao}" sortBy="#{cp.descricao}" filterMatchMode="contains" headerText="Procedimento">
-                                    <h:outputText value="#{cp.descricao}" />
+                                
+                                <p:column filterBy="#{cp.procedimento.descricao}" sortBy="#{cp.procedimento.descricao}" 
+                                	filterMatchMode="contains" headerText="Procedimento">
+                                    <h:outputText value="#{cp.procedimento.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{cp.nome}" sortBy="#{cp.nome}" filterMatchMode="contains" headerText="Convênio">
-                                    <h:outputText value="#{cp.nome}" />
+                                <p:column filterBy="#{cp.convenio.dadosBasico.nome}" sortBy="#{cp.convenio.dadosBasico.nome}" 
+                                	filterMatchMode="contains" headerText="Convênio">
+                                    <h:outputText value="#{cp.convenio.dadosBasico.nome}" />
                                 </p:column>
                                 <p:column filterBy="#{cp.valor}" sortBy="#{cp.valor}" filterMatchMode="contains" headerText="Valor">
                                     <h:outputText value="#{cp.valor}">
@@ -239,15 +245,17 @@
                                         <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                     </h:outputText>
                                 </p:column>
+                                <ui:remove>
                                 <p:column filterBy="#{cp.valorFaturado}" sortBy="#{cp.valorFaturado}" filterMatchMode="contains" headerText="Valor Faturado">
                                     <h:outputText value="#{cp.valorFaturado}">
                                         <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                     </h:outputText>
                                 </p:column>
+                                </ui:remove>
                             </p:dataTable>
 							<br />
                             <div class="SeparatorFull"></div>
-                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton value="Exportar" ajax="false" process="dtRelatorioConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                     <p:dataExporter encoding="iso-8859-1" type="xls" target="dtRelatorioConvenioProcedimento" fileName="convenioProcedimentos" />
                                 </p:commandButton>
