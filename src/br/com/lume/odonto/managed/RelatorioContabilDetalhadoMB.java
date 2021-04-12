@@ -119,7 +119,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         
         Date dataAnterior = null;
         String cor, corLinha = "white";
-        extrato = "<table class='extrato-financeiro' style=\"border-spacing: 0;\" width=\"100%\">";
+        extrato = "<table class='extrato-financeiro' style=\"border-spacing: 0; font-size:13px;\" width=\"100%\" >";
         extrato += "<tr bgcolor=white><td width=\"20%\">Data</td>";        
         
         if(origemDestinoCheck) {
@@ -196,7 +196,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         }
         extrato += "<tr><td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
         extrato += "</table>";
-        extrato += "<table class='extrato-financeiro-rodape' style=\"border-spacing: 0;\" width=\"100%\"><tr bgcolor=white><td width=\"20%\"></td><td width=\"30%\"></td><td width=\"30%\"></td><td width=\"20%\" align=\"right\"></td></tr>";
+        extrato += "<table class='extrato-financeiro-rodape' style=\"border-spacing: 0; font-size:13px;\" width=\"100%\"><tr bgcolor=white><td width=\"20%\"></td><td width=\"30%\"></td><td width=\"30%\"></td><td width=\"20%\" align=\"right\"></td></tr>";
         this.saldoFinalDetalhado();
         this.saldoFinal();
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";

@@ -147,22 +147,22 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         return false;
     }
 
-    public void alteraFaturaListener(Lancamento lancamento) {       
-        try {
-            List<Lancamento> lancamentos = new ArrayList<Lancamento>();
-            lancamento.setFormaPagamento(lancamento.getTarifa().getTipo());
-            lancamentos.add(lancamento);
-            LancamentoSingleton.getInstance().getBo().persist(lancamento);
-            Fatura fatura = lancamento.getFatura();
-            fatura.setLancamentos(lancamentos);      
-            FaturaSingleton.getInstance().ajustarFaturaGenerica(fatura, UtilsFrontEnd.getProfissionalLogado());
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            e.printStackTrace();
-        }
-
-    }
+//    public void alteraFaturaListener(Lancamento lancamento) {       
+//        try {
+//            List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+//            lancamento.setFormaPagamento(lancamento.getTarifa().getTipo());
+//            lancamentos.add(lancamento);
+//            LancamentoSingleton.getInstance().getBo().persist(lancamento);
+//            Fatura fatura = lancamento.getFatura();
+//            fatura.setLancamentos(lancamentos);      
+//            FaturaSingleton.getInstance().ajustarFaturaGenerica(fatura, UtilsFrontEnd.getProfissionalLogado());
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+//            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public void validarLancamentosSelecionados() {
         try {

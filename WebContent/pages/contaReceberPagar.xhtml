@@ -627,9 +627,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{lc.tarifa}" style=""
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
 												converter="tarifa">
-
-												<p:ajax process="@this"
-													listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}" />
 												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}"
 													var="tarifa" itemLabel="#{tarifa.produto}"
 													itemValue="#{tarifa}" />
@@ -645,10 +642,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column headerText="Data Crédito"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<p:calendar value="#{lc.dataCredito}" autocomplete="false"
+											<p:calendar value="#{lc.dataCredito}" autocomplete="false" id="alteracaoDataCredito"
 												locale="#{lumeSecurity.locale}" mask="true"
-												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
-												<p:ajax event="dateSelect" process="@this" />
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">											
 											</p:calendar>
 										</p:column>
 										<p:column headerText="Valor à conferir" id="valorAConferir"
@@ -703,10 +699,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{lc.valor}"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
 												required="true" maxlength="13" maxValue="9999999999.99"
-												decimalSeparator="," symbol="R$ " thousandSeparator=".">
-												<p:ajax event="change" process="@this"
-													listener="#{conferenciaRecebimentoMB.alteraFaturaListener(lc)}"
-													oncomplete="PF('dtLancamentoValidar').filter()" />
+												decimalSeparator="," symbol="R$ " thousandSeparator=".">												
 											</p:inputNumber>
 
 											<f:facet name="footer">
@@ -726,7 +719,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											exportable="false">
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
-												update="dtLancamentoValidar" process="@this"
+												update="dtLancamentoValidar" process="@this,valor,confereciaForma,alteracaoDataCredito"
 												styleClass="GreenButton" title="Valor recebido"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"

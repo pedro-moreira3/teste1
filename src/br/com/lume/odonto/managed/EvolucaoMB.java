@@ -59,9 +59,13 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
         if (evolucao.getPlanoTratamentoProcedimentos() != null && !evolucao.getPlanoTratamentoProcedimentos().isEmpty()) {
             for (int i = 0; i < evolucao.getPlanoTratamentoProcedimentos().size(); i++) {
                 EvolucaoPlanoTratamentoProcedimento evoPTP = evolucao.getPlanoTratamentoProcedimentos().get(i);
-                infoPTP += "Procedimento: " + evoPTP.getPlanoTratamentoProcedimentoDescricao();
-                if (evoPTP.getRegiaoDenteFace() != null && !evoPTP.getRegiaoDenteFace().isEmpty())
-                    infoPTP += ", " + evoPTP.getRegiaoDenteFace();
+                infoPTP +=  evoPTP.getPlanoTratamentoProcedimentoDescricao();
+                if (evoPTP.getPlanoTratamentoProcedimento() != null && evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr() != null &&
+                        !evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr().isEmpty()
+                        )
+                    infoPTP += ", " + evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr();
+               // if (evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr() != null)
+               //     infoPTP += ", " + evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr();
                 infoPTP += "; <br />";
             }
             if (infoPTP != null && !infoPTP.isEmpty() && infoPTP.length() > 7)
