@@ -72,7 +72,7 @@
 									itemValue="#{null}" />
 								<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}"
 									var="ptp" itemValue="#{ptp}"
-									itemLabel="#{ptp.descricaoCompleta}" />
+									itemLabel="#{custoMB.descricaoProcedimento(ptp)}" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="dtRegistro" value="Data: " />
