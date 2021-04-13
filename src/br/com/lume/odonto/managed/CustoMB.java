@@ -19,12 +19,15 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.custo.CustoSingleton;
+import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.orcamento.OrcamentoItemSingleton;
+import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -139,6 +142,22 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public String descricaoProcedimento(PlanoTratamentoProcedimento ptp) {
+        try {
+            boolean ptpTemOrc = OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp);
+            if(ptpTemOrc) {
+                OrcamentoItem oi = OrcamentoItemSingleton.getInstance().getBo().getOIAprovadoFromPTP(ptp);
+                return ptp.getDescricaoCompleta() + " [Valor orçado: R$" + oi.getValor() + "]" + ( ptp.getDataFinalizado() != null ? " [Data de execução: " + ptp.getDataFinalizadoStr() + "]" : "") ;
+            }else {
+                return ptp.getDescricaoCompleta() + " [Valor do procedimento: R$" + ptp.getValor() + "]" + ( ptp.getDataFinalizado() != null ? " [Data de execução: " + ptp.getDataFinalizadoStr() + "]" : "") ;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao carregar a descrição do procedimento!");
+        }
+        return "";
     }
 
     public void handleSelect(SelectEvent event) {
