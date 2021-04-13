@@ -1001,6 +1001,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             faturaItemEditar.setValorComDesconto(new BigDecimal(faturaItemEditar.getValorItem()));
             faturaItemEditar.setDataCriacao(lancamentoContabilEditarItem.getData());
+            
+            lancamentoContabilEditarItem.setMotivo(faturaItemEditar.getMotivo());
             faturaItemEditar.setDescricaoItem(Utils.descricaoItemFaturaGenerica(lancamentoContabilEditarItem));
 
             if (faturaItemEditar.getTipoSaldo().equals("S")) {
