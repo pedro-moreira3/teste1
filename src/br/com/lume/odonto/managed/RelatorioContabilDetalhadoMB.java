@@ -221,7 +221,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                     gastosGerais = gastosGerais.add(lc.getValor().abs());
                 } else if (lc.getMotivo().getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.RECEITA_BRUTA)) {
                     receitaBruta = receitaBruta.add(lc.getValor().abs());
-                }
+                }               
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -230,7 +230,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         totalGastos = gastosOdontologicos.add(gastosOperacionais).add(gastosGerais);
         saldoPeriodo = receitaBruta.subtract(totalGastos);
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
-        desenhaSaldo(receitaBruta, "Receita Bruta");
+        desenhaSaldo(receitaBruta, "Ganho Total");
         extrato += "<tr><td bgcolor=\"white\" colspan=\"4\"><hr></td></tr>";
         desenhaSaldo(gastosOperacionais.multiply(new BigDecimal(-1)), "Gastos Operacionais");
         desenhaSaldo(gastosOdontologicos.multiply(new BigDecimal(-1)), "Gastos Odontológicos");        
