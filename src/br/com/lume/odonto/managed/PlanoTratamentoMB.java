@@ -1291,6 +1291,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     }
 
+    public void fazNada() {
+        
+    }
+    
     public String getDescontoFromParcela(Integer parcela) {
         String percent = null;
         NumberFormat percformat = NumberFormat.getPercentInstance(new Locale("pt", "BR"));
