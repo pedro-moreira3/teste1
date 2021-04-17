@@ -992,7 +992,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         BigDecimal valorTotalExistenteLancamentos = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(getEntity(), ValidacaoLancamento.TODOS_ATIVOS);
         BigDecimal valorEditado = new BigDecimal(faturaItemEditar.getValorItem());
-
+        valorEditado = valorEditado.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         if (FaturaSingleton.getInstance().getValorTotal(faturaItemEditar.getFatura()).compareTo(new BigDecimal(0)) != 0 && valorTotalExistenteLancamentos.compareTo(valorEditado) > 0) {
             this.addError("Erro!", "O valor dos lancamentos não pode exceder o valor do item");
             return;
