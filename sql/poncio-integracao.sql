@@ -87,5 +87,5 @@ ALTER TABLE DETAIL_PACOTE_CONFIRMACAO_AUTO ALTER COLUMN MENSAGEM_PADRAO_CONFIRMA
 SET DEFAULT 'Olá <nome_paciente>! Você tem consulta na <nome_clinica> com o Dr(a). <nome_dentista> dia  10/10/2020 às 15:00 horas. Para confirmar responda SIM ou NÃO.';
 
 ALTER TABLE AGENDAMENTO ADD COLUMN MENSAGEM_CONFIRMACAO_AUTOMATICA_ENVIADA boolean default FALSE;
-
+alter table HISTORICO_MENSAGEM_INTEGRACAO add column MENSAGEM_SID varchar(255);
 
