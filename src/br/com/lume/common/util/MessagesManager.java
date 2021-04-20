@@ -3,33 +3,38 @@ package br.com.lume.common.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sound.midi.Soundbank;
 
+import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.twilio.Twilio;
 import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.twiml.messaging.*;
 import com.twilio.type.PhoneNumber;
-import com.twilio.twiml.MessagingResponse;
-import com.twilio.twiml.messaging.Body;
 //import static spark.Spark.*;
+
+import br.com.lume.common.bo.IEnumController;
 
 public class MessagesManager extends HttpServlet{
 
+    private static final long serialVersionUID = -5113750481940092741L;
+    
     private static MessagesManager instance;
-    private String sidWebhook;
-    private String sidEnv;
     
     public static final String ACCOUNT_SID = "ACf95921d69a6b7507b84009f0f818b319";
     public static final String AUTH_TOKEN = "fb650d8f11c74d7af01731b88ea16cae";
     
+    public static final String MESSAGES = "messages";
+    public static final String STATUS_MESSAGES = "statusCallback";
+    
     private MessagesManager() {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
     }
     
     public static MessagesManager getInstance() {
@@ -41,111 +46,78 @@ public class MessagesManager extends HttpServlet{
         }
     }
 
-    public void smsSender() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        Message message = Message.creator(
-                new PhoneNumber("whatsapp:+554199473590"),
-                new PhoneNumber("whatsapp:+14155238886"),
-                "Teste Twilio")
-            .create();
-
-        System.out.println(message.getSid());
-        sidEnv = message.getSid();
-    }
-    
-    public void configurationWebhook() {
-//        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-//        Webhook webhook = Webhook.updater()
-//            .setFilters(
-//                Arrays.asList("onMessageAdd", "onMessageUpdate", "onMessageRemove"))
-//            .setTarget(Webhook.Target.WEBHOOK)
-//            .setPreWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-//            .setPostWebhookUrl("https://dev-intelidente.lumetec.com.br/webhook")
-//            .setMethod("POST")
-//            .update();
-
-    }
-
-    public void configurationConversation() {
-        
-        Body body = new Body.Builder("TESTE").build();
-        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message.Builder().body(body).build();
-        
-        
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        com.twilio.rest.conversations.v1.conversation.Webhook webhook = 
-                com.twilio.rest.conversations.v1.conversation.Webhook.creator("chxxx",
-                com.twilio.rest.conversations.v1.conversation.Webhook.Target.WEBHOOK)
-            .setConfigurationMethod(com.twilio.rest.conversations.v1.conversation.Webhook.Method.GET)
-            .setConfigurationFilters(
-                Arrays.asList("onMessageAdded", "onConversationAdded", "onConversationRemoved", "onConversationUpdate", 
-                        "onMessageAdd", "onMessageAdded"))
-            .setConfigurationUrl("https://dev-intelidente.lumetec.com.br/webhook")
-            .create();
-
-        System.out.println("--------------- configurationConversation ----------------");
-        System.out.println(webhook.getSid());
-        sidWebhook = webhook.getSid();
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        processRequest(req, resp);
     }
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("------------Mensagem Twilio---------");
-        System.out.println(req.toString());
+        processRequest(req, resp);
+    }
+    
+    public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {        
+        String servletPath = req.getServletPath();
+        
+        System.out.println(servletPath);
         
         BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
         while(bff.ready()) {
             System.out.println(bff.readLine());
         }
         
-        System.out.println("\n");
+//        switch(servletPath) {
+//            case MESSAGES:{
+//                BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+//                while(bff.ready()) {
+//                    System.out.println(bff.readLine());
+//                }
+//            }break;
+//            case STATUS_MESSAGES:{
+//                BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+//                while(bff.ready()) {
+//                    System.out.println(bff.readLine());
+//                }
+//            }break;
+//            default:{
+//                BufferedReader bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+//                while(bff.ready()) {
+//                    System.out.println(bff.readLine());
+//                }
+//            }
+//        }
+    }
+
+    public String messageSender(String fromNumber, String toNumber, String mensagem) {
+        Message message = Message.creator(
+                new PhoneNumber("whatsapp:"+toNumber),
+                new PhoneNumber("whatsapp:+14155238886"),
+                mensagem)
+            .create();
         
-        Body body = new Body
-              .Builder("Resposta teste!")
-              .build();
-      
-        com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
-              .Builder()
-              .body(body)
-              .build();
-        MessagingResponse twiml = new MessagingResponse
-              .Builder()
-              .message(sms)
-              .build();
-
-        System.out.println(twiml.toXml());
-        resp.setContentType("text/xml");
-        resp.getWriter().print(twiml.toXml());
-        super.doPost(req, resp);
+        return message.getSid();
     }
     
-    public void receiveMsgs() {
-//        get("/", (req, res) -> "Olá");
-//
-//        post("/sms", (req, res) -> {
-//            res.type("application/xml");
-//            Body body = new Body
-//                    .Builder("Resposta teste!")
-//                    .build();
-//            com.twilio.twiml.messaging.Message sms = new com.twilio.twiml.messaging.Message
-//                    .Builder()
-//                    .body(body)
-//                    .build();
-//            MessagingResponse twiml = new MessagingResponse
-//                    .Builder()
-//                    .message(sms)
-//                    .build();
-//            return twiml.toXml();
-//        });
+    public Message messageFind(String sid) {
+        Message msg = Message.fetcher(sid)
+                .fetch();
+        return msg;
     }
     
-    public void listAllMessagesInHistory() {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+    public ResourceSet<Message> messagesList(){
         ResourceSet<Message> messages = Message.reader().limit(20).read();
-
-        System.out.println("------------- Listagem do histórico ----------");
-        for(Message record : messages) {
-            System.out.println(record.getSid());
-        }
+        return messages;
+    }
+    
+    public ResourceSet<Message> messagesList(String fromNumber, String toNumber, int year, int month, int dayMonth, int hour, int limit){
+        ResourceSet<Message> messages = Message.reader()
+                .setDateSent(
+                    ZonedDateTime.of(year, month, dayMonth, hour, 0, 0, 0, ZoneId.of("UTC")))
+                .setFrom(new com.twilio.type.PhoneNumber(fromNumber))
+                .setTo(new com.twilio.type.PhoneNumber(toNumber))
+                .limit(limit)
+                .read();
+            
+        return messages;
     }
 }
