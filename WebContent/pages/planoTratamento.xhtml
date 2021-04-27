@@ -889,16 +889,17 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 							<p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}"
 								headerText="Nr." width="45">
-								<h:outputText value="#{plano.sequencial}" />
+								<h:outputText value="#{plano.sequencial}" filterMatchMode="contains" filterBy="#{plano.sequencial}"/>
 							</p:column>
-							<p:column headerText="Prioridade" width="45">
+							<p:column headerText="Prioridade" width="45" filterMatchMode="contains" filterBy="#{plano.prioridade}">
 								<h:outputText value="#{plano.prioridade}" />
 							</p:column>
-							<p:column headerText="Status" width="60">
+							<p:column headerText="Status" width="60" filterMatchMode="contains" filterBy="#{plano.statusDescricao}">
 								<h:outputText value="#{plano.statusDescricao}" />
 							</p:column>
 
-							<p:column sortBy="#{plano.procedimento.descricao}"
+							<p:column sortBy="#{plano.procedimento.descricao}" 
+								filterMatchMode="contains" filterBy="#{plano.procedimento.descricao}"
 								headerText="Procedimento" width="350">
 								<p:outputPanel style="position: relative">
 									<h:outputText value="#{plano.procedimento.descricao}" />
@@ -912,7 +913,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:outputPanel>
 							</p:column>
 							<p:column sortBy="#{plano.denteRegiao}" headerText="Dente/Região e Diagnóstico"
-								width="100">
+								width="100" filterMatchMode="contains" filterBy="#{plano.denteRegiaoStr}">
 								<h:outputText value="#{plano.denteRegiaoStr}"
 									id="denteRegiaoProc" />
 								<p:tooltip for="denteRegiaoProc"
@@ -972,11 +973,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:commandButton>
 							</p:column>
 							<p:column headerText="Dta. de Execução"
+								filterMatchMode="contains" filterBy="#{plano.dataFinalizadoStr}"
 								styleClass="cabecalho hideOnEdit"
 								sortBy="#{plano.dataFinalizadoStrOrd}" width="70px;">
 								<h:outputText value="#{plano.dataFinalizadoStr}" />
 							</p:column>
 							<p:column headerText="Executado Por" styleClass="hideOnEdit"
+								filterMatchMode="contains" filterBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
 								sortBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
 								width="70px;">
 								<h:outputText
@@ -2452,7 +2455,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:column headerText="Face">
 						<p:selectCheckboxMenu value="#{regiao.facesArray}"
 							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
-							label="#{regiao.facesArrayLabel}" style="width: 200px;"
+							label="#{regiao.facesArrayLabel}" style="width: 200px;" multiple="true"
 							rendered="#{regiao.statusDente.temFace}">
 							<p:ajax process="@this"
 								listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
