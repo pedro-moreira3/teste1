@@ -38,14 +38,6 @@
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/lumeerp.jar</systemPath>
 		</dependency>
 
-		
-
-		<dependency>
-			<groupId>com.twilio.sdk</groupId>
-			<artifactId>twilio</artifactId>
-			<version>8.3.0</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/javax.faces/javax.faces-api -->
 		<dependency>
 			<groupId>javax.faces</groupId>

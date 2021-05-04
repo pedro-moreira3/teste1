@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<!-- wColorPicker -->
+
+<style>
+
+/* Chat containers */
+.container {
+	border: 2px solid #dedede;
+	background-color: #f1f1f1;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 10px 0;
+}
+
+/* Darker chat container */
+.darker {
+	border-color: #ccc;
+	background-color: #ddd;
+}
+
+/* Clear floats */
+.container::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
+/* Style images */
+.container img {
+	float: left;
+	max-width: 60px;
+	width: 100%;
+	margin-right: 20px;
+	border-radius: 50%;
+}
+
+/* Style the right image */
+.container img.right {
+	float: right;
+	margin-left: 20px;
+	margin-right: 0;
+}
+
+/* Style time text */
+.time-right {
+	float: right;
+	color: #aaa;
+}
+
+/* Style time text */
+.time-left {
+	float: left;
+	color: #999;
+}
+</style>
+
+
+	<div class="ui-g ui-fluid">
+		<div class="ui-g-12 ui-lg-12">
+
+			<ui:remove>
+				<p:outputPanel id="viwChat"
+					style="width:720px;vertical-align:center;">
+					Histórico de mensagens
+				</p:outputPanel>
+			</ui:remove>
+
+			<br />
+
+			<p:outputPanel style="width:50%;height:500px;">
+				<p:scrollPanel>
+					<ui:repeat var="message" value="#{pacienteMB.historicoMensagens}">
+						<h:panelGroup rendered="#{message.metodoEnvio == 'E'}" style="text-align:right;">
+							<div class="container">
+								<img src="/w3images/bandmember.jpg" alt="Intelidente" />
+								<p>#{(message.metodoEnvio == 'E' ? message.mensagemEnviada :
+									message.respostaPaciente)}</p>
+								<span class="time-right">#{message.dataCriacaoStr}</span>
+							</div>
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{message.metodoEnvio == 'S'}">
+							<div class="container darker">
+								<img src="/w3images/avatar_g2.jpg" alt="#{pacienteMB.entity.dadosBasico.nome}" class="right" />
+								<p>#{(message.metodoEnvio == 'E' ? message.mensagemEnviada :
+									message.respostaPaciente)}</p>
+								<span class="time-left">#{message.dataCriacaoStr}</span>
+							</div>
+						</h:panelGroup>
+					</ui:repeat>
+				</p:scrollPanel>
+			</p:outputPanel>
+
+		</div>
+	</div>
+
+
+</ui:composition>

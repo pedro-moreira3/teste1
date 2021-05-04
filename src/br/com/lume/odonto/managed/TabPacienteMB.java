@@ -106,6 +106,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteMB.carregarAnotacoes();
         }else if("Documentos".equals(event.getTab().getTitle())) {
             pacienteMB.carregarDocumentosPaciente();
+        }else if("Mensagens".equals(event.getTab().getTitle())) {
+            pacienteMB.carregarHistoricoMensagens();
         }
     }
 

@@ -70,6 +70,7 @@ import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
 import br.com.lume.documentoEmitido.bo.DocumentoEmitidoBO;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
+import br.com.lume.integracao.HistoricoMensagemIntegracaoSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
 import br.com.lume.odonto.entity.Agendamento;
@@ -81,16 +82,19 @@ import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Exame;
+import br.com.lume.odonto.entity.HistoricoMensagemIntegracao;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ViaCep;
+import br.com.lume.odonto.entity.HistoricoMensagemIntegracao.TipoEnvio;
 import br.com.lume.odonto.exception.CertificadoInexistente;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.DataNascimentoException;
 import br.com.lume.odonto.exception.SenhaCertificadoInvalidaException;
 import br.com.lume.odonto.exception.TelefoneException;
+import br.com.lume.odonto.queue.EnvioMensagensConfirmacao;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.PacienteSingleton;
@@ -120,7 +124,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Dominio> indicacoes;
 
     private Dominio indicacao;
-    
+
     private Dominio estadoCivil;
 
     private String senha, text;
@@ -147,7 +151,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<String> errosCarregarPaciente;
 
     private boolean visivelDadosPaciente = true;
-    
+
     private boolean empresaTemPacoteDados;
 
     private List<Agendamento> historicoAgendamentos;
@@ -176,28 +180,31 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private String metodoImagem = "U";
     private UploadedFile uploadedFile;
     private List<Dominio> listaEstadoCivil;
-    
+
     //DOCUMENTOS
     private Documento tipoDocumentoImportacao;
     private String descricaoDocumentoImportacao;
     private DocumentoEmitido documentoDownload;
     private StreamedContent fileDownload;
     private List<DocumentoEmitido> listaDocumentos;
-    
+
     private String modeloHtml;
     private boolean mostraCabecalho = false;
     private boolean mostraLogo = false;
     private boolean mostraRodape = false;
     private boolean mostraLogoCentral = false;
 
+    //HISTORICO DE MENSAGENS
+    private List<HistoricoMensagemIntegracao> historicoMensagens;
+
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
-        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());     
-        
+        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
+
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
-        
+
         try {
             indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
             empresaTemPacoteDados = EmpresaSingleton.getInstance().isEmpresatemPacoteMensagens(UtilsFrontEnd.getEmpresaLogada());
@@ -206,7 +213,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             log.error("Erro no PacienteMB", e1);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-        
+
         try {
             listaEstadoCivil = DominioSingleton.getInstance().getBo().listByObjeto("estado_civil");
         } catch (Exception e1) {
@@ -214,9 +221,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             log.error("Erro no PacienteMB", e1);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-        
-           
-        
+
         if (url.contains("paciente.jsf")) {
             pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
             if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
@@ -229,17 +234,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     planoRender = true;
                 }
                 DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
-                if (UtilsFrontEnd.getProfissionalLogado() != null) {                  
+                if (UtilsFrontEnd.getProfissionalLogado() != null) {
                     convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
-
-             
 
                 List<String> perfis = new ArrayList<>();
                 perfis.add(OdontoPerfil.DENTISTA);
                 perfis.add(OdontoPerfil.ADMINISTRADOR);
                 perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-                if( UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
                     profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
                 this.sortAnamneses();
@@ -254,40 +257,71 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
         }
     }
-    
+
     public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");
-        getListaVideosTutorial().put("Atualizar cadastro do paciente", "https://www.youtube.com/v/a1PS5p1OAAI?autoplay=1");                
+        getListaVideosTutorial().put("Atualizar cadastro do paciente", "https://www.youtube.com/v/a1PS5p1OAAI?autoplay=1");
     }
-    
+
+    public void carregarHistoricoMensagens() {
+//        List<HistoricoMensagemIntegracao> mensagens = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().
+//                getMensagensFromPaciente(this.getEntity());
+
+        this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
+
+        HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
+        msg.setDataCriacao(new Date());
+        msg.setId(0l);
+        msg.setMensagemEnviada("Teste");
+        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+        msg.setMetodoEnvio("E");
+
+        HistoricoMensagemIntegracao msg2 = new HistoricoMensagemIntegracao();
+        msg2.setDataCriacao(new Date());
+        msg2.setId(1l);
+        msg2.setRespostaPaciente("Teste resposta");
+        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+        msg2.setMetodoEnvio("S");
+
+        this.historicoMensagens.add(msg);
+        this.historicoMensagens.add(msg2);
+    }
+
     public void salvarArquivoImportacao() {
-        
+
     }
-    
+
+    public void solicitarConfirmacao(Agendamento agendamento) {
+        try {
+            if (agendamento.getStatusNovo().equals("I") || agendamento.getStatusNovo().equals("N")) {
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(this.getEntity(), agendamento, UtilsFrontEnd.getEmpresaLogada());
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Agendamento com status inválido.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void carregarDocumentosPaciente() {
-        this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), 
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
-    
+
     public void loadDoc(DocumentoEmitido doc) {
         if (doc != null) {
             this.modeloHtml = doc.getModelo();
         }
         PrimeFaces.current().ajax().update("lume:tabViewPaciente:impressaoDoc");
     }
-        
-        
-        
 
-    
     public StreamedContent getArquivo(DocumentoEmitido doc) {
-        
+
         StreamedContent arquivo = null;
         if (doc.getPathDocumento() != null) {
-            try {              
+            try {
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
-                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");                
+                FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");
                 arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -295,7 +329,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return arquivo;
     }
-    
+
     public void mostrarPerguntasAnamnese() {
         this.mostrarPerguntasAnamnese = true;
         anamneses = new ArrayList<>();
@@ -307,7 +341,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void carregarAnotacoes() {
         this.editorAnotacoes.setSubmittedValue(this.getEntity().getAnotacoes());
     }
-    
+
     public StreamedContent getImagemUsuario() {
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
@@ -325,11 +359,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void mudaIndicacao() {
         getEntity().setIndicacaoDominio(indicacao);
     }
-    
+
     public void mudaEstadoCivil() {
-        if(estadoCivil == null) {
+        if (estadoCivil == null) {
             getEntity().getDadosBasico().setEstadoCivil("");
-        }else {
+        } else {
             getEntity().getDadosBasico().setEstadoCivil(estadoCivil.getNome());
         }
     }
@@ -345,14 +379,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public String idadeDoPaciente() {
         String idade = Utils.getIdadePaciente(this.getEntity());
-        if(!idade.equals("")) {
+        if (!idade.equals("")) {
             return "Idade: " + Utils.getIdadePaciente(this.getEntity()) + " anos";
         }
-       return "";
-            
-      
+        return "";
+
     }
-    
+
     public boolean showPaciente() {
         if (indicacao != null) {
             if (indicacao.getNome().equals("Indicado por Paciente")) {
@@ -474,7 +507,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void upload(FileUploadEvent event) {
         InputStream inputStream = null;
-        
+
         try {
             UploadedFile file = event.getFile();
             inputStream = file.getInputstream();
@@ -494,7 +527,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             log.error(e);
             this.addError("Erro ao carregar arquivo.", "");
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
@@ -534,7 +567,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     public void carregarAnamneses() {
         try {
             configuracoesAnamneses = ConfiguracaoAnamneseSingleton.getInstance().getBo().listAll(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -616,11 +649,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     paciente.setJustificativa(null);
                     paciente.setStatus(Status.ATIVO);
                     PacienteSingleton.getInstance().persist(paciente);
-                    
-                  
+
                 }
-                
-                
+
             }
             paciente2Ativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
             paciente2Ativar.setDataUltimaAlteracao(new Date());
@@ -640,15 +671,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     @Override
     public void setEntity(Paciente entity) {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
-              
-        try {            
-            if(UtilsFrontEnd.getProfissionalLogado() != null && UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
-                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
+
+        try {
+            if (UtilsFrontEnd.getProfissionalLogado() != null && UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
-            if(entity != null && entity.getDadosBasico() != null && entity.getDadosBasico().getEstadoCivil() != null) {
-                estadoCivil = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("estado_civil","item", entity.getDadosBasico().getEstadoCivil());    
-            } 
-            
+            if (entity != null && entity.getDadosBasico() != null && entity.getDadosBasico().getEstadoCivil() != null) {
+                estadoCivil = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("estado_civil", "item", entity.getDadosBasico().getEstadoCivil());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -668,8 +699,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             addError("Erro", "É necessário informar o celular do paciente!");
             erroValidacoes = true;
         }
-        if (getEntity().getDadosBasico().getDataNascimento() != null && responsavel &&
-                (getEntity().getDadosBasico().getResponsavel() == null || getEntity().getDadosBasico().getResponsavel().isEmpty())) {
+        if (getEntity().getDadosBasico().getDataNascimento() != null && responsavel && (getEntity().getDadosBasico().getResponsavel() == null || getEntity().getDadosBasico().getResponsavel().isEmpty())) {
             addError("Erro", "Paciente com menos de 18 anos, favor informar o nome do responsável!");
             erroValidacoes = true;
         }
@@ -728,9 +758,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             if (getEntity().getId() == null || getEntity().getId() == 0) {
                 getEntity().setDataCriacao(Calendar.getInstance().getTime());
             }
-            
+
             try {
-                if(this.image2Delete != null && !this.image2Delete.isEmpty()) {
+                if (this.image2Delete != null && !this.image2Delete.isEmpty()) {
                     Files.deleteIfExists(Paths.get(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + this.image2Delete));
                 }
             } catch (Exception e) {
@@ -782,14 +812,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.habilitaSalvar = true;
         if (getEntity() != null) {
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
-              //  Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICAS, UtilsFrontEnd.getEmpresaLogada());
-               // if (generica == null)
+                //  Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICAS, UtilsFrontEnd.getEmpresaLogada());
+                // if (generica == null)
                 //    generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICA, UtilsFrontEnd.getEmpresaLogada());
 
-              //  if (generica != null) {
+                //  if (generica != null) {
                 //    configuracaoSelecionada.add(generica);
-                  //  anamneses = new ArrayList<>();
-                  // this.actionAtualizaPerguntasPorAnamnese(generica);
+                //  anamneses = new ArrayList<>();
+                // this.actionAtualizaPerguntasPorAnamnese(generica);
                 //}
             }
         }
@@ -898,7 +928,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 this.getEntity().getDadosBasico().setBairro("");
                 this.getEntity().getDadosBasico().setCidade("");
                 this.getEntity().getDadosBasico().setEndereco("");
-                this.getEntity().getDadosBasico().setUf("");                
+                this.getEntity().getDadosBasico().setUf("");
                 addError("Endereço não encontrado!", "");
             }
         }
@@ -1034,11 +1064,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return null;
     }
-    
+
     public void actionPersistAnotacoes(ActionEvent event) {
         try {
             PacienteSingleton.getInstance().persist(this.getEntity());
-            
+
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.log.error("Erro no actionPersistAnotacoes", e);
@@ -1275,7 +1305,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         // TODO Auto-generated method stub
         return super.getEntity();
     }
-    
+
     public boolean isVisualizar() {
         return visualizar;
     }
@@ -1332,42 +1362,34 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.editorAnotacoes = editorAnotacoes;
     }
 
-    
     public List<Dominio> getListaEstadoCivil() {
         return listaEstadoCivil;
     }
 
-    
     public void setListaEstadoCivil(List<Dominio> listaEstadoCivil) {
         this.listaEstadoCivil = listaEstadoCivil;
     }
 
-    
     public Dominio getEstadoCivil() {
         return estadoCivil;
     }
 
-    
     public void setEstadoCivil(Dominio estadoCivil) {
         this.estadoCivil = estadoCivil;
     }
 
-    
     public List<ConfiguracaoAnamnese> getConfiguracaoSelecionada() {
         return configuracaoSelecionada;
     }
 
-    
     public void setConfiguracaoSelecionada(List<ConfiguracaoAnamnese> configuracaoSelecionada) {
         this.configuracaoSelecionada = configuracaoSelecionada;
     }
 
-    
     public List<ConfiguracaoAnamnese> getConfiguracoesAnamneses() {
         return configuracoesAnamneses;
     }
 
-    
     public void setConfiguracoesAnamneses(List<ConfiguracaoAnamnese> configuracoesAnamneses) {
         this.configuracoesAnamneses = configuracoesAnamneses;
     }
@@ -1412,64 +1434,60 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.fileDownload = fileDownload;
     }
 
-    
     public String getModeloHtml() {
         return modeloHtml;
     }
 
-    
     public void setModeloHtml(String modeloHtml) {
         this.modeloHtml = modeloHtml;
     }
 
-    
     public boolean isMostraCabecalho() {
         return mostraCabecalho;
     }
 
-    
     public void setMostraCabecalho(boolean mostraCabecalho) {
         this.mostraCabecalho = mostraCabecalho;
     }
 
-    
     public boolean isMostraLogo() {
         return mostraLogo;
     }
 
-    
     public void setMostraLogo(boolean mostraLogo) {
         this.mostraLogo = mostraLogo;
     }
 
-    
     public boolean isMostraRodape() {
         return mostraRodape;
     }
 
-    
     public void setMostraRodape(boolean mostraRodape) {
         this.mostraRodape = mostraRodape;
     }
 
-    
     public boolean isMostraLogoCentral() {
         return mostraLogoCentral;
     }
 
-    
     public void setMostraLogoCentral(boolean mostraLogoCentral) {
         this.mostraLogoCentral = mostraLogoCentral;
     }
 
-    
     public boolean isEmpresaTemPacoteDados() {
         return empresaTemPacoteDados;
     }
 
-    
     public void setEmpresaTemPacoteDados(boolean empresaTemPacoteDados) {
         this.empresaTemPacoteDados = empresaTemPacoteDados;
+    }
+
+    public List<HistoricoMensagemIntegracao> getHistoricoMensagens() {
+        return historicoMensagens;
+    }
+
+    public void setHistoricoMensagens(List<HistoricoMensagemIntegracao> historicoMensagens) {
+        this.historicoMensagens = historicoMensagens;
     }
 
 }

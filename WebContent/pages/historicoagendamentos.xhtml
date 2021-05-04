@@ -39,6 +39,13 @@
 				paginator="true" paginatorPosition="bottom"
 				binding="#{pacienteMB.tabelaFrequencia}">
 				<f:facet name="header">Agendamentos</f:facet>
+				
+				<p:column headerText="Ações">
+					<p:commandButton styleClass="NavyButton" icon="fa fa-clock-o"
+						actionListener="#{pacienteMB.solicitarConfirmacao(a)}"
+						process="@this"/>
+				</p:column>
+				
 				<p:column filterBy="#{a.profissional.dadosBasico.nome}"
 					sortBy="#{a.profissional.dadosBasico.nome}"
 					filterMatchMode="contains" headerText="Dentista"

@@ -97,6 +97,12 @@ body div.ui-widget-content.ui-tabs {
 				disabled="#{pacienteMB.entity.id == null}">
 				<ui:include src="historicoagendamentos.xhtml" />
 			</p:tab>
+			
+			<p:tab id="tab14" title="Mensagens"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="historicoMensagens.xhtml" />
+			</p:tab>
 
 			<p:tab id="tab11" title="Financeiro"
 				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"

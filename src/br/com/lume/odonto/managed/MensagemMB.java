@@ -25,7 +25,6 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.MessagesManager;
 import br.com.lume.mensagem.MensagemSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Mensagem;
@@ -56,8 +55,6 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     private boolean switchAllPatro = true;
     private boolean switchAllClientes = true;
     private boolean switchAllUsuarios = true;
-    
-    MessagesManager m = null;
 
     public MensagemMB() {
         super(MensagemSingleton.getInstance().getBo());
@@ -72,8 +69,6 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
             this.perfis.add("Auxiliar de Cirurgião Dentista");
             
             this.setEntityList(MensagemSingleton.getInstance().getBo().listAll());
-            
-            this.m = MessagesManager.getInstance();
             //m.configurationWebhook();
             //m.receiveMsgs();
             
@@ -99,8 +94,8 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
 
     public void testeTwilio() {
         try {
-            m = MessagesManager.getInstance();
-            m.messageSender("", "+5541999473590", "Olá Eduardo! Você tem consulta na Facial Clin com o Dr(a). Mariana dia 20/04. Para confirmar responda SIM ou NÃO.");
+            //m = MessagesManager.getInstance();
+            //m.messageSender("", "+5541999473590", "Olá Eduardo! Você tem consulta na Facial Clin com o Dr(a). Mariana dia 20/04. Para confirmar responda SIM ou NÃO.");
             
         } catch (Exception e) {
             e.printStackTrace();
