@@ -174,7 +174,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private NegociacaoFatura negociacaoConfirmacao;
     private List<LancamentoParcelaInfo> negociacaoParcelas;
     private String negociacaoMensagemCalculo, negociacaoMensagemErroCalculo;
-    
+
     private BigDecimal valorAlteracaoItem;
     private FaturaItem itemAlteracao;
 
@@ -233,11 +233,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         updateWichScreenOpenForFaturaView();
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
-    
-    public void setVideos() {        
+
+    public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Como fazer o recebimento", "https://www.youtube.com/v/LeKXFc8hKgo?autoplay=1");
-        getListaVideosTutorial().put("Paciente indeciso? Faça várias negociações!", "https://www.youtube.com/v/4KPlYGfPr50?autoplay=1");                
+        getListaVideosTutorial().put("Paciente indeciso? Faça várias negociações!", "https://www.youtube.com/v/4KPlYGfPr50?autoplay=1");
     }
 
     public void updateWichScreenOpenForFaturaView() {
@@ -300,11 +300,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void cancelarItem(FaturaItem item) {
-        if(item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isFinalizado()) {
+        if (item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isFinalizado()) {
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não é possível cancelar um item de procedimento já executado.");
-        }else if(!item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isCancelado()){
+        } else if (!item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isCancelado()) {
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário cancelar o procedimento no plano de tratamento.");
-        }else {
+        } else {
             try {
                 FaturaItemSingleton.getInstance().inativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
                 addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -315,32 +315,32 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
         }
     }
-    
+
     public void carregaItem(FaturaItem item) {
         this.itemAlteracao = item;
     }
-    
+
     public void persistAlteracaoValorItem(FaturaItem item) {
         try {
             FaturaItem itemBanco = FaturaItemSingleton.getInstance().getBo().find(item);
-            
-            if(itemBanco.getValorAlterado() == null) {
+
+            if (itemBanco.getValorAlterado() == null) {
                 item.setValorAlterado(itemBanco.getValorComDesconto());
             }
-            
+
             item.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
             item.setDataAlteracaoStatus(new Date());
-            
+
             FaturaItemSingleton.getInstance().getBo().merge(item);
             this.updateValues(getEntity());
-            
+
             addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao alterar valor do item da fatura.");
             e.printStackTrace();
         }
     }
-    
+
     public void alterarItem() {
         try {
             FaturaItemSingleton.getInstance().getBo().persist(itemAlteracao);
@@ -351,7 +351,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             e.printStackTrace();
         }
     }
-    
+
     public void ativarItem(FaturaItem item) {
         try {
             FaturaItemSingleton.getInstance().ativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
@@ -360,7 +360,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             e.printStackTrace();
         }
     }
-    
+
     public void cancelaLancamento(Lancamento l) {
         try {
             if (l.getValidadoPorProfissional() == null) {
@@ -396,7 +396,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void carregarAjuste(Lancamento lancamento) {
-        try{
+        try {
             if (isAdmin() && lancamento.getValidadoPorProfissional() != null) {
                 this.ajustarLancamento = new Lancamento();
                 this.extornarLancamento = lancamento;
@@ -412,7 +412,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             } else {
                 this.addError("Permissão negada", Mensagens.getMensagem(Mensagens.PERMISSAO_NEGADA));
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             this.addError("Falha ao carregar dados de ajuste", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
@@ -964,7 +964,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void actionEditarItem(FaturaItem faturaItem) {
         try {
 
-            Lancamento lancamento = faturaItem.getFatura().getLancamentosFiltered().get(0);
+            Lancamento lancamento = faturaItem.getFatura().getLancamentosFiltered().get(faturaItem.getFatura().getLancamentosFiltered().size() -1);
             lancamentoContabilEditarItem = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
 
             if (faturaItem.getTipoSaldo().equals("S")) {
@@ -982,6 +982,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             faturaItemEditar = faturaItem;
 
+            tipoCategoria = faturaItem.getMotivo().getCategoria().getTipoCategoria();
+            categoria = faturaItem.getMotivo().getCategoria();
+            carregarMotivos();
+            
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -1001,7 +1005,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             faturaItemEditar.setValorComDesconto(new BigDecimal(faturaItemEditar.getValorItem()));
             faturaItemEditar.setDataCriacao(lancamentoContabilEditarItem.getData());
-            
+
             lancamentoContabilEditarItem.setMotivo(faturaItemEditar.getMotivo());
             faturaItemEditar.setDescricaoItem(Utils.descricaoItemFaturaGenerica(lancamentoContabilEditarItem));
 
@@ -1014,26 +1018,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             LancamentoContabilSingleton.getInstance().getBo().persist(lancamentoContabilEditarItem);
 
             Fatura fatura = faturaItemEditar.getFatura();
-            TipoPessoa tipoPessoa =  DadosBasicoSingleton.getTipoPessoa(lancamentoContabilEditarItem.getDadosBasico());
-            if(tipoPessoa.equals(TipoPessoa.FORNECEDOR)) {
+            TipoPessoa tipoPessoa = DadosBasicoSingleton.getTipoPessoa(lancamentoContabilEditarItem.getDadosBasico());
+            if (tipoPessoa.equals(TipoPessoa.FORNECEDOR)) {
                 fatura.setFornecedor(FornecedorSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));
-                fatura.setPaciente(null);              
-                fatura.setProfissional(null);                
-            }else if(tipoPessoa.equals(TipoPessoa.PACIENTE)) {
-                fatura.setPaciente(PacienteSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));               
+                fatura.setPaciente(null);
+                fatura.setProfissional(null);
+            } else if (tipoPessoa.equals(TipoPessoa.PACIENTE)) {
+                fatura.setPaciente(PacienteSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));
                 fatura.setProfissional(null);
                 fatura.setFornecedor(null);
-            }else if(tipoPessoa.equals(TipoPessoa.PROFISSIONAL)) {
+            } else if (tipoPessoa.equals(TipoPessoa.PROFISSIONAL)) {
                 fatura.setProfissional(ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(lancamentoContabilEditarItem.getDadosBasico()));
                 fatura.setPaciente(null);
-                fatura.setFornecedor(null);              
+                fatura.setFornecedor(null);
             }
             origem = lancamentoContabilEditarItem.getDadosBasico();
             FaturaSingleton.getInstance().getBo().persist(fatura);
             setEntity(fatura);
-            
+
             //TODO depois de colocar a recorrencia verificar aqui
-            
+
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
             PrimeFaces.current().executeScript("PF('dlgEditarPagamentoRecebimento').hide()");
         } catch (Exception e) {
@@ -1166,10 +1170,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-          //  updateValues(getEntity(), true, true);
+            //  updateValues(getEntity(), true, true);
 
             pesquisar();
-            
+
             PrimeFaces.current().executeScript("PF('dlgNovoLancamento').hide()");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -1908,9 +1912,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             for (Lancamento lan : lancamentosFatura) {
                 for (LancamentoContabil lc : lan.getLancamentosContabeis()) {
-                    if (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE))
+                    if (lc.getMotivo().getSigla() != null && (lc.getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE) || lc.getMotivo().getSigla().equals(Motivo.EXTORNO_PROFISSIONAL)))
                         lancamentosSearch.remove(lan);
                 }
+
             }
         }
 

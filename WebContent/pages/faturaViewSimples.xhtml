@@ -180,7 +180,7 @@ body .height31 input {
 													value="Salvar"
 													actionListener="#{faturaPagtoMB.actionPersistEditarItem}"
 													update="@parent:@parent:@parent:pnEditarPagamentoRecebimento,@parent:pnlfaturaViewSimples,pnlNewLancamentoSimples "
-													process="@this, @parent:@parent:@parent:pnEditarPagamentoRecebimento"
+													process="@this, @parent:@parent:@parent:pnEditarPagamentoRecebimento,pnlAjusteLancamentoSimples"
 													oncomplete="PF('dtLancamentoContabil').filter()"
 													styleClass="GreenButton" />
 											<p:commandButton value="Fechar" icon="White fa fa-close"
@@ -759,8 +759,8 @@ body .height31 input {
 								rendered="true">
 									
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
-										title="Editar"	disabled="#{fi.fatura.statusFatura.rotulo eq 'PA' or fi.fatura.statusFatura.rotulo eq 'C'}"								
-										update=" @parent:@parent:@parent:pnEditarPagamentoRecebimento"
+										title="Editar"	disabled="#{!faturaPagtoMB.administrador}"								
+										update="@parent:@parent:@parent:pnEditarPagamentoRecebimento"
 										actionListener="#{faturaPagtoMB.actionEditarItem(fi)}"
 										onsuccess="PF('dlgEditarPagamentoRecebimento').show()" process="@this"
 										>

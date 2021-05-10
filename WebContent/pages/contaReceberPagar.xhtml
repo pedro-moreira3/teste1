@@ -309,18 +309,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										</p:column>
 
-										<p:column filterBy="#{lc.dadosBasico.nome}" rendered="#{lc.dadosBasico ne null}"
+										<p:column filterBy="#{lc.dadosBasico.nome}" 
 											sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains"
 											headerText="Origem/Destino"
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
-											<h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" />
-										</p:column>
-										
-										<p:column filterBy="#{lc.lancamento.tarifa.produto}" rendered="#{lc.dadosBasico eq null and lc.lancamento ne null and lc.lancamento.tarifa ne null}"
-											sortBy="#{lc.lancamento.tarifa.produto}" filterMatchMode="contains"
-											headerText="Origem/Destino"
-											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
-											<h:outputText value="#{lc.lancamento.tarifa.produto}" title="#{lc.id}" />
+											<h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" rendered="#{lc.dadosBasico != null and lc.dadosBasico.nome != null}"/>
+											<h:outputText value="#{lc.lancamento.tarifa.produto}" title="#{lc.id}" rendered="#{lc.dadosBasico eq null and lc.lancamento ne null and lc.lancamento.tarifa ne null}"/>
 										</p:column>
 										
 										<p:column
