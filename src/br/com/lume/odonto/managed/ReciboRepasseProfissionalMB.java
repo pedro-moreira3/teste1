@@ -34,6 +34,7 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
+import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
@@ -41,6 +42,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -243,6 +245,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
             Map<Long, ReciboRepasseProfissionalLancamento> recibosMap = new HashMap<Long, ReciboRepasseProfissionalLancamento>();
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
+                    
                     RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(repasseRecibo.getLancamento());
                     if (repasse != null) {
                         repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
@@ -250,24 +253,33 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                     //quando nao tem repasse de origem    
                     if (repasse == null) {
                         repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(repasseRecibo.getLancamento());
-                        if (repasse != null) {
-                            // repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0);
+                        
+                        if(repasse == null) {
+                            RepasseFaturas rf = RepasseFaturasSingleton.getInstance().getBo().getFaturaRepasseFromFaturaProfissional(repasseRecibo.getLancamento().getFatura());                                                        
+                            repasseRecibo.getLancamento().setPtp(rf.getPlanoTratamentoProcedimento());
+                            repasseRecibo.getDados().setPaciente(rf.getFaturaOrigem().getPaciente().getDadosBasico().getNome());
+                            repasseRecibo.getDados().setPlanoTratamento(rf.getPlanoTratamentoProcedimento().getDescricao());
+                            repasseRecibo.getDados().setPlanoTratamentoProcedimento(rf.getPlanoTratamentoProcedimento().getDescricaoCompletaComFace());
+                            repasseRecibo.getDados().setDataExecucao(rf.getPlanoTratamentoProcedimento().getDataFinalizado());
+                            
+                        }
+                        
+                        if (repasse != null) {                         
                             repasseRecibo.getLancamento().setPtp(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento());
                             repasseRecibo.getDados().setPaciente(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome());
                             repasseRecibo.getDados().setPlanoTratamento(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao());
                             repasseRecibo.getDados().setPlanoTratamentoProcedimento(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getDescricaoCompletaComFace());
                             repasseRecibo.getDados().setDataExecucao(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getDataFinalizado());
-                           
-                            repasseRecibo.getDados().setLancamentoPago(repasseRecibo.getLancamento().getValidadoStr());
-                            repasseRecibo.getDados().setValorTotal(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
-                            repasseRecibo.getDados().setValorJaPago(FaturaSingleton.getInstance().getTotalPago(repasseRecibo.getLancamento().getFatura()));
-                            repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
-                            if (repasseRecibo.getLancamento().getValorComDesconto() == null
-                                    || repasseRecibo.getLancamento().getValorComDesconto().compareTo(BigDecimal.ZERO) == 0)
-                                repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValor());
-                         
                           
                         }
+                        
+                        repasseRecibo.getDados().setLancamentoPago(repasseRecibo.getLancamento().getValidadoStr());
+                        repasseRecibo.getDados().setValorTotal(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
+                        repasseRecibo.getDados().setValorJaPago(FaturaSingleton.getInstance().getTotalPago(repasseRecibo.getLancamento().getFatura()));
+                        repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
+                        if (repasseRecibo.getLancamento().getValorComDesconto() == null
+                                || repasseRecibo.getLancamento().getValorComDesconto().compareTo(BigDecimal.ZERO) == 0)
+                            repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValor());
                     }
                     repasseRecibo.setValorTotalRepassar(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
                     if (recibosMap.containsKey(repasseRecibo.getLancamento().getPtp().getId())) {

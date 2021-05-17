@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.lume.common.lazy.models.PacienteLazyModel;
+import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
@@ -30,6 +32,7 @@ import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
@@ -42,6 +45,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     private Logger log = Logger.getLogger(RelatorioPacienteAgendamentoMB.class);
 
     private List<Paciente> pacientes = new ArrayList<>();
+    
+    private PacienteLazyModel pacientesLazy;
 
     private Date inicio, fim;
 
@@ -201,7 +206,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                             ,this.filtroPorProfissional);   
                         }
                         pacientes.removeIf(paciente -> paciente.getProximoRetorno() != null);
-                    } 
+                    }
                     
                     if(!getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO) && !getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)
                             && !getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)){
@@ -227,7 +232,11 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 //                            }  
 //                        }
                         System.out.println(new Timestamp(System.currentTimeMillis()));
-                    }                
+                    }
+                    
+                    if(this.pacientes != null && !this.pacientes.isEmpty()) {
+                        pacientesLazy = new PacienteLazyModel(pacientes);
+                    }
                  
                                     
                 }
@@ -679,5 +688,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
+    }
+
+    public PacienteLazyModel getPacientesLazy() {
+        return pacientesLazy;
+    }
+
+    public void setPacientesLazy(PacienteLazyModel pacientesLazy) {
+        this.pacientesLazy = pacientesLazy;
     }
 }
