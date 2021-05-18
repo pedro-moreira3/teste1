@@ -29,7 +29,8 @@ public class EnvioMensagensConfirmacao extends TimerTask implements Serializable
             for (Agendamento agendamento : agendamentos) {                
                 Paciente paciente = agendamento.getPaciente();
                 Empresa empresa = EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa());
-                boolean retornoEnvio  = HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(paciente, agendamento, empresa);
+                boolean retornoEnvio  = HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
+                        paciente, agendamento, null, empresa);
                 if(retornoEnvio) {
                     //TODO transformar em log para salvar em tb to banco
                     System.out.println("MENSAGEM CONFIRMACAO: Mensagem enviada com sucesso para o agendamento id: " + agendamento.getId());

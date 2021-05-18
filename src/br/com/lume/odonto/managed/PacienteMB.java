@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
@@ -48,6 +50,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
+import org.primefaces.ultima.view.message.MessagesView;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.anamnese.AnamneseSingleton;
@@ -57,6 +60,7 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.MessagesWhatsapp;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
@@ -106,7 +110,7 @@ import br.com.lume.security.entity.Usuario;
 
 @ManagedBean
 @ViewScoped
-public class PacienteMB extends LumeManagedBean<Paciente> {
+public class PacienteMB extends LumeManagedBean<Paciente> implements Observer {
 
     private static final long serialVersionUID = 1L;
     private Logger log = Logger.getLogger(PacienteMB.class);
@@ -258,6 +262,18 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof MessagesWhatsapp) {
+            if(this.historicoMensagens != null && !this.historicoMensagens.isEmpty()) {
+                this.historicoMensagens.add(((MessagesWhatsapp) o).getMensagem());
+            }else {
+                this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
+                this.historicoMensagens.add(((MessagesWhatsapp) o).getMensagem());
+            }
+        }
+    }
+    
     public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");
@@ -295,7 +311,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void solicitarConfirmacao(Agendamento agendamento) {
         try {
             if (agendamento.getStatusNovo().equals("I") || agendamento.getStatusNovo().equals("N")) {
-                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(this.getEntity(), agendamento, UtilsFrontEnd.getEmpresaLogada());
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
+                        this.getEntity(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }else {
                 addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Agendamento com status inválido.");
             }

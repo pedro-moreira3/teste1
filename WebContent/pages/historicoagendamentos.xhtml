@@ -43,7 +43,9 @@
 				<p:column headerText="Ações">
 					<p:commandButton styleClass="NavyButton" icon="fa fa-clock-o"
 						actionListener="#{pacienteMB.solicitarConfirmacao(a)}"
-						process="@this"/>
+						process="@this">
+						<p:confirm message="Confirmar o envio da mensagem ao paciente ?"></p:confirm>
+					</p:commandButton>
 				</p:column>
 				
 				<p:column filterBy="#{a.profissional.dadosBasico.nome}"
