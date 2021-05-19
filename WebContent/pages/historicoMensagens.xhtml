@@ -77,7 +77,7 @@
 					<ui:repeat var="message" value="#{pacienteMB.historicoMensagens}">
 						<h:panelGroup rendered="#{message.metodoEnvio == 'E'}" style="text-align:right;">
 							<div class="container">
-								<img src="/w3images/bandmember.jpg" alt="Intelidente" />
+								<img src="../images/logo_intelidente.png" alt="Intelidente" />
 								<p>#{(message.metodoEnvio == 'E' ? message.mensagemEnviada :
 									message.respostaPaciente)}</p>
 								<span class="time-right">#{message.dataCriacaoStr}</span>

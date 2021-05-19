@@ -55,6 +55,7 @@ import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
+import br.com.lume.integracao.HistoricoMensagemIntegracaoSingleton;
 // import br.com.lume.odonto.bo.AgendamentoBO;
 // import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
 // import br.com.lume.odonto.bo.DadosBasicoBO;
@@ -302,7 +303,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         getListaVideosTutorial().put("Atualizando informações de agendamento", "https://www.youtube.com/v/Jw48ioxUdOg?autoplay=1");                
     }
    
-
+    public void solicitarConfirmacao(Agendamento agendamento) {
+        try {
+            if (agendamento.getStatusNovo().equals("I") || agendamento.getStatusNovo().equals("N")) {
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
+                        agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Agendamento com status inválido.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void carregarAgenda() {
         //limpaPacienteSelecionado();
         carregarScheduleTarefas();

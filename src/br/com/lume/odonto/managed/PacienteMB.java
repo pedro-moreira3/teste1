@@ -60,7 +60,6 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.MessagesWhatsapp;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
@@ -110,7 +109,7 @@ import br.com.lume.security.entity.Usuario;
 
 @ManagedBean
 @ViewScoped
-public class PacienteMB extends LumeManagedBean<Paciente> implements Observer {
+public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private static final long serialVersionUID = 1L;
     private Logger log = Logger.getLogger(PacienteMB.class);
@@ -261,18 +260,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> implements Observer {
             }
         }
     }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof MessagesWhatsapp) {
-            if(this.historicoMensagens != null && !this.historicoMensagens.isEmpty()) {
-                this.historicoMensagens.add(((MessagesWhatsapp) o).getMensagem());
-            }else {
-                this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
-                this.historicoMensagens.add(((MessagesWhatsapp) o).getMensagem());
-            }
-        }
-    }
     
     public void setVideos() {
         getListaVideosTutorial().clear();
@@ -281,27 +268,27 @@ public class PacienteMB extends LumeManagedBean<Paciente> implements Observer {
     }
 
     public void carregarHistoricoMensagens() {
-//        List<HistoricoMensagemIntegracao> mensagens = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().
-//                getMensagensFromPaciente(this.getEntity());
+        List<HistoricoMensagemIntegracao> mensagens = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().
+                getMensagensFromPaciente(this.getEntity());
 
-        this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
+        this.historicoMensagens = mensagens;
 
-        HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
-        msg.setDataCriacao(new Date());
-        msg.setId(0l);
-        msg.setMensagemEnviada("Teste");
-        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
-        msg.setMetodoEnvio("E");
-
-        HistoricoMensagemIntegracao msg2 = new HistoricoMensagemIntegracao();
-        msg2.setDataCriacao(new Date());
-        msg2.setId(1l);
-        msg2.setRespostaPaciente("Teste resposta");
-        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
-        msg2.setMetodoEnvio("S");
-
-        this.historicoMensagens.add(msg);
-        this.historicoMensagens.add(msg2);
+//        HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
+//        msg.setDataCriacao(new Date());
+//        msg.setId(0l);
+//        msg.setMensagemEnviada("Teste");
+//        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+//        msg.setMetodoEnvio("E");
+//
+//        HistoricoMensagemIntegracao msg2 = new HistoricoMensagemIntegracao();
+//        msg2.setDataCriacao(new Date());
+//        msg2.setId(1l);
+//        msg2.setRespostaPaciente("Teste resposta");
+//        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+//        msg2.setMetodoEnvio("S");
+//
+//        this.historicoMensagens.add(msg);
+//        this.historicoMensagens.add(msg2);
     }
 
     public void salvarArquivoImportacao() {
