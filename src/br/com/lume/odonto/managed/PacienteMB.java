@@ -204,7 +204,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
-
+        
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
 
@@ -231,7 +231,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
                 visivelDadosPaciente = false;
             }
-            try {
+            try {                
                 Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("paciente", "mostrar", "plano");
                 if (dominio != null && dominio.getValor().equals(Status.SIM)) {
                     planoRender = true;
@@ -268,40 +268,45 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void carregarHistoricoMensagens() {
-        List<HistoricoMensagemIntegracao> mensagens = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().
-                getMensagensFromPaciente(this.getEntity());
-
-        this.historicoMensagens = mensagens;
-
-//        HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
-//        msg.setDataCriacao(new Date());
-//        msg.setId(0l);
-//        msg.setMensagemEnviada("Teste");
-//        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
-//        msg.setMetodoEnvio("E");
+//        List<HistoricoMensagemIntegracao> mensagens = HistoricoMensagemIntegracaoSingleton.getInstance().getBo().
+//                getMensagensFromPaciente(this.getEntity());
 //
-//        HistoricoMensagemIntegracao msg2 = new HistoricoMensagemIntegracao();
-//        msg2.setDataCriacao(new Date());
-//        msg2.setId(1l);
-//        msg2.setRespostaPaciente("Teste resposta");
-//        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
-//        msg2.setMetodoEnvio("S");
-//
-//        this.historicoMensagens.add(msg);
-//        this.historicoMensagens.add(msg2);
+//        this.historicoMensagens = mensagens;
+//        System.out.println("mensagens " + historicoMensagens.size());
+
+        this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
+        
+        HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
+        msg.setDataCriacao(new Date());
+        msg.setId(0l);
+        msg.setMensagemEnviada("Teste");
+        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+        msg.setMetodoEnvio("E");
+
+        HistoricoMensagemIntegracao msg2 = new HistoricoMensagemIntegracao();
+        msg2.setDataCriacao(new Date());
+        msg2.setId(1l);
+        msg2.setRespostaPaciente("Teste resposta");
+        //msg.setTipoEnvio(HistoricoMensagemIntegracao.TipoEnvio.ENVIO);
+        msg2.setMetodoEnvio("S");
+
+        this.historicoMensagens.add(msg);
+        this.historicoMensagens.add(msg2);
     }
 
     public void salvarArquivoImportacao() {
 
     }
-
+    
     public void solicitarConfirmacao(Agendamento agendamento) {
         try {
-            if (agendamento.getStatusNovo().equals("I") || agendamento.getStatusNovo().equals("N")) {
+            if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) ||
+                    agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
                 HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
-                        this.getEntity(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+                        agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }else {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Agendamento com status inválido.");
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
+                        "A solicitação pode ser enviada para status \"Não confirmado\" e \"Encaixe\".");
             }
         } catch (Exception e) {
             e.printStackTrace();

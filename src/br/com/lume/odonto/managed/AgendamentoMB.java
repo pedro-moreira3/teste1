@@ -55,6 +55,7 @@ import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
+import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
 import br.com.lume.integracao.HistoricoMensagemIntegracaoSingleton;
 // import br.com.lume.odonto.bo.AgendamentoBO;
 // import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
@@ -73,6 +74,7 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.ConfiguracaoAnamnese;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Paciente;
@@ -305,15 +307,31 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
    
     public void solicitarConfirmacao(Agendamento agendamento) {
         try {
-            if (agendamento.getStatusNovo().equals("I") || agendamento.getStatusNovo().equals("N")) {
+            if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) ||
+                    agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
                 HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
                         agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }else {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Agendamento com status inválido.");
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
+                        "A solicitação pode ser enviada para status \"Não confirmado\" e \"Encaixe\".");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public boolean verificaConfirmacaoConsultas() {
+        try {
+            DetailPacoteConfirmacaoAuto detalhe = DetailPacoteConfirmacaoAutoSingleton.getInstance()
+                    .getDadosFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
+
+            if (detalhe.getAtivoStr() != null && detalhe.getAtivoStr().equals("Sim")) {
+                return true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     public void carregarAgenda() {

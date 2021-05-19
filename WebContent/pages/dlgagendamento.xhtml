@@ -690,6 +690,7 @@
 			<h:panelGroup>
 				<p:commandButton styleClass="NavyButton" icon="fa fa-clock-o" value="Solicitar confirmação"
 					actionListener="#{agendamentoMB.solicitarConfirmacao(a)}"
+					rendered="#{agendamentoMB.verificaConfirmacaoConsultas()}"
 					process="@this">
 					<p:confirm message="Confirmar o envio da mensagem ao paciente ?"></p:confirm>
 				</p:commandButton>

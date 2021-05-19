@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
@@ -15,6 +16,8 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
+import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
+import br.com.lume.odonto.entity.DetailPacoteConfirmacaoAuto;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
@@ -111,6 +114,20 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public boolean verificaConfirmacaoConsultas() {
+        try {
+            DetailPacoteConfirmacaoAuto detalhe = DetailPacoteConfirmacaoAutoSingleton.getInstance()
+                    .getDadosFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
+
+            if (detalhe.getAtivoStr() != null && detalhe.getAtivoStr().equals("Sim")) {
+                return true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 //    public void refreshDadosPaciente() {
 //        try {
 //            if (pacienteMB.getEntity() != null && pacienteMB.getEntity().getId() != null && pacienteMB.getEntity().getId() > 0) {
@@ -217,6 +234,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void loadPaciente(Paciente paciente) {
         try {
             this.pacienteMB.setEntity(paciente);
+            this.pacienteMB.carregarHistoricoMensagens();
             this.tabview.setActiveIndex(0);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

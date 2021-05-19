@@ -72,9 +72,9 @@
 
 			<br />
 
-			<p:outputPanel style="width:50%;height:500px;">
+			<p:outputPanel id="pnPrincipalMensagens" style="width:50%;height:500px;" rendered="#{pacienteMB.entity.historicoMensagens != null}">
 				<p:scrollPanel>
-					<ui:repeat var="message" value="#{pacienteMB.historicoMensagens}">
+					<p:repeat value="#{pacienteMB.historicoMensagens}" var="message">
 						<h:panelGroup rendered="#{message.metodoEnvio == 'E'}" style="text-align:right;">
 							<div class="container">
 								<img src="../images/logo_intelidente.png" alt="Intelidente" />
@@ -86,13 +86,13 @@
 
 						<h:panelGroup rendered="#{message.metodoEnvio == 'S'}">
 							<div class="container darker">
-								<img src="/w3images/avatar_g2.jpg" alt="#{pacienteMB.entity.dadosBasico.nome}" class="right" />
+								<img src="../images/avatar.png" alt="#{pacienteMB.entity.dadosBasico.nome}" class="right" />
 								<p>#{(message.metodoEnvio == 'E' ? message.mensagemEnviada :
 									message.respostaPaciente)}</p>
 								<span class="time-left">#{message.dataCriacaoStr}</span>
 							</div>
 						</h:panelGroup>
-					</ui:repeat>
+					</p:repeat>
 				</p:scrollPanel>
 			</p:outputPanel>
 

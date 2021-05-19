@@ -99,7 +99,7 @@ body div.ui-widget-content.ui-tabs {
 			</p:tab>
 			
 			<p:tab id="tab14" title="Mensagens"
-				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0 and tabPacienteMB.verificaConfirmacaoConsultas()}"
 				disabled="#{pacienteMB.entity.id == null}">
 				<ui:include src="historicoMensagens.xhtml" />
 			</p:tab>
