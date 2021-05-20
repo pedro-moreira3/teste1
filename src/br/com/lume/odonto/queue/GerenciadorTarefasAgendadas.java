@@ -17,7 +17,7 @@ public class GerenciadorTarefasAgendadas implements ServletContextListener, Seri
     private AtualizacaoFaturas atualizacaoFaturas = new AtualizacaoFaturas();
     private EnvioMensagensConfirmacao envioMensagensConfirmacao = new EnvioMensagensConfirmacao();
 
-    //60 em 60 minutos
+    //5 em 5 minutos
     private static final long TEMPO_CONSUMO_MENSAGENS_AUTOMATICAS = GerenciadorTarefasAgendadas.minutesToMillis(1);
     
     @Override
