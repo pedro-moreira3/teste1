@@ -33,7 +33,7 @@ public class EnvioMensagensConfirmacao extends TimerTask implements Serializable
             
             //TODO arrumar para a hora certA
             //Vamos enviar todas as mensagens entre as 7 e 8 da manha;
-            if (GerenciadorTarefasAgendadas.isWithinRange(10, 12)) {
+            if (GerenciadorTarefasAgendadas.isWithinRange(7, 8)) {
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
@@ -49,16 +49,22 @@ public class EnvioMensagensConfirmacao extends TimerTask implements Serializable
                         Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
                     dataInicio = adicionaDiaPrimeiraHora(new Date(), 1);
                     dataFim = adicionaDiaUltimaHora(new Date(), 1);
+                    
+                    //TODO  no meio de semana a mesma coisa, segunda envia as de terca, mas se terca for feriado, envia as de quarta, se terca e quarta for feriado, envia as de quinta
+                   // na quarta feira, se quinta e sexta for feriado, vai enviar as de sabado domingo e segunda
+                    
                 } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
                     //na sexta, pegamos todos os agendamentos de sabado, domingo e segunda e enviamos as mensagens;
                     dataInicio = adicionaDiaPrimeiraHora(new Date(), 1);
                     dataFim = adicionaDiaUltimaHora(new Date(), 3);
+                    
+                    //TODO na sexta fazemos o envio pra sabado, domingo e segunda. se segunda for feriado, envia as de terca, se terca for feriado tb, envia as de quarta
                 }
 
                 System.out.println("DATA INICIO: " + dataInicio);
                 System.out.println("DATA FIM: " + dataFim);
 
-                //TODO tratar feriados;
+              
 
                 if (dataInicio != null && dataFim != null) {
                     agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendamentosParaEnvioConfirmacaoAutomaticaPorData(dataInicio, dataFim);
