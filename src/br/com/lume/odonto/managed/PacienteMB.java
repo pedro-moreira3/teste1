@@ -56,6 +56,9 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.carregarPaciente.carregarPacienteSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.exception.business.EmpresaSemSaldoMensagensException;
+import br.com.lume.common.exception.business.PacienteNaoHabilitadoMensagens;
+import br.com.lume.common.exception.business.PacoteMensagensNaoContratadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -73,6 +76,7 @@ import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
 import br.com.lume.documentoEmitido.bo.DocumentoEmitidoBO;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
+import br.com.lume.integracao.DetailPacoteConfirmacaoAutoSingleton;
 import br.com.lume.integracao.HistoricoMensagemIntegracaoSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
@@ -302,17 +306,35 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         try {
             if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) ||
                     agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
-                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
+                
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemManualParaCliente(
                         agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }else {
                 addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
                         "A solicitação pode ser enviada para status \"Não confirmado\" e \"Encaixe\".");
             }
-        } catch (Exception e) {
+        }catch (PacoteMensagensNaoContratadoException e) {
             e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
+        }catch (EmpresaSemSaldoMensagensException e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
+        }catch (PacienteNaoHabilitadoMensagens e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), "");
         }
     }
-
+    
+    public void verificaPacoteMensagens() {
+        boolean pacoteHabilitado = DetailPacoteConfirmacaoAutoSingleton.getInstance().pacoteContratado(
+                UtilsFrontEnd.getEmpresaLogada());
+        if(!pacoteHabilitado)
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), "Você ainda não contratou as mensagens, para contratar acesse o menu Clínica -> Confirmação automática de Consultas.");
+    }
+    
     public void carregarDocumentosPaciente() {
         this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }

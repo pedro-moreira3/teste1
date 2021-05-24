@@ -1,6 +1,8 @@
 package br.com.lume.odonto.managed;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -14,6 +16,7 @@ import org.primefaces.event.TabChangeEvent;
 import br.com.lume.common.iugu.Iugu;
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.integracao.ContratacaoPacoteConfirmacaoAutoSingleton;
@@ -49,6 +52,11 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
     private boolean temFaturaAberta = false;
     List<ContratacaoPacoteConfirmacaoAuto> listaFaturasEmAberto;
 
+    //Filtro relatório
+    private Date dataInicio;
+    private Date dataFim;
+    private String filtroPeriodo;
+    
     public PacoteConfirmacaoAutoMB() {
         super(new PacoteConfirmacaoAutoSingleton().getBo());
         this.setClazz(PacoteConfirmacaoAuto.class);
@@ -80,6 +88,93 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
         }
 
+    }
+    
+    public void filtraHistoricoMensagens() {
+        if(validarIntervaloDatas()) {
+            mensagensEnviadas = 
+                    HistoricoMensagemIntegracaoSingleton.getInstance().getBo().mensagensFromData(
+                            getDataInicio(), getDataFim(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        }else {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Entrada inválida.");
+        }
+    }
+    
+    private boolean validarIntervaloDatas() {
+
+        if ((dataInicio != null && dataFim != null) && dataInicio.getTime() > dataFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        return true;
+    }
+    
+    public void actionTrocaDatasCriacao() {
+        try {
+
+            this.dataInicio = getDataInicio(getFiltroPeriodo());
+            this.dataFim = getDataFim(getFiltroPeriodo());
+
+            PrimeFaces.current().ajax().update(":lume:tabViewRepasseProfissional:dataInicial");
+            PrimeFaces.current().ajax().update(":lume:tabViewRepasseProfissional:dataFinal");
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasCriacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            log.error("Erro no getDataFim", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
     }
 
     public String getMensagemConfirmacao(PacoteConfirmacaoAuto pacote) {
@@ -212,6 +307,30 @@ public class PacoteConfirmacaoAutoMB extends LumeManagedBean<PacoteConfirmacaoAu
 
     public void setMensagensEnviadas(List<HistoricoMensagemIntegracao> mensagensEnviadas) {
         this.mensagensEnviadas = mensagensEnviadas;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
     }
 
 }

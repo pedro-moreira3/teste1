@@ -38,6 +38,9 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
+import br.com.lume.common.exception.business.EmpresaSemSaldoMensagensException;
+import br.com.lume.common.exception.business.PacienteNaoHabilitadoMensagens;
+import br.com.lume.common.exception.business.PacoteMensagensNaoContratadoException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
@@ -309,29 +312,26 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         try {
             if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) ||
                     agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
-                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemAutomaticaParaCliente(
+                
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemManualParaCliente(
                         agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }else {
                 addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
                         "A solicitação pode ser enviada para status \"Não confirmado\" e \"Encaixe\".");
             }
-        } catch (Exception e) {
+        }catch (PacoteMensagensNaoContratadoException e) {
             e.printStackTrace();
-        }
-    }
-    
-    public boolean verificaConfirmacaoConsultas() {
-        try {
-            DetailPacoteConfirmacaoAuto detalhe = DetailPacoteConfirmacaoAutoSingleton.getInstance()
-                    .getDadosFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
-
-            if (detalhe.getAtivoStr() != null && detalhe.getAtivoStr().equals("Sim")) {
-                return true;
-            }
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
+        }catch (EmpresaSemSaldoMensagensException e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
+        }catch (PacienteNaoHabilitadoMensagens e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
         }catch (Exception e) {
             e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), "");
         }
-        return false;
     }
     
     public void carregarAgenda() {
