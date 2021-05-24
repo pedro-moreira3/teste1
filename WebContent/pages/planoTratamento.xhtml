@@ -1084,11 +1084,19 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								value="#{planoTratamentoMB.justificativasCancelamento}"
 								var="cancelamento" itemLabel="#{cancelamento.nome}"
 								itemValue="#{cancelamento}" />
-						</p:selectOneMenu>						
+						</p:selectOneMenu>	
+						
+						
+											
 					</p:panelGrid>
+					
+					
 					<p:panelGrid columns="1" layout="grid" id="pnljustificativaExclusaoMessage"
 						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
+						
+						<p:outputLabel style="color:red;font-weight:bold" value="#{planoTratamentoMB.mensagemErroExclusaoProcedimento}" />
+						
 						<p:message for="justificativaExclusao" styleClass="msg" />
 					</p:panelGrid>
 					
