@@ -156,6 +156,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private String filtroStatusProcedimento = "N";
 
     private String filtroTipo = "T";
+    
+    private String mensagemErroExclusaoProcedimento;
 
     private DualListModel<PlanoTratamentoProcedimento> ptProcedimentosDisponiveis = new DualListModel<>();
 
@@ -650,6 +652,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void abreJustificativaRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) {
         planoTratamentoProcedimentoSelecionado = planoTratamentoProcedimentoRemove;
+        mensagemErroExclusaoProcedimento = "";
         PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').show()");
     }
 
@@ -674,6 +677,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
 
         if (planoTratamentoProcedimentoRemove.getPlanoTratamento().getValorTotalOrcamento().doubleValue() > 0 && planoTratamentoProcedimentoRemove.getPlanoTratamento().getValor().doubleValue() == 0 && !isAdmin()) {
+            mensagemErroExclusaoProcedimento = "Apenas perfis administrativos podem remover procedimentos totalmente já pagos.";
             addError("Apenas perfis administrativos podem remover procedimentos totalmente já pagos.", "");
             return;
         }
@@ -696,6 +700,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
             log.error("Erro no actionRemove" + OdontoMensagens.getMensagem("erro.procedimento.utilizado"));
             addError(OdontoMensagens.getMensagem("erro.procedimento.utilizado") + erro, "");
+            
+            mensagemErroExclusaoProcedimento = "Esse procedimento está em um agendamento, portanto não pode ser excluido.";
+            
         }
     }
 
@@ -1890,7 +1897,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (planoTratamentoProcedimentoRegiao.isAtivo()) {
                 if (planoTratamentoProcedimentoRegiao.get() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente().getExcluido().equals(
                         "N")) {
-                    aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));
+                    if(planoTratamentoProcedimentoRegiao != null && planoTratamentoProcedimentoRegiao.getRegiaoDente() != null) {
+                        aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));    
+                    }
+                    
                 }
 
             }
@@ -3360,6 +3370,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setProcedimentosOrcSelecionado(List<OrcamentoItem> procedimentosOrcSelecionado) {
         this.procedimentosOrcSelecionado = procedimentosOrcSelecionado;
+    }
+
+    
+    public String getMensagemErroExclusaoProcedimento() {
+        return mensagemErroExclusaoProcedimento;
+    }
+
+    
+    public void setMensagemErroExclusaoProcedimento(String mensagemErroExclusaoProcedimento) {
+        this.mensagemErroExclusaoProcedimento = mensagemErroExclusaoProcedimento;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {
