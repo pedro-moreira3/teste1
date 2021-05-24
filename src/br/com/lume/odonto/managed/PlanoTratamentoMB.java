@@ -1897,7 +1897,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (planoTratamentoProcedimentoRegiao.isAtivo()) {
                 if (planoTratamentoProcedimentoRegiao.get() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente() != null && planoTratamentoProcedimentoRegiao.get().getStatusDente().getExcluido().equals(
                         "N")) {
-                    aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));
+                    if(planoTratamentoProcedimentoRegiao != null && planoTratamentoProcedimentoRegiao.getRegiaoDente() != null) {
+                        aux.append(planoTratamentoProcedimentoRegiao.getRegiaoDente().getStick(extraStyle));    
+                    }
+                    
                 }
 
             }
