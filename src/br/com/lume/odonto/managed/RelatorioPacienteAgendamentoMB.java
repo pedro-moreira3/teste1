@@ -234,9 +234,9 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                         System.out.println(new Timestamp(System.currentTimeMillis()));
                     }
                     
-                    if(this.pacientes != null && !this.pacientes.isEmpty()) {
-                        pacientesLazy = new PacienteLazyModel(pacientes);
-                    }
+                 //   if(this.pacientes != null && !this.pacientes.isEmpty()) {
+                   //     pacientesLazy = new PacienteLazyModel(pacientes);
+                  //  }
                  
                                     
                 }
