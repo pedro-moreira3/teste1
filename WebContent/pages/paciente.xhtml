@@ -49,6 +49,12 @@
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
+					
+					<h:panelGroup>
+								<p:commandButton styleClass="GreenButton" icon="ui-icon-add"
+									value="teste mensagem"
+									actionListener="#{pacienteMB.testeTwilio}" process="@this" />
+							</h:panelGroup>
 
 					<p:panelGrid columns="4" layout="grid" id="botoesLong"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">

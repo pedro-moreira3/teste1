@@ -57,6 +57,7 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.MessagesManager;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
@@ -244,6 +245,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 log.error("Erro no PacienteMB", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             }
+        }
+    }
+    
+    public void testeTwilio() {
+        try {
+            MessagesManager msg = MessagesManager.getInstance();
+            msg.messageSenderWhatsApp("+5541999473590", "Olá, isso é um teste");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
