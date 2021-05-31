@@ -73,7 +73,11 @@
 			<br />
 
 			<p:outputPanel id="pnPrincipalMensagens" style="width:50%;height:500px;" rendered="#{pacienteMB.entity.historicoMensagens != null}">
-				<p:scrollPanel>
+			<p:outputPanel rendered="#{!pacienteMB.isEmpresaTemPacoteDados()}">
+			<p:outputLabel style="font-size:16px;font-weight:bold;">Você ainda não tem mensagens contradas,	para contratar acesso o menu Clínica -> Confirmação automática de Consultas.</p:outputLabel>
+			
+			</p:outputPanel>
+				<p:scrollPanel rendered="#{pacienteMB.isEmpresaTemPacoteDados()}">
 					<p:repeat value="#{pacienteMB.historicoMensagens}" var="message">
 						<h:panelGroup rendered="#{message.metodoEnvio == 'E'}" style="text-align:right;">
 							<div class="container">
