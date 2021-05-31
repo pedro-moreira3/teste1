@@ -95,8 +95,8 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
 
     public void testeTwilio() {
         try {
-            MessagesManager msg = MessagesManager.getInstance();
-            msg.messageSenderWhatsApp("+5541999473590", "Olá, isso é um teste");
+//            MessagesManager msg = MessagesManager.getInstance();
+//            msg.messageSenderWhatsApp("+5541999473590", "Olá, isso é um teste");
         } catch (Exception e) {
             e.printStackTrace();
         }
