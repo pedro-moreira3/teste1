@@ -14,6 +14,7 @@
 		<servlet-name>Twilio Servlet</servlet-name> 
 		<url-pattern>/messages</url-pattern>
 		<url-pattern>/statusCallback</url-pattern> 
+		<url-pattern>/webhook</url-pattern> 
 	</servlet-mapping>
 	
 	<context-param>
