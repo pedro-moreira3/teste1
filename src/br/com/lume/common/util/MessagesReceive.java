@@ -36,7 +36,7 @@ public class MessagesReceive extends HttpServlet{
         try {
             String servletPath = req.getServletPath();
             StringBuilder sb = new StringBuilder();
-
+            System.out.println("Recebendo msg");
             bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
             while (bff.ready()) {
                 sb.append(bff.readLine());
