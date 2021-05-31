@@ -208,7 +208,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
-        
+
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
 
@@ -235,7 +235,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
                 visivelDadosPaciente = false;
             }
-            try {                
+            try {
                 Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("paciente", "mostrar", "plano");
                 if (dominio != null && dominio.getValor().equals(Status.SIM)) {
                     planoRender = true;
@@ -264,7 +264,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
         }
     }
-    
+
     public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");
@@ -279,7 +279,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 //        System.out.println("mensagens " + historicoMensagens.size());
 
         this.historicoMensagens = new ArrayList<HistoricoMensagemIntegracao>();
-        
+
         HistoricoMensagemIntegracao msg = new HistoricoMensagemIntegracao();
         msg.setDataCriacao(new Date());
         msg.setId(0l);
@@ -301,40 +301,40 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void salvarArquivoImportacao() {
 
     }
-    
+
     public void solicitarConfirmacao(Agendamento agendamento) {
         try {
-            if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) ||
-                    agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
-                
-                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemManualParaCliente(
-                        agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
-            }else {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
-                        "A solicitação pode ser enviada para status \"Não confirmado\" e \"Encaixe\".");
+            if (agendamento == null || agendamento.getStatus() == null) {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "A solicitação só pode ser enviada para agendamentos \"Não confirmado\" e \"Encaixe\".");
+            } else if (agendamento.getStatus().equals(StatusAgendamentoUtil.NAO_CONFIRMADO.getSigla()) || agendamento.getStatus().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
+
+                HistoricoMensagemIntegracaoSingleton.getInstance().enviaMensagemManualParaCliente(agendamento.getPaciente(), agendamento, UtilsFrontEnd.getProfissionalLogado(),
+                        UtilsFrontEnd.getEmpresaLogada());
+
+            } else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "A solicitação só pode ser enviada para agendamentos \"Não confirmado\" e \"Encaixe\".");
             }
-        }catch (PacoteMensagensNaoContratadoException e) {
+        } catch (PacoteMensagensNaoContratadoException e) {
             e.printStackTrace();
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
-        }catch (EmpresaSemSaldoMensagensException e) {
+        } catch (EmpresaSemSaldoMensagensException e) {
             e.printStackTrace();
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
-        }catch (PacienteNaoHabilitadoMensagens e) {
+        } catch (PacienteNaoHabilitadoMensagens e) {
             e.printStackTrace();
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), "");
         }
     }
-    
+
     public void verificaPacoteMensagens() {
-        boolean pacoteHabilitado = DetailPacoteConfirmacaoAutoSingleton.getInstance().pacoteContratado(
-                UtilsFrontEnd.getEmpresaLogada());
-        if(!pacoteHabilitado)
+        boolean pacoteHabilitado = DetailPacoteConfirmacaoAutoSingleton.getInstance().pacoteContratado(UtilsFrontEnd.getEmpresaLogada());
+        if (!pacoteHabilitado)
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_EXECUTAR_ACAO), "Você ainda não contratou as mensagens, para contratar acesse o menu Clínica -> Confirmação automática de Consultas.");
     }
-    
+
     public void carregarDocumentosPaciente() {
         this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }

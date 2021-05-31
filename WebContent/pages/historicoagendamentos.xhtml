@@ -41,10 +41,10 @@
 				<f:facet name="header">Agendamentos</f:facet>
 				
 				<p:column headerText="Ações">
-					<p:commandButton styleClass="NavyButton" icon="fa fa-clock-o"
+					<p:commandButton styleClass="NavyButton" icon="fa fa-whatsapp"
 						actionListener="#{pacienteMB.solicitarConfirmacao(a)}"
 						rendered="#{tabPacienteMB.verificaConfirmacaoConsultas()}"
-						process="@this">
+						process="@this" title="Enviar confirmação de consulta via WhatsApp/SMS">
 						<p:confirm message="Confirmar o envio da mensagem ao paciente ?"></p:confirm>
 					</p:commandButton>
 				</p:column>
