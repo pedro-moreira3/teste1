@@ -7,7 +7,7 @@
 	
 	<servlet> 
 		<servlet-name>Twilio Servlet</servlet-name>
-		<servlet-class>br.com.lume.common.util.MessagesManager</servlet-class>
+		<servlet-class>br.com.lume.common.util.MessagesReceive</servlet-class>
 	</servlet>
 	
 	<servlet-mapping> 
