@@ -48,6 +48,8 @@ public class MessagesReceive extends HttpServlet{
             Gson gson = new Gson();
             Object objeto = gson.fromJson(sb.toString(), Object.class);
 
+            resp.getOutputStream().println("AOO DE BOM !");
+            
             switch (servletPath) {
                 case MESSAGES: {
 //                  HistoricoMensagemIntegracaoSingleton historicoIntegracao = HistoricoMensagemIntegracaoSingleton
