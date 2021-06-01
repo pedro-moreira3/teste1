@@ -37,12 +37,16 @@ public class MessagesReceive extends HttpServlet{
             String servletPath = req.getServletPath();
             StringBuilder sb = new StringBuilder();
             System.out.println("Recebendo msg");
+            
             bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+            
             while (bff.ready()) {
                 sb.append(bff.readLine());
                 System.out.println(sb.toString());
             }
 
+            resp.setContentType("text/html");
+            
             // TODO Implementar as classes referentes ao tratamento do JSON para realizar a
             // conversão.
             Gson gson = new Gson();
