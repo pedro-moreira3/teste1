@@ -47,8 +47,6 @@ public class MessagesReceive extends HttpServlet{
             // conversão.
             Gson gson = new Gson();
             Object objeto = gson.fromJson(sb.toString(), Object.class);
-
-            resp.getOutputStream().println("AOO DE BOM !");
             
             switch (servletPath) {
                 case MESSAGES: {
@@ -67,6 +65,7 @@ public class MessagesReceive extends HttpServlet{
                     System.out.println(sb.toString());
                 }break;
                 default: {
+                    
                     System.out.println(sb.toString());
                 }
             }
