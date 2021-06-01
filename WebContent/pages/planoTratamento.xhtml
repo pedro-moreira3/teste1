@@ -1442,6 +1442,46 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
+	
+	<p:dialog id="alterarDataAprovacao" widgetVar="alterarDataAprovacao" focus="btnSalvarEdicaoDataAprovacao"
+		header="Alterar Data de Aprovação de Orçamento" responsive="true" modal="true"
+		appendTo=":lume" closable="false">
+		<p:outputPanel id="pgAlterarDataAprovacao">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
+						style="border:0px none; background-color:transparent;">
+						
+						<p:outputLabel for="novaDataAprovacao" value="Selecione a nova data de Aprovação: " />
+						<p:calendar id="novaDataAprovacao" value="#{planoTratamentoMB.novaDataAprovacao}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}" navigator="true"
+							yearRange="-0:+0" mask="true">
+						</p:calendar>
+						<p:message for="novaDataAprovacao" styleClass="msg" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:outputPanel>
+
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="White fa fa-save" id="btnSalvarEdicaoDataAprovacao"
+				value="Salvar" actionListener="#{planoTratamentoMB.actionSalvarDataAprovacaoOrcamento}"
+				update=":lume:tabViewPaciente:orcamentoViewTable, pgAlterarDataAprovacao"
+				process="@this, :lume:tabViewPaciente:pgAlterarDataAprovacao"
+				styleClass="GreenButton">
+				<p:confirm header="Confirmação"
+					message="Deseja realmente alterar a data de aprovação do orçamento?" icon="ui-icon-alert" />
+			</p:commandButton>
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				oncomplete="PF('alterarDataAprovacao').hide()"
+				process="@this" styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
 
 	<p:dialog id="orcamentos" widgetVar="dlgOrcamentos" responsive="true"
 		modal="true" appendTo=":lume" resizable="false"
@@ -1481,7 +1521,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText
 								value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 						</f:facet>
-						<p:column width="120" headerText="Editar">
+						<p:column width="160" headerText="Ações">
 							<p:commandButton process="@this" title="Visualizar"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:orcamentoViewTable, :lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView"
@@ -1500,6 +1540,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:confirm header="Confirmação"
 									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 							</p:commandButton>
+							<p:commandButton process="@this" title="Alterar Data de Aprovação"
+								actionListener="#{planoTratamentoMB.actionEditaDataAprovacaoOrcamento(orcamento)}"
+								update=":lume:tabViewPaciente:pgAlterarDataAprovacao"
+								oncomplete="PF('alterarDataAprovacao').show();"
+								rendered="#{planoTratamentoMB.admin}"
+								disabled="#{orcamento.aprovado == 'S'}" styleClass="NavyButton" icon="fa fa-pencil" />
 						</p:column>
 						<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
 							filterMatchMode="contains" sortBy="#{orcamento.descricao}">
@@ -1511,6 +1557,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="#{orcamento.dataCriacao}">
 								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
 							</h:outputText>
+						</p:column>
+						<p:column headerText="Criador" filterBy="#{orcamento.profissionalCriacao.dadosBasico.nome}"
+							filterMatchMode="contains" sortBy="#{orcamento.profissionalCriacao.dadosBasico.nome}">
+							<h:outputText value="#{orcamento.profissionalCriacao.dadosBasico.nome}" />
 						</p:column>
 						<p:column headerText="Valor do Desconto"
 							filterBy="#{orcamento.descontoValor}" filterMatchMode="contains"

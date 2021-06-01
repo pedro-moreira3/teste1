@@ -124,6 +124,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private OrcamentoPlanejamento planejamentoAtual;
     private boolean showProcedimentosCancelados;
 
+    // Alteracao Data Aprovacao
+    private Orcamento orcamentoDataAprovacao;
+    private Date novaDataAprovacao;
+    
     private List<Dominio> formasPagamentoNewPlanejamento;
     private List<Tarifa> tarifasNewPlanejamento;
     private List<Integer> parcelasNewPlanejamento;
@@ -1590,6 +1594,23 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public BigDecimal getTotalPago() {
         return LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(this.orcamentoSelecionado, true);
+    }
+    
+    public void actionEditaDataAprovacaoOrcamento(Orcamento o) {
+        this.orcamentoDataAprovacao = o;
+        this.novaDataAprovacao = o.getDataAprovacao();
+    }
+    
+    public void actionSalvarDataAprovacaoOrcamento() {
+        try {          
+            OrcamentoSingleton.getInstance().atualizaDataAprovacao(orcamentoDataAprovacao, novaDataAprovacao, UtilsFrontEnd.getProfissionalLogado());
+            carregaOrcamentos();
+            
+            PrimeFaces.current().executeScript("PF('alterarDataAprovacao').hide()");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
     }
 
     public void carregaTelaOrcamento(PlanoTratamento planoTratamento) {
@@ -3382,6 +3403,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.mensagemErroExclusaoProcedimento = mensagemErroExclusaoProcedimento;
     }
 
+    
+    public Orcamento getOrcamentoDataAprovacao() {
+        return orcamentoDataAprovacao;
+    }
+
+    
+    public void setOrcamentoDataAprovacao(Orcamento orcamentoDataAprovacao) {
+        this.orcamentoDataAprovacao = orcamentoDataAprovacao;
+    }
+
+    
+    public Date getNovaDataAprovacao() {
+        return novaDataAprovacao;
+    }
+
+    
+    public void setNovaDataAprovacao(Date novaDataAprovacao) {
+        this.novaDataAprovacao = novaDataAprovacao;
+    }
+
     //  public boolean isRenderizarObservacoesCobranca() {
     //      return renderizarObservacoesCobranca;
     // }
@@ -3389,5 +3430,5 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     //  public void setRenderizarObservacoesCobranca(boolean renderizarObservacoesCobranca) {
     //       this.renderizarObservacoesCobranca = renderizarObservacoesCobranca;
     //   }
-
+    
 }
