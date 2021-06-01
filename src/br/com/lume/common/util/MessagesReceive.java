@@ -44,8 +44,6 @@ public class MessagesReceive extends HttpServlet{
                 sb.append(bff.readLine());
                 System.out.println(sb.toString());
             }
-
-            resp.setContentType("text/html");
             
             // TODO Implementar as classes referentes ao tratamento do JSON para realizar a
             // conversão.
