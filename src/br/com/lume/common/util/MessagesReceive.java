@@ -32,36 +32,50 @@ public class MessagesReceive extends HttpServlet{
     }
     
     public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        BufferedReader bff = null;
+     //   BufferedReader bff = null;
  //       try {
             String servletPath = req.getServletPath();
+        //    StringBuilder sb = new StringBuilder();
+            System.out.println("- Recebendo msg -");
+            
+            System.out.println("query string: " + req.getQueryString());
+            
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
             StringBuilder sb = new StringBuilder();
-            System.out.println("Recebendo msg: ");
-            
-            bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
-            
-            
-            System.out.println(req.getInputStream());
-            
-            while (bff.ready()) {
-                System.out.println("linha do buffer: " + bff.readLine());
-                sb.append(bff.readLine());
-                System.out.println(sb.toString());
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line+"\n");
             }
+            br.close();
+            System.out.println("sb: " + sb.toString());
             
-            bff.close();
+            
+            
+//            bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+//            
+//            
+//            System.out.println(req.getInputStream());
+//            
+//            while (bff.ready()) {
+//                System.out.println("linha do buffer: " + bff.readLine());
+//                sb.append(bff.readLine());
+//                System.out.println(sb.toString());
+//            }
+//            
+//            bff.close();
         
             
 //            // TODO Implementar as classes referentes ao tratamento do JSON para realizar a conversão.
-            Gson gson = new Gson();
-            Object objeto = gson.fromJson(sb.toString(), Object.class);
+      //      Gson gson = new Gson();
+     //       Object objeto = gson.fromJson(sb.toString(), Object.class);
             
             switch (servletPath) {
                 case MESSAGES: {
 //                  HistoricoMensagemIntegracaoSingleton historicoIntegracao = HistoricoMensagemIntegracaoSingleton
 //                          .getInstance();
     
-                    System.out.println(sb.toString());
+               //     System.out.println(sb.toString());
                     
                     // TODO Implementar o preenchimento do historico com os dados pertinente ao
                     // paciente
@@ -70,11 +84,11 @@ public class MessagesReceive extends HttpServlet{
                     // sidMsg);
                 }break;
                 case STATUS_MESSAGES: {
-                    System.out.println(sb.toString());
+                 //   System.out.println(sb.toString());
                 }break;
                 default: {
                     
-                    System.out.println(sb.toString());
+              //      System.out.println(sb.toString());
                 }
             }
 
