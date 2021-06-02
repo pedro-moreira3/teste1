@@ -44,6 +44,7 @@ public class MessagesReceive extends HttpServlet{
             System.out.println(req.getInputStream());
             
             while (bff.ready()) {
+                System.out.println("linha do buffer: " + bff.readLine());
                 sb.append(bff.readLine());
                 System.out.println(sb.toString());
             }
