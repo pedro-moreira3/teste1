@@ -36,9 +36,12 @@ public class MessagesReceive extends HttpServlet{
  //       try {
             String servletPath = req.getServletPath();
             StringBuilder sb = new StringBuilder();
-            System.out.println("Recebendo msg");
+            System.out.println("Recebendo msg: ");
             
             bff = new BufferedReader(new InputStreamReader(req.getInputStream()));
+            
+            
+            System.out.println(req.getInputStream());
             
             while (bff.ready()) {
                 sb.append(bff.readLine());
@@ -46,42 +49,38 @@ public class MessagesReceive extends HttpServlet{
             }
             
             bff.close();
+        
+            
+//            // TODO Implementar as classes referentes ao tratamento do JSON para realizar a conversão.
+            Gson gson = new Gson();
+            Object objeto = gson.fromJson(sb.toString(), Object.class);
+            
+            switch (servletPath) {
+                case MESSAGES: {
+//                  HistoricoMensagemIntegracaoSingleton historicoIntegracao = HistoricoMensagemIntegracaoSingleton
+//                          .getInstance();
+    
+                    System.out.println(sb.toString());
+                    
+                    // TODO Implementar o preenchimento do historico com os dados pertinente ao
+                    // paciente
+                    // historicoIntegracao.criaHistorico(paciente, agendamento, msgTemplate,
+                    // metodoEnvio, TipoEnvio.ENVIO, profissionalLogado, null, null,
+                    // sidMsg);
+                }break;
+                case STATUS_MESSAGES: {
+                    System.out.println(sb.toString());
+                }break;
+                default: {
+                    
+                    System.out.println(sb.toString());
+                }
+            }
+
+            
             resp.setContentType("text/html");
             resp.setStatus(HttpServletResponse.SC_OK); 
             
-//            // TODO Implementar as classes referentes ao tratamento do JSON para realizar a
-//            // conversão.
-//            Gson gson = new Gson();
-//            Object objeto = gson.fromJson(sb.toString(), Object.class);
-//            
-//            switch (servletPath) {
-//                case MESSAGES: {
-////                  HistoricoMensagemIntegracaoSingleton historicoIntegracao = HistoricoMensagemIntegracaoSingleton
-////                          .getInstance();
-//    
-//                    System.out.println(sb.toString());
-//                    
-//                    // TODO Implementar o preenchimento do historico com os dados pertinente ao
-//                    // paciente
-//                    // historicoIntegracao.criaHistorico(paciente, agendamento, msgTemplate,
-//                    // metodoEnvio, TipoEnvio.ENVIO, profissionalLogado, null, null,
-//                    // sidMsg);
-//                }break;
-//                case STATUS_MESSAGES: {
-//                    System.out.println(sb.toString());
-//                }break;
-//                default: {
-//                    
-//                    System.out.println(sb.toString());
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (bff != null)
-//                bff.close();
-//        }
     }
     
 }
