@@ -25,7 +25,6 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.MessagesManager;
 import br.com.lume.mensagem.MensagemSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Mensagem;
@@ -57,7 +56,7 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     private boolean switchAllClientes = true;
     private boolean switchAllUsuarios = true;
     
-    MessagesManager m = null;
+    //MessagesManager m = null;
 
     public MensagemMB() {
         super(MensagemSingleton.getInstance().getBo());
