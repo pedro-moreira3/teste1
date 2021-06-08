@@ -115,7 +115,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private DefaultStreamedContent scFoto;
 
     private boolean renderedPhotoCam;
-    
+
     private String filtroStatus = "A";
 
     private byte[] data;
@@ -151,17 +151,17 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     public void carregarProfissionais() {
         try {
             profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if(filtroStatus.equals("A")) {
+            if (filtroStatus.equals("A")) {
                 profissionais.removeIf((p) -> p.getStatus().equals("I"));
-            }else if(filtroStatus.equals("I")) {
+            } else if (filtroStatus.equals("I")) {
                 profissionais.removeIf((p) -> p.getStatus().equals("A"));
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     public void actionBiometria(ActionEvent event) {
         applet = true;
     }
@@ -341,6 +341,19 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
             ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
+            //se aqui estiver nulo é pq mudou o email, entao precisamos arrumar o email e o login. na tabela de usuario
+            if (usuario == null) {
+                if (this.getEntity() != null && this.getEntity().getIdUsuario() != 0l && this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getEmail() != null) {
+                    usuario = UsuarioSingleton.getInstance().getBo().find(this.getEntity().getIdUsuario());
+                    if (usuario != null) {
+                        usuario.setUsuStrEml(this.getEntity().getDadosBasico().getEmail());
+                        usuario.setUsuStrLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
+                        UsuarioSingleton.getInstance().getBo().persist(usuario);
+                    }
+                }
+
+            }
+
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (usuario == null) {
                 usuario = new Usuario();
@@ -438,8 +451,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() + "_" + UtilsFrontEnd.getProfissionalLogado().getId() 
-                    + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() + "_" + UtilsFrontEnd.getProfissionalLogado().getId() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -452,12 +464,12 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         data = captureEvent.getData();
         scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
     }
-    
+
     public StreamedContent getImagemUsuario() {
         try {
-            
+
             Profissional profissional = this.getEntity();
-            
+
             if (profissional != null && profissional.getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
@@ -508,7 +520,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         usuario.setUsuStrLogin(this.getEntity().getDadosBasico().getEmail());
         usuario.setPerfisUsuarios(Arrays.asList(perfil));
         usuario.setUsuIntDiastrocasenha(999);
-        
+
         UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario, UtilsFrontEnd.getEmpresaLogada());
     }
 
@@ -532,18 +544,18 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionInativar(ActionEvent event) {
         try {
-            
-            this.getEntity().setStatus(Status.INATIVO);    
+
+            this.getEntity().setStatus(Status.INATIVO);
             this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
-            
+
             this.actionPersist(event);
-            
-           // if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-           // } else {
-           //     this.addError("Erro ao inativar profissional", "");
-           // }
-                
+
+            // if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            // } else {
+            //     this.addError("Erro ao inativar profissional", "");
+            // }
+
             this.carregarProfissionais();
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
