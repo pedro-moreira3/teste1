@@ -1432,26 +1432,23 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         List<DescontoOrcamento> descontos = new ArrayList<DescontoOrcamento>();
         descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByProfissional(UtilsFrontEnd.getProfissionalLogado(), "A");
-        if (descontos.isEmpty()) {
+        
+        if(!descontos.isEmpty()) {
+          //VERIFICA QUANDO PROFISSIONAL NÃO TEM DESCONTO CADASTRADO CORRETAMENTE
+            for(DescontoOrcamento desconto : descontos) {
+                if(desconto.getQuantidadeParcelas() == null) {
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+                    return;
+                }
+            }
+        }else if (descontos.isEmpty()) {
             descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "A");
             
-            //VERIFICA QUANDO PROFISSIONAL NÃO TEM DESCONTO CADASTRADO CORRETAMENTE
-            try {
-                for(DescontoOrcamento desconto : descontos) {
-                    if(desconto.getQuantidadeParcelas() == null)
-                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+            for(DescontoOrcamento desconto : descontos) {
+                if(desconto.getQuantidadeParcelas() == null) {
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro da clinica, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+                    return;
                 }
-            }catch (Exception e) {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
-                return;
-            }
-            
-        }
-
-        for(DescontoOrcamento desconto : descontos) {
-            if(desconto.getQuantidadeParcelas() == null) {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
-                return;
             }
         }
         
