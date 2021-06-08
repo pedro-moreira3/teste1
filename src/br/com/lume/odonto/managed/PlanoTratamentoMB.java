@@ -57,6 +57,7 @@ import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Dente;
+import br.com.lume.odonto.entity.Desconto;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.FaturaItem;
@@ -1426,13 +1427,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    private void populaDescontos() {
+    private void populaDescontos() {        
         parcelasDisponiveis = new ArrayList<Integer>();
 
         List<DescontoOrcamento> descontos = new ArrayList<DescontoOrcamento>();
         descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByProfissional(UtilsFrontEnd.getProfissionalLogado(), "A");
         if (descontos.isEmpty()) {
             descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "A");
+            
+            //VERIFICA QUANDO PROFISSIONAL NÃO TEM DESCONTO CADASTRADO CORRETAMENTE
+            for(DescontoOrcamento desconto : descontos) {
+                if(desconto.getQuantidadeParcelas() == null)
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+            }
+            
         }
 
         descontos.sort((d1, d2) -> d1.getQuantidadeParcelas().compareTo(d2.getQuantidadeParcelas()));
