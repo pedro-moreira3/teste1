@@ -1436,9 +1436,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "A");
             
             //VERIFICA QUANDO PROFISSIONAL NÃO TEM DESCONTO CADASTRADO CORRETAMENTE
-            for(DescontoOrcamento desconto : descontos) {
-                if(desconto.getQuantidadeParcelas() == null)
-                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+            try {
+                for(DescontoOrcamento desconto : descontos) {
+                    if(desconto.getQuantidadeParcelas() == null)
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+                }
+            }catch (Exception e) {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
             }
             
         }
