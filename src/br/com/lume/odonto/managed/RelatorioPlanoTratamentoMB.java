@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.convenio.ConvenioSingleton;
@@ -26,6 +28,7 @@ import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.FaturaItem;
+import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -88,12 +91,28 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     }
 
     public String possuiOrcamento(PlanoTratamento pt) {
-        if (OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt) == null || OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt).size() == 0) {
+        List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
+        if (orcamentos == null || orcamentos.size() == 0) {
             return "Não";
         } else {
             return "Sim";
         }
 
+    }
+    
+    public String dataUltimaAprovacao(PlanoTratamento pt) {
+        List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
+        try {
+            if (orcamentos != null && !orcamentos.isEmpty()) {
+                return Utils.dateToString(orcamentos.stream()
+                        .filter(orcamento -> orcamento.isAprovado())
+                        .map(orcamento -> orcamento.getDataAprovacao())
+                        .max(Date::compareTo).get());
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return null;
     }
 
     public List<Paciente> sugestoesPacientes(String query) {

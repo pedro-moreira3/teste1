@@ -1152,6 +1152,145 @@ body .height31 input {
 			</div>
 		</div>
 	</p:dialog>
+	
+	<p:dialog widgetVar="dlgImprimirRecibo" responsive="true" modal="true" 
+		appendTo=":lume" width="700px">
+		<f:facet name="header">
+			<p:outputPanel id="pnlImprimirReciboHeader">
+				<h:outputText value="Imprimir Recibo para o Paciente #{faturaPagtoMB.entity.paciente.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlImprimirRecibo">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="">
+							<p:outputLabel for="tipoRecibo" value="" />
+							<p:selectOneRadio id="tipoRecibo" converter="enumTipoRecibo"
+								value="#{faturaPagtoMB.tipoReciboEscolhido}" required="true"
+								layout="grid" columns="1">
+								<f:selectItems value="#{faturaPagtoMB.tiposRecibo}" var="tr"
+									itemValue="#{tr}" itemLabel="#{tr.descricao}" />
+							</p:selectOneRadio>
+						</h:panelGroup>
+						
+						<h:panelGroup styleClass="">
+							<p:selectBooleanCheckbox
+								styleClass="sideChkBox"
+								value="#{faturaPagtoMB.incluirLogo}" 
+								itemLabel="Incluir logo da Clínica na impressão do recibo" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Imprimir" icon="White fa fa-print"
+						actionListener="#{faturaPagtoMB.actionPrintReciboLancamento}"
+						update="pnlImprimirReciboEscolhaLancamentoHeader, 
+								pnlImprimirReciboEscolhaLancamento,
+								pnlReciboView" 
+						process="@this, pnlImprimirRecibo"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgImprimirRecibo').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+	
+	<p:dialog widgetVar="dlgImprimirReciboEscolhaLancamento" responsive="true" modal="true" 
+		appendTo=":lume" width="700px">
+		<f:facet name="header">
+			<p:outputPanel id="pnlImprimirReciboEscolhaLancamentoHeader">
+				<h:outputText value="Escolha os Lançamentos a serem impressos" />
+			</p:outputPanel>
+		</f:facet>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlImprimirReciboEscolhaLancamento">
+					
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
+						selection="#{faturaPagtoMB.lancamentosImpressao}"
+						paginator="true" rowKey="#{l}" paginatorPosition="bottom">
+						<f:facet name="header">Lançamentos da Fatura</f:facet>
+
+						<p:column selectionMode="multiple" style="width:20px;text-align:center" />
+						<p:column
+							sortBy="#{l.dataPagamentoStr}"
+							filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
+							width="20%" headerText="Data de Recebimento">
+								<h:outputText value="#{l.dataPagamentoStr}" />
+						</p:column>
+						<p:column
+							sortBy="#{l.valor}" filterMatchMode="contains"
+							filterBy="#{l.valor}" headerText="Valor" width="20%">
+							<h:outputText value="#{l.valor}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+						<p:column
+							width="55%"
+							filterBy="#{l.formaPagamentoStr}"
+							headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
+							<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
+						</p:column>
+						
+					</p:dataTable>
+					
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Imprimir" icon="White fa fa-print"
+						actionListener="#{faturaPagtoMB.actionPrintReciboLancamentoEscolha}"
+						update="" 
+						process="@this, pnlImprimirReciboEscolhaLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgImprimirReciboEscolhaLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+	
+	<p:dialog widgetVar="dlgReciboView" responsive="true" modal="true" 
+		appendTo=":lume" width="700px" header="Impressão de Recibo">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlReciboView">
+					
+					<p:media value="#{faturaPagtoMB.reciboView}" width="700px" height="700px" player="pdf" />
+					
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgReciboView').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
 
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
@@ -1501,6 +1640,15 @@ body .height31 input {
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
 										</p:confirm>
+									</p:commandButton>
+									<p:commandButton styleClass="GreenButton" icon="fa fa-print"
+										title="Imprimir Recibo"
+										update="@parent:@parent:@parent:pnlImprimirRecibo,
+												@parent:@parent:@parent:pnlImprimirReciboHeader"
+										actionListener="#{faturaPagtoMB.actionIniciaImpressaoRecibo(l)}"
+										process="@this"
+										disabled="#{(l.pagamentoConferido != 'S' and l.validado != 'S') or !l.ativo}"
+										onsuccess="PF('dlgImprimirRecibo').show()">
 									</p:commandButton>
 								</p:column>
 								<p:column

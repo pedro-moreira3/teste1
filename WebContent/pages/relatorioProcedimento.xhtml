@@ -358,6 +358,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:selectOneMenu>
 
 									</h:panelGroup>
+									
+									<h:panelGroup>
+										<p:outputLabel style="margin:0px;" for="filtroEspecialidade"
+											value="Especialidade: " />
+										<p:selectOneMenu id="filtroEspecialidade"	
+											style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+											value="#{relatorioProcedimentoMB.filtroPorEspecialidade}"
+											converter="especialidade">
+											<f:selectItem itemLabel="Todas" itemValue="#{null}" />
+											<f:selectItems
+												value="#{relatorioProcedimentoMB.especialidades}"
+												var="especialidade" itemLabel="#{especialidade.descricao}"
+												itemValue="#{especialidade}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
 
 									<ui:remove>
 										<h:panelGroup>
@@ -535,6 +550,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Procedimento">
 								<h:outputText value="#{procedimento.procedimento.descricao}" />
+							</p:column>
+							
+							<p:column filterBy="#{procedimento.procedimento.especialidade.descricao}"
+								sortBy="#{procedimento.procedimento.especialidade.descricao}"
+								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Especialidade">
+								<h:outputText value="#{procedimento.procedimento.especialidade.descricao}" />
 							</p:column>
 
 							<p:column

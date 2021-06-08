@@ -518,6 +518,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" headerText="Possui orçamento?">
 								<h:outputText value="#{relatorioPlanoTratamentoMB.possuiOrcamento(m)}" title="#{m.id}" />
 							</p:column>
+							<p:column filterBy="#{relatorioPlanoTratamentoMB.dataUltimaAprovacao(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.dataUltimaAprovacao(m)}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Última Aprovação">
+								<h:outputText value="#{relatorioPlanoTratamentoMB.dataUltimaAprovacao(m)}" />
+							</p:column>
 							
 							<ui:remove>
 							<p:column

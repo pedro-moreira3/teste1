@@ -246,8 +246,42 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										var="agendamento" itemLabel="#{agendamento}"
 										itemValue="#{agendamento}" />
 								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroMotivoInativacao"
+									value="Motivo da Inativação:" />
+
+								<p:selectOneMenu id="filtroMotivoInativacao"
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorMotivoInativacao}"
+									converter="motivoInativacaoPaciente">
+									<f:selectItem itemLabel="Todos" itemValue="#{null}" />
+									<f:selectItems
+										value="#{relatorioPacienteMB.motivosInativacao}"
+										var="motivo" itemLabel="#{motivacao.descricao}"
+										itemValue="#{motivo}" />
+								</p:selectOneMenu>
 							</h:panelGroup>							
 
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinica"
+									value="Como chegou na clínica:" />
+								<p:selectOneMenu id="filtroComoChegouNaClinica"	
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinica}"
+									converter="dominio">
+									<f:selectItem itemLabel="Qualquer" itemValue="#{null}" />
+									<f:selectItems
+										value="#{relatorioPacienteMB.indicacoes}"
+										var="indicacao" itemLabel="#{indicacao.nome}"
+										itemValue="#{indicacao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							
 						</p:panelGrid>
 
 						<div class="EmptyBox5"></div>

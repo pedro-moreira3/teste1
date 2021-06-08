@@ -21,15 +21,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.bo.IEnumController;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Status;
 import br.com.lume.common.util.TooltipHelper;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.Utils.ValidacaoLancamento;
@@ -38,7 +39,6 @@ import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
-import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton.TipoPessoa;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
@@ -52,7 +52,6 @@ import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
-import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -62,10 +61,8 @@ import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
-import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
-import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.NegociacaoFatura;
@@ -77,6 +74,7 @@ import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Requisito;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.entity.TipoCategoria;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -195,6 +193,31 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private List<TipoCategoria> tiposCategoria;
     private FaturaItem faturaItemEditar;
+    
+    // Tipo de impressão para Recibo
+    private Lancamento lancamentoImpressao;
+    private List<Lancamento> lancamentosImpressao;
+    private boolean incluirLogo;
+    private TipoRecibo tipoReciboEscolhido;
+    private StreamedContent reciboView;
+    public static enum TipoRecibo implements IEnumController {
+        IMPRIMIR_SELECIONADO("IS", "Imprimir o recibo deste pagamento"), 
+        IMPRIMIR_TODOS("IT", "Imprimir um recibo para todos os recebimentos dessa fatura"),
+        ESCOLHER("ES", "Escolher o recebimento para imprimir  o recibo");
+
+        private String rotulo, descricao;
+        TipoRecibo(String rotulo, String descricao) {
+            this.rotulo = rotulo;
+            this.descricao = descricao;
+        }
+
+        public String getRotulo() {
+            return this.rotulo;
+        }
+        public String getDescricao() {
+            return this.descricao;
+        }
+    };
 
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
@@ -1143,6 +1166,53 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------
+    
+    //--------------------------------- IMPRIMIR RECIBO ---------------------------------
+    
+    public void actionIniciaImpressaoRecibo(Lancamento lancamento) {
+        this.lancamentoImpressao = lancamento;
+        this.tipoReciboEscolhido = TipoRecibo.IMPRIMIR_SELECIONADO;
+        this.incluirLogo = false;
+    }
+    
+    public void actionPrintReciboLancamento() {
+        try {
+            if (tipoReciboEscolhido == TipoRecibo.ESCOLHER) {
+                PrimeFaces.current().executeScript("PF('dlgImprimirReciboEscolhaLancamento').show()");
+            } else {
+                // Imprimi mesmo
+//                OutputStream report = JasperExport.exportReport(JasperExportConfiguration.builder()
+//                        .reportFile("ReciboLancamento.jasper")
+//                        .addParameter("Paciente", "Di Maria")
+//                        .addParameter("Cidade", "Rolândia").build());
+//                InputStream in = new ByteArrayInputStream(((ByteArrayOutputStream) report).toByteArray());
+                //this.reciboView = new DefaultStreamedContent(in, "application/pdf");
+                //PrimeFaces.current().executeScript("PF('dlgReciboView').show()");
+                //resolver!!!!
+                
+                addInfo("Sucesso!", "Recibo gerado");
+                PrimeFaces.current().executeScript("PF('dlgImprimirRecibo').hide()");
+            }
+        } catch (Exception e) {
+            addError("Erro!", "Falha ao gerar o Recibo!");
+        }
+    }
+    
+    public void actionPrintReciboLancamentoEscolha() {
+        try {
+            if (lancamentosImpressao != null && !lancamentosImpressao.isEmpty()) {
+                // Imprimi mesmo
+                addInfo("Sucesso!", "Recibos gerados");
+                PrimeFaces.current().executeScript("PF('dlgImprimirReciboEscolhaLancamento').hide()");
+                PrimeFaces.current().executeScript("PF('dlgImprimirRecibo').hide()");
+            } else
+                addError("Erro!", "Selecione ao menos um Lançamento!");
+        } catch (Exception e) {
+            addError("Erro!", "Falha ao gerar o Recibo!");
+        }
+    }
+    
+    //--------------------------------- IMPRIMIR RECIBO ---------------------------------
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------    
 
@@ -2732,6 +2802,61 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.itemAlteracao = itemAlteracao;
     }
 
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------    
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
+    
+    //--------------------------------- IMPRIMIR RECIBO ---------------------------------
+    
+    public Lancamento getLancamentoImpressao() {
+        return lancamentoImpressao;
+    }
+
+    
+    public void setLancamentoImpressao(Lancamento lancamentoImpressao) {
+        this.lancamentoImpressao = lancamentoImpressao;
+    }
+
+    
+    public List<Lancamento> getLancamentosImpressao() {
+        return lancamentosImpressao;
+    }
+
+    
+    public void setLancamentosImpressao(List<Lancamento> lancamentosImpressao) {
+        this.lancamentosImpressao = lancamentosImpressao;
+    }
+
+    
+    public boolean isIncluirLogo() {
+        return incluirLogo;
+    }
+
+    
+    public void setIncluirLogo(boolean incluirLogo) {
+        this.incluirLogo = incluirLogo;
+    }
+
+    
+    public TipoRecibo getTipoReciboEscolhido() {
+        return tipoReciboEscolhido;
+    }
+
+    
+    public void setTipoReciboEscolhido(TipoRecibo tipoReciboEscolhido) {
+        this.tipoReciboEscolhido = tipoReciboEscolhido;
+    }
+    
+    public List<TipoRecibo> getTiposRecibo() {
+        return Arrays.asList(TipoRecibo.values());
+    }
+    
+    public StreamedContent getReciboView() {
+        return reciboView;
+    }
+
+    public void setReciboView(StreamedContent reciboView) {
+        this.reciboView = reciboView;
+    }    
+    
+    //--------------------------------- IMPRIMIR RECIBO ---------------------------------
 
 }

@@ -20,12 +20,16 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.MotivoInativacaoPaciente;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.MotivoInativacaoPacienteSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
@@ -50,6 +54,14 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     private String filtroPorConvenio;
 
     private String filtroStatusPaciente;
+    
+    private MotivoInativacaoPaciente filtroPorMotivoInativacao;
+    
+    private Dominio filtroPorComoChegouNaClinica;
+    
+    // Listas para escolha no filtro
+    List<Dominio> indicacoes;
+    List<MotivoInativacaoPaciente> motivosInativacao;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -64,6 +76,18 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
         if (this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();
         this.sugestoesConvenios("todos");
+        
+        try {
+            indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+        try {
+            motivosInativacao = MotivoInativacaoPacienteSingleton.getInstance().getBo().listMotivosAtivos();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
 
     }
 
@@ -105,7 +129,7 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
                 this.pacientes = new ArrayList<Paciente>();
            
                 this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPaciente(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
-                        getConvenio(getFiltroPorConvenio()), this.filtroStatusPaciente);             
+                        getConvenio(getFiltroPorConvenio()), this.filtroStatusPaciente, this.filtroPorMotivoInativacao, this.filtroPorComoChegouNaClinica);             
 
             }
             this.sugestoesConvenios("todos");
@@ -248,8 +272,6 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
         exportarTabela("Relatório de agendamentos dos Pacientes", tabelaRelatorio, type);
     }
 
-  
-
     public Date getInicio() {
         return inicio;
     }
@@ -336,6 +358,38 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
 
     public void setTabelaAniversariantes(DataTable tabelaAniversariantes) {
         this.tabelaAniversariantes = tabelaAniversariantes;
+    }
+    
+    public MotivoInativacaoPaciente getFiltroPorMotivoInativacao() {
+        return filtroPorMotivoInativacao;
+    }
+
+    public void setFiltroPorMotivoInativacao(MotivoInativacaoPaciente filtroPorMotivoInativacao) {
+        this.filtroPorMotivoInativacao = filtroPorMotivoInativacao;
+    }
+    
+    public List<Dominio> getIndicacoes() {
+        return indicacoes;
+    }
+    
+    public void setIndicacoes(List<Dominio> indicacoes) {
+        this.indicacoes = indicacoes;
+    }
+    
+    public List<MotivoInativacaoPaciente> getMotivosInativacao() {
+        return motivosInativacao;
+    }
+
+    public void setMotivosInativacao(List<MotivoInativacaoPaciente> motivosInativacao) {
+        this.motivosInativacao = motivosInativacao;
+    }
+    
+    public Dominio getFiltroPorComoChegouNaClinica() {
+        return filtroPorComoChegouNaClinica;
+    }
+
+    public void setFiltroPorComoChegouNaClinica(Dominio filtroPorComoChegouNaClinica) {
+        this.filtroPorComoChegouNaClinica = filtroPorComoChegouNaClinica;
     }
 
 }
