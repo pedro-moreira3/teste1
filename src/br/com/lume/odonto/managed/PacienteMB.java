@@ -247,6 +247,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
     
+    public void testeTwilio() {
+        try {
+//            MessagesManager msg = MessagesManager.getInstance();
+//            msg.messageSenderWhatsApp("+5541999473590", "Olá, isso é um teste");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("Cadastro do paciente", "https://www.youtube.com/v/E8kQKlOlunU?autoplay=1");

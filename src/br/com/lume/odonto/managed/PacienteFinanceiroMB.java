@@ -50,6 +50,8 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
+    
+    private boolean disableFinanceiro;
 
     public PacienteFinanceiroMB() {
         super(FaturaSingleton.getInstance().getBo());
@@ -409,6 +411,16 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
 
     public void setLancamentosAConferir(List<Lancamento> lancamentosAConferir) {
         this.lancamentosAConferir = lancamentosAConferir;
+    }
+
+    
+    public boolean isDisableFinanceiro() {
+        return disableFinanceiro;
+    }
+
+    
+    public void setDisableFinanceiro(boolean disableFinanceiro) {
+        this.disableFinanceiro = disableFinanceiro;
     }
 
 }
