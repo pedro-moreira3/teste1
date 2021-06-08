@@ -55,7 +55,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     @ManagedProperty(value = "#{pacienteFinanceiroMB}")
     private PacienteFinanceiroMB pacienteFinanceiroMB;
 
-    private org.primefaces.component.tabview.TabView tabview = null;
+    private org.primefaces.component.tabview.TabView tabview = null;   
 
     public TabPacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -214,8 +214,20 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPaciente(Paciente paciente) {
         try {
+            this.pacienteFinanceiroMB.setDisableFinanceiro(false);
             this.pacienteMB.setEntity(paciente);
             this.tabview.setActiveIndex(0);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
+        }
+    }
+    
+    public void loadPacienteSemFinanceiro(Paciente paciente) {
+        try {          
+            this.pacienteFinanceiroMB.setDisableFinanceiro(true);
+            this.pacienteMB.setEntity(paciente);
+            this.tabview.setActiveIndex(0);            
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
@@ -246,5 +258,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
     }
+
 
 }

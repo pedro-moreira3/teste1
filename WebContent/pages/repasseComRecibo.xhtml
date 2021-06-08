@@ -1521,14 +1521,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<f:facet name="header">Procedimentos</f:facet>
 												<p:column selectionMode="multiple" style="width:16px;" />
 												<p:column width="12%" headerText="Ações">
-													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
-														title="Detalhes do repasse"
-														oncomplete="PF('dlgFaturaView').show();"
-														actionListener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
-														process="@this"
-														disabled="#{ptp.fatura eq null  or 
-													ptp.fatura.ativo eq 'N' }"
-														update=":lume:pnlfaturaViewProf, :lume:buttonViewFaturaProf" />
+													
 													<p:commandButton icon="fa fa-calculator"
 														styleClass="NavyButton" title="Visualizar Cálculo Repasse"
 														actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
