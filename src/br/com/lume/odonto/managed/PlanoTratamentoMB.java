@@ -1448,6 +1448,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             
         }
 
+        for(DescontoOrcamento desconto : descontos) {
+            if(desconto.getQuantidadeParcelas() == null) {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "No cadastro do profissional, informe a quantidade de parcelas para o(s) desconto(s) cadastrado(s).");
+                return;
+            }
+        }
+        
         descontos.sort((d1, d2) -> d1.getQuantidadeParcelas().compareTo(d2.getQuantidadeParcelas()));
         int quantidadeParcelasInseridas = 1;
         for (DescontoOrcamento descontoOrcamento : descontos) {
