@@ -1217,6 +1217,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------    
 
     public void actionPersistNovoNovoLancamento() {
+        actionPersistNovoNovoLancamento(true);
+    }
+    
+    public void actionPersistNovoNovoLancamento(boolean forcaFechamentoDialog) {
         try {
             if (novoLancamentoQuantidadeParcelas == null || novoLancamentoValorDaPrimeiraParcela == null || novoLancamentoFormaPagamento == null || novoLancamentoDataPagamento == null || novoLancamentoDataCredito == null) {
                 this.addError("Erro!", "Preencha todos os campos!");
@@ -1244,7 +1248,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             pesquisar();
 
-            PrimeFaces.current().executeScript("PF('dlgNovoLancamento').hide()");
+            if (forcaFechamentoDialog)
+                PrimeFaces.current().executeScript("PF('dlgNovoLancamento').hide()");
+            else
+                actionNovoLancamentoNew();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             e.printStackTrace();

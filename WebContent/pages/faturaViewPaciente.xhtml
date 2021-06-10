@@ -455,12 +455,16 @@ body .height31 input {
 
 				<p:separator styleClass="SeparatorFull" />
 
-				<p:panelGrid columns="2" layout="grid"
+				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento}"
 						update="pnlfaturaView" process="@this, pnlNovoLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Salvar e Continuar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento(false)}"
+						update="pnlfaturaView, pnlNovoLancamento, novoLancamentoParcelasTable" process="@this, pnlNovoLancamento"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
@@ -1641,7 +1645,7 @@ body .height31 input {
 											message="Você confirma este recebimento?">
 										</p:confirm>
 									</p:commandButton>
-									<p:commandButton styleClass="GreenButton" icon="fa fa-print"
+									<p:commandButton styleClass="NavyButton" icon="fa fa-print"
 										title="Imprimir Recibo"
 										update="@parent:@parent:@parent:pnlImprimirRecibo,
 												@parent:@parent:@parent:pnlImprimirReciboHeader"
