@@ -156,6 +156,7 @@
 							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.telefoneStr}"
+							rendered="#{pacienteMB.visivelDadosPaciente}"
 							filterBy="#{paciente.dadosBasico.telefoneStr}"
 							filterMatchMode="contains" headerText="Celular"
 							filterFunction="#{pacienteMB.filtroSemAcento}">

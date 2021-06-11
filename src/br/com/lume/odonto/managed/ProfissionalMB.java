@@ -343,7 +343,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
             //se aqui estiver nulo é pq mudou o email, entao precisamos arrumar o email e o login. na tabela de usuario
             if (usuario == null) {
-                if (this.getEntity() != null && this.getEntity().getIdUsuario() != 0l && this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getEmail() != null) {
+                if (this.getEntity() != null && this.getEntity().getIdUsuario() != null && this.getEntity().getIdUsuario() != 0l && this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getEmail() != null) {
                     usuario = UsuarioSingleton.getInstance().getBo().find(this.getEntity().getIdUsuario());
                     if (usuario != null) {
                         usuario.setUsuStrEml(this.getEntity().getDadosBasico().getEmail());
