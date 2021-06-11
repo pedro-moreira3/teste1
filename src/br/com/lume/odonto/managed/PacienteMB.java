@@ -114,7 +114,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Anamnese> pacienteAnamneses;
     private Anamnese pacienteAnamnese;
 
-    private boolean readonly, applet = false, responsavel = false, planoRender = false;
+    private boolean readonly, applet = false, responsavel = false, planoRender = false, abrirComoImpressao;
 
     private Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
@@ -305,7 +305,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return arquivo;
     }
     
+    public void mostrarPerguntasAnamneseImpressao() {
+        mostrarPerguntasAnamnese();
+        this.abrirComoImpressao = true;
+        this.habilitaSalvar = false;
+    }
+    
     public void mostrarPerguntasAnamnese() {
+        this.abrirComoImpressao = false;
         this.mostrarPerguntasAnamnese = true;
         anamneses = new ArrayList<>();
         for (ConfiguracaoAnamnese e : configuracaoSelecionada) {
@@ -782,6 +789,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.pacienteAnamnese = null;
         configuracaoSelecionada = new ArrayList<>();
         this.habilitaSalvar = true;
+        this.abrirComoImpressao = false;
         if (getEntity() != null) {
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
               //  Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICAS, UtilsFrontEnd.getEmpresaLogada());
@@ -977,7 +985,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return pacienteAnamnese;
     }
 
+    public void setPacienteAnamneseParaImpressao(Anamnese pacienteAnamnese) {
+        setPacienteAnamnese(pacienteAnamnese);
+        this.abrirComoImpressao = true;
+        this.habilitaSalvar = false;
+    }
+    
     public void setPacienteAnamnese(Anamnese pacienteAnamnese) {
+        this.abrirComoImpressao = false;
         this.habilitaSalvar = false;
         this.visualizar = true;
         this.pacienteAnamnese = pacienteAnamnese;
@@ -1478,6 +1493,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setPaciente2Inativar(Paciente paciente2Inativar) {
         this.paciente2Inativar = paciente2Inativar;
+    }
+    
+    public boolean isAbrirComoImpressao() {
+        return abrirComoImpressao;
+    }
+
+    public void setAbrirComoImpressao(boolean abrirComoImpressao) {
+        this.abrirComoImpressao = abrirComoImpressao;
     }
 
 }
