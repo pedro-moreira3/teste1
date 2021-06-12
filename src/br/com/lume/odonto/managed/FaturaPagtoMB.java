@@ -197,6 +197,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     // Tipo de impressão para Recibo
     private Lancamento lancamentoImpressao;
     private List<Lancamento> lancamentosImpressao;
+    private BigDecimal valorTotalRecibo;
     private boolean incluirLogo;
     private TipoRecibo tipoReciboEscolhido;
     private StreamedContent reciboView;
@@ -1201,6 +1202,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void actionPrintReciboLancamentoEscolha() {
         try {
             if (lancamentosImpressao != null && !lancamentosImpressao.isEmpty()) {
+                //this.valorTotalRecibo = lancamentosImpressao.stream().map(l -> l.getValor()).
                 // Imprimi mesmo
                 addInfo("Sucesso!", "Recibos gerados");
                 PrimeFaces.current().executeScript("PF('dlgImprimirReciboEscolhaLancamento').hide()");
@@ -2862,7 +2864,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setReciboView(StreamedContent reciboView) {
         this.reciboView = reciboView;
-    }    
+    }
+    
+    public BigDecimal getValorTotalRecibo() {
+        return valorTotalRecibo;
+    }
+
+    public void setValorTotalRecibo(BigDecimal valorTotalRecibo) {
+        this.valorTotalRecibo = valorTotalRecibo;
+    }
     
     //--------------------------------- IMPRIMIR RECIBO ---------------------------------
 

@@ -1777,6 +1777,13 @@ body .height31 input {
 			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
 		</ui:include>
 	</p:outputPanel>
+	
+	<p:outputPanel id="faturaReciboInclude">
+		<ui:include src="/templates/faturaRecibo.xhtml">
+			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
+			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentosImpressao}" />
+		</ui:include>
+	</p:outputPanel>
 
 
 </ui:composition>
