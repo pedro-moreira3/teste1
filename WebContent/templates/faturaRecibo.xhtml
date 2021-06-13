@@ -20,97 +20,109 @@
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 
-				<p:outputPanel id="fatura2PrintReciboInterno"
-					style="font-family: sans-serif">
+				<p:outputPanel id="fatura2PrintReciboInterno">
 					
-					<div style="width:100vw;margin-bottom:5px;border:solid 1px gray;padding:0;">
-						<div style="display:flex;">
-							<div style="width:50%;height:104px;padding:2px;padding-left:8px;padding-right:8px;position:relative;">
-								<div style="width:100%;max-width:100%;height:100%;max-height:100%;">
-					              <img src="#logo" style="max-width:100%;max-height:100%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);" />
-					          	</div>
-							</div>
-							<div style="width:50%;height:100%;padding:2px;padding-left:8px;padding-right:8px;">
-								<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;"><b>#{f.empresa.empStrNme}</b></p>
-							  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.enderecoCompletoFormatado}</p>
-							  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.documento}</p>
-							  	<br style="height:20px" />
-							  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.empChaFone}</p>
+					<div style="font-family: sans-serif;font-size: 11px;width:100%;padding:0;margin:0;">
+						<div style="width:100%;margin-bottom:5px;border:solid 1px gray;padding:0;">
+							<div style="display:flex;">
+								<div style="width:40%;height:104px;padding:2px;padding-left:8px;padding-right:8px;position:relative;">
+									<div style="width:100%;max-width:100%;height:100%;max-height:100%;">
+										<p:graphicImage rendered="#{mostrarLogo}" 
+											styleClass="Fleft" id="logoRecibo" stream="false"
+											style="max-width:100%;max-height:100%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);"
+											value="../../imagens/#{f.empresa.empStrLogoWCache}" />
+							         </div>
+								</div>
+								<div style="width:60%;height:100%;padding:2px;padding-left:8px;padding-right:8px;">
+									<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;"><b>#{f.empresa.empStrNme}</b></p>
+								  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.enderecoCompletoFormatado}</p>
+								  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.documento}</p>
+								  	<br style="height:20px" />
+								  	<p style="height:20px;line-height:20px;margin:0;width:calc(100% - 5px);text-align:right;">#{f.empresa.empChaFone}</p>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div style="width:100vw;margin-bottom:5px;border:solid 1px gray;padding:0;">
-						<div style="display:flex;">
-						      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						          Recebemos de
-						      	</div>
-						      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
-						          	#{f.paciente.dadosBasico.nome}
-						      	</div>
-					  	</div>
-					  	<div style="display:flex;">
-						      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						          na data de
-						      	</div>
-						      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
-						          	#{new SimpleDateFormat("dd/MM/yyyy").format(new Date()))}
-						      	</div>
-					  	</div>
-					  	<div style="display:flex;">
-						      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						          inscrito no CPF/RG
-						      	</div>
-						      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
-						          	#{(f.paciente.dadosBasico.documento != null ? f.paciente.dadosBasico.documento : f.paciente.dadosBasico.rg)}
-					      		</div>
-					  	</div>
-					  	<div style="display:flex;">
-						      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						          a importância de
-						      	</div>
-						      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
-						          	#{valorCobrado}
-						      	</div>
-					  	</div>
-					  	<div style="display:flex;">
-					      		<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-								Correspondente ao pagamento de tratamento odontológico.      	
-							</div>
-					  	</div>
-					</div>
-					<div style="width:100vw;border:solid 1px gray;padding:0;margin:0;">
-					  	<div style="display:flex;">
-						      	<div style="width:50%;height:100%;padding:2px;padding-left:8px;padding-right:8px;">
-						          	<div style="width:100%;padding:5px;">
-										<table style="width:100%;">
-											<tr>
-												<th>Data</th>
-												<th>Valor</th>
-												<th>Parcela</th>
-												<th>Forma</th>
-											</tr>
-									    	<ui:repeat value="#{lancamentos}" var="l">
-									    		<tr>
-									    			<td>#{l.dataPagamentoStr}</td>
-									    			<td>#{l.valor}</td>
-									    			<td>#{l.numeroParcela}/#{l.parcelaTotal}</td>
-									    			<td>#{l.formaPagamento}</td>	
-									    		</tr>
-									    	</ui:repeat>    
-										</table>
+						<div style="width:100%;margin-bottom:5px;border:solid 1px gray;padding:0;">
+							<div style="display:flex;">
+							      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          Recebemos de
+							      	</div>
+							      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
+							          	#{f.paciente.dadosBasico.nome}
+							      	</div>
+						  	</div>
+						  	<div style="display:flex;">
+							      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          na data de
+							      	</div>
+							      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
+							          	#{faturaPagtoMB.nowDate}
+							      	</div>
+						  	</div>
+						  	<div style="display:flex;">
+							      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          inscrito no CPF/RG
+							      	</div>
+							      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
+							          	#{(f.paciente.dadosBasico.documento != null ? f.paciente.dadosBasico.documento : f.paciente.dadosBasico.rg)}
+						      		</div>
+						  	</div>
+						  	<div style="display:flex;">
+							      	<div style="width:30%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          a importância de
+							      	</div>
+							      	<div style="width:70%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
+							      		<h:outputText value="#{valorTotalRecibo}">
+							      			<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+							      		</h:outputText>
+							      	</div>
+						  	</div>
+						  	<div style="display:flex;">
+						      		<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+									Correspondente ao pagamento de tratamento odontológico.      	
+								</div>
+						  	</div>
+						</div>
+						<div style="width:100%;border:solid 1px gray;padding:0;margin:0;">
+						  	<div style="display:flex;">
+							      	<div style="width:60%;height:100%;padding:2px;padding-left:8px;padding-right:8px;">
+							          	<div style="width:100%;padding:5px;">
+											<table style="width:100%;text-align: center;font-size: 11px;">
+												<tr>
+													<th style="border: solid 1px gray;width:20%">Data</th>
+													<th style="border: solid 1px gray;width:20%">Valor</th>
+													<th style="border: solid 1px gray;width:15%">Parcela</th>
+													<th style="border: solid 1px gray;width:45%">Forma de Pagamento</th>
+												</tr>
+										    	<ui:repeat value="#{lancamentos}" var="l">
+										    		<tr>
+										    			<td style="border: solid 1px gray">#{l.dataPagamentoStr}</td>
+										    			<td style="border: solid 1px gray">
+										    				<h:outputText value="#{l.valor}">
+										    					<f:convertNumber type="currency" currencySymbol="R$"
+																	maxFractionDigits="2" />
+										    				</h:outputText>
+										    			</td>
+										    			<td style="border: solid 1px gray">#{l.numeroParcela}/#{l.parcelaTotal}</td>
+										    			<td style="border: solid 1px gray">#{l.formaPagamentoStr}</td>	
+										    		</tr>
+										    	</ui:repeat>    
+											</table>
+										</div>
+						      		</div>
+							      	<div style="width:40%;height:100%;padding:2px;padding-left:8px;padding-right:8px;position:relative">
+									<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							    			Por ser verdade firmamos o presente, em
+							   		</div>
+									<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							    			#{f.empresa.empStrCidade}, #{faturaPagtoMB.nowDate}
+							   		</div>
+									<br /><br /><br />
+								        <hr style="margin:5px;border-top: solid 1px black" />
+								        <div style="width:100%;height:20px;line-height:20px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
+								        	#{(f.empresa.empStrResponsavel != null ? f.empresa.empStrResponsavel : "Responsável")}
 									</div>
-					      		</div>
-						      	<div style="width:50%;height:100%;padding:2px;padding-left:8px;padding-right:8px;position:relative">
-								<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						    			Por ser verdade firmamos o presente, em
-						   		</div>
-								<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-						    			#{f.empresa.empStrCidade}, #{new SimpleDateFormat("dd/MM/yyyy").format(new Date()))}
-						   		</div>
-								<br /><br /><br />
-							        <hr style="margin:5px;border-top: solid 1px black">
-							        <div style="width:100%;height:20px;line-height:20px;padding:2px;padding-left:8px;padding-right:8px;text-align:center;">
-							        	#{(f.empresa.empStrResponsavel != null ? f.empresa.empStrResponsavel : "Responsável")}
 								</div>
 							</div>
 						</div>

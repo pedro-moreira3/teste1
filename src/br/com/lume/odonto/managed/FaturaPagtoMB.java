@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,6 +43,7 @@ import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton.TipoPessoa;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
+import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
@@ -54,6 +56,7 @@ import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.DescontoOrcamento;
+import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
@@ -201,6 +204,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private boolean incluirLogo;
     private TipoRecibo tipoReciboEscolhido;
     private StreamedContent reciboView;
+    private String htmlReciboContent;
     public static enum TipoRecibo implements IEnumController {
         IMPRIMIR_SELECIONADO("IS", "Imprimir o recibo deste pagamento"), 
         IMPRIMIR_TODOS("IT", "Imprimir um recibo para todos os recebimentos dessa fatura"),
@@ -1176,20 +1180,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.incluirLogo = false;
     }
     
+    public List<Lancamento> getLancamentosAEscolher() {
+        return getLancamentos();
+    }
+    
     public void actionPrintReciboLancamento() {
         try {
             if (tipoReciboEscolhido == TipoRecibo.ESCOLHER) {
                 PrimeFaces.current().executeScript("PF('dlgImprimirReciboEscolhaLancamento').show()");
             } else {
+                if (tipoReciboEscolhido == TipoRecibo.IMPRIMIR_SELECIONADO) {
+                    this.lancamentosImpressao = new ArrayList<>();
+                    this.lancamentosImpressao.add(this.lancamentoImpressao);
+                } else if (tipoReciboEscolhido == TipoRecibo.IMPRIMIR_TODOS) {
+                    this.lancamentosImpressao = new ArrayList<>();
+                    this.lancamentosImpressao.addAll(getLancamentosAEscolher());
+                }
+                this.valorTotalRecibo = lancamentosImpressao.stream().map(l -> l.getValor())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                PrimeFaces.current().executeScript("PF('dlgPrintReciboFatura').show()");
                 // Imprimi mesmo
-//                OutputStream report = JasperExport.exportReport(JasperExportConfiguration.builder()
-//                        .reportFile("ReciboLancamento.jasper")
-//                        .addParameter("Paciente", "Di Maria")
-//                        .addParameter("Cidade", "Rolândia").build());
-//                InputStream in = new ByteArrayInputStream(((ByteArrayOutputStream) report).toByteArray());
-                //this.reciboView = new DefaultStreamedContent(in, "application/pdf");
-                //PrimeFaces.current().executeScript("PF('dlgReciboView').show()");
-                //resolver!!!!
                 
                 addInfo("Sucesso!", "Recibo gerado");
                 PrimeFaces.current().executeScript("PF('dlgImprimirRecibo').hide()");
@@ -1202,7 +1212,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void actionPrintReciboLancamentoEscolha() {
         try {
             if (lancamentosImpressao != null && !lancamentosImpressao.isEmpty()) {
-                //this.valorTotalRecibo = lancamentosImpressao.stream().map(l -> l.getValor()).
+                this.valorTotalRecibo = lancamentosImpressao.stream().map(l -> l.getValor())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                PrimeFaces.current().executeScript("PF('dlgPrintReciboFatura').show()");
+                
                 // Imprimi mesmo
                 addInfo("Sucesso!", "Recibos gerados");
                 PrimeFaces.current().executeScript("PF('dlgImprimirReciboEscolhaLancamento').hide()");
@@ -1211,6 +1224,21 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 addError("Erro!", "Selecione ao menos um Lançamento!");
         } catch (Exception e) {
             addError("Erro!", "Falha ao gerar o Recibo!");
+        }
+    }
+    
+    public void salvaHtmlReciboContent() {
+        try {
+            Documento documento = DocumentoSingleton.getInstance().getBo()
+                    .findByDescricao("Recibo com valor do recebimento");
+            DocumentoSingleton.getInstance().emitirDocumento(documento, 
+                    this.htmlReciboContent, 
+                    UtilsFrontEnd.getProfissionalLogado(), 
+                    null, 
+                    getEntity().getPaciente(), 
+                    UtilsFrontEnd.getEmpresaLogada());
+        } catch (Exception e) {
+            addError("Erro!", "Falha ao salvar o Recibo!");
         }
     }
     
@@ -2872,6 +2900,18 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setValorTotalRecibo(BigDecimal valorTotalRecibo) {
         this.valorTotalRecibo = valorTotalRecibo;
+    }
+    
+    public String getNowDate() {
+        return new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    }
+    
+    public String getHtmlReciboContent() {
+        return htmlReciboContent;
+    }
+
+    public void setHtmlReciboContent(String htmlReciboContent) {
+        this.htmlReciboContent = htmlReciboContent;
     }
     
     //--------------------------------- IMPRIMIR RECIBO ---------------------------------
