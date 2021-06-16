@@ -212,14 +212,16 @@ div.ui-selectoneradio label {
 									process="@this" onclick="PF('eventDialog').hide()"
 									actionListener="#{agendamentoMB.handleClose}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" />
-
-								<p:commandButton id="confirmarPreCadastro"
-									icon="White fa fa-save" process="pnAgendamento"
-									value="Confirmar Pré Agendamento"
-									update="pnAgendamento, btBloqueioAgenda"
-									oncomplete="PF('myschedule').update();"
+									
+									<p:commandButton id="confirmarPreCadastro" icon="White fa fa-save"
+									process="@this" value="Confirmar Pré Agendamento"
+									rendered="#{agendamentoMB.entity.statusNovo == 'P'}"
 									actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
-									rendered="#{agendamentoMB.entity.statusNovo == 'P'}" />
+									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
+									 />
+									
+									
 							</p:panelGrid>
 						</p:outputPanel>
 					</div>
