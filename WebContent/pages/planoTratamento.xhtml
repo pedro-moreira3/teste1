@@ -1544,8 +1544,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.actionEditaDataAprovacaoOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:pgAlterarDataAprovacao"
 								oncomplete="PF('alterarDataAprovacao').show();"
-								rendered="#{planoTratamentoMB.admin}"
-								disabled="#{orcamento.aprovado == 'S'}" styleClass="NavyButton" icon="fa fa-pencil" />
+								rendered="#{planoTratamentoMB.admin and orcamento.aprovado != 'S'}"
+								styleClass="NavyButton" icon="fa fa-pencil" />
 						</p:column>
 						<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
 							filterMatchMode="contains" sortBy="#{orcamento.descricao}">
@@ -1578,10 +1578,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									maxFractionDigits="2" />
 							</h:outputText>
 						</p:column>
-						<p:column headerText="Aprovado?"
-							filterBy="#{orcamento.aprovadoStr}" filterMatchMode="contains"
-							sortBy="#{orcamento.aprovadoStr}">
-							<h:outputText value="#{orcamento.aprovadoStr}" />
+						<p:column headerText="Data de Aprovação"
+							filterBy="#{orcamento.dataAprovacaoStr}" filterMatchMode="contains"
+							sortBy="#{orcamento.dataAprovacaoStr}">
+							<h:outputText value="#{orcamento.dataAprovacaoStr}" />						
 						</p:column>
 						<p:column headerText="Observações"
 							filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
