@@ -264,7 +264,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>							
 
 						</p:panelGrid>
-						<p:panelGrid columns="3" layout="grid"
+						<p:panelGrid columns="3" layout="grid" id="filtrosIndicacao"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 							<h:panelGroup>
@@ -274,12 +274,54 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinica}"
 									converter="dominio">
+									<p:ajax process="@this" update="filtrosIndicacao" />
 									<f:selectItem itemLabel="Qualquer" itemValue="#{null}" />
 									<f:selectItems
 										value="#{relatorioPacienteMB.indicacoes}"
 										var="indicacao" itemLabel="#{indicacao.nome}"
 										itemValue="#{indicacao}" />
 								</p:selectOneMenu>
+							</h:panelGroup>
+							
+							<h:panelGroup rendered="#{relatorioPacienteMB.filtroIndicacaoPaciente()}">
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinicaPaciente"
+									value="Paciente que indicou:" />
+								<p:autoComplete id="filtroComoChegouNaClinicaPaciente"
+									style="min-width:0px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinicaPaciente}"
+									completeMethod="#{relatorioPacienteMB.sugestoesPacientes}" var="p"
+									itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="paciente" forceSelection="true" scrollHeight="400"
+									minQueryLength="3" queryDelay="1000">
+	
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+	
+								</p:autoComplete>
+							</h:panelGroup>
+							
+							
+							<h:panelGroup rendered="#{relatorioPacienteMB.filtroIndicacaoProfissional()}">
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinicaProfissional"
+									value="Profissional que indicou:" />
+								<p:autoComplete id="filtroComoChegouNaClinicaProfissional"
+									style="min-width:0px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinicaProfissional}"
+									completeMethod="#{relatorioPacienteMB.sugestoesProfissionais}"
+									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+									itemValue="#{p}" converter="profissional"
+									forceSelection="true" scrollHeight="400" queryDelay="1000"
+									dropdown="true" />
 							</h:panelGroup>
 							
 						</p:panelGrid>

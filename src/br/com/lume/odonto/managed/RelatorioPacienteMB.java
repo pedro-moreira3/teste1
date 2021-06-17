@@ -26,11 +26,13 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.MotivoInativacaoPaciente;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.MotivoInativacaoPacienteSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
 @ManagedBean
@@ -62,6 +64,8 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     // Listas para escolha no filtro
     List<Dominio> indicacoes;
     List<MotivoInativacaoPaciente> motivosInativacao;
+    private Paciente filtroPorComoChegouNaClinicaPaciente;
+    private Profissional filtroPorComoChegouNaClinicaProfissional;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -129,7 +133,9 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
                 this.pacientes = new ArrayList<Paciente>();
            
                 this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPaciente(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
-                        getConvenio(getFiltroPorConvenio()), this.filtroStatusPaciente, this.filtroPorMotivoInativacao, this.filtroPorComoChegouNaClinica);             
+                        getConvenio(getFiltroPorConvenio()), this.filtroStatusPaciente, this.filtroPorMotivoInativacao, this.filtroPorComoChegouNaClinica,
+                        (filtroIndicacaoPaciente() ? this.filtroPorComoChegouNaClinicaPaciente : null), 
+                        (filtroIndicacaoProfissional() ? this.filtroPorComoChegouNaClinicaProfissional : null));             
 
             }
             this.sugestoesConvenios("todos");
@@ -137,6 +143,24 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
             e.printStackTrace();
         }
 
+    }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false);
+    }
+    
+    public boolean filtroIndicacaoProfissional() {
+        if (this.filtroPorComoChegouNaClinica != null &&
+                "Indicado por Profissional".equals(this.filtroPorComoChegouNaClinica.getNome()))
+            return true;
+        return false;
+    }
+    
+    public boolean filtroIndicacaoPaciente() {
+        if (this.filtroPorComoChegouNaClinica != null &&
+                "Indicado por Paciente".equals(this.filtroPorComoChegouNaClinica.getNome()))
+            return true;
+        return false;
     }
 
     public String descricaoStatusPaciente(String status) {
@@ -390,6 +414,22 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
 
     public void setFiltroPorComoChegouNaClinica(Dominio filtroPorComoChegouNaClinica) {
         this.filtroPorComoChegouNaClinica = filtroPorComoChegouNaClinica;
+    }
+    
+    public Paciente getFiltroPorComoChegouNaClinicaPaciente() {
+        return filtroPorComoChegouNaClinicaPaciente;
+    }
+    
+    public void setFiltroPorComoChegouNaClinicaPaciente(Paciente filtroPorComoChegouNaClinicaPaciente) {
+        this.filtroPorComoChegouNaClinicaPaciente = filtroPorComoChegouNaClinicaPaciente;
+    }
+    
+    public Profissional getFiltroPorComoChegouNaClinicaProfissional() {
+        return filtroPorComoChegouNaClinicaProfissional;
+    }
+
+    public void setFiltroPorComoChegouNaClinicaProfissional(Profissional filtroPorComoChegouNaClinicaProfissional) {
+        this.filtroPorComoChegouNaClinicaProfissional = filtroPorComoChegouNaClinicaProfissional;
     }
 
 }
