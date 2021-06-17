@@ -104,7 +104,7 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
         try {
             if (orcamentos != null && !orcamentos.isEmpty()) {
-                return Utils.dateToString(orcamentos.stream()
+                return Utils.dateToStringSomenteDataBrasil(orcamentos.stream()
                         .filter(orcamento -> orcamento.isAprovado())
                         .map(orcamento -> orcamento.getDataAprovacao())
                         .max(Date::compareTo).get());
