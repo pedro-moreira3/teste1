@@ -73,14 +73,15 @@
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="pnPrincipalExame">
-			<h3>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h3>
+			<h3>Atenção: Apenas arquivos com as seguintes extensões são permitidos: JPG, JPEG, GIF, PNG ou PDF.</h3>
 			<p:fileUpload multiple="false" mode="advanced" dragDropSupport="true"
 				rendered="true" update="nomeAnexo"
-				allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|GIF|JPEG|PNG|PDF|JPG)$/"
-				label="Anexar Exame"
-				invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
-				invalidSizeMessage="Tamanho excedeu oOo limite." auto="true"
+				allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|bmp|GIF|JPEG|PNG|PDF|JPG|BMP)$/"
+				label="Clique aqui e escolha o exame"
+				invalidFileMessage="Apenas imagens e arquivos PDF podem ser utilizados."
+				invalidSizeMessage="Tamanho excedeu o limite." auto="true"
 				sizeLimit="10240000" id="exame"
+				 accept=".gif,.jpg,.jpeg,.png,.bmp,.pdf"
 				fileUploadListener="#{exameMB.uploadArquivo}"
 				styleClass="NavyButton" icon="fa fa-cloud-upload" />
 
@@ -115,7 +116,7 @@
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-save" value="Salvar"
 				process="@this, :lume:tabViewPaciente:pnPrincipalExame"
-				update=":lume:tabViewPaciente:tbExame"
+				update=":lume:tabViewPaciente:tbExame,:lume:tabViewPaciente:pnPrincipalExame"
 				actionListener="#{exameMB.actionPersist}" styleClass="GreenButton" />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgViewExame').hide()"
