@@ -459,7 +459,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									
 									<p:tooltip for="btnView" value="Agendar" />
 								</p:commandButton>
-								<p:commandButton icon="White fa fa-pencil"
+								<p:commandButton icon="White fa fa-cog" title="Executar Procedimento"
 									update=":lume:pnlFinalizarProcedimentos" width="5%" 
 									rendered="#{agendamento.descricao ne 'Horário bloqueado' and agendamento.id != null and agendamento.id != 0}"
 									disabled="#{agendamento.statusAgendamento.descricao != 'Atendido'}"
