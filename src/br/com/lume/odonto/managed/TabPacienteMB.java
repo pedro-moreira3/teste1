@@ -215,6 +215,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void loadPaciente(Paciente paciente) {
         try {
             this.pacienteMB.setEntity(paciente);
+            this.pacienteMB.setIndicacao(paciente.getIndicacaoDominio());
             this.tabview.setActiveIndex(0);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
