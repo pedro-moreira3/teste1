@@ -1512,12 +1512,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						<p:column headerText="Valor do Desconto"
+						<p:column headerText="Desconto"
 							filterBy="#{orcamento.descontoValor}" filterMatchMode="contains"
 							sortBy="#{orcamento.descontoValor}">
-							<h:outputText value="#{orcamento.descontoValor}">
+							<h:outputText value="#{orcamento.descontoValor}" rendered="#{orcamento.descontoTipo ne 'P'}">
 								<f:convertNumber type="currency" currencySymbol="R$"
 									maxFractionDigits="2" />
+							</h:outputText>
+							<h:outputText value="#{orcamento.descontoValor} %" rendered="#{orcamento.descontoTipo eq 'P'}">							
 							</h:outputText>
 						</p:column>
 						<p:column headerText="Valor Total"

@@ -1097,10 +1097,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void actionConfirmarPreCadastro(ActionEvent event) throws Exception {
+        
         this.getEntity().setStatusNovo(StatusAgendamentoUtil.CONFIRMADO.getSigla());
         try {
-            AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());
+            AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());   
             this.actionNew(event);
+            PrimeFaces.current().executeScript("PF('eventDialog').hide()");
+            
         } catch (BusinessException e) {
             e.printStackTrace();
         } catch (TechnicalException e) {
