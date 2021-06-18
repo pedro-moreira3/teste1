@@ -537,11 +537,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{p.dadosBasico.telefoneResponsavel}" />								
 							</p:column>
 							
-							<p:column filterBy="#{p.indicacaoDominio.nome}" visible="false"
-								sortBy="#{p.indicacaoDominio.nome}"
+							<p:column filterBy="#{p.indicacaoStr}" visible="false"
+								sortBy="#{p.indicacaoStr}"
 								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Como chegou na clínica">
-								<h:outputText value="#{p.indicacaoDominio.nome}" />								
+								<h:outputText value="#{p.indicacaoStr}" />								
 							</p:column>
 							
 							<p:column filterBy="#{p.motivoInativacao.descricao}" visible="false"
