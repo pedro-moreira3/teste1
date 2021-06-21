@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -82,6 +83,7 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.entity.ItemAnamnese;
+import br.com.lume.odonto.entity.MotivoInativacaoPaciente;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Profissional;
@@ -93,6 +95,7 @@ import br.com.lume.odonto.exception.SenhaCertificadoInvalidaException;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
+import br.com.lume.paciente.MotivoInativacaoPacienteSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.pergunta.PerguntaSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -110,7 +113,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Anamnese> pacienteAnamneses;
     private Anamnese pacienteAnamnese;
 
-    private boolean readonly, applet = false, responsavel = false, planoRender = false;
+    private boolean readonly, applet = false, responsavel = false, planoRender = false, abrirComoImpressao;
 
     private Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
@@ -186,6 +189,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean mostraLogo = false;
     private boolean mostraRodape = false;
     private boolean mostraLogoCentral = false;
+    
+    //Inativação paciente
+    private MotivoInativacaoPaciente motivoInativacao;
+    private Paciente paciente2Inativar;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -297,7 +304,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return arquivo;
     }
     
+    public void mostrarPerguntasAnamneseImpressao() {
+        mostrarPerguntasAnamnese();
+        this.abrirComoImpressao = true;
+        this.habilitaSalvar = false;
+    }
+    
     public void mostrarPerguntasAnamnese() {
+        this.abrirComoImpressao = false;
         this.mostrarPerguntasAnamnese = true;
         anamneses = new ArrayList<>();
         for (ConfiguracaoAnamnese e : configuracaoSelecionada) {
@@ -577,26 +591,37 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return "";
     }
+    
+    public List<MotivoInativacaoPaciente> getMotivosInativacao() {
+        return MotivoInativacaoPacienteSingleton.getInstance().getBo().listMotivosAtivos();
+    }
 
-    public void actionInativar(Paciente paciente2Inativar) {
+    public void actionIniciaInativar(Paciente paciente2Inativar) {
+        this.paciente2Inativar = paciente2Inativar;
+        this.motivoInativacao = null;
+        PrimeFaces.current().executeScript("PF('dlgMotivoInativacao').show()");
+    }
+    
+    public void actionInativar() {
         try {
-            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Inativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (Paciente paciente : pacientes) {
-                if (paciente.getStatus().equals(Status.ATIVO)) {
-                    paciente.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
-                    paciente.setDataUltimaAlteracao(new Date());
-
-                    paciente.setStatus(Status.INATIVO);
-                    paciente.setJustificativa(this.getEntity().getJustificativa());
-                    PacienteSingleton.getInstance().persist(paciente);
-                }
+            if (this.motivoInativacao == null) {
+                addError("Erro", "Nenhum motivo escolhido!");
+                return;
+            } else if (this.motivoInativacao.getHabilitaDescritivo() &&
+                    (this.motivoInativacao.getDescritivo() == null ||
+                            this.motivoInativacao.getDescritivo().isEmpty())) {
+                addError("Erro", "Descreva o motivo da inativação!");
+                return;
             }
-            paciente2Inativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
-            paciente2Inativar.setDataUltimaAlteracao(new Date());
-
-            paciente2Inativar.setStatus(Status.INATIVO);
-            PacienteSingleton.getInstance().persist(paciente2Inativar);
+            
+            PacienteSingleton.getInstance().inativarPaciente(
+                    paciente2Inativar, 
+                    UtilsFrontEnd.getProfissionalLogado(), 
+                    this.motivoInativacao, 
+                    this.getEntity().getJustificativa());
+            
             this.geraLista();
+            PrimeFaces.current().executeScript("PF('dlgMotivoInativacao').hide()");
             this.addInfo("Sucesso", "Paciente inativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
@@ -607,28 +632,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionAtivar(Paciente paciente2Ativar) {
         try {
-            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Ativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (Paciente paciente : pacientes) {
-                if ((paciente.getJustificativa() != null && paciente.getJustificativa().equals(
-                        this.getEntity().getJustificativa())) || (paciente.getJustificativa() == null && this.getEntity().getJustificativa() == null)) {
-                    paciente.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
-                    paciente.setDataUltimaAlteracao(new Date());
-
-                    paciente.setJustificativa(null);
-                    paciente.setStatus(Status.ATIVO);
-                    PacienteSingleton.getInstance().persist(paciente);
-                    
-                  
-                }
-                
-                
-            }
-            paciente2Ativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
-            paciente2Ativar.setDataUltimaAlteracao(new Date());
-
-            paciente2Ativar.setJustificativa(null);
-            paciente2Ativar.setStatus(Status.ATIVO);
-            PacienteSingleton.getInstance().persist(paciente2Ativar);
+            PacienteSingleton.getInstance().ativarPaciente(
+                    paciente2Ativar,
+                    UtilsFrontEnd.getProfissionalLogado(), 
+                    this.getEntity().getJustificativa());
             this.geraLista();
             this.addInfo("Sucesso", "Paciente ativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -781,6 +788,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.pacienteAnamnese = null;
         configuracaoSelecionada = new ArrayList<>();
         this.habilitaSalvar = true;
+        this.abrirComoImpressao = false;
         if (getEntity() != null) {
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
               //  Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICAS, UtilsFrontEnd.getEmpresaLogada());
@@ -976,7 +984,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return pacienteAnamnese;
     }
 
+    public void setPacienteAnamneseParaImpressao(Anamnese pacienteAnamnese) {
+        setPacienteAnamnese(pacienteAnamnese);
+        this.abrirComoImpressao = true;
+        this.habilitaSalvar = false;
+    }
+    
     public void setPacienteAnamnese(Anamnese pacienteAnamnese) {
+        this.abrirComoImpressao = false;
         this.habilitaSalvar = false;
         this.visualizar = true;
         this.pacienteAnamnese = pacienteAnamnese;
@@ -1461,6 +1476,30 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setMostraLogoCentral(boolean mostraLogoCentral) {
         this.mostraLogoCentral = mostraLogoCentral;
+    }
+    
+    public MotivoInativacaoPaciente getMotivoInativacao() {
+        return motivoInativacao;
+    }
+    
+    public void setMotivoInativacao(MotivoInativacaoPaciente motivoInativacao) {
+        this.motivoInativacao = motivoInativacao;
+    }
+    
+    public Paciente getPaciente2Inativar() {
+        return paciente2Inativar;
+    }
+
+    public void setPaciente2Inativar(Paciente paciente2Inativar) {
+        this.paciente2Inativar = paciente2Inativar;
+    }
+    
+    public boolean isAbrirComoImpressao() {
+        return abrirComoImpressao;
+    }
+
+    public void setAbrirComoImpressao(boolean abrirComoImpressao) {
+        this.abrirComoImpressao = abrirComoImpressao;
     }
 
 }

@@ -246,8 +246,84 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										var="agendamento" itemLabel="#{agendamento}"
 										itemValue="#{agendamento}" />
 								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroMotivoInativacao"
+									value="Motivo da Inativação:" />
+
+								<p:selectOneMenu id="filtroMotivoInativacao"
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorMotivoInativacao}"
+									converter="motivoInativacaoPaciente">
+									<f:selectItem itemLabel="Todos" itemValue="#{null}" />
+									<f:selectItems
+										value="#{relatorioPacienteMB.motivosInativacao}"
+										var="motivo" itemLabel="#{motivacao.descricao}"
+										itemValue="#{motivo}" />
+								</p:selectOneMenu>
 							</h:panelGroup>							
 
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid" id="filtrosIndicacao"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinica"
+									value="Como chegou na clínica:" />
+								<p:selectOneMenu id="filtroComoChegouNaClinica"	
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinica}"
+									converter="dominio">
+									<p:ajax process="@this" update="filtrosIndicacao" />
+									<f:selectItem itemLabel="Qualquer" itemValue="#{null}" />
+									<f:selectItems
+										value="#{relatorioPacienteMB.indicacoes}"
+										var="indicacao" itemLabel="#{indicacao.nome}"
+										itemValue="#{indicacao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							
+							<h:panelGroup rendered="#{relatorioPacienteMB.filtroIndicacaoPaciente()}">
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinicaPaciente"
+									value="Paciente que indicou:" />
+								<p:autoComplete id="filtroComoChegouNaClinicaPaciente"
+									style="min-width:0px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinicaPaciente}"
+									completeMethod="#{relatorioPacienteMB.sugestoesPacientes}" var="p"
+									itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="paciente" forceSelection="true" scrollHeight="400"
+									minQueryLength="3" queryDelay="1000">
+	
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+	
+								</p:autoComplete>
+							</h:panelGroup>
+							
+							
+							<h:panelGroup rendered="#{relatorioPacienteMB.filtroIndicacaoProfissional()}">
+								<p:outputLabel style="margin:0px;" for="filtroComoChegouNaClinicaProfissional"
+									value="Profissional que indicou:" />
+								<p:autoComplete id="filtroComoChegouNaClinicaProfissional"
+									style="min-width:0px;margin-bottom:10px;"
+									value="#{relatorioPacienteMB.filtroPorComoChegouNaClinicaProfissional}"
+									completeMethod="#{relatorioPacienteMB.sugestoesProfissionais}"
+									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+									itemValue="#{p}" converter="profissional"
+									forceSelection="true" scrollHeight="400" queryDelay="1000"
+									dropdown="true" />
+							</h:panelGroup>
+							
 						</p:panelGrid>
 
 						<div class="EmptyBox5"></div>
@@ -459,6 +535,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Telefone Responsável">
 								<h:outputText value="#{p.dadosBasico.telefoneResponsavel}" />								
+							</p:column>
+							
+							<p:column filterBy="#{p.indicacaoStr}" visible="false"
+								sortBy="#{p.indicacaoStr}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Como chegou na clínica">
+								<h:outputText value="#{p.indicacaoStr}" />								
+							</p:column>
+							
+							<p:column filterBy="#{p.motivoInativacao.descricao}" visible="false"
+								sortBy="#{p.motivoInativacao.descricao}"
+								filterFunction="#{relatorioPacienteMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Motivo de inativação">
+								<h:outputText value="#{p.motivoInativacao.descricao}" />								
 							</p:column>
 							
 						</p:dataTable>

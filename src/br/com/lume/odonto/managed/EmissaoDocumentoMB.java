@@ -684,8 +684,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             this.dataInicio = getDataInicio(getFiltroPeriodo());
             this.dataFim = getDataFim(getFiltroPeriodo());
 
-            PrimeFaces.current().ajax().update(":lume:dataInicial");
-            PrimeFaces.current().ajax().update(":lume:dataFinal");
+            PrimeFaces.current().ajax().update("lume:dataInicial");
+            PrimeFaces.current().ajax().update("lume:dataFinal");
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

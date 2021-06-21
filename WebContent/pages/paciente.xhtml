@@ -122,7 +122,7 @@
 							<h:panelGroup rendered="#{paciente.status == 'A'}">
 								<p:commandButton id="persistInativar"
 									icon="White fa fa-chain-broken" title="Inativar"
-									actionListener="#{pacienteMB.actionInativar(paciente)}"
+									actionListener="#{pacienteMB.actionIniciaInativar(paciente)}"
 									update=":lume:dtPrincipalPacientes" process="@this"
 									styleClass="NavyButton" />
 							</h:panelGroup>
@@ -212,6 +212,57 @@
 			</div>
 		</div>
 
+		<p:dialog widgetVar="dlgMotivoInativacao" responsive="true" modal="true" 
+			appendTo=":lume" width="700px">
+		<f:facet name="header">
+			<p:outputPanel id="pnlMotivoInativacaoHeader">
+				<h:outputText value="Motivo para inativar o paciente #{pacienteMB.paciente2Inativar.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlMotivoInativacao">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="">
+							<p:outputLabel for="motivoInativacao" value="Selecione um motivo" />
+							<p:selectOneMenu id="motivoInativacao" value="#{pacienteMB.motivoInativacao}"
+								converter="motivoInativacaoPaciente">
+								<p:ajax process="pnlMotivoInativacao"
+									update="pnlMotivoInativacao" />
+			                    <f:selectItem itemLabel="Selecione..." itemValue="#{null}" noSelectionOption="true" />
+			                    <f:selectItems value="#{pacienteMB.motivosInativacao}" var="motivo"
+			                    	itemLabel="#{motivo.descricao}" itemValue="#{motivo}" />
+			                </p:selectOneMenu>
+						</h:panelGroup>
+						
+						<h:panelGroup styleClass="" rendered="#{pacienteMB.motivoInativacao.habilitaDescritivo}">
+							<p:outputLabel for="descritivo" value="Descreva o motivo da inativação" />
+							<p:inputText id="descritivo" value="#{pacienteMB.motivoInativacao.descritivo}" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Inativar" icon="White fa fa-chain-broken"
+						actionListener="#{pacienteMB.actionInativar()}"
+						update=":lume:dtPrincipalPacientes, pnlMotivoInativacao" 
+						process="@this, pnlMotivoInativacao"
+						styleClass="NavyButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgMotivoInativacao').hide()"
+						styleClass="NavyButton" />
+
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:dialog>
 		
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:dtPrincipalPacientes" actionListener="#{pacienteMB.geraLista}" />

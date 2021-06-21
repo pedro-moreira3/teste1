@@ -22,7 +22,9 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -63,6 +65,9 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private String filtroPorConvenio;
     private String filtroPeriodo;
     private String filtroPeriodoFinalizacao;
+    
+    private List<Especialidade> especialidades;
+    private Especialidade filtroPorEspecialidade;
    
     private Procedimento filtroPorProcedimento;
     
@@ -87,6 +92,12 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         this.sugestoesConvenios("todos");
         
         popularLista();
+        
+        try {
+            this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
     
     public void popularLista() {
@@ -97,7 +108,8 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
                 this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().
                         listByDataAndProfissionalAndPaciente(Utils.formataComecoDia(this.dataInicio), Utils.formataFimDia(this.dataFim), Utils.formataComecoDia(this.dataFinalizacaoInicio),
                                 Utils.formataFimDia(this.dataFinalizacaoFim), this.filtroPorPaciente, 
-                        this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
+                        this.filtroPorEspecialidade);
                 
                 if(!this.filtroProcedimento.isEmpty())
                     removerFiltrosProcedimento(this.listaProcedimentos);
@@ -463,4 +475,21 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     public void setFiltroPeriodoFinalizacao(String filtroPeriodoFinalizacao) {
         this.filtroPeriodoFinalizacao = filtroPeriodoFinalizacao;
     }
+    
+    public List<Especialidade> getEspecialidades() {
+        return especialidades;
+    }
+    
+    public void setEspecialidades(List<Especialidade> especialidades) {
+        this.especialidades = especialidades;
+    }
+    
+    public Especialidade getFiltroPorEspecialidade() {
+        return filtroPorEspecialidade;
+    }
+
+    public void setFiltroPorEspecialidade(Especialidade filtroPorEspecialidade) {
+        this.filtroPorEspecialidade = filtroPorEspecialidade;
+    }
+    
 }
