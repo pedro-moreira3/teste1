@@ -202,7 +202,7 @@
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
 											<p:outputLabel for="onMenu" rendered="#{!pacienteMB.abrirComoImpressao}"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao} (Marque apenas uma resposta)" />
 											<h:panelGroup rendered="#{!pacienteMB.abrirComoImpressao}">
 												<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
 													style="width: 340px;" converter="resposta"
@@ -232,7 +232,7 @@
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
 											<p:outputLabel for="checkBox"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao} (Marque quantas respostas quiser)." />
 											<h:panelGroup>
 												<p:selectManyCheckbox id="checkBox"
 													value="#{anamnese.respostas}"
@@ -254,7 +254,7 @@
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
 											<p:outputLabel for="onRadio"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao} (Marque sim ou não)." />
 											<h:panelGroup>
 												<h:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
 													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
@@ -374,16 +374,12 @@
 													value="#{anamnese.pergunta.descricao}" />
 											</div>
 											<div style="width: 60%; padding:3px;padding-left: 10px">
-												<p:selectManyCheckbox id="checkBox" 
-													value="#{anamnese.respostas}" style="font-size:10px"
-													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
-													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
-													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-													layout="responsive" columns="3">
-													<f:selectItems value="#{anamnese.pergunta.respostas}"
-														var="resposta" itemLabel="#{resposta.descricao}"
-														itemValue="#{resposta.descricao}" />
-												</p:selectManyCheckbox>
+											
+											<ui:repeat var="resposta" value="#{anamnese.respostas}">
+												<p:outputLabel value="#{resposta}, " style="font-size:10px" />
+											</ui:repeat>
+											
+											
 											</div>
 										</div>
 									</p:outputPanel>
@@ -395,14 +391,13 @@
 													value="#{anamnese.pergunta.descricao}" />
 											</div>
 											<div style="width: 60%; padding:3px;padding-left: 10px">
-												<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
-													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
-													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
-													style="font-size: 10px; !important"
-													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
-													<f:selectItem itemLabel="Sim" itemValue="Sim" />
-													<f:selectItem itemLabel="Não" itemValue="Não" />
-												</p:selectOneRadio>
+											
+										
+													<p:outputLabel value="#{anamnese.resposta}" style="font-size:10px" />
+											
+											
+											
+											
 											</div>
 										</div>
 									</p:outputPanel>

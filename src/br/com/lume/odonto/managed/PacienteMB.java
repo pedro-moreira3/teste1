@@ -274,8 +274,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
     
     public void carregarDocumentosPaciente() {
-        this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity(), 
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        this.listaDocumentos = DocumentoEmitidoSingleton.getInstance().getBo().listByEmitidoPara(this.getEntity());
     }
     
     public void loadDoc(DocumentoEmitido doc) {

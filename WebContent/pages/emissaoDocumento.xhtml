@@ -104,7 +104,7 @@
 										value="#{emissaoDocumentoMB.filtroPeriodo}">
 
 										<p:ajax process="@this"
-											listener="#{emissaoDocumentoMB.actionTrocaDatasCriacao}" />
+											listener="#{emissaoDocumentoMB.actionTrocaDatasCriacao(true)}" />
 
 										<f:selectItem itemValue="" itemLabel="Selecione" />
 										<f:selectItem itemValue="O" itemLabel="Ontem" />

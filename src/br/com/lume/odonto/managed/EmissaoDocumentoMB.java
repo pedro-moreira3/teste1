@@ -111,7 +111,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
 
-        actionTrocaDatasCriacao();
+        actionTrocaDatasCriacao(false);
         if (getDataInicio() != null && getDataFim() != null) {
             Calendar c = Calendar.getInstance();
             c.setTime(getDataInicio());
@@ -678,15 +678,15 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         return null;
     }
 
-    public void actionTrocaDatasCriacao() {
+    public void actionTrocaDatasCriacao(boolean updateComponent) {
         try {
 
             this.dataInicio = getDataInicio(getFiltroPeriodo());
             this.dataFim = getDataFim(getFiltroPeriodo());
-
-            PrimeFaces.current().ajax().update("lume:dataInicial");
-            PrimeFaces.current().ajax().update("lume:dataFinal");
-
+            if(updateComponent) {
+                PrimeFaces.current().ajax().update("lume:dataInicial");
+                PrimeFaces.current().ajax().update("lume:dataFinal");
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }

@@ -1268,6 +1268,7 @@ body .height31 input {
 						process="@this" oncomplete="PF('dlgImprimirReciboEscolhaLancamento').hide()"
 						styleClass="NavyButton" />
 
+
 				</p:panelGrid>
 			</div>
 		</div>
@@ -1757,10 +1758,14 @@ body .height31 input {
 	
 	<p:outputPanel id="faturaReciboInclude">
 		<script>
-			function processAndSaveHtmlReciboContent() {
+		function processAndSaveHtmlReciboContent() {
+
+			if (typeof $('*[id*=fatura2PrintReciboInterno]:visible').val() != 'undefined') {
 				var htmlContentRecibo = $('*[id*=fatura2PrintReciboInterno]:visible')[0].innerHTML;
 				$('*[id*=hiddenReciboField]')[0].value = htmlContentRecibo;
 			}
+
+		}
 		</script>
 		<p:remoteCommand name="saveHtmlReciboPrint" onstart="processAndSaveHtmlReciboContent()"
 			actionListener="#{faturaPagtoMB.salvaHtmlReciboContent()}"

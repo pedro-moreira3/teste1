@@ -1236,7 +1236,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             Documento documento = DocumentoSingleton.getInstance().getBo().findByDescricao("Recibo com valor do recebimento");
 
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Recibo", UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Recibo");
             
             //TODO arrumar construtor pra isso
             if (documento == null) {

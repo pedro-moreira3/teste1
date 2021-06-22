@@ -91,7 +91,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         
         this.sugestoesConvenios("todos");
         
-        popularLista();
+       // popularLista();
         
         try {
             this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
