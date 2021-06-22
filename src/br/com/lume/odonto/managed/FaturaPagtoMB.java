@@ -210,9 +210,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public static enum TipoRecibo implements IEnumController {
 
-        IMPRIMIR_SELECIONADO("IS", "Imprimir o recibo deste pagamento"),
+        IMPRIMIR_SELECIONADO("IS", "Imprimir o recibo para esse recebimento"),
         IMPRIMIR_TODOS("IT", "Imprimir um recibo para todos os recebimentos dessa fatura"),
-        ESCOLHER("ES", "Escolher o recebimento para imprimir  o recibo");
+        ESCOLHER("ES", "Imprimir um recibo selecionando os recebimentos");
 
         private String rotulo, descricao;
 
