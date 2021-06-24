@@ -175,6 +175,119 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<p:remoteCommand name="onCloseMarcacaoPonto" />
 		</p:outputPanel>
 		
+		<p:dialog id="evolucao" widgetVar="evolucao"
+			header="Evolução - Finalizar procedimento" responsive="true"
+			modal="true" appendTo=":lume">
+			<p:outputPanel id="evolucaoView">
+				<p:panelGrid columns="1" layout="grid"
+					style="max-height: 500px; overflow-y: auto;"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
+					<h:panelGroup styleClass="lumeField">
+						<ui:repeat var="procedimento"
+							value="#{agendamentoRapidoMB.ptps2Finalizar}">
+							<h:outputText
+								value="Procedimento: #{procedimento.procedimento.descricao}" />
+							<br />
+							<h:outputText
+								value="Finalizado às: #{agendamentoRapidoMB.dateNowFormat}" />
+							<br />
+							<h:outputText
+								value="Por: #{agendamentoRapidoMB.nomeProfissionalLogado}" />
+							<br />
+							<ui:repeat var="face"
+								value="#{procedimento.planoTratamentoProcedimentoFaces}">
+								<h:outputText
+									value="Dente: #{procedimento.denteObj.descricao} | Face: #{face.face}" />
+							</ui:repeat>
+							<br />
+						</ui:repeat>
+					</h:panelGroup>
+				</p:panelGrid>
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="evolucaoDescricao"
+							value="Descrição da evolução: " />
+						<p:inputTextarea id="evolucaoDescricao" cols="60" rows="6"
+							autoResize="false" value="#{agendamentoRapidoMB.descricaoEvolucao}"
+							maxlength="2000" required="true" />
+						<p:message for="evolucaoDescricao" styleClass="msg" />
+					</h:panelGroup>
+				</p:panelGrid>
+			</p:outputPanel>
+			<p:separator styleClass="SeparatorFull" />
+			<p:panelGrid columns="3" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton id="persistEvolucaopt" icon="White fa fa-save"
+					value="Salvar" actionListener="#{agendamentoRapidoMB.actionFinalizarProcedimentos()}"
+					update="evolucaoView"
+					process="@this, evolucaoView" />
+			</p:panelGrid>
+		</p:dialog>
+		
+		<p:dialog widgetVar="dlgFinalizarProcedimentos" responsive="true" modal="true" 
+			appendTo=":lume" width="900px" header="Finalização Rápida de Procedimentos">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:outputPanel id="pnlFinalizarProcedimentos">
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			
+							<h:panelGroup style="display:inline-flex">
+								<b>Paciente: </b>
+								<p:outputLabel value="#{agendamentoRapidoMB.agendamentoFinalizarPTPs.paciente.dadosBasico.nome}" />
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-flex">
+								<b>Plano de Tratamento: </b>
+								<p:outputLabel value="#{agendamentoRapidoMB.agendamentoFinalizarPTPs.planoTratamento.descricaoComConvenio}" />
+							</h:panelGroup>
+							<p:outputLabel value="Selecione os procedimentos a serem finalizados abaixo:" />
+							
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{agendamentoRapidoMB.procedimentosAFinalizar}" var="p" rows="20"
+								selection="#{agendamentoRapidoMB.procedimentosEscolhidosAFinalizar}"
+								paginator="true" rowKey="#{p}" paginatorPosition="bottom">
+								<f:facet name="header">Procedimentos vinculados a este Agendamento</f:facet>
+		
+								<p:column
+									sortBy="#{p.planoTratamentoProcedimento.descricao}"
+									filterMatchMode="contains" filterBy="#{p.planoTratamentoProcedimento.procedimento.descricao}"
+									width="65%" headerText="Descrição">
+										<h:outputText value="#{p.planoTratamentoProcedimento.procedimento.descricao}" />
+								</p:column>
+								<p:column
+									sortBy="#{p.planoTratamentoProcedimento.denteRegiaoStr}" filterMatchMode="contains"
+									filterBy="#{p.planoTratamentoProcedimento.denteRegiaoStr}" headerText="Dente/Região e Diagnóstico" width="30%">
+									<h:outputText value="#{p.planoTratamentoProcedimento.denteRegiaoStr}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column selectionMode="multiple" style="width:20px;text-align:center" />
+								
+							</p:dataTable>
+	
+						</p:panelGrid>
+					</p:outputPanel>
+	
+					<p:separator styleClass="SeparatorFull" />
+	
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+	
+						<p:commandButton value="Finalizar" icon="White fa fa-pencil"
+							actionListener="#{agendamentoRapidoMB.actionFinalizarProcedimentosAddEvolucao()}"
+							update="pnlFinalizarProcedimentos, evolucaoView" 
+							process="@this, pnlFinalizarProcedimentos"
+							styleClass="GreenButton" />
+						<p:commandButton value="Fechar" icon="White fa fa-close"
+							process="@this" oncomplete="PF('dlgFinalizarProcedimentos').hide()"
+							styleClass="NavyButton" />
+	
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:dialog>
+		
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">					
@@ -345,6 +458,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										listener="#{agendamentoRapidoMB.setEntity(agendamento)}" />									
 									
 									<p:tooltip for="btnView" value="Agendar" />
+								</p:commandButton>
+								<p:commandButton icon="White fa fa-cog" title="Executar Procedimento"
+									update=":lume:pnlFinalizarProcedimentos" width="5%" 
+									rendered="#{agendamento.descricao ne 'Horário bloqueado' and agendamento.id != null and agendamento.id != 0}"
+									disabled="#{agendamento.statusAgendamento.descricao != 'Atendido'}"
+									actionListener="#{agendamentoRapidoMB.actionStartFinalizarProcedimentos(agendamento)}"
+									process="@this">
+									<p:tooltip value="Finalizar Procedimentos" />
 								</p:commandButton>
 								<ui:remove>
 								<p:commandButton id="btnVerificarCobranca" icon="Red fa fa-money" styleClass="RedButton"

@@ -5,6 +5,34 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<style>
+		.SeparatorSolido {
+			border: none;
+		}
+		.SeparatorSolido:not(:last-of-type) {
+			border-bottom: solid 1px gray;
+		}
+		.SeparatorSolido:last-of-type {
+			display: none;
+		}
+		
+		body .printAnamnese .ui-panelgrid .ui-panelgrid-cell {
+		}
+		
+		@media print { 
+			* {
+				font-size: 9px !important;
+			}
+			.ui-selectmanycheckbox .ui-g-12 {
+				padding: 0px !important;
+			}
+		}
+		
+		body .printAnamnese .ui-selectmanycheckbox .ui-g-12 {
+			padding: 0px !important;
+		}
+	</style>
 
 	<p:outputPanel id="mainViewAnamnese">
 		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
@@ -53,9 +81,14 @@
 				<f:facet name="header">Anamneses</f:facet>
 				<p:column headerText="Ações" style="width:100px">
 				<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
-				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
-				update=":lume:tabViewPaciente:painelEspecialidades, :lume:tabViewPaciente:painelPerguntasEspecialidades, :lume:tabViewPaciente:dtAnamnese,:lume:tabViewPaciente:persistAnamnese"
-				process="@this,:lume:tabViewPaciente:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+					actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
+					update=":lume:tabViewPaciente:painelEspecialidades, :lume:tabViewPaciente:painelPerguntasEspecialidades, :lume:tabViewPaciente:dtAnamnese,:lume:tabViewPaciente:persistAnamnese"
+					process="@this,:lume:tabViewPaciente:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+				<p:commandButton icon="fa fa-print" title="Imprimir Anamnese"
+					actionListener="#{pacienteMB.setPacienteAnamneseParaImpressao(pacienteAnamnese)}" 
+					update=":lume:tabViewPaciente:painelEspecialidades, :lume:tabViewPaciente:painelPerguntasEspecialidades, :lume:tabViewPaciente:dtAnamnese,:lume:tabViewPaciente:persistAnamnese,
+								:lume:tabViewPaciente:pnPrintAnamnese"
+					process="@this" oncomplete="PF('dlgPrintAnamnese').show();" />
 									
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.id}"
@@ -114,13 +147,18 @@
 							</p:selectManyCheckbox>
 						<p:panelGrid columns="6" layout="grid" 
 											styleClass="ui-panelgrid-blank"
-											columnClasses="ui-grid-col-4,ui-grid-col-12"
+											columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4"
 											style="border:0px none; background-color:transparent;"
 											>
 						<p:commandButton id="ciar" icon="ui-icon-add" value="Preencher Anamnese" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
 						actionListener="#{pacienteMB.mostrarPerguntasAnamnese}"
-						update=":lume:tabViewPaciente:perguntasEspecialidade,:lume:tabViewPaciente:painelEspecialidades,:lume:tabViewPaciente:painelPerguntasEspecialidades,:lume:tabViewPaciente:especialidade" 
+						update=":lume:tabViewPaciente:perguntasEspecialidade,:lume:tabViewPaciente:painelEspecialidades,:lume:tabViewPaciente:painelPerguntasEspecialidades,:lume:tabViewPaciente:especialidade,:lume:tabViewPaciente:persistAnamnese" 
 						process="@this,:lume:tabViewPaciente:especialidade,:lume:tabViewPaciente:painelEspecialidades" oncomplete="" />
+						<p:commandButton icon="ui-icon-print" value="Imprimir Anamnese em Branco" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
+						actionListener="#{pacienteMB.mostrarPerguntasAnamneseImpressao}"
+						update=":lume:tabViewPaciente:perguntasEspecialidade,:lume:tabViewPaciente:painelEspecialidades,:lume:tabViewPaciente:painelPerguntasEspecialidades,:lume:tabViewPaciente:especialidade,:lume:tabViewPaciente:persistAnamnese,
+									:lume:tabViewPaciente:pnPrintAnamnese" 
+						process="@this,:lume:tabViewPaciente:especialidade,:lume:tabViewPaciente:painelEspecialidades"></p:commandButton>
 						</p:panelGrid>							
 						</p:outputPanel>
 
@@ -151,8 +189,8 @@
 												value="#{anamnese.pergunta.descricao}" />
 											<h:panelGroup>
 												<p:inputText id="texte" value="#{anamnese.resposta}"
-													disabled="#{pacienteMB.readonly}"
-													required="#{anamnese.pergunta.requerida}"
+													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
+													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório" />
 												<p:message styleClass="msg" for="texte" />
 											</h:panelGroup>
@@ -163,13 +201,13 @@
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
-											<p:outputLabel for="onMenu"
-												value="#{anamnese.pergunta.descricao}" />
-											<h:panelGroup>
+											<p:outputLabel for="onMenu" rendered="#{!pacienteMB.abrirComoImpressao}"
+												value="#{anamnese.pergunta.descricao} (Marque apenas uma resposta)" />
+											<h:panelGroup rendered="#{!pacienteMB.abrirComoImpressao}">
 												<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
 													style="width: 340px;" converter="resposta"
 													disabled="#{pacienteMB.readonly}"
-													required="#{anamnese.pergunta.requerida}"
+													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
 													<f:selectItem itemValue="#{null}"
 														itemLabel="Selecione uma opção" />
@@ -179,6 +217,13 @@
 												</p:selectOneMenu>
 												<p:message styleClass="msg" for="onMenu" />
 											</h:panelGroup>
+											<p:outputLabel for="texteMulti" rendered="#{pacienteMB.abrirComoImpressao}"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup rendered="#{pacienteMB.abrirComoImpressao}">
+												<p:inputText id="texteMulti" value="#{anamnese.resposta}"
+													disabled="true" />
+												<p:message styleClass="msg" for="texteMulti" />
+											</h:panelGroup>
 										</p:panelGrid>
 
 										<p:panelGrid columns="2" layout="grid"
@@ -187,12 +232,12 @@
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
 											<p:outputLabel for="checkBox"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao} (Marque quantas respostas quiser)." />
 											<h:panelGroup>
 												<p:selectManyCheckbox id="checkBox"
 													value="#{anamnese.respostas}"
-													disabled="#{pacienteMB.readonly}"
-													required="#{anamnese.pergunta.requerida}"
+													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
+													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
 													layout="responsive" columns="3">
 													<f:selectItems value="#{anamnese.pergunta.respostas}"
@@ -209,11 +254,11 @@
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
 											<p:outputLabel for="onRadio"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao} (Marque sim ou não)." />
 											<h:panelGroup>
 												<h:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
-													disabled="#{pacienteMB.readonly}"
-													required="#{anamnese.pergunta.requerida}"
+													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
+													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													style="font-size: 16px; !important"													
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
 													<f:selectItem itemLabel="Sim" itemValue="Sim" />
@@ -232,9 +277,9 @@
 												value="#{anamnese.pergunta.descricao}" />
 											<h:panelGroup>
 												<p:inputText value="#{anamnese.resposta}"
-													style="width: 340px;" disabled="#{pacienteMB.readonly}"
+													style="width: 340px;" disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
 													validatorMessage="Favor digitar um número." id="numero"
-													required="#{anamnese.pergunta.requerida}"
+													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
 													<f:validateRegex pattern="[0-9]*" />
 												</p:inputText>
@@ -254,15 +299,18 @@
 
 			</p:scrollPanel>
 		</p:outputPanel>
-		<p:panelGrid columns="4" layout="grid"
+		<p:panelGrid columns="4" layout="grid" id="persistAnamnese"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:outputPanel  id="persistAnamnese">
-				<p:commandButton  icon="White fa fa-save White" rendered="#{pacienteMB.habilitaSalvar}"
-					value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
-					update=":lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade, :lume:tabViewPaciente:dtAnamnese"
-					process="@this, :lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade"
-					disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />			
-				</p:outputPanel>
+			<p:commandButton  icon="White fa fa-save White" rendered="#{pacienteMB.habilitaSalvar and !pacienteMB.abrirComoImpressao}"
+				value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
+				update=":lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade, :lume:tabViewPaciente:dtAnamnese"
+				process="@this, :lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade"
+				disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />			
+			<p:commandButton  icon="White fa fa-print" rendered="#{pacienteMB.abrirComoImpressao}"
+				value="Imprimir" process="@this" styleClass="NavyButton">
+				<p:printer target=":lume:tabViewPaciente:painelPerguntasEspecialidades"/>
+			</p:commandButton>
+			<p:outputPanel rendered="#{!pacienteMB.habilitaSalvar and !pacienteMB.abrirComoImpressao}"></p:outputPanel>			
 			<p:outputPanel></p:outputPanel>
 			<p:outputPanel></p:outputPanel>	
 			<p:outputPanel>
@@ -271,6 +319,114 @@
 			</p:outputPanel>
 		</p:panelGrid>
 		
+	</p:dialog>
+
+
+	<p:dialog widgetVar="dlgPrintAnamnese" appendTo=":lume"
+		onHide="PF('dlgPrintAnamnese').toggleMaximize();"
+		onShow="PF('dlgPrintAnamnese').toggleMaximize();"
+		header="Anamnese do Paciente #{pacienteMB.entity.dadosBasico.nome}"
+		resizable="false" modal="true" responsive="true">
+		<p:outputPanel id="pnPrintAnamnese"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
+						<p:outputPanel id="anamneseFinal2Print" styleClass="printAnamnese">
+
+							<ui:repeat var="anamnesesAgrupadas"
+								value="#{pacienteMB.anamneses}">
+								
+								<p:outputLabel value="#{anamnesesAgrupadas[0].configuracaoAnamnese}" />
+								<div style="height:5px;width: 100%"></div>
+								<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
+	
+									<p:panelGrid columns="12" layout="grid"
+										styleClass="ui-panelgrid-blank"
+										columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;"
+										rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTextoLivre}">
+										<h:outputText escape="false" style="font-size:10px"
+											value="#{anamnese.pergunta.descricaoComQuebraLinha}" />
+									</p:panelGrid>
+									
+									<p:outputPanel rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto or
+										anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade or 
+										anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
+										<div style="display:inline-flex;width:100%;border: solid 1px gray;">
+											<div style="width: 40%;padding:3px;padding-left: 10px;border-right: solid 1px gray;;border-bottom:none">
+												<h:outputText for="texte" style="font-size:10px"
+													value="#{anamnese.pergunta.descricao}" />
+											</div>
+											<div style="width: 60%; padding:3px;padding-left: 10px">
+												<h:outputText id="texte" value="#{anamnese.resposta}"
+													style="font-size:10px" />
+											</div>
+										</div>
+									</p:outputPanel>
+									
+									<p:outputPanel rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
+										<div style="display:inline-flex;width:100%;border: solid 1px gray;border-bottom:none">
+											<div style="width: 40%;padding:3px;padding-left: 10px;border-right: solid 1px gray;">
+												<h:outputText for="checkBox" style="font-size:10px"
+													value="#{anamnese.pergunta.descricao}" />
+											</div>
+											<div style="width: 60%; padding:3px;padding-left: 10px">
+											
+											<ui:repeat var="resposta" value="#{anamnese.respostas}">
+												<p:outputLabel value="#{resposta}, " style="font-size:10px" />
+											</ui:repeat>
+											
+											
+											</div>
+										</div>
+									</p:outputPanel>
+									
+									<p:outputPanel rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
+										<div style="display:inline-flex;width:100%;border: solid 1px gray;border-bottom:none">
+											<div style="width: 40%;padding:3px;padding-left: 10px;border-right: solid 1px gray;">
+												<h:outputText for="onRadio" style="font-size:10px"
+													value="#{anamnese.pergunta.descricao}" />
+											</div>
+											<div style="width: 60%; padding:3px;padding-left: 10px">
+											
+										
+													<p:outputLabel value="#{anamnese.resposta}" style="font-size:10px" />
+											
+											
+											
+											
+											</div>
+										</div>
+									</p:outputPanel>
+																		
+								</ui:repeat>
+								<p:separator style="margin:0;;border-top:solid 1px gray" />
+								<div style="height:20px;width: 100%"></div>
+							</ui:repeat>
+						</p:outputPanel>
+					</div>
+				</div>
+
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="White fa fa-print" value="Imprimir"
+				process="@this" styleClass="NavyButton">
+				<p:printer
+					target=":lume:tabViewPaciente:anamneseFinal2Print" />
+			</p:commandButton>
+			<p:outputPanel></p:outputPanel>
+			<p:outputPanel></p:outputPanel>
+			<p:outputPanel>
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgPrintAnamnese').hide()" />
+			</p:outputPanel>
+		</p:panelGrid>
+
 	</p:dialog>
 
 </ui:composition>

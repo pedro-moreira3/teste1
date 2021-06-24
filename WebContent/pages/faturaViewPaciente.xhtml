@@ -455,12 +455,16 @@ body .height31 input {
 
 				<p:separator styleClass="SeparatorFull" />
 
-				<p:panelGrid columns="2" layout="grid"
+				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton value="Salvar" icon="White fa fa-save"
+					<p:commandButton value="Salvar e Fechar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento}"
 						update="pnlfaturaView" process="@this, pnlNovoLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Salvar e Continuar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento(false)}"
+						update="pnlfaturaView, pnlNovoLancamento, novoLancamentoParcelasTable" process="@this, pnlNovoLancamento"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
@@ -1152,6 +1156,123 @@ body .height31 input {
 			</div>
 		</div>
 	</p:dialog>
+	
+	<p:dialog widgetVar="dlgImprimirRecibo" responsive="true" modal="true" 
+		appendTo=":lume" width="700px">
+		<f:facet name="header">
+			<p:outputPanel id="pnlImprimirReciboHeader">
+				<h:outputText value="Imprimir Recibo para o Paciente #{faturaPagtoMB.entity.paciente.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlImprimirRecibo">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="">
+							<p:outputLabel for="tipoRecibo" value="" />
+							<p:selectOneRadio id="tipoRecibo" converter="enumTipoRecibo"
+								value="#{faturaPagtoMB.tipoReciboEscolhido}" required="true"
+								layout="grid" columns="1">
+								<f:selectItems value="#{faturaPagtoMB.tiposRecibo}" var="tr"
+									itemValue="#{tr}" itemLabel="#{tr.descricao}" />
+							</p:selectOneRadio>
+						</h:panelGroup>
+						
+						<h:panelGroup styleClass="">
+							<p:selectBooleanCheckbox
+								styleClass="sideChkBox"
+								value="#{faturaPagtoMB.incluirLogo}" 
+								itemLabel="Incluir logo da Clínica na impressão do recibo" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Imprimir" icon="White fa fa-print"
+						oncomplete="saveHtmlReciboPrint()"
+						actionListener="#{faturaPagtoMB.actionPrintReciboLancamento}"
+						update="pnlImprimirReciboEscolhaLancamentoHeader, 
+								pnlImprimirReciboEscolhaLancamento,
+								@parent:@parent:faturaReciboInclude" 
+						process="@this, pnlImprimirRecibo"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgImprimirRecibo').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+	
+	<p:dialog widgetVar="dlgImprimirReciboEscolhaLancamento" responsive="true" modal="true" 
+		appendTo=":lume" width="700px">
+		<f:facet name="header">
+			<p:outputPanel id="pnlImprimirReciboEscolhaLancamentoHeader">
+				<h:outputText value="Escolha os Lançamentos a serem impressos" />
+			</p:outputPanel>
+		</f:facet>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlImprimirReciboEscolhaLancamento">
+					
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						value="#{faturaPagtoMB.lancamentosAEscolher}" var="l" rows="20"
+						selection="#{faturaPagtoMB.lancamentosImpressao}"
+						paginator="true" rowKey="#{l}" paginatorPosition="bottom">
+						<f:facet name="header">Lançamentos da Fatura</f:facet>
+
+						<p:column selectionMode="multiple" style="width:20px;text-align:center" />
+						<p:column
+							sortBy="#{l.dataPagamentoStr}"
+							filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
+							width="20%" headerText="Data de Recebimento">
+								<h:outputText value="#{l.dataPagamentoStr}" />
+						</p:column>
+						<p:column
+							sortBy="#{l.valor}" filterMatchMode="contains"
+							filterBy="#{l.valor}" headerText="Valor" width="20%">
+							<h:outputText value="#{l.valor}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+						<p:column
+							width="55%"
+							filterBy="#{l.formaPagamentoStr}"
+							headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
+							<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
+						</p:column>
+						
+					</p:dataTable>
+					
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Imprimir" icon="White fa fa-print"
+						actionListener="#{faturaPagtoMB.actionPrintReciboLancamentoEscolha}"
+						update="@parent:@parent:faturaReciboInclude"
+						process="@this, pnlImprimirReciboEscolhaLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgImprimirReciboEscolhaLancamento').hide()"
+						styleClass="NavyButton" />
+
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
 
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
@@ -1502,6 +1623,15 @@ body .height31 input {
 											message="Você confirma este recebimento?">
 										</p:confirm>
 									</p:commandButton>
+									<p:commandButton styleClass="NavyButton" icon="fa fa-print"
+										title="Imprimir Recibo"
+										update="@parent:@parent:@parent:pnlImprimirRecibo,
+												@parent:@parent:@parent:pnlImprimirReciboHeader"
+										actionListener="#{faturaPagtoMB.actionIniciaImpressaoRecibo(l)}"
+										process="@this"
+										disabled="#{(l.pagamentoConferido != 'S' and l.validado != 'S') or !l.ativo}"
+										onsuccess="PF('dlgImprimirRecibo').show()">
+									</p:commandButton>
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')} cabecalho"
@@ -1623,6 +1753,29 @@ body .height31 input {
 			<ui:param name="show"
 				value="#{faturaPagtoMB.showLancamentosCancelados}" />
 			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
+		</ui:include>
+	</p:outputPanel>
+	
+	<p:outputPanel id="faturaReciboInclude">
+		<script>
+		function processAndSaveHtmlReciboContent() {
+
+			if (typeof $('*[id*=fatura2PrintReciboInterno]:visible').val() != 'undefined') {
+				var htmlContentRecibo = $('*[id*=fatura2PrintReciboInterno]:visible')[0].innerHTML;
+				$('*[id*=hiddenReciboField]')[0].value = htmlContentRecibo;
+			}
+
+		}
+		</script>
+		<p:remoteCommand name="saveHtmlReciboPrint" onstart="processAndSaveHtmlReciboContent()"
+			actionListener="#{faturaPagtoMB.salvaHtmlReciboContent()}"
+			process="@this, hiddenReciboField" />
+		<p:inputText value="#{faturaPagtoMB.htmlReciboContent}" id="hiddenReciboField" type="hidden" />
+		<ui:include src="/templates/faturaRecibo.xhtml">
+			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
+			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentosImpressao}" />
+			<ui:param name="valorTotalRecibo" value="#{faturaPagtoMB.valorTotalRecibo}" />
+			<ui:param name="mostrarLogo" value="#{faturaPagtoMB.incluirLogo}" />
 		</ui:include>
 	</p:outputPanel>
 

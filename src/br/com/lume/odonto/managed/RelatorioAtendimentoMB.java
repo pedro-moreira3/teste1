@@ -113,11 +113,16 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             if (getDataInicio() != null && getDataFim() != null) {
                 Calendar c = Calendar.getInstance();
                 c.setTime(getDataInicio());
-                c.add(Calendar.DAY_OF_MONTH, -1);
+                c.set(Calendar.HOUR_OF_DAY, 0);
+                c.set(Calendar.MINUTE, 0);
+                c.set(Calendar.SECOND, 0);
                 dataInicial = c.getTime();
-
+                
+                c = Calendar.getInstance();
                 c.setTime(getDataFim());
-                c.add(Calendar.DAY_OF_MONTH, +1);
+                c.set(Calendar.HOUR_OF_DAY, 23);
+                c.set(Calendar.MINUTE, 59);
+                c.set(Calendar.SECOND, 59);  
                 dataFinal = c.getTime();
                 
                 
