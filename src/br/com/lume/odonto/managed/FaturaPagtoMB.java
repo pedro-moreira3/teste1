@@ -1245,6 +1245,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 documento.setExcluido("N");
                 documento.setDataCriacao(new Date());
                 documento.setTipo(dominio);
+                documento.setModelo("");
+                documento.setDescricao("Recibo com valor do recebimento");
+                documento.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
                 DocumentoSingleton.getInstance().getBo().persist(documento);
             }            
 
