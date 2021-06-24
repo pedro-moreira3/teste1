@@ -652,7 +652,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void salvaProcedimento(PlanoTratamentoProcedimento ptp) throws Exception {
         actionPersistFaces(ptp);
-        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
+        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);                
     }
 
     public void abreJustificativaRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) {
@@ -1175,6 +1175,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     ptp.setDataFinalizado(new Date());
                     ptp.setFinalizadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                     ptp.setDentistaExecutor(UtilsFrontEnd.getProfissionalLogado());
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                     this.calculaRepasse(ptp);
                     salvaProcedimento(ptp);
 
