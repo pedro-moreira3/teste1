@@ -1270,6 +1270,44 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	
 	
 	
+		<p:dialog id="dlgSomenteFaces" widgetVar="dlgSomenteFaces"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false" header="Faces"
+		width="300px;" height="300px;">
+		
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:outputPanel id="pgSomenteFaces" style="position: relative; width: 300px;height: 200px;">
+					Selecione abaixo as faces:
+					<br />								
+					<p:selectCheckboxMenu value="#{planoTratamentoMB.regiaSomenteFaces.facesArray}"
+							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
+							label="#{regiao.facesArrayLabel}" style="width: 200px;" multiple="true"	>	
+								<p:ajax process="@this"								
+								update="@this,:lume:tabViewPaciente:pgSomenteFaces" />					
+							<f:selectItems value="#{planoTratamentoMB.regiaSomenteFaces.facesStr}" var="face"
+								itemValue="#{face}" itemLabel="#{face}" />
+						</p:selectCheckboxMenu>	
+					</p:outputPanel>		
+				</div>
+			</div>
+			<br />
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="3" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+					process="@this, :lume:tabViewPaciente:pgSomenteFaces"
+					value="Salvar"
+					actionListener="#{planoTratamentoMB.actionPersistFacesStatusDente}"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:pgProcedimentoDiagnostico,lume:tabViewPaciente:dtProcedimentosSelecionadospt"
+					oncomplete="PF('procedimentosTableInPT').filter();PF('dlgSomenteFaces').hide();" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					process="@this" onclick="PF('dlgSomenteFaces').hide();"
+					styleClass="NavyButton" />
+				
+			</p:panelGrid>	
+		</p:dialog>	
+	
 	
 	<p:dialog id="detalhesProcedimento" widgetVar="dlgDetalhesProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
@@ -2511,16 +2549,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<h:outputText value="#{regiao.statusDente.descricao}" />
 					</p:column>
 					<p:column headerText="Face">
-						<p:selectCheckboxMenu value="#{regiao.facesArray}"
-							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
-							label="#{regiao.facesArrayLabel}" style="width: 200px;" multiple="true"
-							rendered="#{regiao.statusDente.temFace}">
-							<p:ajax process="@this"
-								listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
-								update="@this,:lume:tabViewPaciente:pnDenteOdontograma,:lume:tabViewPaciente:procedimentosOdontograma" />
-							<f:selectItems value="#{regiao.facesStr}" var="face"
-								itemValue="#{face}" itemLabel="#{face}" />
-						</p:selectCheckboxMenu>
+					
+					<p:outputLabel value="#{regiao.facesArray}"></p:outputLabel>
+					
+					<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
+									process="@this" style="margin-left: 15px;"
+									actionListener="#{planoTratamentoMB.abreSomenteFaces(regiao)}"
+									oncomplete="PF('dlgSomenteFaces').show()" 
+									title="Detalhes" disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
+									update="@this,:lume:tabViewPaciente:pnDenteOdontograma,:lume:tabViewPaciente:procedimentosOdontograma,lume:tabViewPaciente:pgSomenteFaces" />
+						
+					
+					
+					
+					
 					</p:column>
 					<p:column width="10%">
 						<p:commandButton icon="White fa fa-minus White"
@@ -2593,20 +2635,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<h:outputText id="descricao"
 						value="#{procedimento.procedimento.descricao}" />
 				</p:column>
-				<p:column headerText="Face" id="cFaces"
-					rendered="#{!planoTratamentoMB.enableRegioes}">
-					<p:selectCheckboxMenu id="face"
-						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
-						value="#{procedimento.facesSelecionadas}"
-						label="#{procedimento.facesSelecionadasStr}"
-						rendered="#{procedimento.procedimento.quantidadeFaces > 0}">
-						<p:ajax process="@this"
-							listener="#{planoTratamentoMB.actionPersistFaces(procedimento)}"
-							update=":lume:tabViewPaciente:procedimentosOdontograma,@this,:lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
-						<f:selectItems value="#{procedimento.faces}" var="face"
-							itemValue="#{face}" itemLabel="#{face}" />
-					</p:selectCheckboxMenu>
-				</p:column>
+				
 				<p:column headerText="Região"
 					rendered="#{planoTratamentoMB.enableRegioes}">
 					<p:selectOneMenu id="regioes" value="#{procedimento.regiao}"

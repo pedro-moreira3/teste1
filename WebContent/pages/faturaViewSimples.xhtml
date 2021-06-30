@@ -818,7 +818,7 @@ body .height31 input {
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
-										disabled="#{!l.ativo or l.validado != 'N'}"
+										disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"

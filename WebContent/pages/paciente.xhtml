@@ -87,17 +87,7 @@
 							</p:splitButton>
 						</h:panelGroup>
 
-					</p:panelGrid>
-					<h:panelGroup id="botoes" styleClass="tableButtons">
-						<p:commandButton icon="fa fa-file-excel-o"
-							process="dtPrincipalPacientes"
-							styleClass="BotaoCrud Exportar green-btn" ajax="false"
-							id="btExporExcel" immediate="true">
-							<p:dataExporter type="xls" target="dtPrincipalPacientes"
-								fileName="pacientes" pageOnly="false" encoding="ISO-8859-1" />
-							<p:tooltip value="Exportar tabela para Excel" for="btExporExcel" />
-						</p:commandButton>
-					</h:panelGroup>
+					</p:panelGrid>					
 
 					<p:focus context=":lume:hiddenFocus" />
 					<p:outputLabel id="hiddenFocus" style="display:hidden" />
