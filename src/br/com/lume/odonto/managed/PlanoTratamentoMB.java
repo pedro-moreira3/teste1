@@ -245,6 +245,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private String observacoesDetalhes;
 
     private String observacoesAdicionarProcedimento;
+    private RegiaoDente regiaSomenteFaces;
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -949,6 +950,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionAdicionarProcedimentoDiagnostico(ActionEvent event) {
         try {
+            
             if (getEntity() != null) {
 
                 PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().carregaProcedimento(getEntity(), procedimentoSelecionado, getPaciente());
@@ -964,6 +966,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().getPlanoTratamentoProcedimentos().add(ptp);
                 calculaValorTotal();
                 PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
+                
+                for (RegiaoDente rd : getDiagnosticosDentes()) {
+                    PlanoTratamentoProcedimentoRegiao ptpr = PlanoTratamentoProcedimentoRegiaoSingleton.getInstance().getBo().findByRegiaoDente(rd);
+                    if(ptpr == null) {
+                        ptpr =  new PlanoTratamentoProcedimentoRegiao();
+                        ptpr.setRegiaoDente(rd);
+                        ptpr.setAtivo(true);
+                        ptpr.setTipoRegiao(TipoRegiao.DENTE);              
+                    }
+                    ptpr.setPlanoTratamentoProcedimento(ptp);
+                    PlanoTratamentoProcedimentoRegiaoSingleton.getInstance().getBo().persist(ptpr);
+                }
+              
+                
                 if (enableRegioes) {
                     carregarProcedimentosComRegiao();
                 } else {
@@ -2261,9 +2277,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public void actionPersistFacesStatusDente(RegiaoDente rd) {
-        try {
-            RegiaoDenteSingleton.getInstance().getBo().persist(rd);
+    public void abreSomenteFaces(RegiaoDente rd) {
+        this.regiaSomenteFaces = rd;
+    }
+    
+    public void actionPersistFacesStatusDente() {
+        try {            
+            RegiaoDenteSingleton.getInstance().getBo().persist(regiaSomenteFaces);
+            PlanoTratamentoProcedimentoRegiao ptpr = PlanoTratamentoProcedimentoRegiaoSingleton.getInstance().getBo().findByRegiaoDente(regiaSomenteFaces);
+            if(ptpr == null) {
+                ptpr =  new PlanoTratamentoProcedimentoRegiao();
+                ptpr.setRegiaoDente(regiaSomenteFaces);
+                ptpr.setAtivo(true);
+                ptpr.setTipoRegiao(TipoRegiao.DENTE);              
+            }
+                   
+            ptpr.setRegiaoDente(regiaSomenteFaces);
+            PlanoTratamentoProcedimentoRegiaoSingleton.getInstance().getBo().persist(ptpr);
+            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -3439,6 +3470,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setNovaDataAprovacao(Date novaDataAprovacao) {
         this.novaDataAprovacao = novaDataAprovacao;
+    }
+
+    
+    public RegiaoDente getRegiaSomenteFaces() {
+        return regiaSomenteFaces;
+    }
+
+    
+    public void setRegiaSomenteFaces(RegiaoDente regiaSomenteFaces) {
+        this.regiaSomenteFaces = regiaSomenteFaces;
     }
 
     //  public boolean isRenderizarObservacoesCobranca() {

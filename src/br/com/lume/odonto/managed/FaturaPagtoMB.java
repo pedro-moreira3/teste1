@@ -397,20 +397,68 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void cancelaLancamento(Lancamento l) {
         try {
-            if (l.getValidadoPorProfissional() == null) {
-                LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
-                //FaturaSingleton.getInstance().ajustarFaturaGenerica(l.getFatura(), UtilsFrontEnd.getProfissionalLogado());
-                this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
-            } else {
-                if (isAdmin()) {
-                    cancelaLancamentoValidado(l);
-                    //  FaturaSingleton.getInstance().ajustarFaturaGenerica(l.getFatura(), UtilsFrontEnd.getProfissionalLogado());
+
+            if (!l.getValidado().equals('N')) {
+                if (l.getValidadoPorProfissional() == null) {
+                    LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
+                    //FaturaSingleton.getInstance().ajustarFaturaGenerica(l.getFatura(), UtilsFrontEnd.getProfissionalLogado());
+                    this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
                 } else {
-                    this.addError("Permissão negada !", Mensagens.getMensagem(Mensagens.PERMISSAO_NEGADA));
+                    if (isAdmin()) {
+                        cancelaLancamentoValidado(l);
+                        //  FaturaSingleton.getInstance().ajustarFaturaGenerica(l.getFatura(), UtilsFrontEnd.getProfissionalLogado());
+                    } else {
+                        this.addError("Permissão negada !", Mensagens.getMensagem(Mensagens.PERMISSAO_NEGADA));
+                    }
                 }
+
+                updateValues(getEntity(), true, false);
+            }else {
+                //TODO colocar isso em um metodo
+                Lancamento estorno = new Lancamento();
+                estorno.setAlteradoPor(l.getAlteradoPor());
+                estorno.setAtivo(l.isAtivo());
+                estorno.setConferidoPorProfissional(l.getConferidoPorProfissional());
+                estorno.setCredito(l.getCredito());
+                estorno.setDataAlteracaoStatus(l.getDataAlteracaoStatus());
+                estorno.setDataConferido(l.getDataConferido());
+                estorno.setDataCredito(l.getDataCredito());
+                estorno.setDataCriacao(l.getDataCriacao());
+                estorno.setDataFaturamento(l.getDataFaturamento());
+                estorno.setDataPagamento(l.getDataPagamento());
+                estorno.setDataPagamentoFaturamento(l.getDataPagamentoFaturamento());
+                estorno.setDataValidado(l.getDataValidado());
+                estorno.setFatura(l.getFatura());
+                estorno.setFormaPagamento(l.getFormaPagamento());
+                estorno.setJustificativaAjuste(l.getJustificativaAjuste());
+                estorno.setLancamentoExtornado(l.getLancamentoExtornado());
+                estorno.setNegociacao(l.getNegociacao());
+                estorno.setNumeroParcela(l.getNumeroParcela());
+                estorno.setOrcamento(l.getOrcamento());
+                estorno.setPagamentoConferido(l.getPagamentoConferido());
+                estorno.setParcelaTotal(l.getParcelaTotal());
+                estorno.setPlanoTratamentoProcedimento(l.getPlanoTratamentoProcedimento());
+                estorno.setPt(l.getPt());
+                estorno.setPtp(l.getPtp());
+                estorno.setRecibo(l.getRecibo());
+                estorno.setRfl(l.getRfl());
+                estorno.setTarifa(l.getTarifa());
+                estorno.setTributo(l.getTributo());
+                estorno.setUsed(l.isUsed());
+                estorno.setValidado(l.getValidado());
+                estorno.setValidadoPorProfissional(l.getValidadoPorProfissional());
+                
+                estorno.setValor(l.getValor().negate());                
+                estorno.setValorDesconto(l.getValorDesconto().negate());                
+                estorno.setValorOriginal(l.getValorOriginal().negate());
+                estorno.setValorRepassado(l.getValorRepassado().negate());
+                LancamentoSingleton.getInstance().getBo().persist(estorno);
+                
+                
+               
             }
 
-            updateValues(getEntity(), true, false);
+           
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -1237,7 +1285,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             Documento documento = DocumentoSingleton.getInstance().getBo().findByDescricao("Recibo com valor do recebimento");
 
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Recibo");
-            
+
             //TODO arrumar construtor pra isso
             if (documento == null) {
                 documento = new Documento();
@@ -1249,7 +1297,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 documento.setDescricao("Recibo com valor do recebimento");
                 documento.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
                 DocumentoSingleton.getInstance().getBo().persist(documento);
-            }            
+            }
 
             DocumentoEmitido de = new DocumentoEmitido(this.htmlReciboContent, documento, dominio, UtilsFrontEnd.getProfissionalLogado(), getEntity().getPaciente(), null, new Date());
 
