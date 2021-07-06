@@ -524,6 +524,27 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
         return StringUtils.containsIgnoreCase(removerAcentos((String) value), removerAcentos(filterText));
     }
+    
+    public boolean filtroCpfCnpj(Object value, Object filter, Locale locale) {
+
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if (StringUtils.isBlank(filterText)) {
+            return true;
+        }
+
+        if (value == null) {
+            return false;
+        }
+
+        return StringUtils.containsIgnoreCase(removerPontosBarrasTracos((String) value), removerPontosBarrasTracos(filterText));
+    }
+    
+    private String removerPontosBarrasTracos(String str) {
+        String c;
+        c = Normalizer.normalize(str, Normalizer.Form.NFD);
+        c = c.replaceAll("\\D", "");
+        return c;
+    }
 
     private String removerAcentos(String str) {
         String c;
