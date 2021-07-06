@@ -184,10 +184,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<h1>Relatório de Relacionamento</h1>
-
+					<p:outputPanel id="painelGeral">
+						<p:outputPanel id="mensagemExecucao" rendered="#{relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
+							<br/>						
+							<h1 style="font-size: 24px !important;" align="center">
+								<p:outputLabel style="font-size:">Atenção! Relatório em execução, recarregue essa página em alguns minutos.</p:outputLabel>
+							</h1>
+							<br/>
+						</p:outputPanel>
+						
 					<p:separator styleClass="SeparatorFull" />
 
-					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="false"
+					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="false"  rendered="#{!relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}"
 						toggleSpeed="500">
 						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
@@ -390,8 +398,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
 								value="Pesquisar"
 								actionListener="#{relatorioPacienteAgendamentoMB.actionFiltrar}"
-								update=":lume:dtPrincipalRelatorio" tabindex="1"
-								process="@this,:lume:filtroRelatorio" styleClass="OrangeButton" />
+								update=":lume:dtPrincipalRelatorio,:lume:painelGeral,:lume:mensagemExecucao,:lume:filtroRelatorio" tabindex="1"
+								process="@this,:lume:painelGeral,:lume:mensagemExecucao,:lume:filtroRelatorio" styleClass="OrangeButton" />
 
 							<h:panelGroup>
 								<p:commandButton value="Imprimir"
@@ -437,7 +445,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
-					<p:outputPanel>
+					<p:outputPanel rendered="#{!relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
 						<p:dataTable id="dtPrincipalRelatorio"
 							widgetVar="dtPrincipalRelatorio"
 							value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
@@ -447,95 +455,95 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							selectionMode="single" filterDelay="1000"
 							binding="#{relatorioPacienteAgendamentoMB.tabelaRelatorio}">
 							<f:facet name="header">Pacientes</f:facet>
-							<p:column sortBy="#{p.dadosBasico.nome}"
-								filterBy="#{p.dadosBasico.nome}"
+							<p:column sortBy="#{p.nomePaciente}"
+								filterBy="#{p.nomePaciente}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
-								<p:commandLink value="#{p.dadosBasico.nome}" process="@this"
+								<p:commandLink value="#{p.nomePaciente}" process="@this"
 									title="#{p.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(p)}"
+									actionListener="#{tabPacienteMB.loadPaciente(p.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
 									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 							</p:column>
-							<p:column filterBy="#{p.convenio.dadosBasico.nome}"
-								sortBy="#{p.convenio.dadosBasico.nome}"
+							<p:column filterBy="#{p.convenio}"
+								sortBy="#{p.convenio}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
-								<h:outputText value="#{p.convenio.dadosBasico.nome}" />
+								<h:outputText value="#{p.convenio}" />
 							</p:column>
-							<p:column width="10%" filterBy="#{p.dadosBasico.telefoneStr}"
-								sortBy="#{p.dadosBasico.telefoneStr}"
+							<p:column width="10%" filterBy="#{p.telefonePaciente}"
+								sortBy="#{p.telefonePaciente}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Celular">
-								<h:outputText value="#{p.dadosBasico.telefoneStr}" />
+								<h:outputText value="#{p.telefonePaciente}" />
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									rendered="#{p.dadosBasico.telefoneStr != null}"
-									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p)}'); return false;"
+									rendered="#{p.telefonePaciente != null}"
+									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p.paciente)}'); return false;"
 									styleClass="GreenButton" style="margin-left:10px;" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
 							</p:column>
 							<p:column
-								filterBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
-								sortBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
+								filterBy="#{p.dentistaUltimoAgendamento}"
+								sortBy="#{p.dentistaUltimoAgendamento}"
 								filterMatchMode="contains"
 								headerText="Dentista Último Agendamento">
 								<h:outputText
-									value="#{p.ultimoAgendamento.profissional.dadosBasico.nome}" />
+									value="#{p.dentistaUltimoAgendamento}" />
 							</p:column>
-							<p:column filterBy="#{p.ultimoAgendamento.inicio}"
-								sortBy="#{p.ultimoAgendamento.inicio}"
+							<p:column filterBy="#{p.dataUltimoAgendamento}"
+								sortBy="#{p.dataUltimoAgendamento}"
 								filterMatchMode="contains" headerText="Data Último Agendamento">
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
+									value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataUltimoAgendamento)}" />
 							</p:column>
 							<p:column
-								filterBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}"
-								sortBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}"
+								filterBy="#{p.statusUltimoAgendamento}"
+								sortBy="#{p.statusUltimoAgendamento}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Status Último Agendamento">
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}" />
+									value="#{p.statusUltimoAgendamento}" />
 							</p:column>
-							<p:column filterBy="#{p.proximoAgendamento.inicio}"
-								sortBy="#{p.proximoAgendamento.inicio}" exportable="true"
+							<p:column filterBy="#{p.dataProximoAgendamento}"
+								sortBy="#{p.dataProximoAgendamento}" exportable="true"
 								filterMatchMode="contains" headerText="Data Próximo Agendamento">
 								<p:commandButton icon="fa fa fa-calendar"
-									rendered="#{p.proximoAgendamento.inicio eq '' or p.proximoAgendamento.inicio eq null}"
+									rendered="#{p.dataProximoAgendamento eq '' or p.dataProximoAgendamento eq null}"
 									oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 									title="Agendar" process="@this"
-									action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p,p.ultimoAgendamento.profissional)}"
+									action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p.paciente,p.profissional)}"
 									update="lume:pnAgendamento" style="width: 33px !important" />
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" />
+									value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataProximoAgendamento)}" />
 							</p:column>
 							<p:column
-								filterBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}"
-								sortBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}"
+								filterBy="#{p.statusProximoAgendamento}"
+								sortBy="#{p.statusProximoAgendamento}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Status Próximo Agendamento">
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}" />
+									value="#{p.statusProximoAgendamento}" />
 							</p:column>
-							<p:column filterBy="#{p.proximoRetorno.dataRetorno}"
-								sortBy="#{p.proximoRetorno.dataRetorno}"
+							<p:column filterBy="#{p.dataProximoRetorno}"
+								sortBy="#{p.dataProximoRetorno}"
 								filterMatchMode="contains" headerText="Data Próximo Retorno">
 								<ui:remove>
 									<p:commandButton icon="fa fa fa-mail-reply"
-										rendered="#{p.proximoRetorno.dataRetorno eq '' or p.proximoRetorno.dataRetorno eq null}"
+										rendered="#{p.dataProximoRetorno eq '' or p.dataProximoRetorno eq null}"
 										oncomplete="PF('dlgViewRetorno').show();"
 										title="Marcar Retorno" process="@this"
-										action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p)}"
+										action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p.paciente)}"
 										update="lume:pnAgendamento,:lume:dlgViewRetorno"
 										style="width: 33px !important" />
 								</ui:remove>
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
+									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.dataProximoRetorno)}" />
 							</p:column>
 						</p:dataTable>
 					</p:outputPanel>
-
+</p:outputPanel>
 					<p:dialog widgetVar="eventDialog" header="Agendamento"
 						resizable="false" id="pnAgendamento" responsive="true"
 						position="10,10" modal="true"
@@ -861,21 +869,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<c:forEach var="p"
 										items="#{relatorioPacienteAgendamentoMB.pacientes}">
 										<tr>
-											<td><h:outputText value="#{p.dadosBasico.nome}" /></td>
-											<td><h:outputText value="#{p.convenio.dadosBasico.nome}" /></td>
-											<td><h:outputText value="#{p.dadosBasico.telefoneStr}" /></td>
+											<td><h:outputText value="#{p.paciente.dadosBasico.nome}" /></td>
+											<td><h:outputText value="#{p.paciente.convenio.dadosBasico.nome}" /></td>
+											<td><h:outputText value="#{p.paciente.dadosBasico.telefoneStr}" /></td>
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
+													value="#{relatorioPacienteAgendamentoMB.formatarData(p.paciente.ultimoAgendamento.inicio)}" />
 											</td>
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}" /></td>
+													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.paciente.ultimoAgendamento)}" /></td>
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" /></td>
+													value="#{relatorioPacienteAgendamentoMB.formatarData(p.paciente.proximoAgendamento.inicio)}" /></td>
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}" />
+													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.paciente.proximoAgendamento)}" />
 											</td>
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
+													value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.paciente.proximoRetorno.dataRetorno)}" />
 											</td>
 										</tr>
 									</c:forEach>
