@@ -662,7 +662,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
                     if (itemOrigem != null) {
                         valorProcedimento = itemOrigem.getValorComDesconto();
-                    } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
+                    } else if (ptp.getOrcamentoProcedimentos() != null && ptp.getOrcamentoProcedimentos().size() > 0 && ptp.getOrcamentoProcedimentos().get(0) != null && ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem() != null) {
                         valorProcedimento = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getValor();
                     } else if (ptp != null && ptp.getProcedimento() != null) {
                         valorProcedimento = ptp.getProcedimento().getValor();
