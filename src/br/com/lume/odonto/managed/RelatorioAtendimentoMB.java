@@ -14,14 +14,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
-import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
@@ -36,13 +35,8 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.RelatorioAgendaColunas;
-import br.com.lume.odonto.entity.RelatorioAgendaTags;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.relatorioAgenda.RelatorioAgendaColunasSingleton;
-import br.com.lume.relatorioAgenda.RelatorioAgendaTagsSingleton;
-
 
 @ManagedBean
 @ViewScoped
@@ -52,9 +46,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private Logger log = Logger.getLogger(AgendamentoMB.class);
 
+    private PieChartModel pieModel;
+
     private List<String> filtroAtendimento;
 
-    private List<RelatorioAgendaColunas> listaAtendimentos;
+    private List<Agendamento> listaAtendimentos;
 
     private List<Agendamento> agendamentos;
 
@@ -87,60 +83,24 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private boolean mostrarSomenteConsultaInicial = false;
     
-    private boolean mostraMensagemEmExecucao;
-    
     public RelatorioAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
-        
+        pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
         
-        RelatorioAgendaTags tag = RelatorioAgendaTagsSingleton.getInstance().getBo().findByEmpresa(UtilsFrontEnd.getEmpresaLogada());
-       
-         if(tag != null && tag.isEmExecucao()) {
-             mostraMensagemEmExecucao = true;
-         }else {
-             mostraMensagemEmExecucao = false;
-             // pieModel = new PieChartModel();          
-             
-             if (filtroAtendimento == null) {
-                 this.filtroAtendimento = new ArrayList<String>();
-             }
+        if (filtroAtendimento == null) {
+            this.filtroAtendimento = new ArrayList<String>();
+        }
 
-             if(this.listaConvenios == null)
-                 this.listaConvenios = new LinkedList<String>();
-             
-             sugestoesConvenios("todos");
-             marcarFiltros();             
-            
-             if(tag != null) {
-                
-                 this.filtroPeriodo = ""+tag.getFiltroPeriodo();
-                 this.dataInicio = tag.getDataDe();
-                 this.dataFim = tag.getDataAte();
-                 this.filtroPorPaciente = tag.getPaciente();
-                 this.filtroPorProfissional = tag.getDentistaExecutor();
-                 this.filtroPorProfissionalUltAlteracao = tag.getProfissionalAlteracao();
-                 this.filtroPorProfissionalUltAgendamento = tag.getProfissionalAgendamento();
-                 if(tag.getConvenio() != null) {
-                     this.filtroPorConvenio = tag.getConvenio().getDadosBasico().getNome();    
-                 }                 
-                 this.mostrarSomenteConsultaInicial = tag.isMostrarSomenteInicial();
-                 this.checkFiltro = tag.isMostrarTodosAgendamentos();                
-                 String[] ary = tag.getListaStatus().split(",");     
-                 this.filtroAtendimento.addAll(Arrays.asList(ary));
-                 
-                 this.listaAtendimentos = RelatorioAgendaColunasSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada());
-             }             
-         } 
+        if(this.listaConvenios == null)
+            this.listaConvenios = new LinkedList<String>();
+        
+        sugestoesConvenios("todos");
+        marcarFiltros();
     }
 
     public void popularLista() {
         try {
-            
-            if(mostraMensagemEmExecucao) {
-                this.addError("Relatório em execução", "Aguarde alguns minutos e recarregue a tela");
-                return;
-            }
 
              if(getDataInicio() == null && getDataFim() == null && filtroPorPaciente == null && 
                      filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals("todos") && filtroPorProfissionalUltAgendamento == null) {
@@ -165,31 +125,63 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 c.set(Calendar.SECOND, 59);  
                 dataFinal = c.getTime();
                 
+                
                 if (validarIntervaloDatas()) {
-                         
-                    String filtroStatus = "";
-                    for (String filtro : filtroAtendimento) {
-                        filtroStatus += filtro + ",";
+                //    filtroPorProfissionalUltAgendamento
+                    this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal, getFiltroPorProfissional(),
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
+
+                   Convenio convenio = this.getConvenio(getFiltroPorConvenio());
+                    if(convenio != null && convenio.getId() != 0) {                      
+                        getListaAtendimentos().removeIf(agendamento -> agendamento.getPlanoTratamento() == null ||  agendamento.getPlanoTratamento().getConvenio() == null ||
+                                !agendamento.getPlanoTratamento().getConvenio().equals(convenio)                                
+                                );   
                     }
-                    filtroStatus = StringUtils.chop(filtroStatus);
                     
-                    RelatorioAgendaColunasSingleton.getInstance().getBo().removeAllFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
-                    RelatorioAgendaTagsSingleton.getInstance().getBo().removeAllFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
+                    if (this.listaConvenios == null)
+                        this.listaConvenios = new ArrayList<>();
+
+                    this.sugestoesConvenios("todos");
+                    this.removerFiltrosAgendamento(this.getListaAtendimentos());
+
+                }
+            }else {
+                
+                if (validarIntervaloDatas()) {
+
+                    this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(this.dataInicio, this.dataFim, getFiltroPorProfissional(),
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroPorProfissionalUltAgendamento));
+
+                    this.getConvenio(getFiltroPorConvenio());
                     
-                    RelatorioAgendaTags tags = new RelatorioAgendaTags(filtroPeriodo.charAt(0), new Date(), dataInicial, dataFinal, true, mostrarSomenteConsultaInicial, this.checkFiltro, 
-                            filtroStatus, UtilsFrontEnd.getEmpresaLogada(), 
-                            getFiltroPorPaciente(), getFiltroPorProfissional(), getFiltroPorProfissionalUltAlteracao(), 
-                            getFiltroPorProfissionalUltAgendamento(),  this.getConvenio(getFiltroPorConvenio()));
-                    RelatorioAgendaTagsSingleton.getInstance().getBo().persist(tags);
-                    
-                    tags =  RelatorioAgendaTagsSingleton.getInstance().getBo().find(tags);
-                    
-                    geraRelatorioAsync(tags);
-                    mostraMensagemEmExecucao = true;
+                    if (this.listaConvenios == null)
+                        this.listaConvenios = new ArrayList<>();
+
+                    this.sugestoesConvenios("todos");
+                    this.removerFiltrosAgendamento(this.getListaAtendimentos());
+
                 }
                 
-            }  
-           
+            }
+            
+            //
+            if(mostrarSomenteConsultaInicial) {
+                List<Agendamento> agendamentosComConsultaInicial = new ArrayList<Agendamento>();
+                for (Agendamento agendamento : this.getListaAtendimentos()) {
+                    //TODO melhor jeito para mostrar consulta Inicial
+                    if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
+                        for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
+                            if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
+                                    aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
+                                    aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
+                                    ) {
+                                agendamentosComConsultaInicial.add(agendamento);
+                            }
+                        }
+                    }
+                }
+                this.setListaAtendimentos(agendamentosComConsultaInicial);
+            }
 
             
 
@@ -199,80 +191,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
     }
     
-    
-    private void geraRelatorioAsync(RelatorioAgendaTags tags) {
-
-        Thread th = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    
-                    List<Agendamento> listaAgendamentos = new ArrayList<Agendamento>();
-     
-                    removerFiltrosAgendamento(listaAgendamentos);
-
-                    if(tags.isMostrarSomenteInicial()) {                        
-                    
-                        for (Agendamento agendamento : listaAgendamentos) {                
-                            if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
-                                for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
-                                    if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
-                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
-                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
-                                            ) {
-                                        listaAgendamentos.add(agendamento);
-                                    }
-                                }
-                            }
-                        }                        
-                    }else {
-
-                        listaAgendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(tags.getDataDe(), tags.getDataAte(),
-                                tags.getProfissionalAgendamento(), tags.getProfissionalAlteracao(), tags.getPaciente(), 
-                                tags.getEmpresa().getEmpIntCod(),tags.getProfissionalAgendamento());                  
-                        
-                       Convenio convenio = tags.getConvenio();
-                      
-                       if(convenio != null && convenio.getId() != 0) {                      
-                           listaAgendamentos.removeIf(agendamento -> agendamento.getPlanoTratamento() == null ||  agendamento.getPlanoTratamento().getConvenio() == null ||
-                                    !agendamento.getPlanoTratamento().getConvenio().equals(convenio)                                
-                                    );   
-                        }
-                        
-                    }
-                    List<RelatorioAgendaColunas> colunas = new ArrayList<RelatorioAgendaColunas>();
-                    for (Agendamento agendamento : listaAgendamentos) {                        
-                        
-                        String convenioStr = "";
-                        if(agendamento.getPlanoTratamento() != null && agendamento.getPlanoTratamento().getConvenioStr() != null) {
-                            convenioStr = agendamento.getPlanoTratamento().getConvenioStr();
-                        }
-                        
-                    
-                        RelatorioAgendaColunas coluna = new RelatorioAgendaColunas(agendamento.getInicio(), agendamento.getPaciente().getDadosBasico().getNome(), agendamento.getPaciente().getDadosBasico().getTelefoneStr(), convenioStr,
-                                agendamento.getProfissional().getDadosBasico().getNome(), verificaSeTemAgendamentoInicial(agendamento), getStatusDescricao(agendamento), tags.getEmpresa(), agendamento.getPaciente(), agendamento, agendamento.getProfissional(), tags);
-                        colunas.add(coluna);                      
-                    }
-                    RelatorioAgendaColunasSingleton.getInstance().getBo().persistBatch(colunas);
-                    
-                    tags.setEmExecucao(false);
-                    RelatorioAgendaTagsSingleton.getInstance().getBo().persist(tags);
-                    
-                    
-                } catch (Exception e) {
-                    LogIntelidenteSingleton.getInstance().makeLog(e);
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        th.start();
-
-    }
-    
-    public String verificaSeTemAgendamentoInicial(Agendamento agendamento) {      
+    public String verificaSeTemAgendamentoInicial(Agendamento agendamento) {
+        //TODO melhor jeito para mostrar consulta Inicial
         if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
             for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
                 if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
@@ -378,6 +298,27 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         } else {
             return false;
         }
+    }
+
+    private boolean validaData() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(this.getDataInicio());
+        c.add(Calendar.DAY_OF_MONTH, -1);
+        Date start = c.getTime();
+
+        c.setTime(this.getDataFim());
+        c.add(Calendar.DAY_OF_MONTH, +1);
+        Date end = c.getTime();
+
+        List<Agendamento> agendamentoBloqueado = geraAgendamentoAfastamentoByProfissional(start, end, this.filtroPorProfissional);
+        for (Agendamento agnd : agendamentoBloqueado) {
+            if (this.getDataInicio().after(agnd.getInicio()) && this.getDataInicio().before(agnd.getFim()) || this.getDataFim().after(agnd.getInicio()) && this.getDataFim().before(
+                    agnd.getFim()) || this.getDataFim().getTime() == agnd.getFim().getTime() || this.getDataInicio().getTime() == agnd.getInicio().getTime() || agnd.getInicio().after(
+                            this.getDataInicio()) && agnd.getInicio().before(this.getDataFim()) || agnd.getFim().after(this.getDataInicio()) && agnd.getFim().before(this.getDataFim())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<Agendamento> geraAgendamentoAfastamentoByProfissional(Date start, Date end, Profissional profissional) {
@@ -525,13 +466,13 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         exportarTabela("Relatorio Agendamento", tabelaAgendamento, type);
     }
 
-//    public PieChartModel getPieModel() {
-//        return pieModel;
-//    }
-//
-//    public void setPieModel(PieChartModel pieModel) {
-//        this.pieModel = pieModel;
-//    }
+    public PieChartModel getPieModel() {
+        return pieModel;
+    }
+
+    public void setPieModel(PieChartModel pieModel) {
+        this.pieModel = pieModel;
+    }
 
     public List<Agendamento> getAgendamentos() {
         return agendamentos;
@@ -569,11 +510,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         this.cadeiras = cadeiras;
     }
 
-    public List<RelatorioAgendaColunas> getListaAtendimentos() {
+    public List<Agendamento> getListaAtendimentos() {
         return listaAtendimentos;
     }
 
-    public void setListaAtendimentos(List<RelatorioAgendaColunas> listAtendimentos) {
+    public void setListaAtendimentos(List<Agendamento> listAtendimentos) {
         this.listaAtendimentos = listAtendimentos;
     }
 
@@ -699,15 +640,5 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public void setFiltroPorProfissionalUltAgendamento(Profissional filtroPorProfissionalUltAgendamento) {
         this.filtroPorProfissionalUltAgendamento = filtroPorProfissionalUltAgendamento;
-    }
-
-    
-    public boolean isMostraMensagemEmExecucao() {
-        return mostraMensagemEmExecucao;
-    }
-
-    
-    public void setMostraMensagemEmExecucao(boolean mostraMensagemEmExecucao) {
-        this.mostraMensagemEmExecucao = mostraMensagemEmExecucao;
     }
 }
