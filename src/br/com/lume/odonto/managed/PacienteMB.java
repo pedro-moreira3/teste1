@@ -185,7 +185,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<DocumentoEmitido> listaDocumentos;
     
     private String modeloHtml;
-    private boolean mostraCabecalho = false;
+    private boolean mostraCabecalho = true;
     private boolean mostraLogo = false;
     private boolean mostraRodape = false;
     private boolean mostraLogoCentral = false;
@@ -829,6 +829,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
         }
         anamneses.addAll(ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas));
+    }
+    
+    public void montaCabecalho() {
+
     }
 
     public void actionAnamnesePersist(ActionEvent event) {
