@@ -188,8 +188,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:outputPanel id="mensagemExecucao" rendered="#{relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
 							<br/>						
 							<h1 style="font-size: 24px !important;" align="center">
-								<p:outputLabel style="font-size:">Atenção! Relatório em execução, recarregue essa página em alguns minutos.</p:outputLabel>
+								<p:outputLabel style="font-size:">Atenção! Relatório em execução, recarregue essa página em alguns minutos.</p:outputLabel>								
 							</h1>
+							<br/>
+							  <h:panelGroup style="display:block; text-align:center">
+								<p:commandButton value="Recarregar Página" style="max-width:200px"
+									oncomplete="location.reload();"
+									icon="White fa fa-repeat"								
+									styleClass=""/>
+								</h:panelGroup>	
 							<br/>
 						</p:outputPanel>
 						
