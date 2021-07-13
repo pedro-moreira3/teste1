@@ -440,6 +440,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             formaPagamentoDigitacao = null;
 
             getEntity().setDadosBasico(null);
+            getEntity().setDescricao(null);
             this.getEntity().setMotivo(null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -447,36 +448,35 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.editando = false;
         ///   super.actionNew(event);
     }
+    
+   
+    public void actionPersistContinuar(ActionEvent event) {
+        actionPersist(event);
+        
+        actionNew(event);
+        
+    //    setEntity(new LancamentoContabil());
+       // lancamentoContabilMB.entity.dadosBasic
+        //   lancamentoContabilMB.entity.motivo
+        //lancamentoContabilMB.entity.data
+        //lancamentoContabilMB.entity.valor
+        //lancamentoContabilMB.entity.descricao
+//this.tipoCategoria
+//this.categoria  
+//this.formaPagamentoDigitacao
+//        this.recorrente
+//this.diasRecorrente
+//this.quantidadeVezesRecorrencia
+    }
+    
+    public void actionPersistFechar(ActionEvent event) {
+        actionPersist(event);        
+        PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
+    }
 
     @Override
     public void actionPersist(ActionEvent event) {
-//        if (this.getEntity().getData() == null) {
-//            this.getEntity().setData(new Date());
-//        }
-//        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//        this.getEntity().setTipo(this.getEntity().getMotivo().getTipo());
-//        if (!this.getEntity().getTipo().equals("Inicial")) {
-//            boolean isPagamentoProfissional = false;
-//            if (this.getEntity().getMotivo().getSigla() != null && this.getEntity().getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)) {
-//                isPagamentoProfissional = true;
-//            }
-//            if (this.getEntity().getTipo().equals("Pagar") && !isPagamentoProfissional) {
-//                if (this.getEntity().getValor().compareTo(BigDecimal.ZERO) > 0) {
-//                    this.getEntity().setValor((this.getEntity().getValor().negate()));
-//                }
-//            }
-//        } else {
-//            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//            if (lc != null) {
-//                lc.setValor(this.getEntity().getValor());
-//                this.setEntity(lc);
-//                this.addInfo("Valor do saldo inical alterado.", "");
-//            } else {
-//                this.addInfo("Valor do saldo inical salvo.", "");
-//            }
-//        }
-//        super.actionPersist(event);
-//        validarLC(this.getEntity());
+
         if (!editando) {
             criarFaturaGenerica(this.getEntity());
             getEntity().setValor(null);
@@ -507,7 +507,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         actionNew(null);
         geraLista();
         updateSomatorio();
-        PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
+        
         this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
     }
 

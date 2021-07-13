@@ -69,10 +69,30 @@
 							<p:inputText id="telCelular" value="#{fornecedorMB.entity.dadosBasico.celular}" styleClass="telefone"/>
 
 							<p:outputLabel for="contato" value="Contato : " />
-							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}"  maxlength="200" />
+							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}"  maxlength="200" />							
+							<p:column></p:column>
+							<p:column></p:column>
+							<h:panelGroup style="display:block;margin-left:3px;">
+								<p:selectBooleanCheckbox id="dedutivel"								
+									value="#{fornecedorMB.entity.dedutivel}">									
+								</p:selectBooleanCheckbox>
+								<p:outputLabel for="dedutivel" value="Conta Dedutível" />
+							</h:panelGroup>
 							
-							<p:column></p:column>
-							<p:column></p:column>
+							
+							
+						</p:panelGrid>
+						<p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="tipo" value="Tipo de Fornecedor" />
+							<p:selectOneRadio id="tipo" columns="6"
+									value="#{fornecedorMB.entity.tipo}">
+								<f:selectItem itemLabel="Serviços" itemValue="S" />
+								<f:selectItem itemLabel="Produtos" itemValue="P" />
+								<f:selectItem itemLabel="Mão de Obra" itemValue="M" />							
+								<f:selectItem itemLabel="Insumos" itemValue="M" />							
+								<f:selectItem itemLabel="Outros" itemValue="O" />			
+							</p:selectOneRadio>							
 						</p:panelGrid>				
 							<br />
 							<div class="SeparatorFull"></div>

@@ -1114,7 +1114,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:commandButton id="pesquisarDetalhado"
 												icon="fa fa-search White" value="Pesquisar"
 												actionListener="#{relatorioContabilDetalhadoMB.filtra}"
-												update="extratoDetalhado,painelCheckbox"
+												update="extratoDetalhado,painelCheckbox,"
 												process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado,painelCheckbox"
 												styleClass="NavyButton" />
 											<p:commandButton id="limparDetalhado"
@@ -1125,19 +1125,58 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												icon="White fa fa-print" styleClass="NavyButton">
 												<p:printer target="extratoDetalhado" />
 											</p:commandButton>
+											
+											<p:commandButton id="imprimirDrc" ype="button"	
+												value="Imprimir DRC" styleClass="NavyButton"										
+												icon="fa fa-print White" process="@this"
+												oncomplete="PF('dlgImprimirDrc').show()"
+												update="lume:painelDrc" immediate="true"
+												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}"
+											 >												
+											 </p:commandButton>
+											 
+											
 										</p:panelGrid>
 										<div class="SeparatorFull"></div>
 										<br />
 										<p:panel>
 											<h:outputLabel id="extratoDetalhado"
 												value="#{relatorioContabilDetalhadoMB.extrato}"
-												escape="false" />
-										</p:panel>
+												escape="false" />												
+										</p:panel>				
+														
 									</p:outputPanel>
 								</div>
 							</div>
 						</p:tab>
 					</p:tabView>
+					
+					
+					
+					
+					<p:dialog id="dlgImprimirDrc" widgetVar="dlgImprimirDrc"
+						appendTo=":lume" header="Imprimir DRC" height="600" width="800">
+
+						<p:panel id="painelDrc">
+							<h:outputLabel id="drc"
+							value="#{relatorioContabilDetalhadoMB.drc}"
+							escape="false" />	
+						</p:panel>
+						<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
+							<h:panelGroup>
+								<p:commandButton value="Imprimir DRC" type="button"										
+											icon="White fa fa-print" styleClass="NavyButton">
+											<p:printer target="painelDrc" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Fechar" styleClass="NavyButton"
+									process="@this" oncomplete="PF('dlgImprimirDrc').hide();" />
+							</h:panelGroup>
+						</p:panelGrid>		
+					</p:dialog>
 
 					<p:dialog id="dlgAjustarValor" widgetVar="dlgAjustarValor"
 						appendTo=":lume" header="Ajustar valor" height="150" width="400">
@@ -1399,17 +1438,25 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								</p:panelGrid>
 
-								<p:panelGrid columns="2" layout="grid"
+								<p:panelGrid columns="3" layout="grid"
 									styleClass="ui-panelgrid-blank form-group ui-fluid"
-									columnClasses="ui-g-6,ui-g-6">
+									columnClasses="ui-g-4,ui-g-4,ui-g-4">
+
+									<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+									process="@this,pnRecorrente,gridDados"
+									value="Salvar e Continuar"
+									actionListener="#{lancamentoContabilMB.actionPersistContinuar}"
+									update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples"
+									oncomplete="PF('dtLancamentoContabil').filter()" />
 
 									<p:commandButton id="persist" icon="White fa fa-save"
-										value="Salvar"
-										actionListener="#{lancamentoContabilMB.actionPersist}"
-										update=":lume:pnNovoPagamentoRecebimento,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
-										process="@this,:lume:dadosBasicos,motivo,data,valor,formaDigitacao,descricao,diasRecorrente,quantidadeRecorrencia"
-										oncomplete="PF('dtLancamentoContabil').filter()"
+										value="Salvar e Fechar"
+										actionListener="#{lancamentoContabilMB.actionPersistFechar}"
+										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
+										process="@this,pnRecorrente,gridDados"										
+										oncomplete="PF('dtLancamentoContabil').filter();"
 										styleClass="GreenButton" />
+										
 									<p:commandButton value="Fechar" icon="White fa fa-close"
 										process="@this"
 										oncomplete="PF('dlgNovoPagamentoRecebimento').hide()"

@@ -168,19 +168,18 @@
 							
 						<h:panelGroup id="perguntasEspecialidade" rendered="#{pacienteMB.mostrarPerguntasAnamnese}">
 						
-		<p:panel  id="impressaoDocPai2" style="border:0px">
-		
-				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogo}">
+		<p:panel  id="impressaoDocPai2" style="border:0px;height:70px">		
+				<p:outputPanel rendered="#{pacienteMB.mostraLogo}">
 						<table style="width: 100%; border-collapse: collapse;">
 							<thead>
 								<tr>
 									<th style="border:0px; padding: 5px; width: 10%">
-										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo2" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+										<p:graphicImage  rendered="#{pacienteMB.mostraLogo}" styleClass="Fleft" id="logo2" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
 									</th>
 									<th style="border: 0px; padding: 5px; width: 90%;text-align:left">
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>
 									
 									</th>	
 								
@@ -189,25 +188,25 @@
 								</thead>
 						</table>	
 				</p:outputPanel>
-				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogoCentral}">
+				<p:outputPanel rendered="#{pacienteMB.mostraLogoCentral}">
 					<table style="width: 100%; border-collapse: collapse;">
 							<thead>
 								<tr>
 									<th style="border:0px; padding: 5px; width: 100%;">
-										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogoCentral}" id="logoCentral2" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
+										<p:graphicImage  rendered="#{pacienteMB.mostraLogoCentral}" id="logoCentral2" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
 									</th>
 								</tr>
 							</thead>
 						</table>	
 				</p:outputPanel>		
-				<p:outputPanel rendered="#{!emissaoDocumentoMB.mostraLogo}">	
+				<p:outputPanel rendered="#{!pacienteMB.mostraLogo}">	
 						<table style="width: 100%; border-collapse: collapse;">
 							<thead>
 								<tr>									
 									<th style="border: 0px; padding: 5px; width: 100%;text-align:left">
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>				
+										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{pacienteMB.mostraCabecalho}"></p:outputLabel>
 									
 									</th>
 								</tr>
@@ -346,6 +345,9 @@
 								</p:outputPanel>
 								<br />
 							</ui:repeat>
+							_________________________________________________________
+							<br/>
+							<p:outputLabel>#{pacienteMB.entity.dadosBasico.nome}</p:outputLabel>
 						</h:panelGroup>
 						</p:outputPanel>
 					</div>
@@ -358,30 +360,30 @@
 		
 			<h:panelGroup style="display:block;margin-left:3px;">
 					<p:selectBooleanCheckbox id="cabecalhoEmpresa2"
-						value="#{emissaoDocumentoMB.mostraCabecalho}">
+						value="#{pacienteMB.mostraCabecalho}">
 						<p:ajax event="change" process="@this"
 							update="impressaoDocPai2"
-							listener="#{emissaoDocumentoMB.montaCabecalho}" />
+							listener="#{pacienteMB.montaCabecalho}" />
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="cabecalhoEmpresa2" value="Incluir cabeçalho" />
 					
 					<p:spacer width="20" height="0" />
 					
 					<p:selectBooleanCheckbox id="logoCabecalho2"
-						value="#{emissaoDocumentoMB.mostraLogo}">
+						value="#{pacienteMB.mostraLogo}">
 						<p:ajax event="change" process="@this"
 							update="impressaoDocPai2"
-							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							listener="#{pacienteMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>	
 					<p:outputLabel for="logoCabecalho2" value="Incluir logo" />	
 						
 					<p:spacer width="20" height="0" />
 					<p:selectBooleanCheckbox id="mostraLogoCentral2"
-						value="#{emissaoDocumentoMB.mostraLogoCentral}">
+						value="#{pacienteMB.mostraLogoCentral}">
 						<p:ajax event="change" process="@this"
 							update="impressaoDocPai2"
-							listener="#{emissaoDocumentoMB.montaCabecalho}"
+							listener="#{pacienteMB.montaCabecalho}"
 							/>
 					</p:selectBooleanCheckbox>						
 					<p:outputLabel for="mostraLogoCentral2" value="Incluir logo centralizada" />
