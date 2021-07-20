@@ -1533,7 +1533,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														<p:commandButton icon="fa fa-repeat"
 															styleClass="NavyButton" title="Recalcular Repasse"
 															rendered="#{repasseProfissionalComReciboMB.admin}"
-															actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
+															actionListener="#{repasseProfissionalComReciboMB.recalcularRepasse(ptp)}"
 															process="@this,dtPrincipalRepasse"
 															oncomplete="PF('dtPrincipalRepasse').filter();"
 															update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse">

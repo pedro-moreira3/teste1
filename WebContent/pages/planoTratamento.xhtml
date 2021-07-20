@@ -870,9 +870,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 									process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
-									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
+									oncomplete="PF('dlgEditarProcedimento').show()" title="Editar"
 									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
-									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes, @this" />
+									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimentoEditar, :lume:tabViewPaciente:pgProcedimentoBotoesEditar, @this" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
 									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
@@ -1257,6 +1257,95 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					oncomplete="PF('procedimentosTableInPT').filter()" />
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgNovoProcedimento').hide();"
+					styleClass="NavyButton" />
+			</p:panelGrid>
+		</p:outputPanel>
+	</p:dialog>
+	
+	
+	
+	<p:dialog id="editarProcedimento" widgetVar="dlgEditarProcedimento"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false" header="#{planoTratamentoMB.headerProcedimentoEdit}"
+		width="50%">
+		<p:outputPanel id="pgProcedimentoEditar">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:outputLabel value="#{planoTratamentoMB.observacoesAdicionarProcedimento}" style="font-weight:bold;color:red" 
+						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}"/>
+					<p:panelGrid columns="4" layout="grid"
+						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<h:outputText value="Nro. Sequencial: " />
+						<p:inputNumber maxValue="99" decimalPlaces="0"
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.sequencial}" />
+						<h:outputText value="Prioridade: " />
+						<p:inputNumber maxValue="99" decimalPlaces="0"
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />	
+					
+							
+					</p:panelGrid>
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-3, ui-g-9"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<h:outputText value="Procedimento:" />
+						<p:autoComplete dropdown="true" queryDelay="1000" id="procedimentoSelecionadoEditar"
+							value="#{planoTratamentoMB.procedimentoSelecionado}"
+							completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
+							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
+							converter="procedimento" forceSelection="true" scrollHeight="400"
+							minQueryLength="3">
+							<p:ajax event="itemSelect" process="@this,painelValor" listener="#{planoTratamentoMB.populaValorProc()}"
+								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
+						</p:autoComplete>						
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" layout="grid" id="convenioInativoEditar"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">						
+						<p:outputPanel
+							rendered="#{planoTratamentoMB.mostraMensagemConvenioNaoVigente}">
+							<div class="ConvenioInativo">
+								<h:outputText
+									value="Convênio inativo ou está fora da data de vigência. O valor original será considerado." />
+							</div>
+						</p:outputPanel>
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" layout="grid" id="painelValorEditar"
+						columnClasses="ui-g-12"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:outputLabel value="Valor do procedimento:" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
+						<p:inputNumber id="valorNovoPtpEditar" value="#{planoTratamentoMB.valorProc}"
+									required="true" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="R$ " thousandSeparator="."
+									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
+								</p:inputNumber>
+						
+						
+					</p:panelGrid>
+
+					
+					
+					
+				</div>
+			</div>
+		</p:outputPanel>
+		<br />
+	
+		<div class="SeparatorFull"></div>
+		<p:outputPanel id="pgProcedimentoBotoesEditar">
+			<p:panelGrid columns="3" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				
+				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+					process="@this, :lume:tabViewPaciente:pgProcedimentoEditar"
+					value="Salvar e Fechar"
+					actionListener="#{planoTratamentoMB.salvar}"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento"
+					oncomplete="PF('procedimentosTableInPT').filter()" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					process="@this" onclick="PF('dlgEditarProcedimento').hide();"
 					styleClass="NavyButton" />
 			</p:panelGrid>
 		</p:outputPanel>
