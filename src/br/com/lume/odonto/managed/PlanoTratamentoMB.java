@@ -740,7 +740,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setFacesSelecionadas(faces);
 
         observacoesDetalhes = "";
-        if (ptp.getProcedimento().getQuantidadeFaces() == 0) {
+        if (ptp.getProcedimento().getQuantidadeFaces() == null || ptp.getProcedimento().getQuantidadeFaces() == 0) {
             observacoesDetalhes = "Observação: Procedimento selecionado não possui faces configuradas em seu cadastro.";
         }
     }
@@ -775,6 +775,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void salvar(ActionEvent event) {
         actionAdicionarProcedimento(event);
         PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
+        PrimeFaces.current().executeScript("PF('dlgEditarProcedimento').hide()");
     }
 
     public void salvarContinuar(ActionEvent event) {
@@ -1786,7 +1787,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                 }
 
-                //   validaDescontos();
+                  validaDescontos();
             } else {
                 numeroParcelaOrcamento = null;
                 valorPrimeiraParcelaOrcamento = null;
