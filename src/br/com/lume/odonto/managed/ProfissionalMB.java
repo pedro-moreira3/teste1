@@ -53,7 +53,6 @@ import br.com.lume.odonto.entity.ObjetoProfissional;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalEspecialidade;
 import br.com.lume.odonto.entity.ProfissionalFilial;
-import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.DataNascimentoException;
 import br.com.lume.odonto.exception.RegistroConselhoNuloException;
 import br.com.lume.odonto.exception.TelefoneException;
@@ -408,19 +407,19 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         DataNascimentoException e) {
             this.addError(OdontoMensagens.getMensagem("profissional.nascimento.erro"), "");
             log.error("Erro no actionPersist ProfissionalMB :" + OdontoMensagens.getMensagem("profissional.nascimento.erro"), e);
-        } catch (TelefoneException te) {
+        } catch (br.com.lume.common.exception.business.TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
-        } catch (ServidorEmailDesligadoException se) {
+        } catch (br.com.lume.common.exception.business.ServidorEmailDesligadoException se) {
             this.addError(se.getMessage(), "");
             log.error(se.getMessage());
-        } catch (UsuarioDuplicadoException ud) {
+        } catch (br.com.lume.common.exception.business.UsuarioDuplicadoException ud) {
             this.addError("Já existe um profissional cadastrado com este e-mail.", "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
-        } catch (CpfCnpjDuplicadoException cd) {
-            this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "");
+        } catch (br.com.lume.common.exception.business.CpfCnpjDuplicadoException cd) {
+            this.addError("CPF/CNPJ já cadastrado. verifique se o profissional não está inativo.", "");
             log.error(OdontoMensagens.getMensagem("erro.cpf.duplicado"));
-        } catch (RegistroConselhoNuloException e) {
+        } catch (br.com.lume.common.exception.business.RegistroConselhoNuloException e) {
             this.addError(e.getMessage(), "");
             log.error(e.getMessage());
         } catch (Exception e) {
