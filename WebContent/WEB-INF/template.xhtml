@@ -15,7 +15,8 @@
 		<link rel="shortcut icon" type="image/x-icon"
 			href="#{request.contextPath}/images/favicon.ico" />
 		<meta name="theme-color"
-			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
+			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />			
+			
 	</f:facet>
 	<title>INTELIDENTE</title>
 
@@ -68,6 +69,17 @@
 }
 </style>
 	<script>
+	
+	function exitListener(code) {	
+	    if (code == 1008) {
+	        PF('dlgMensagemSessaoExpirada').show();
+	      
+	       setTimeout(function(){
+	            window.location.href = '/intelidente/pages/login.jsf';
+	         }, 7000);
+	    }
+	}
+	
 		function mostraDialogo(titulo, mensagem, tipo, tempo) {
 			mostraDialogo(titulo, mensagem, tipo, null);
 		}
@@ -141,6 +153,10 @@
 <h:body
 	styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
 	<!-- LAYOUT CONTAINER -->
+
+
+<f:websocket channel="exit" scope="session"  onclose="exitListener" />
+
 
 	<div class="alert-container"></div>
 
@@ -307,6 +323,18 @@
 		  		style="width: 600px; height: 461.25px; float: none; clear: both; margin: 2px auto;"
 		  		data="#{filaAtendimentoMB.videoLink}">
 			</object>
+		</p:panel>		
+	</p:dialog>
+	
+	<p:dialog widgetVar="dlgMensagemSessaoExpirada" id="dlgMensagemSessaoExpirada" responsive="true" modal="true"
+		appendTo=":lume" resizable="false">
+		  
+		<f:facet name="header">
+			<h:outputText 
+				value="Sessão Expirada" />				
+		</f:facet>
+		<p:panel id="painelSessaoExpirada">
+			Sessão Expirada! você será redirecionado para a tela de login em alguns segundos.
 		</p:panel>		
 	</p:dialog>
 	
