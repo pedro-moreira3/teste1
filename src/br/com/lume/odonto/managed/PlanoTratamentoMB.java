@@ -2497,7 +2497,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void validarAlteracao(OrcamentoItem oi) {
         try {
 
-            if (this.getEntity().isBconvenio()) {
+            if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null) {
 
                 if (!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
 
