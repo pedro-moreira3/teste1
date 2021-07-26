@@ -2397,8 +2397,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public boolean isTemPermissaoTrocarValor() {
+        
+        if(UtilsFrontEnd.getProfissionalLogado().isFazOrcamento()) {
+            return true;
+        }
+        
         if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null)
             //  if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
+            
             if (UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
                 return false;
         return temPermissaoExtra(false);
