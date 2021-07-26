@@ -397,15 +397,14 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento(
                 inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
                 getConvenio(filtroPorConvenio), filtroPorProfissional, getFiltroPorAgendador(),
-                filtroStatusPaciente, paciente, filtroStatusAgendamento, filtroAtendimento);
+                filtroStatusPaciente, paciente, filtroStatusAgendamento);
         
-        //Atualiza os status dos agendamentos com a descrição do status (Último agendamento e próximo agendamento)
-        pacientes.forEach((p) -> {
-            if(p.getStatusUltimoAgendamento() != null)
-                p.setStatusUltimoAgendamento(StatusAgendamentoUtil.findBySigla(p.getStatusUltimoAgendamento()).getDescricao());
-            if(p.getStatusProximoAgendamento() != null)
-                p.setStatusProximoAgendamento(StatusAgendamentoUtil.findBySigla(p.getStatusProximoAgendamento()).getDescricao());
-        });
+        //Filtra pacientes por agendamento.
+        if(filtroAtendimento != null && !filtroAtendimento.isEmpty()) {
+            pacientes.removeIf((p) -> !filtroAtendimento.contains(p.getStatusNovoUltimoAgendamento()));
+        }
+        
+        pacientes.forEach((p) -> p.atualizarStatus());
     }
 
     public String descricaoStatusPaciente(String status) {
