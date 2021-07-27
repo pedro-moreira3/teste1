@@ -17,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.lazy.models.PacienteLazyModel;
+import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
+import br.com.lume.common.lazy.models.RelatorioRelacionamentoColunasLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -49,8 +51,6 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     private Logger log = Logger.getLogger(RelatorioPacienteAgendamentoMB.class);
 
     private List<RelatorioRelacionamentoColunas> pacientes = new ArrayList<>();
-
-    private PacienteLazyModel pacientesLazy;
 
     private Date inicio, fim;
 
@@ -97,6 +97,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     private boolean mostraMensagemEmExecucao;
 
+    private RelatorioRelacionamentoColunasLazyModel pacientesLazy;
+    
     public RelatorioPacienteAgendamentoMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
@@ -833,14 +835,6 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         this.dataFim = dataFim;
     }
 
-    public PacienteLazyModel getPacientesLazy() {
-        return pacientesLazy;
-    }
-
-    public void setPacientesLazy(PacienteLazyModel pacientesLazy) {
-        this.pacientesLazy = pacientesLazy;
-    }
-
     public boolean isMostraMensagemEmExecucao() {
         return mostraMensagemEmExecucao;
     }
@@ -855,5 +849,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     public void setFiltroPorAgendador(Profissional filtroPorAgendador) {
         this.filtroPorAgendador = filtroPorAgendador;
+    }
+
+    public RelatorioRelacionamentoColunasLazyModel getPacientesLazy() {
+        return pacientesLazy;
+    }
+
+    public void setPacientesLazy(RelatorioRelacionamentoColunasLazyModel pacientesLazy) {
+        this.pacientesLazy = pacientesLazy;
     }
 }
