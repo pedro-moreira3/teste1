@@ -185,6 +185,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				<div class="card card-w-title">
 					<h1>Relatório de Relacionamento</h1>
 					<p:outputPanel id="painelGeral">
+						<ui:remove>
 						<p:outputPanel id="mensagemExecucao"
 							rendered="#{relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
 							<br />
@@ -199,6 +200,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 							<br />
 						</p:outputPanel>
+						</ui:remove>
 
 						<p:separator styleClass="SeparatorFull" />
 
@@ -422,9 +424,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:commandButton id="pesquisar" icon="fa fa-search White"
 									value="Pesquisar"
 									actionListener="#{relatorioPacienteAgendamentoMB.actionFiltrar}"
-									update=":lume:dtPrincipalRelatorio,:lume:painelGeral,:lume:mensagemExecucao,:lume:filtroRelatorio"
+									update=":lume:dtPrincipalRelatorio,:lume:painelGeral,:lume:filtroRelatorio"
 									tabindex="1"
-									process="@this,:lume:painelGeral,:lume:mensagemExecucao, :lume:filtroRelatorio"
+									process="@this,:lume:painelGeral,:lume:filtroRelatorio"
 									styleClass="OrangeButton" />
 
 								<h:panelGroup>
