@@ -185,372 +185,400 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				<div class="card card-w-title">
 					<h1>Relatório de Relacionamento</h1>
 					<p:outputPanel id="painelGeral">
-						<p:outputPanel id="mensagemExecucao" rendered="#{relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
-							<br/>						
+						<ui:remove>
+						<p:outputPanel id="mensagemExecucao"
+							rendered="#{relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
+							<br />
 							<h1 style="font-size: 24px !important;" align="center">
-								<p:outputLabel style="font-size:">Atenção! Relatório em execução, recarregue essa página em alguns minutos.</p:outputLabel>								
+								<p:outputLabel style="font-size:">Atenção! Relatório em execução, recarregue essa página em alguns minutos.</p:outputLabel>
 							</h1>
-							<br/>
-							  <h:panelGroup style="display:block; text-align:center">
-								<p:commandButton value="Recarregar Página" style="max-width:200px"
-									oncomplete="location.reload();"
-									icon="White fa fa-repeat"								
-									styleClass=""/>
-								</h:panelGroup>	
-							<br/>
+							<br />
+							<h:panelGroup style="display:block; text-align:center">
+								<p:commandButton value="Recarregar Página"
+									style="max-width:200px" oncomplete="location.reload();"
+									icon="White fa fa-repeat" styleClass="" />
+							</h:panelGroup>
+							<br />
 						</p:outputPanel>
-						
-					<p:separator styleClass="SeparatorFull" />
+						</ui:remove>
 
-					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="false"  rendered="#{!relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}"
-						toggleSpeed="500">
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup styleClass="md-combo">
-								<h:outputText for="filtroPeriodo"
-									value="Período de último agendamento:" />
-								<p:selectOneMenu id="filtroPeriodo"
-									value="#{relatorioPacienteAgendamentoMB.filtroPeriodo}">
-									<p:ajax process="@this" update="inicioFiltro, fimFiltro"
-										listener="#{relatorioPacienteAgendamentoMB.actionTrocaDatasCriacao}" />
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="O" itemLabel="Ontem" />
-									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
-									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="inicioFiltro" value="Último agendamento de:" />
-								<p:calendar id="inicioFiltro"
-									value="#{relatorioPacienteAgendamentoMB.inicio}" />
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="fimFiltro" value="Último agendamento até:" />
-								<p:calendar id="fimFiltro"
-									value="#{relatorioPacienteAgendamentoMB.fim}" />
-							</h:panelGroup>
-						</p:panelGrid>
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup>
-								<h:outputText for="filtroPaciente" value="Paciente:" />
-								<p:autoComplete id="filtroPaciente"
-									value="#{relatorioPacienteAgendamentoMB.paciente}"
-									completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesPacientes}"
-									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="paciente" forceSelection="true" scrollHeight="400"
-									minQueryLength="3">
+						<p:separator styleClass="SeparatorFull" />
 
-									<p:column headerText="Código" style="text-align: center;">
-										<h:outputText value="#{p.codigo}" />
-									</p:column>
-									<p:column headerText="Nome">
-										<h:outputText value="#{p.dadosBasico.nome}" />
-									</p:column>
-									<p:column headerText="Celular">
-										<h:outputText value="#{p.dadosBasico.celular}" />
-									</p:column>
-									<p:column headerText="Nome da Mãe">
-										<h:outputText value="#{p.nomeMae}" />
-									</p:column>
+						<p:fieldset id="filtroRelatorio" header="Filtro"
+							toggleable="false"
+							toggleSpeed="500">
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo"
+										value="Período de último agendamento" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{relatorioPacienteAgendamentoMB.filtroPeriodo}">
+										<p:ajax process="@this" update="inicioFiltro, fimFiltro"
+											listener="#{relatorioPacienteAgendamentoMB.actionTrocaDatasCriacao}" />
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="inicioFiltro" value="Último agendamento de" />
+									<p:calendar id="inicioFiltro"
+										value="#{relatorioPacienteAgendamentoMB.inicio}" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="fimFiltro" value="Último agendamento até" />
+									<p:calendar id="fimFiltro"
+										value="#{relatorioPacienteAgendamentoMB.fim}" />
+								</h:panelGroup>
+							</p:panelGrid>
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<h:outputText for="filtroPaciente" value="Paciente" />
+									<p:autoComplete id="filtroPaciente"
+										value="#{relatorioPacienteAgendamentoMB.paciente}"
+										completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesPacientes}"
+										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="paciente" forceSelection="true" scrollHeight="400"
+										minQueryLength="3">
 
-								</p:autoComplete>
-							</h:panelGroup>
-							<h:panelGroup>
-								<p:outputLabel style="margin:0px;" for="filtroStatusPaciente"
-									value="Status dos Pacientes" />
+										<p:column headerText="Código" style="text-align: center;">
+											<h:outputText value="#{p.codigo}" />
+										</p:column>
+										<p:column headerText="Nome">
+											<h:outputText value="#{p.dadosBasico.nome}" />
+										</p:column>
+										<p:column headerText="Celular">
+											<h:outputText value="#{p.dadosBasico.celular}" />
+										</p:column>
+										<p:column headerText="Nome da Mãe">
+											<h:outputText value="#{p.nomeMae}" />
+										</p:column>
 
-								<p:selectOneMenu id="filtroStatusPaciente"
-									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-									value="#{relatorioPacienteAgendamentoMB.filtroStatusPaciente}">
-									<f:selectItem itemLabel="Todos" itemValue="T" />
-									<f:selectItem itemLabel="Ativos" itemValue="A" />
-									<f:selectItem itemLabel="Inativos" itemValue="I" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-							<h:panelGroup>
-								<p:outputLabel style="margin:0px;" for="filtroConvenio"
-									value="Convênio:" />
+									</p:autoComplete>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroStatusPaciente"
+										value="Status dos pacientes" />
 
-								<p:selectOneMenu id="filtroConvenio"
-									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
-									value="#{relatorioPacienteAgendamentoMB.filtroPorConvenio}">
-									<f:selectItem itemLabel="Todos" itemValue="todos" />
-									<f:selectItems
-										value="#{relatorioPacienteAgendamentoMB.listaConvenios}"
-										var="agendamento" itemLabel="#{agendamento}"
-										itemValue="#{agendamento}" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="filtroProfissional"
-									value="Dentista do último Agendamento" />
-								<p:autoComplete id="filtroProfissional"
-									value="#{relatorioPacienteAgendamentoMB.filtroPorProfissional}"
-									completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesProfissionais}"
-									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
-									itemValue="#{p}" converter="profissional" forceSelection="true"
-									scrollHeight="400" queryDelay="1000" dropdown="true">
+									<p:selectOneMenu id="filtroStatusPaciente"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{relatorioPacienteAgendamentoMB.filtroStatusPaciente}">
+										<f:selectItem itemLabel="Ativos" itemValue="A" />
+										<f:selectItem itemLabel="Inativos" itemValue="I" />
+										<f:selectItem itemLabel="Todos" itemValue="T" />										
+									</p:selectOneMenu>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroConvenio"
+										value="Convênio" />
 
-									<p:ajax event="itemSelect" process="@this" />
+									<p:selectOneMenu id="filtroConvenio"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{relatorioPacienteAgendamentoMB.filtroPorConvenio}">
+										<f:selectItem itemLabel="Todos" itemValue="todos" />
+										<f:selectItems
+											value="#{relatorioPacienteAgendamentoMB.listaConvenios}"
+											var="agendamento" itemLabel="#{agendamento}"
+											itemValue="#{agendamento}" />
+											
+										<p:ajax process="@this"/>
+									</p:selectOneMenu>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="filtroProfissional"
+										value="Dentista do último agendamento" />
+									<p:autoComplete id="filtroProfissional"
+										value="#{relatorioPacienteAgendamentoMB.filtroPorProfissional}"
+										completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesProfissionais}"
+										var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+										itemValue="#{p}" converter="profissional"
+										forceSelection="true" scrollHeight="400" queryDelay="1000"
+										dropdown="true">
 
-								</p:autoComplete>
-							</h:panelGroup>
+										<p:ajax event="itemSelect" process="@this" />
 
-						</p:panelGrid>
-						<p:outputPanel style="margin:20px;">
-							<h:outputLabel value="Mostrar os pacientes: " />
-							<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;" onclick="PF('tTipo').show()"/>
-								<p:tooltip for="tooltipTipo" id="tTipo" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('relatorioPacienteAgendamento', 'pacientes')}" />
-							
-							
-							<br />
-								
-							<p:selectManyCheckbox
-								value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}"
-								layout="grid" columns="6">
-								<f:selectItem itemLabel="Sem agendamentos" itemValue="SUA"
-									itemEscaped="false" />
-								<f:selectItem itemLabel="Sem agendamento futuro" itemValue="SAF"
-									itemEscaped="false" />
-								<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
-									itemEscaped="false" />
-								<p:ajax
-									listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
-									process="@this,pnFiltroStatusRelatorio"
-									update="pnFiltroStatusRelatorio" />
-							</p:selectManyCheckbox>							
-							
-							
-						</p:outputPanel>
-						<p:outputPanel id="pnFiltroStatusRelatorio" style="margin:20px;">
+									</p:autoComplete>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="filtroProfissionalAgendamento"
+										value="Agendamento realizado por" />
+									<p:autoComplete id="filtroProfissionalAgendamento"
+										value="#{relatorioPacienteAgendamentoMB.filtroPorAgendador}"
+										completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesProfissionalAgendamento}"
+										var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+										itemValue="#{p}" converter="profissional"
+										forceSelection="true" scrollHeight="400" queryDelay="1000"
+										dropdown="true">
+										<p:ajax event="itemSelect" process="@this" />
+									</p:autoComplete>
+								</h:panelGroup>
 
-							<p:outputLabel value="Status do último agendamento: " />
+							</p:panelGrid>
+							<p:outputPanel style="margin:20px;">
+								<h:outputLabel value="Mostrar os pacientes: " />
+								<h:outputLabel class="fa fa-question" id="tooltipTipo"
+									style="font-size:16px; margin-left:10px;"
+									onclick="PF('tTipo').show()" />
+								<p:tooltip for="tooltipTipo" id="tTipo" widgetVar="tTipo"
+									position="bottom"
+									value="#{tarifaMB.getTooltipValue('relatorioPacienteAgendamento', 'pacientes')}" />
 
-							<br />
-							<br />
 
-							<h:panelGroup style="display:block;margin-left:3px;">
-								<p:selectBooleanCheckbox id="checkFiltro"
+								<br />
+
+								<p:selectManyCheckbox
+									value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}"
+									layout="grid" columns="6">
+									<f:selectItem itemLabel="Sem agendamentos" itemValue="SUA"
+										itemEscaped="false" />
+									<f:selectItem itemLabel="Sem histórico de agendamentos"
+										itemValue="SAH" itemEscaped="false" />
+									<f:selectItem itemLabel="Sem agendamento futuro"
+										itemValue="SAF" itemEscaped="false" />
+									<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
+										itemEscaped="false" />
+								</p:selectManyCheckbox>
+
+
+							</p:outputPanel>
+							<p:outputPanel id="pnFiltroStatusRelatorio" style="margin:20px;">
+
+								<p:outputLabel value="Status do último agendamento: " />
+
+								<br />
+								<br />
+
+								<h:panelGroup style="display:block;margin-left:3px;">
+									<p:selectBooleanCheckbox id="checkFiltro"
+										disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
+										value="#{relatorioPacienteAgendamentoMB.checkFiltro}">
+										<p:ajax event="change" process="@this"
+											update=":lume:pnFiltroStatusRelatorio"
+											listener="#{relatorioPacienteAgendamentoMB.marcarFiltros}" />
+									</p:selectBooleanCheckbox>
+									<p:outputLabel for="checkFiltro" value="Marcar todos" />
+								</h:panelGroup>
+
+								<br />
+
+								<p:selectManyCheckbox
 									disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
-									value="#{relatorioPacienteAgendamentoMB.checkFiltro}">
-									<p:ajax event="change" process="@this"
-										update=":lume:pnFiltroStatusRelatorio"
-										listener="#{relatorioPacienteAgendamentoMB.marcarFiltros}" />
-								</p:selectBooleanCheckbox>
-								<p:outputLabel for="checkFiltro" value="Marcar todos" />
-							</h:panelGroup>
+									value="#{relatorioPacienteAgendamentoMB.filtroAtendimento}"
+									layout="grid" columns="4" process="@this"
+									update=":lume:filtroRelatorio">
 
-							<br />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
+										itemValue="A" itemEscaped="false" />
 
-							<p:selectManyCheckbox
-								disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
-								value="#{relatorioPacienteAgendamentoMB.filtroAtendimento}"
-								layout="grid" columns="4" process="@this"
-								update=":lume:filtroRelatorio">
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
+										itemValue="C" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Erro de Agendamento&lt;/div&gt;"
+										itemValue="D" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cliente na Clínica&lt;/div&gt;"
+										itemValue="I" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Confirmados&lt;/div&gt;"
+										itemValue="S" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='emAtendimento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Em Atendimento&lt;/div&gt;"
+										itemValue="O" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixe legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe&lt;/div&gt;"
+										itemValue="E" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixeAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe Atendido&lt;/div&gt;"
+										itemValue="H" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoFalta legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Falta&lt;/div&gt;"
+										itemValue="B" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoNaoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não Confirmado&lt;/div&gt;"
+										itemValue="N" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoPrecadastro legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Agendado pelo Paciente&lt;/div&gt;"
+										itemValue="P" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
+										itemValue="R" itemEscaped="false" />
+								</p:selectManyCheckbox>
 
-								<p:ajax process="@this" />
+							</p:outputPanel>
 
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
-									itemValue="A" itemEscaped="false" />
-								
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
-									itemValue="C" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Erro de Agendamento&lt;/div&gt;"
-									itemValue="D" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cliente na Clínica&lt;/div&gt;"
-									itemValue="I" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Confirmados&lt;/div&gt;"
-									itemValue="S" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='emAtendimento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Em Atendimento&lt;/div&gt;"
-									itemValue="O" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixe legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe&lt;/div&gt;"
-									itemValue="E" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixeAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe Atendido&lt;/div&gt;"
-									itemValue="H" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoFalta legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Falta&lt;/div&gt;"
-									itemValue="B" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoNaoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não Confirmado&lt;/div&gt;"
-									itemValue="N" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoPrecadastro legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Agendado pelo Paciente&lt;/div&gt;"
-									itemValue="P" itemEscaped="false" />
-								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
-									itemValue="R" itemEscaped="false" />
-							</p:selectManyCheckbox>
+							<div class="EmptyBox5"></div>
 
+							<div class="SeparatorFull"></div>
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<p:commandButton id="pesquisar" icon="fa fa-search White"
+									value="Pesquisar"
+									actionListener="#{relatorioPacienteAgendamentoMB.actionFiltrar}"
+									update=":lume:dtPrincipalRelatorio,:lume:painelGeral,:lume:filtroRelatorio"
+									tabindex="1"
+									process="@this,:lume:painelGeral,:lume:filtroRelatorio"
+									styleClass="OrangeButton" />
+
+								<h:panelGroup>
+									<p:commandButton value="Imprimir"
+										oncomplete="PF('dlgConfirmarCabecalho').show();"
+										icon="White fa fa-print"
+										update=":lume:dlgGerarRelatorio,:lume:dlgConfirmarCabecalho"
+										styleClass=""
+										process="@this,:lume:dlgConfirmarCabecalho,:lume:filtroRelatorio" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('xls')}"
+										ajax="false" process="dtPrincipalRelatorio,@this"
+										update="@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload
+											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('pdf')}"
+											ajax="false" process="dtPrincipalRelatorio,@this"
+											immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('csv')}"
+											ajax="false" process="dtPrincipalRelatorio,@this"
+											immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+										</p:menuitem>
+
+									</p:splitButton>
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:fieldset>
+						<p:outputPanel>
+							<p:dataTable id="dtPrincipalRelatorio"
+								widgetVar="dtPrincipalRelatorio"
+								value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
+								rowKey="#{p}" rows="10" paginator="true"
+								paginatorPosition="bottom" reflow="true" emptyMessage=""
+								filterDelay="1000"
+								binding="#{relatorioPacienteAgendamentoMB.tabelaRelatorio}">
+								<f:facet name="header">Pacientes</f:facet>
+								<p:column sortBy="#{p.nomePaciente}"
+									filterBy="#{p.nomePaciente}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains" headerText="Paciente">
+									<p:commandLink value="#{p.nomePaciente}" process="@this"
+										title="#{p.id}"
+										actionListener="#{tabPacienteMB.loadPaciente(p.paciente)}"
+										oncomplete="PF('dlgFichaPaciente').show();"
+										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								</p:column>
+								<p:column filterBy="#{p.convenio}" sortBy="#{p.convenio}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains" headerText="Convênio">
+									<h:outputText value="#{p.convenio}" />
+								</p:column>
+								<p:column width="10%" filterBy="#{p.telefonePaciente}"
+									sortBy="#{p.telefonePaciente}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains" headerText="Celular">
+									<h:outputText value="#{p.telefonePaciente}" />
+									<p:button id="whats" icon="White fa fa-whatsapp"
+										rendered="#{p.telefonePaciente != null}"
+										onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p.paciente)}'); return false;"
+										styleClass="GreenButton" style="margin-left:10px;" />
+									<p:tooltip for="whats" value="Enviar mensagem" />
+								</p:column>
+								<p:column filterBy="#{p.dentistaUltimoAgendamento}"
+									sortBy="#{p.dentistaUltimoAgendamento}"
+									filterMatchMode="contains"
+									headerText="Dentista último agendamento">
+									<h:outputText value="#{p.dentistaUltimoAgendamento}" />
+								</p:column>
+								<p:column filterBy="#{p.dataUltimoAgendamento}"
+									sortBy="#{p.dataUltimoAgendamento}" filterMatchMode="contains"
+									headerText="Data Último Agendamento">
+									<h:outputText
+										value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataUltimoAgendamento)}" />
+								</p:column>
+								<p:column filterBy="#{p.statusUltimoAgendamento}"
+									sortBy="#{p.statusUltimoAgendamento}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Status último agendamento">
+									<h:outputText value="#{p.statusUltimoAgendamento}" />
+								</p:column>
+								<p:column filterBy="#{p.agendadorUltimoAgendamento}"
+									sortBy="#{p.agendadorUltimoAgendamento}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Último agendamento agendado por">
+									<h:outputText value="#{p.agendadorUltimoAgendamento}" />
+								</p:column>
+								<p:column filterBy="#{p.dataProximoAgendamento}"
+									sortBy="#{p.dataProximoAgendamento}" exportable="true"
+									filterMatchMode="contains"
+									headerText="Data Próximo Agendamento">
+									<p:commandButton icon="fa fa fa-calendar"
+										rendered="#{p.dataProximoAgendamento eq '' or p.dataProximoAgendamento eq null}"
+										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+										title="Agendar" process="@this"
+										action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p.paciente,p.profissional)}"
+										update="lume:pnAgendamento" style="width: 33px !important" />
+									<h:outputText
+										value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataProximoAgendamento)}" />
+								</p:column>
+								<p:column filterBy="#{p.statusProximoAgendamento}"
+									sortBy="#{p.statusProximoAgendamento}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Status próximo Agendamento">
+									<h:outputText value="#{p.statusProximoAgendamento}" />
+								</p:column>
+								<p:column filterBy="#{p.agendadorProximoAgendamento}"
+									sortBy="#{p.agendadorProximoAgendamento}"
+									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Próximo agendamento agendado por">
+									<h:outputText value="#{p.agendadorProximoAgendamento}" />
+								</p:column>
+								<p:column filterBy="#{p.dataProximoRetorno}"
+									sortBy="#{p.dataProximoRetorno}" filterMatchMode="contains"
+									headerText="Data Próximo Retorno">
+									<ui:remove>
+										<p:commandButton icon="fa fa fa-mail-reply"
+											rendered="#{p.dataProximoRetorno eq '' or p.dataProximoRetorno eq null}"
+											oncomplete="PF('dlgViewRetorno').show();"
+											title="Marcar Retorno" process="@this"
+											action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p.paciente)}"
+											update="lume:pnAgendamento,:lume:dlgViewRetorno"
+											style="width: 33px !important" />
+									</ui:remove>
+									<h:outputText
+										value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.dataProximoRetorno)}" />
+								</p:column>
+							</p:dataTable>
 						</p:outputPanel>
-
-						<div class="EmptyBox5"></div>
-
-						<div class="SeparatorFull"></div>
-
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-
-							<p:commandButton id="pesquisar" icon="fa fa-search White"
-								value="Pesquisar"
-								actionListener="#{relatorioPacienteAgendamentoMB.actionFiltrar}"
-								update=":lume:dtPrincipalRelatorio,:lume:painelGeral,:lume:mensagemExecucao,:lume:filtroRelatorio" tabindex="1"
-								process="@this,:lume:painelGeral,:lume:mensagemExecucao,:lume:filtroRelatorio" styleClass="OrangeButton" />
-
-							<h:panelGroup>
-								<p:commandButton value="Imprimir"
-									oncomplete="PF('dlgConfirmarCabecalho').show();"
-									icon="White fa fa-print"
-									update=":lume:dlgGerarRelatorio,:lume:dlgConfirmarCabecalho"
-									styleClass=""
-									process="@this,:lume:dlgConfirmarCabecalho,:lume:filtroRelatorio" />
-							</h:panelGroup>
-
-							<h:panelGroup>
-								<p:splitButton icon="White fa fa fa-file-excel-o"
-									value="Exportar tabela para Excel"
-									styleClass="GreenSplitButton"
-									actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('xls')}"
-									ajax="false" process="dtPrincipalRelatorio,@this"
-									update="@this" immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-
-									<p:fileDownload
-										value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
-
-									<p:menuitem value="Exportar tabela para PDF"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtPrincipalRelatorio,@this"
-										immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('csv')}"
-										ajax="false" process="dtPrincipalRelatorio,@this"
-										immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
-									</p:menuitem>
-
-								</p:splitButton>
-							</h:panelGroup>
-						</p:panelGrid>
-					</p:fieldset>
-					<p:outputPanel rendered="#{!relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
-						<p:dataTable id="dtPrincipalRelatorio"
-							widgetVar="dtPrincipalRelatorio"
-							value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
-							rowKey="#{p}" rows="10" paginator="true"
-							paginatorPosition="bottom" reflow="true" emptyMessage=""
-							selection="#{relatorioPacienteAgendamentoMB.entity}"
-							selectionMode="single" filterDelay="1000"
-							binding="#{relatorioPacienteAgendamentoMB.tabelaRelatorio}">
-							<f:facet name="header">Pacientes</f:facet>
-							<p:column sortBy="#{p.nomePaciente}"
-								filterBy="#{p.nomePaciente}"
-								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Paciente">
-								<p:commandLink value="#{p.nomePaciente}" process="@this"
-									title="#{p.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(p.paciente)}"
-									oncomplete="PF('dlgFichaPaciente').show();"
-									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
-							</p:column>
-							<p:column filterBy="#{p.convenio}"
-								sortBy="#{p.convenio}"
-								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Convênio">
-								<h:outputText value="#{p.convenio}" />
-							</p:column>
-							<p:column width="10%" filterBy="#{p.telefonePaciente}"
-								sortBy="#{p.telefonePaciente}"
-								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Celular">
-								<h:outputText value="#{p.telefonePaciente}" />
-								<p:button id="whats" icon="White fa fa-whatsapp"
-									rendered="#{p.telefonePaciente != null}"
-									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p.paciente)}'); return false;"
-									styleClass="GreenButton" style="margin-left:10px;" />
-								<p:tooltip for="whats" value="Enviar mensagem" />
-							</p:column>
-							<p:column
-								filterBy="#{p.dentistaUltimoAgendamento}"
-								sortBy="#{p.dentistaUltimoAgendamento}"
-								filterMatchMode="contains"
-								headerText="Dentista Último Agendamento">
-								<h:outputText
-									value="#{p.dentistaUltimoAgendamento}" />
-							</p:column>
-							<p:column filterBy="#{p.dataUltimoAgendamento}"
-								sortBy="#{p.dataUltimoAgendamento}"
-								filterMatchMode="contains" headerText="Data Último Agendamento">
-								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataUltimoAgendamento)}" />
-							</p:column>
-							<p:column
-								filterBy="#{p.statusUltimoAgendamento}"
-								sortBy="#{p.statusUltimoAgendamento}"
-								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
-								filterMatchMode="contains"
-								headerText="Status Último Agendamento">
-								<h:outputText
-									value="#{p.statusUltimoAgendamento}" />
-							</p:column>
-							<p:column filterBy="#{p.dataProximoAgendamento}"
-								sortBy="#{p.dataProximoAgendamento}" exportable="true"
-								filterMatchMode="contains" headerText="Data Próximo Agendamento">
-								<p:commandButton icon="fa fa fa-calendar"
-									rendered="#{p.dataProximoAgendamento eq '' or p.dataProximoAgendamento eq null}"
-									oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
-									title="Agendar" process="@this"
-									action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p.paciente,p.profissional)}"
-									update="lume:pnAgendamento" style="width: 33px !important" />
-								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataProximoAgendamento)}" />
-							</p:column>
-							<p:column
-								filterBy="#{p.statusProximoAgendamento}"
-								sortBy="#{p.statusProximoAgendamento}"
-								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
-								filterMatchMode="contains"
-								headerText="Status Próximo Agendamento">
-								<h:outputText
-									value="#{p.statusProximoAgendamento}" />
-							</p:column>
-							<p:column filterBy="#{p.dataProximoRetorno}"
-								sortBy="#{p.dataProximoRetorno}"
-								filterMatchMode="contains" headerText="Data Próximo Retorno">
-								<ui:remove>
-									<p:commandButton icon="fa fa fa-mail-reply"
-										rendered="#{p.dataProximoRetorno eq '' or p.dataProximoRetorno eq null}"
-										oncomplete="PF('dlgViewRetorno').show();"
-										title="Marcar Retorno" process="@this"
-										action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p.paciente)}"
-										update="lume:pnAgendamento,:lume:dlgViewRetorno"
-										style="width: 33px !important" />
-								</ui:remove>
-								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.dataProximoRetorno)}" />
-							</p:column>
-						</p:dataTable>
 					</p:outputPanel>
-</p:outputPanel>
 					<p:dialog widgetVar="eventDialog" header="Agendamento"
 						resizable="false" id="pnAgendamento" responsive="true"
 						position="10,10" modal="true"
@@ -820,7 +848,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
-									
+
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 											itemValue="C" itemEscaped="false" />
@@ -877,8 +905,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										items="#{relatorioPacienteAgendamentoMB.pacientes}">
 										<tr>
 											<td><h:outputText value="#{p.paciente.dadosBasico.nome}" /></td>
-											<td><h:outputText value="#{p.paciente.convenio.dadosBasico.nome}" /></td>
-											<td><h:outputText value="#{p.paciente.dadosBasico.telefoneStr}" /></td>
+											<td><h:outputText
+													value="#{p.paciente.convenio.dadosBasico.nome}" /></td>
+											<td><h:outputText
+													value="#{p.paciente.dadosBasico.telefoneStr}" /></td>
 											<td><h:outputText
 													value="#{relatorioPacienteAgendamentoMB.formatarData(p.paciente.ultimoAgendamento.inicio)}" />
 											</td>
