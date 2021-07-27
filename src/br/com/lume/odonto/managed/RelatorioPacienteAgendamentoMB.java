@@ -101,21 +101,22 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
 
-        RelatorioRelacionamentoTags tag = RelatorioRelacionamentoTagsSingleton.getInstance().getBo().findByEmpresa(UtilsFrontEnd.getEmpresaLogada());
+        //RelatorioRelacionamentoTags tag = RelatorioRelacionamentoTagsSingleton.getInstance().getBo().findByEmpresa(UtilsFrontEnd.getEmpresaLogada());
 
-        if (tag != null && tag.isEmExecucao()) {
-            mostraMensagemEmExecucao = true;
-        } else {
-            mostraMensagemEmExecucao = false;
-            if (this.listaConvenios == null)
-                this.listaConvenios = new ArrayList<>();
-            this.sugestoesConvenios("todos");
-
-            this.filtroAniversariantes = "A";
-            this.setDataInicio(new Date());
-            this.setDataFim(new Date());
-            actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
-            this.carregarAniversariantes();
+        if (this.listaConvenios == null)
+            this.listaConvenios = new ArrayList<>();
+        this.sugestoesConvenios("todos");
+        
+        this.filtroAniversariantes = "A";
+        this.setDataInicio(new Date());
+        this.setDataFim(new Date());
+        actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
+        this.carregarAniversariantes();
+        
+//        if (tag != null && tag.isEmExecucao()) {
+//            mostraMensagemEmExecucao = true;
+//        } else {
+//            mostraMensagemEmExecucao = false;
 //            if (tag != null) {
 //               this.filtroPeriodo = tag.getFiltroPeriodo();
 //               this.inicio = tag.getDataDe();
@@ -145,7 +146,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 //               this.filtroAtendimento.addAll(Arrays.asList(ary));
 //                this.pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada());
 //            }
-        }
+//        }
 
     }
 

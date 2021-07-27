@@ -473,8 +473,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</h:panelGroup>
 							</p:panelGrid>
 						</p:fieldset>
-						<p:outputPanel
-							rendered="#{!relatorioPacienteAgendamentoMB.mostraMensagemEmExecucao}">
+						<p:outputPanel>
 							<p:dataTable id="dtPrincipalRelatorio"
 								widgetVar="dtPrincipalRelatorio"
 								value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
