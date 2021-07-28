@@ -586,7 +586,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
             try {
-                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
+                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada());
             } catch (Exception e) {
                 addError("Erro", "Falha na criação do comissionamento. " + e.getMessage());
             }
