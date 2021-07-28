@@ -335,13 +335,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:selectManyCheckbox
 									value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}"
 									layout="grid" columns="6">
-									<f:selectItem itemLabel="Sem agendamentos" itemValue="SUA"
+									<f:selectItem itemLabel="Sem nenhum agendamento" itemValue="SUA"
 										itemEscaped="false" />
 									<f:selectItem itemLabel="Sem histórico de agendamentos"
 										itemValue="SAH" itemEscaped="false" />
-									<f:selectItem itemLabel="Sem agendamento futuro"
+									<f:selectItem itemLabel="Sem nenhum agendamento futuro"
 										itemValue="SAF" itemEscaped="false" />
-									<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
+									<f:selectItem itemLabel="Sem retorno futuro programado" itemValue="SRR"
 										itemEscaped="false" />
 								</p:selectManyCheckbox>
 
@@ -477,7 +477,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 						<p:outputPanel>
 							<p:dataTable id="dtPrincipalRelatorio"
-								widgetVar="dtPrincipalRelatorio" lazy="true"
+								widgetVar="dtPrincipalRelatorio"
 								value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
 								rowKey="#{p}" rows="10" paginator="true"
 								paginatorPosition="bottom" reflow="true" emptyMessage=""
