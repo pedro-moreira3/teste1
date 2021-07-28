@@ -429,6 +429,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									process="@this,:lume:painelGeral,:lume:filtroRelatorio"
 									styleClass="OrangeButton" />
 
+								<ui:remove>
 								<h:panelGroup>
 									<p:commandButton value="Imprimir"
 										oncomplete="PF('dlgConfirmarCabecalho').show();"
@@ -437,6 +438,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										styleClass=""
 										process="@this,:lume:dlgConfirmarCabecalho,:lume:filtroRelatorio" />
 								</h:panelGroup>
+								</ui:remove>
 
 								<h:panelGroup>
 									<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -475,7 +477,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 						<p:outputPanel>
 							<p:dataTable id="dtPrincipalRelatorio"
-								widgetVar="dtPrincipalRelatorio"
+								widgetVar="dtPrincipalRelatorio" lazy="true"
 								value="#{relatorioPacienteAgendamentoMB.pacientes}" var="p"
 								rowKey="#{p}" rows="10" paginator="true"
 								paginatorPosition="bottom" reflow="true" emptyMessage=""
@@ -492,6 +494,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										oncomplete="PF('dlgFichaPaciente').show();"
 										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
+								
 								<p:column filterBy="#{p.convenio}" sortBy="#{p.convenio}"
 									filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 									filterMatchMode="contains" headerText="Convênio">
@@ -579,11 +582,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:dataTable>
 						</p:outputPanel>
 					</p:outputPanel>
+					
 					<p:dialog widgetVar="eventDialog" header="Agendamento"
 						resizable="false" id="pnAgendamento" responsive="true"
 						position="10,10" modal="true"
 						style="position:absolute !important;" appendToBody="true">
-
 						<div class="Container100 Responsive100 NoIndent">
 							<div class="Container100 ui-fluid NoPadding">
 								<div class="Card" style="margin-top: -35px">
@@ -617,7 +620,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						icon="pi pi-exclamation-triangle" width="300px" modal="true"
 						draggable="false" blockScroll="true" positionTop="0"
 						positionLeft="0" style="overflow:hidden !important;">
-
 						<h:panelGroup style="margin:16px;">
 							<p:selectBooleanCheckbox id="cabecalho"
 								value="#{relatorioPacienteAgendamentoMB.imprimirCabecalho}">
@@ -641,7 +643,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 						</p:panelGrid>
-
 					</p:dialog>
 
 					<p:dialog appendTo=":lume:" maximizable="false" modal="true"
@@ -716,10 +717,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:panelGrid>
 					</p:dialog>
 
-
 					<p:dialog id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio"
 						header="Relatório" responsive="true" modal="true">
-
+						<ui:remove>
 						<div class="table">
 							<p:outputPanel id="relatorio">
 
@@ -930,7 +930,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<br />
 							</p:outputPanel>
 						</div>
-
+						</ui:remove>
 					</p:dialog>
 
 
