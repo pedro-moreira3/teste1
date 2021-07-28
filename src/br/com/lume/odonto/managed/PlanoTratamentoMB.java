@@ -60,7 +60,9 @@ import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.Desconto;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
+import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.NegociacaoOrcamento;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
@@ -75,6 +77,8 @@ import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RegiaoDente;
 import br.com.lume.odonto.entity.RegiaoRegiao;
+import br.com.lume.odonto.entity.RepasseFaturas;
+import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.entity.Tarifa;
@@ -90,8 +94,11 @@ import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
 import br.com.lume.regiaoRegiao.RegiaoRegiaoSingleton;
+import br.com.lume.repasse.RepasseFaturasItemSingleton;
+import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.retorno.RetornoSingleton;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
@@ -1067,7 +1074,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             calculaRepasse(ptpMudarExecutor);
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptpMudarExecutor);
             PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').hide()");
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null);
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptpMudarExecutor, profissionalFinalizarNovamente, UtilsFrontEnd.getProfissionalLogado(), null, UtilsFrontEnd.getEmpresaLogada());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (RepasseNaoPossuiRecebimentoException e) {
             addError("Atenção", e.getMessage());
@@ -1196,7 +1203,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     salvaProcedimento(ptp);
 
                     try {
-                        RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                        RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado(),
+                                UtilsFrontEnd.getEmpresaLogada());
                     } catch (RepasseNaoPossuiRecebimentoException e) {
                         addError("Atenção", e.getMessage());
                     } catch (Exception e) {
@@ -1753,12 +1761,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
             carregaOrcamentos();
 
-            try {
-                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
-            } catch (Exception e) {
-                e.printStackTrace();
-                addError("Erro", "Falha na criação do comissionamento. " + e.getMessage());
-            }
+            orcamentoSelecionado.setQuantidadeParcelas(1);
+            
+            
+            itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
+
+            
+            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0 && itemsJaAprovados.get(0).getOrigemProcedimento() != null && itemsJaAprovados.get(
+                    0).getOrigemProcedimento().getPlanoTratamentoProcedimento() != null) {
+                recalculaRepasseAsync(itemsJaAprovados.get(
+                        0).getOrigemProcedimento().getPlanoTratamentoProcedimento(),UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+            }  
+                
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1766,6 +1780,44 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             return;
         }
+    }
+    
+    private void recalculaRepasseAsync(PlanoTratamentoProcedimento ptp,Profissional profissional,Empresa empresa) {
+
+        Thread th = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {                    
+                    Thread.sleep(3000);                    
+                    //   RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada());
+    
+                        if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
+                            RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+                            if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+                                ptp.setFatura(repasseFaturas.getFaturaRepasse());
+                            }
+                        } else {
+                            //repasse antigo, quando ainda nao tinha ptp no repasse fatura
+                            RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
+                            if (repasseFaturasItem != null && repasseFaturasItem.getFaturaItemRepasse() != null && repasseFaturasItem.getFaturaItemRepasse().getFatura() != null) {
+                                ptp.setFatura(repasseFaturasItem.getFaturaItemRepasse().getFatura());
+                            }
+                        }                    
+                        
+                        RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), profissional, ptp.getFatura(), empresa);
+                                    
+                                     
+
+                } catch (Exception e) {
+                    e.printStackTrace();                  
+                }
+
+            }
+        });
+
+        th.start();
+
     }
 
     public void actionEditOrcamento(Orcamento orcamento) {
@@ -2397,14 +2449,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public boolean isTemPermissaoTrocarValor() {
-        
-        if(UtilsFrontEnd.getProfissionalLogado().isFazOrcamento()) {
+
+        if (UtilsFrontEnd.getProfissionalLogado().isFazOrcamento()) {
             return true;
         }
-        
+
         if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null)
             //  if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
-            
+
             if (UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
                 return false;
         return temPermissaoExtra(false);

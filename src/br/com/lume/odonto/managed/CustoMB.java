@@ -92,7 +92,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(this.getEntity());
            // this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
+            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada());
             carregaListaCusto();
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
@@ -117,7 +117,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
                         this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
                     RepasseFaturasSingleton.getInstance().recalculaRepasse(this.getEntity().getPlanoTratamentoProcedimento(), 
                             this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
-                            this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
+                            this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse(),UtilsFrontEnd.getEmpresaLogada());
                 }
                 
                 carregaListaCusto();

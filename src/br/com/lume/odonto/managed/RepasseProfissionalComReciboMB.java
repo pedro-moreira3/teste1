@@ -575,12 +575,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 this.addError("Erro", "Dentista executor com tipo de remuneração fixa");
                 return;
             }
-            List<ReciboRepasseProfissionalLancamento> listaRecibos = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listRecibosValidosForLancamentos(
-                    Utils.tratarCamposInLancamento(ptp.getFatura().getLancamentos()));
-            if (listaRecibos != null && listaRecibos.size() > 0) {
-                this.addError("Erro", "Não é permitido o recálculo para procedimentos com recibos já aprovados.");
-                return;
+            
+            if(ptp.getFatura() != null) {
+                List<ReciboRepasseProfissionalLancamento> listaRecibos = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listRecibosValidosForLancamentos(
+                        Utils.tratarCamposInLancamento(ptp.getFatura().getLancamentos()));
+                if (listaRecibos != null && listaRecibos.size() > 0) {
+                    this.addError("Erro", "Não é permitido o recálculo para procedimentos com recibos já aprovados.");
+                    return;
+                }
             }
+            
+           
 
             if (ptp.getFatura() != null && ptp.getFatura().getLancamentos() != null) {
                 for (Lancamento l : ptp.getFatura().getLancamentos()) {
@@ -592,7 +597,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 }
             }
 
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(),UtilsFrontEnd.getEmpresaLogada());
             addInfo("Sucesso", "Repasse recalculado!");
             this.pesquisar();
         } catch (RepasseNaoPossuiRecebimentoException e) {
@@ -825,7 +830,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             //  criaRepasseManual
 
             if (getEntity().getFatura() == null) {
-                Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), getEntity().getDentistaExecutor(), profissional);
+                Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), getEntity().getDentistaExecutor(), profissional,UtilsFrontEnd.getEmpresaLogada());
                 getEntity().setFatura(novaFatura);
                 try {
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(getEntity());

@@ -136,7 +136,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
             if (!this.filtroSemRepasse)
                 RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemTroca(), null, getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             else
-                RepasseFaturasItemSingleton.getInstance().criaItemRepasseProfissional(getPtpCriaRepasse(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado(), true);
+                RepasseFaturasItemSingleton.getInstance().criaItemRepasseProfissional(getPtpCriaRepasse(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado(), true,UtilsFrontEnd.getEmpresaLogada());
             this.pesquisar();
             this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
             PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide();");
