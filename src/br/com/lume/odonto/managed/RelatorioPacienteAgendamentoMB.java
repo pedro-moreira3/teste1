@@ -397,6 +397,22 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     }
     
     public void listarPacientesAgendamento() {
+        if (getInicio() != null && getFim() != null) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(getInicio());
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            inicio = c.getTime();
+            
+            c = Calendar.getInstance();
+            c.setTime(getFim());
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+            c.set(Calendar.SECOND, 59);  
+            fim = c.getTime();
+        }
+        
         pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento(
                 inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
                 getConvenio(filtroPorConvenio), filtroPorProfissional, getFiltroPorAgendador(),
