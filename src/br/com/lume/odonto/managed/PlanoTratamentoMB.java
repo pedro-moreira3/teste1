@@ -1762,17 +1762,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             carregaOrcamentos();
 
             orcamentoSelecionado.setQuantidadeParcelas(1);
-            
-            
+
             itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
 
-            
-            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0 && itemsJaAprovados.get(0).getOrigemProcedimento() != null && itemsJaAprovados.get(
-                    0).getOrigemProcedimento().getPlanoTratamentoProcedimento() != null) {
-                recalculaRepasseAsync(itemsJaAprovados.get(
-                        0).getOrigemProcedimento().getPlanoTratamentoProcedimento(),UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
-            }  
-                
+            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0) {
+                //recalculaRepasseAsync(orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento(),UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+                recalculaRepasseAsync(itemsJaAprovados,UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1781,17 +1777,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             return;
         }
     }
-    
-    private void recalculaRepasseAsync(PlanoTratamentoProcedimento ptp,Profissional profissional,Empresa empresa) {
+
+    private void recalculaRepasseAsync(List<OrcamentoItem> itemsJaAprovados,Profissional profissional,Empresa empresa) {
 
         Thread th = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {                    
-                    Thread.sleep(3000);                    
-                    //   RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada());
-    
+                    for (OrcamentoItem orcamentoItem : itemsJaAprovados) {   
+                        Thread.sleep(3000);
+                        PlanoTratamentoProcedimento ptp = orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento();
+                        
                         if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                             RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                             if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
@@ -1803,14 +1800,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                             if (repasseFaturasItem != null && repasseFaturasItem.getFaturaItemRepasse() != null && repasseFaturasItem.getFaturaItemRepasse().getFatura() != null) {
                                 ptp.setFatura(repasseFaturasItem.getFaturaItemRepasse().getFatura());
                             }
-                        }                    
-                        
+                        }
+
                         RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), profissional, ptp.getFatura(), empresa);
-                                    
-                                     
+                        
+                    } 
 
                 } catch (Exception e) {
-                    e.printStackTrace();                  
+                    e.printStackTrace();
                 }
 
             }
