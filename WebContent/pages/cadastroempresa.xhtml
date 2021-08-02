@@ -352,11 +352,13 @@
 									value="Plano Ortodôntico: Calcular repasse por procedimento" />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepassePorProcedimentoOrtodonticoBool}" />
-								<p:outputLabel
-									value="Validar se o procedimento foi executado para permitir repasse profissional " />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.validarRepasseProcedimentoFinalizadoBool}" />
-
+								
+								<ui:remove>
+									<p:outputLabel
+										value="Validar se o procedimento foi executado para permitir repasse profissional " />
+									<p:selectBooleanCheckbox
+										value="#{cadastroEmpresaMB.entity.validarRepasseProcedimentoFinalizadoBool}" />
+									</ui:remove>
 								<p:outputLabel
 									value="Validar se os custos diretos do procedimento já foram conferidos para permitir repasse profissional " />
 								<p:selectBooleanCheckbox
