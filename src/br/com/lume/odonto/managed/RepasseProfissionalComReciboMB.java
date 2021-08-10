@@ -151,17 +151,19 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             actionTrocaDatas(null);
             actionTrocaDatasDiaria(null);
+            
+            String sDate1 = "01/06/2021";
+            //  Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+              String sDate2 = "31/07/2021";
+            //  recalcularRepasseLote(41l, UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado(),sDate1,sDate2);
+
 
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
         
-        String sDate1 = "01/01/2021";
-      //  Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-        String sDate2 = "31/07/2021";
-       // recalcularRepasseLote(41l, UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado(),sDate1,sDate2);
-
+   
     }
 
     public void setVideos() {
@@ -447,8 +449,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
                 List<PlanoTratamentoProcedimento> removerPtp = new ArrayList<PlanoTratamentoProcedimento>();
                 List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
-                for (PlanoTratamentoProcedimento ptp : getEntityList()) {                  
-
+                for (PlanoTratamentoProcedimento ptp : getEntityList()) {
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                         if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
@@ -535,8 +536,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 if (rrpl == null || rrpl.getRecibo() == null || rrpl.getRecibo().getAprovado() == null || !rrpl.getRecibo().getAprovado().equals("S")) {
                                     ptpsValidosComLancamentos.get(ptp).add(lancamento);    
                                 }else {
-                                    removerPtp.add(ptp);
-                                    continue;
+                                  //  if(lancamento.isValorRestanteIgnoradoAjusteManual) {
+                                        
+                                   // }
+                                  //  removerPtp.add(ptp);
+                                 //   continue;
                                 }
                             }
                             ptp.setValorDisponivel(FaturaSingleton.getInstance().getTotalNaoPago(ptp.getFatura()));
