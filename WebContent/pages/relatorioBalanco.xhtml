@@ -289,11 +289,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							headerText="Procedimento">
 							<h:outputText
 								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.descricaoCompletaComFace}"
-								title="#{rfl.id}" />
+								title="#{rfl.repasseFaturas.planoTratamentoProcedimento.id}" />
 						</p:column>
 
 						<p:column
-							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizadoStr}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizado}"
 							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizadoStr}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
@@ -306,7 +306,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:column
 							sortBy="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}"
 							headerText="Valor total da fatura de repasse">
-							<h:outputText
+							<h:outputText title="#{rfl.repasseFaturas.faturaRepasse.id}"  
 								value="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
@@ -386,7 +386,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								title="#{rfl.id}" />
 						</p:column>
 
-						<p:column sortBy="#{rfl.lancamentoRepasse.dataPagamentoStr}"
+						<p:column sortBy="#{rfl.lancamentoRepasse.dataPagamento}"
 							filterBy="#{rfl.lancamentoRepasse.dataPagamentoStr}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
