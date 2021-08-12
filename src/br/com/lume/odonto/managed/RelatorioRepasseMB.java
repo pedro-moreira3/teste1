@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -20,6 +22,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
@@ -84,6 +87,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
 
     public void pesquisar() {
         try {
+            Map<Long, BigDecimal> map = new HashMap<>();
             this.setEntityList(null);
             List<RepasseFaturas> repasses;
 
@@ -102,7 +106,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                 repasses = new ArrayList<RepasseFaturas>();
                 
                 if(statusPagamento != null) {
-                    this.getEntityList().removeIf((rfl) -> !rfl.getLancamentoRepasse().getStatusCompleto().contains(statusPagamento));
+                    this.getEntityList().removeIf((rfl) -> !rfl.getLancamentoRepasse().getStatusCompleto().contains(statusPagamento) || !rfl.getLancamentoRepasse().getFatura().isAtivo());
                 }
                 
                 for(RepasseFaturasLancamento rfl : this.getEntityList()) {
@@ -186,7 +190,48 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
                     }
                     
+                   System.out.println("123123123"+rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+                 
+                    if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) < 0
+                           ) {
+                        map.put(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId(), valorTotal(rfl.getLancamentoRepasse()));
+                        
+                      //  ptpid - valor do pagamento
+                                            
+//                        System.out.println("--------------------------: " +
+//                        rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome() + " - " + 
+//                        rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getProcedimento().getDescricao());
+//                        System.out.println("--------------------------");
+                    }
+                    
                 }
+                
+//                for(RepasseFaturasLancamento rfl : this.getEntityList()) {
+//                    if (map.containsKey(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId())) {
+//                        if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) > 0) {
+//                          //  if(rfl.getLancamentoRepasse().getStatusSemSubStatus().contains("A Pagar")) {
+//                            BigDecimal valorExistente = map.get(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId());
+//                            if(valorExistente.compareTo(valorTotal(rfl.getLancamentoRepasse())) == 0) {
+//                                System.out.println("--------------------------: " +
+//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome() + " - " + 
+//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + " - " + 
+//                                valorTotal(rfl.getLancamentoRepasse()) + " id rfl - " + 
+//                                rfl.getId() + " - " + 
+//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId() );
+//                                rfl.getLancamentoRepasse().setAtivo("N");
+//                                
+//                                rfl.getRepasseFaturas().getFaturaRepasse().setAtivo(false);
+//                                FaturaSingleton.getInstance().getBo().persist( rfl.getRepasseFaturas().getFaturaRepasse());
+//                                System.out.println("id fATURA para nao ativo: " + rfl.getRepasseFaturas().getFaturaRepasse().getId());
+//                                System.out.println("id alterado para nao ativo: " + rfl.getLancamentoRepasse().getId());
+//                                LancamentoSingleton.getInstance().getBo().persist(rfl.getLancamentoRepasse());
+//                              //  rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId() +
+//                                System.out.println("--------------------------");
+//                            }
+//                        }
+//                    }
+//                }
+                
                 
             }
 
