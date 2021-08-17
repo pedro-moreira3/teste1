@@ -399,6 +399,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public void listarPacientesAgendamento() {
         if (getInicio() != null && getFim() != null) {
             Calendar c = Calendar.getInstance();
+            int today = c.get(Calendar.DAY_OF_MONTH);
+            
             c.setTime(getInicio());
             c.set(Calendar.HOUR_OF_DAY, 0);
             c.set(Calendar.MINUTE, 0);
@@ -407,9 +409,11 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
             
             c = Calendar.getInstance();
             c.setTime(getFim());
-            c.set(Calendar.HOUR_OF_DAY, 23);
-            c.set(Calendar.MINUTE, 59);
-            c.set(Calendar.SECOND, 59);  
+            if(c.get(Calendar.DAY_OF_MONTH) < today) {
+                c.set(Calendar.HOUR_OF_DAY, 23);
+                c.set(Calendar.MINUTE, 59);
+                c.set(Calendar.SECOND, 59);
+            }
             fim = c.getTime();
         }
         
@@ -426,6 +430,17 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         pacientes.forEach((p) -> p.atualizarStatus());
     }
 
+    public void novoRetorno(Long idPaciente) {
+        try {
+            this.actionNew(null);
+            this.retorno = new Retorno();
+            Paciente paciente = PacienteSingleton.getInstance().getBo().find(idPaciente);
+            this.retorno.setPaciente(paciente);
+        }catch (Exception e) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar parâmetros do retorno");
+        }
+    }
+    
     public String descricaoStatusPaciente(String status) {
 
         if (status.equals("T"))

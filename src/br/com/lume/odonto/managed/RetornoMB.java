@@ -6,9 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -26,7 +27,7 @@ import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class RetornoMB extends LumeManagedBean<Retorno> {
 
@@ -40,6 +41,8 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     private StatusRetorno retornar;
 
+    private Paciente paciente;
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRetorno;
 
@@ -53,6 +56,18 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         this.setClazz(Retorno.class);
     }
 
+    public void novoRetorno(Long idPaciente) {
+        try {
+            this.actionNew(null);
+            this.paciente = PacienteSingleton.getInstance().getBo().find(idPaciente);
+            Retorno retorno = new Retorno();
+            retorno.setPaciente(paciente);
+            this.setEntity(retorno);
+        }catch (Exception e) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar parâmetros do retorno");
+        }
+    }
+    
     public void geraLista() {
         try {
             if ((dataIni != null && dataFim != null) && dataFim.before(dataIni)) {
@@ -174,6 +189,14 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void setTabelaRetorno(DataTable tabelaRetorno) {
         this.tabelaRetorno = tabelaRetorno;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
 }

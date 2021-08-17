@@ -545,7 +545,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										rendered="#{p.dataProximoAgendamento eq '' or p.dataProximoAgendamento eq null}"
 										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 										title="Agendar" process="@this"
-										action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p.paciente,p.profissional)}"
+										action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p.idPaciente)}"
 										update="lume:pnAgendamento" style="width: 33px !important" />
 									<h:outputText
 										value="#{relatorioPacienteAgendamentoMB.formatarData(p.dataProximoAgendamento)}" />
@@ -567,15 +567,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:column filterBy="#{p.dataProximoRetorno}"
 									sortBy="#{p.dataProximoRetorno}" filterMatchMode="contains"
 									headerText="Data Próximo Retorno">
-									<ui:remove>
 										<p:commandButton icon="fa fa fa-mail-reply"
 											rendered="#{p.dataProximoRetorno eq '' or p.dataProximoRetorno eq null}"
-											oncomplete="PF('dlgViewRetorno').show();"
+											oncomplete="PF('dlgViewRetorno').show();resize('#lume\\:dlgViewRetorno');"
+											action="#{retornoMB.novoRetorno(p.idPaciente)}"
 											title="Marcar Retorno" process="@this"
-											action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p.paciente)}"
-											update="lume:pnAgendamento,:lume:dlgViewRetorno"
+											update=":lume:idDlgViewRetorno"
 											style="width: 33px !important" />
-									</ui:remove>
 									<h:outputText
 										value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.dataProximoRetorno)}" />
 								</p:column>
@@ -619,7 +617,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						widgetVar="dlgConfirmarCabecalho" responsive="true"
 						icon="pi pi-exclamation-triangle" width="300px" modal="true"
 						draggable="false" blockScroll="true" positionTop="0"
-						positionLeft="0" style="overflow:hidden !important;">
+						style="overflow:hidden !important;">
 						<h:panelGroup style="margin:16px;">
 							<p:selectBooleanCheckbox id="cabecalho"
 								value="#{relatorioPacienteAgendamentoMB.imprimirCabecalho}">
@@ -647,73 +645,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					<p:dialog appendTo=":lume:" maximizable="false" modal="true"
 						minimizable="false" resizable="false" responsive="true"
-						widgetVar="dlgViewRetorno" width="80%" id="dlgViewRetorno">
+						widgetVar="dlgViewRetorno" width="80%" id="idDlgViewRetorno">
 						<f:facet name="header">
 							<p:outputPanel id="viewRetornoHeader">
-					Cadastro de retorno
-				</p:outputPanel>
+								Cadastro de retorno
+							</p:outputPanel>
 						</f:facet>
-						<p:outputPanel id="viewRetorno">
-							<div class="ui-g ui-fluid">
-								<div class="ui-g-12 ui-lg-12">
-									<p:panelGrid columns="4" layout="grid"
-										columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
-										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-										<h:outputLabel value="Paciente:" />
-										<h:outputLabel
-											value="#{relatorioPacienteAgendamentoMB.retorno.paciente}" />
-										<h:outputLabel value="Status : " />
-
-										<p:selectOneMenu
-											value="#{relatorioPacienteAgendamentoMB.retorno.retornar}"
-											converter="enumStatusRetorno">
-											<f:selectItem itemValue="#{null}"
-												itemLabel="Selecione uma opção" />
-											<f:selectItems
-												value="#{relatorioPacienteAgendamentoMB.statusPossiveis}"
-												var="status" itemValue="#{status}"
-												itemLabel="#{status.descricao}" />
-										</p:selectOneMenu>
-										<p:outputLabel value="Data Contato : " for="dtContato" />
-										<p:calendar id="dtContato" required="true"
-											value="#{relatorioPacienteAgendamentoMB.retorno.dataRetorno}"
-											pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-											locale="#{lumeSecurity.locale}"
-											timeZone="#{lumeSecurity.timeZone}" navigator="true"
-											yearRange="-100:+10" styleClass="dtContato" />
-										<p:outputLabel for="observacoesretornocadastro"
-											value="Observações : " />
-										<p:inputTextarea id="observacoesretornocadastro" rows="3"
-											cols="33"
-											value="#{relatorioPacienteAgendamentoMB.retorno.observacoes}"
-											maxlength="200" />
-										<h:outputLabel value="Plano de Tratamento : " />
-										<h:outputText
-											value="#{relatorioPacienteAgendamentoMB.retorno.planoTratamento.descricao}" />
-										<h:outputLabel value="Data Finalização Plano de Tratamento : " />
-										<h:outputText
-											value="#{relatorioPacienteAgendamentoMB.retorno.planoTratamento.dataFinalizadoStr}" />
-
-										<p:outputLabel for="detalhesRetorno"
-											value="Detalhes do contato : " />
-										<p:inputTextarea id="detalhesRetorno" rows="3" cols="33"
-											value="#{relatorioPacienteAgendamentoMB.retorno.detalhesContato}"
-											maxlength="200" />
-
-									</p:panelGrid>
-								</div>
-							</div>
-						</p:outputPanel>
-						<p:separator styleClass="SeparatorFull" />
+						<ui:include src="dlgretorno.xhtml" />
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:commandButton icon="White fa fa-save" value="Salvar"
-								actionListener="#{relatorioPacienteAgendamentoMB.actionPersistRetorno}"
-								update=":lume:dtPrincipalRelatorio"
-								process="@this, :lume:viewRetorno" styleClass="GreenButton" />
+								actionListener="#{retornoMB.actionPersist}" process="viewRetorno,@this"
+								styleClass="GreenButton" onsuccess="PF('dlgViewRetorno').hide()"/>
 							<p:commandButton icon="White fa fa-close" value="Fechar"
-								styleClass="NavyButton"
-								oncomplete="PF('dlgViewRetorno').hide();PF('dtPrincipalRelatorio').filter();" />
+								styleClass="NavyButton" oncomplete="PF('dlgViewRetorno').hide()" />
 						</p:panelGrid>
 					</p:dialog>
 
@@ -735,7 +680,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										value="#{relatorioPacienteAgendamentoMB.nomeClinica()}" />
 								</h1>
 
-								<h1
+								<h1>
 									style="font-size: 14px !important; margin: 0; margin-top: -5px; margin-bottom: 5px;">
 									<h:outputText
 										value="#{relatorioPacienteAgendamentoMB.telefoneClinica()}" />
