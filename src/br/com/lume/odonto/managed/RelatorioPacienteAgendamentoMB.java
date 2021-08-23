@@ -103,8 +103,6 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
 
-        //RelatorioRelacionamentoTags tag = RelatorioRelacionamentoTagsSingleton.getInstance().getBo().findByEmpresa(UtilsFrontEnd.getEmpresaLogada());
-
         if (this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();
         this.sugestoesConvenios("todos");
@@ -114,42 +112,6 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         this.setDataFim(new Date());
         actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
         this.carregarAniversariantes();
-        
-//        if (tag != null && tag.isEmExecucao()) {
-//            mostraMensagemEmExecucao = true;
-//        } else {
-//            mostraMensagemEmExecucao = false;
-//            if (tag != null) {
-//               this.filtroPeriodo = tag.getFiltroPeriodo();
-//               this.inicio = tag.getDataDe();
-//               this.fim = tag.getDataAte();
-//               this.paciente = tag.getPaciente();
-//               this.filtroStatusPaciente = tag.getStatusPaciente();
-//               if( tag.getConvenio() != null) {
-//                   this.filtroPorConvenio = tag.getConvenio().getDadosBasico().getNome();    
-//               }
-//               
-//               this.filtroPorProfissional = tag.getProfissionalAgendamento();
-//               this.filtroStatusAgendamento =  new ArrayList<String>();
-//               if(tag.isTagSemAgendamento()) {
-//                   this.filtroStatusAgendamento.add("SUA");
-//               }
-//               if(tag.isTagSemAgendamentoFuturo()) {
-//                   this.filtroStatusAgendamento.add("SAF");
-//               }
-//               if(tag.isTagSemRetornoFuturo()) {
-//                   this.filtroStatusAgendamento.add("SRR");
-//               }               
-//         
-//                       
-//               this.checkFiltro = tag.isTagMostrarTodosAgendamentos();
-//               
-//               String[] ary = tag.getListaStatus().split(",");     
-//               this.filtroAtendimento.addAll(Arrays.asList(ary));
-//                this.pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada());
-//            }
-//        }
-
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -178,16 +140,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         try {
             return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
         } catch (Exception e) {
-
         }
         return "";
     }
 
     public void carregarAniversariantes() {
         try {
-
             this.aniversariantes = PacienteSingleton.getInstance().getBo().listAniversariantes(dataInicio, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-
         } catch (Exception e) {
             this.log.error(e);
             e.printStackTrace();
@@ -248,45 +207,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                     this.addError("O filtro por período do útilmo agendamento não suporta datas superiores à data atual.", "");
                     return;
                 }
-            } else {
-                
-//                boolean tagSemAgendamento = false;
-//                boolean tagSemAgendamentoFuturo = false;
-//                boolean tagSemRetornoFuturo = false;
-//                if (getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
-//                    tagSemAgendamento = true;
-//                }
-//
-//                if (getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
-//                    tagSemAgendamentoFuturo = true;
-//                }
-//
-//                if (getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {
-//                    tagSemRetornoFuturo = true;
-//                }
-//
-//                String filtroStatus = "";
-//                for (String filtro : filtroAtendimento) {
-//                    filtroStatus += filtro + ",";
-//                }
-//                filtroStatus = StringUtils.chop(filtroStatus);
-//
-//                RelatorioRelacionamentoColunasSingleton.getInstance().getBo().removeAllFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
-//                RelatorioRelacionamentoTagsSingleton.getInstance().getBo().removeAllFromEmpresa(UtilsFrontEnd.getEmpresaLogada());
-//                
-//                RelatorioRelacionamentoTags tags = new RelatorioRelacionamentoTags(new Date(), true, this.filtroPeriodo, this.filtroStatusPaciente, this.inicio, this.fim,
-//                        filtroStatus, UtilsFrontEnd.getEmpresaLogada(), paciente, this.filtroPorProfissional, getConvenio(getFiltroPorConvenio()), tagSemAgendamento, tagSemAgendamentoFuturo,
-//                        tagSemRetornoFuturo, checkFiltro);
-//                RelatorioRelacionamentoTagsSingleton.getInstance().getBo().persist(tags);
-//
-//                tags = RelatorioRelacionamentoTagsSingleton.getInstance().getBo().find(tags);
-//
-//                geraRelatorioAsync(tags);
-//                mostraMensagemEmExecucao = true;
-
             }
             listarPacientesAgendamento();
-            // this.sugestoesConvenios("todos");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -490,7 +490,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									filterMatchMode="contains" headerText="Paciente">
 									<p:commandLink value="#{p.nomePaciente}" process="@this"
 										title="#{p.id}"
-										actionListener="#{tabPacienteMB.loadPaciente(p.paciente)}"
+										actionListener="#{tabPacienteMB.loadPaciente(p.pacienteCarregado)}"
 										oncomplete="PF('dlgFichaPaciente').show();"
 										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
