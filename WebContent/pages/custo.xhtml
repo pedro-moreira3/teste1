@@ -6,7 +6,7 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<div class="ui-g ui-fluid">
@@ -14,109 +14,179 @@
 				<div class="card card-w-title">
 					<h:inputHidden id="idCusto" value="#{custoMB.entity.id}" />
 					<h1>Registro de Custos Diretos</h1>
-					<div class="SeparatorFull"></div>
 
-					<p:outputPanel id="pnCusto" styleClass="BordNone">
-						<p:panelGrid columns="2"
-							columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
-							styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
+					<p:dialog id="dlgNovoCusto" widgetVar="dlgNovoCusto"
+						resizable="false" modal="true" responsive="true" appendTo=":lume"
+						width="85%" header="Novo Custo">
+						<p:outputPanel id="pnCusto" styleClass="BordNone">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="paciente" value="Paciente:" />
-							<p:autoComplete dropdown="true" queryDelay="1000" size="42"
-								minQueryLength="3" value="#{custoMB.paciente}" id="paciente"
-								completeMethod="#{custoMB.geraSugestoes}" var="p"
-								itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
-								converter="paciente" required="true" scrollHeight="400"
-								disabled="#{custoMB.entity.id != null and custoMB.entity.id != 0}">
+								<p:outputLabel for="paciente" value="Paciente:" />
+								<p:autoComplete dropdown="true" queryDelay="1000"
+									minQueryLength="3" value="#{custoMB.paciente}" id="paciente"
+									completeMethod="#{custoMB.geraSugestoes}" var="p"
+									itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
+									converter="paciente" required="true" scrollHeight="400"
+									disabled="#{custoMB.entity.id != null and custoMB.entity.id != 0}">
 
-								<p:column headerText="Código" style="text-align: center;">
-									<h:outputText value="#{p.codigo}" />
-								</p:column>
-								<p:column headerText="Nome">
-									<h:outputText value="#{p.dadosBasico.nome}" />
-								</p:column>
-								<p:column headerText="Celular">
-									<h:outputText value="#{p.dadosBasico.celular}" />
-								</p:column>
-								<p:column headerText="Nome da Mãe">
-									<h:outputText value="#{p.nomeMae}" />
-								</p:column>
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
 
-								<p:ajax event="itemSelect" listener="#{custoMB.handleSelect}"
-									process="@this,paciente" update=":lume:dtCusto,:lume:pnCusto" />
-							</p:autoComplete>
+									<p:ajax event="itemSelect" listener="#{custoMB.handleSelect}"
+										process="@this,paciente" update=":lume:dtCusto,:lume:pnCusto" />
+								</p:autoComplete>
 
-							<p:outputLabel for="planoTratamento"
-								value="Plano de tratamento: " />
-							<p:selectOneMenu id="planoTratamento" required="true"
-								disabled="#{custoMB.paciente == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
-								value="#{custoMB.planoTratamento}" converter="planoTratamento">
-								<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
-								<f:selectItems value="#{custoMB.planoTratamentos}" var="pt"
-									itemValue="#{pt}" itemLabel="#{pt.descricao}" />
-								<p:ajax update=":lume:botoes,:lume:pnCusto"
-									listener="#{custoMB.handleSelectPT}" process="@this"/>
-							</p:selectOneMenu>
+								<p:outputLabel for="planoTratamento"
+									value="Plano de tratamento: " />
+								<p:selectOneMenu id="planoTratamento" required="true"
+									disabled="#{custoMB.paciente == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
+									value="#{custoMB.planoTratamento}" converter="planoTratamento">
+									<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
+									<f:selectItems value="#{custoMB.planoTratamentos}" var="pt"
+										itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+									<p:ajax update="pnlBotoes,:lume:pnCusto"
+										listener="#{custoMB.handleSelectPT}" process="@this" />
+								</p:selectOneMenu>
 
-							<p:outputLabel for="planoTratamentoProcedimento"
-								value="Procedimento: " />
-							<p:selectOneMenu id="planoTratamentoProcedimento" required="true"
-								disabled="#{custoMB.planoTratamento == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
-								value="#{custoMB.entity.planoTratamentoProcedimento}"
-								converter="planoTratamentoProcedimento">
-								
-								<p:ajax process="@this"/>
-								
-								<f:selectItem itemLabel="Selecione um procedimento"
-									itemValue="#{null}" />
-								<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}"
-									var="ptp" itemValue="#{ptp}"
-									itemLabel="#{custoMB.descricaoProcedimento(ptp)}" />
-							</p:selectOneMenu>
+								<p:outputLabel for="planoTratamentoProcedimento"
+									value="Procedimento: " />
+								<p:selectOneMenu id="planoTratamentoProcedimento"
+									required="true"
+									disabled="#{custoMB.planoTratamento == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
+									value="#{custoMB.entity.planoTratamentoProcedimento}"
+									converter="planoTratamentoProcedimento">
 
-							<p:outputLabel for="dtRegistro" value="Data: " />
-							<p:calendar id="dtRegistro"
-								value="#{custoMB.entity.dataRegistro}" pattern="dd/MM/yyyy"
-								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
-								disabled="#{custoMB.planoTratamento == null}">
-									<p:ajax event="dateSelect" process="@this"/>
-							</p:calendar>
+									<p:ajax process="@this" />
 
-							<p:outputLabel for="valorCusto" value="Custo: " />
-							<p:inputNumber id="valorCusto"
-								disabled="#{custoMB.planoTratamento == null}"
-								value="#{custoMB.entity.valor}" required="true" maxlength="10"
-								maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." >
-							</p:inputNumber>
+									<f:selectItem itemLabel="Selecione um procedimento"
+										itemValue="#{null}" />
+									<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}"
+										var="ptp" itemValue="#{ptp}"
+										itemLabel="#{custoMB.descricaoProcedimento(ptp)}" />
+								</p:selectOneMenu>
 
-							<p:outputLabel for="descricaoCusto" value="Descrição do custo: " />
-							<p:inputTextarea id="descricaoCusto"
-								value="#{custoMB.entity.descricao}" required="true"
-								maxlength="100" disabled="#{custoMB.planoTratamento == null}" >
-							</p:inputTextarea>
+								<p:outputLabel for="dtRegistro" value="Data: " />
+								<p:calendar id="dtRegistro"
+									value="#{custoMB.entity.dataRegistro}" pattern="dd/MM/yyyy"
+									mask="true" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
+									disabled="#{custoMB.planoTratamento == null}" required="true">
+									<p:ajax event="dateSelect" process="@this" />
+								</p:calendar>
 
+								<p:outputLabel for="valorCusto" value="Custo: " />
+								<p:inputNumber id="valorCusto"
+									disabled="#{custoMB.planoTratamento == null}"
+									value="#{custoMB.entity.valor}" required="true" maxlength="10"
+									maxValue="99999999.99" decimalSeparator="," symbol=""
+									thousandSeparator=".">
+								</p:inputNumber>
+
+								<p:outputLabel for="descricaoCusto" value="Descrição do custo: " />
+								<p:inputTextarea id="descricaoCusto"
+									value="#{custoMB.entity.descricao}" required="true"
+									maxlength="100" disabled="#{custoMB.planoTratamento == null}">
+								</p:inputTextarea>
+
+							</p:panelGrid>
+						</p:outputPanel>
+
+
+
+						<p:panelGrid id="pnlBotoes" columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid"
+							columnClasses="ui-g-4,ui-g-4,ui-g-4">
+
+							<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+								process="@this,pnCusto" value="Salvar e Continuar"
+								actionListener="#{custoMB.actionPersistContinuar}"
+								update=":lume:dtCusto,pnCusto" />
+
+							<p:commandButton id="persist" icon="White fa fa-save"
+								value="Salvar e Fechar"
+								actionListener="#{custoMB.actionPersistFechar}"
+								update=":lume:dtCusto,pnCusto" process="@this,pnCusto"
+								styleClass="GreenButton" />
+
+							<p:commandButton value="Fechar" icon="White fa fa-close"
+								process="@this" oncomplete="PF('dlgNovoCusto').hide()"
+								styleClass="NavyButton" />
 						</p:panelGrid>
-					</p:outputPanel>
+					</p:dialog>
 
-					<div class="SeparatorFull"></div>
-					<p:outputPanel id="botoes" styleClass="BordNone">
+
+					<p:fieldset toggleable="false">
+						<p:panelGrid columns="3" layout="grid" id="filtroPrincipalDatas"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:outputLabel for="listaPeriodoInicial" value="Período:" />
+								<p:selectOneMenu id="listaPeriodoInicial" style="margin-top:-10px"
+									value="#{custoMB.periodo}"
+									update="inicioLancamento,fimLancamento">
+
+									<p:ajax process="@this" update="inicioLancamento,fimLancamento"
+										listener="#{custoMB.actionTrocaDatas}" />
+									<f:selectItem itemValue="9" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="7" itemLabel="Mês anterior" />
+									<f:selectItem itemValue="1" itemLabel="Hoje" />
+									<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
+									<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
+									<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
+
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:outputLabel for="inicioLancamento" value="Inicio: " />
+								<p:calendar id="inicioLancamento" value="#{custoMB.inicio}"
+									pattern="dd/MM/yyyy" mask="true" required="false" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:outputLabel for="fimLancamento" value="Fim: " />
+								<p:calendar id="fimLancamento" value="#{custoMB.fim}"
+									pattern="dd/MM/yyyy" mask="true" required="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+						
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="pesquisarCustos"
+								icon="fa fa-search White" value="Pesquisar"
+								actionListener="#{custoMB.geraLista}"
+								update="filtroPrincipalDatas,dtCusto"
+								process="@this,filtroPrincipalDatas"
+								oncomplete="PF('dtCusto').filter()" styleClass="OrangeButton" />
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:outputPanel id="botoes" styleClass="BordNone">
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="new" value="Novo Registro de Custo"
-								icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}"
-								update=":lume:pnCusto,dtCusto,:lume:botoes"
-								process="@this" disabled="#{custoMB.planoTratamento == null}" />
-							<p:commandButton id="persist" value="Salvar"
-								icon="White fa fa-save"
-								actionListener="#{custoMB.actionPersist}"
-								update=":lume:dtCusto,:lume:botoes"
-								process="paciente, descricaoCusto, valorCusto, @this"
-								disabled="#{custoMB.planoTratamento == null}"
-								styleClass="GreenButton" />
+								icon="White fa fa-file-o"
+								oncomplete="PF('dlgNovoCusto').show();"
+								actionListener="#{custoMB.actionNew}"
+								update=":lume:dlgNovoCusto" process="@this" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
 								value="Excluir" actionListener="#{custoMB.actionRemove}"
 								update=":lume:pnCusto, :lume:dtRegistro, :lume:dtCusto,:lume:botoes"
@@ -158,10 +228,10 @@
 						paginatorPosition="bottom" id="dtCusto" emptyMessage=""
 						selection="#{custoMB.entity}" selectionMode="single"
 						rowKey="#{custo}" binding="#{custoMB.tabelaCusto}">
-						
+
 						<p:ajax event="rowSelect" update=":lume:pnCusto,:lume:botoes"
 							listener="#{custoMB.carrega}" />
-						
+
 						<f:facet name="header">Lançamentos</f:facet>
 
 						<p:column headerText="Data de Faturamento"

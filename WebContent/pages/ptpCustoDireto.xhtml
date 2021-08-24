@@ -37,7 +37,7 @@
 					sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 					filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 					filterMatchMode="contains"
-					filterFunction="#{custoMB.filtroSemAcento}">
+					filterFunction="#{pTPCustoDiretoMB.filtroSemAcento}">
 
 					<p:commandLink
 						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
@@ -54,7 +54,7 @@
 					sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
 					filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
 					filterMatchMode="contains"
-					filterFunction="#{custoMB.filtroSemAcento}">
+					filterFunction="#{pTPCustoDiretoMB.filtroSemAcento}">
 					<h:outputText
 						value="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}" />
 				</p:column>
@@ -62,18 +62,18 @@
 					sortBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
 					filterBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
 					filterMatchMode="contains"
-					filterFunction="#{custoMB.filtroSemAcento}">
+					filterFunction="#{pTPCustoDiretoMB.filtroSemAcento}">
 					<h:outputText
 						value="#{custo.planoTratamentoProcedimento.descricaoCompleta}" />
 				</p:column>
 				<p:column sortBy="#{custo.descricao}" headerText="Descrição"
 					filterBy="#{custo.descricao}"
-					filterFunction="#{custoMB.filtroSemAcento}">
+					filterFunction="#{pTPCustoDiretoMB.filtroSemAcento}">
 					<h:outputText value="#{custo.descricao}" />
 				</p:column>
 				<p:column sortBy="#{custo.valor}" style="text-align:center;"
 					headerText="Parcela" filterBy="#{custo.valor}"
-					filterFunction="#{custoMB.filtroSemAcento}">
+					filterFunction="#{pTPCustoDiretoMB.filtroSemAcento}">
 					<h:outputText value="#{custo.valor}" />
 				</p:column>
 
@@ -93,16 +93,137 @@
 					message="Você tem certeza que deseja validar a conferência dos custos diretos? &lt;br/&gt; Esta é uma operação irreversível!">
 				</p:confirm>
 			</p:commandButton>
+			<p:commandButton id="new" value="Novo Registro de Custo"
+								icon="White fa fa-file-o"
+								oncomplete="PF('dlgNovoCusto').show();"
+								actionListener="#{pTPCustoDiretoMB.actionNew}"
+								update=":lume:dlgNovoCusto, :lume:pnCusto, :lume:custopaciente" process="@this" />
 			<h:outputText
 				rendered="#{pTPCustoDiretoMB.entity.custoDiretoValido == 'S' and pTPCustoDiretoMB.admin}"
 				value="* Custos já conferidos pelo profissional #{pTPCustoDiretoMB.entity.custoDiretoValidadoPor.dadosBasico.nome} às #{pTPCustoDiretoMB.entity.dataCustoDiretoValidadoStr}"
 				style="color: gray;" />
 			<p:column
-				rendered="#{pTPCustoDiretoMB.entity.custoDiretoValido != 'S' or !pTPCustoDiretoMB.admin}" />
+				rendered="#{pTPCustoDiretoMB.entity.custoDiretoValido == 'S' or !pTPCustoDiretoMB.admin}" />
 			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgPTPCustoDireto').hide()" />
 		</p:panelGrid>
+		
+		<p:dialog id="dlgNovoCusto" widgetVar="dlgNovoCusto"
+						resizable="false" modal="true" responsive="true" appendTo=":lume"
+						width="85%" header="Novo Custo">
+						<p:outputPanel id="pnCusto" styleClass="BordNone">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="custopaciente" value="Paciente:" />
+								<p:autoComplete dropdown="true" queryDelay="1000"
+									minQueryLength="3" value="#{pTPCustoDiretoMB.paciente}" id="custopaciente"
+									completeMethod="#{pTPCustoDiretoMB.geraSugestoes}" var="p"
+									itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
+									converter="paciente" required="true" scrollHeight="400"
+									disabled="true">
+
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+									<p:ajax event="itemSelect" listener="#{pTPCustoDiretoMB.handleSelect}"
+										process="@this,custopaciente" update=":lume:pnPTPCustoDireto,:lume:pnCusto" />
+								</p:autoComplete>
+
+								<p:outputLabel for="planoTratamento"
+									value="Plano de tratamento: " />
+								<p:selectOneMenu id="planoTratamento" required="true"
+									disabled="true"
+									value="#{pTPCustoDiretoMB.planoTratamento}" converter="planoTratamento">
+									<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
+									<f:selectItems value="#{pTPCustoDiretoMB.planoTratamentos}" var="pt"
+										itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+									<p:ajax update="pnlBotoes,:lume:pnCusto"
+										listener="#{pTPCustoDiretoMB.handleSelectPT}" process="@this" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="planoTratamentoProcedimento"
+									value="Procedimento: " />
+								<p:selectOneMenu id="planoTratamentoProcedimento"
+									required="true"
+									disabled="true"
+									value="#{pTPCustoDiretoMB.custo.planoTratamentoProcedimento}"
+									converter="planoTratamentoProcedimento">
+
+									<p:ajax process="@this" />
+
+									<f:selectItem itemLabel="Selecione um procedimento"
+										itemValue="#{null}" />
+									<f:selectItems value="#{pTPCustoDiretoMB.planoTratamentoProcedimentos}"
+										var="ptp" itemValue="#{ptp}"
+										itemLabel="#{pTPCustoDiretoMB.descricaoProcedimento(ptp)}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="dtRegistro" value="Data: " />
+								<p:calendar id="dtRegistro"
+									value="#{pTPCustoDiretoMB.custo.dataRegistro}" pattern="dd/MM/yyyy"
+									mask="true" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
+									disabled="#{pTPCustoDiretoMB.planoTratamento == null}"
+									required="true">
+									<p:ajax event="dateSelect" process="@this" />
+								</p:calendar>
+
+								<p:outputLabel for="valorCusto" value="Custo: " />
+								<p:inputNumber id="valorCusto"
+									disabled="#{pTPCustoDiretoMB.planoTratamento == null}"
+									value="#{pTPCustoDiretoMB.custo.valor}" required="true" maxlength="10"
+									maxValue="99999999.99" decimalSeparator="," symbol=""
+									thousandSeparator=".">
+								</p:inputNumber>
+
+								<p:outputLabel for="descricaoCusto" value="Descrição do custo: " />
+								<p:inputTextarea id="descricaoCusto"
+									value="#{pTPCustoDiretoMB.custo.descricao}" required="true"
+									maxlength="100" disabled="#{pTPCustoDiretoMB.planoTratamento == null}">
+								</p:inputTextarea>
+
+							</p:panelGrid>
+						</p:outputPanel>
+
+						<p:panelGrid id="pnlBotoes" columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid">
+<ui:remove>
+									<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+									process="@this,pnCusto"
+									value="Salvar e Continuar"
+									actionListener="#{pTPCustoDiretoMB.actionPersistCustoContinuar}"
+									update=":lume:pnPTPCustoDireto,pnCusto" />
+</ui:remove>
+									<p:commandButton id="persistFechar" icon="White fa fa-save"
+										value="Salvar"
+										actionListener="#{pTPCustoDiretoMB.actionPersistCustoFechar}"
+										update=":lume:pnPTPCustoDireto,pnCusto"
+										process="@this,pnCusto"										
+										styleClass="GreenButton" />
+										
+									<p:commandButton value="Fechar" icon="White fa fa-close"
+										process="@this" 
+										oncomplete="PF('dlgNovoCusto').hide()"
+										styleClass="NavyButton" />
+								</p:panelGrid>
+
+					</p:dialog>
 	</p:dialog>
 
 </ui:composition>

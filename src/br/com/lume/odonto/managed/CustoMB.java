@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -9,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
@@ -17,8 +19,10 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.custo.CustoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -46,6 +50,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     private List<PlanoTratamento> planoTratamentos;
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
     private PlanoTratamento planoTratamento;
+    private String periodo;
+    private Date inicio, fim;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaCusto;
@@ -54,6 +60,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         super(CustoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimentoCusto.class);
         paciente = new Paciente();
+        this.periodo = "9";
+        actionTrocaDatas();
 //        try {
 //            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 //            custos = new ArrayList<>();
@@ -83,6 +91,31 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         this.setPlanoTratamentoProcedimentos(this.getEntity().getPlanoTratamentoProcedimento().getPlanoTratamento().getPlanoTratamentoProcedimentos());
     }
 
+    public void actionTrocaDatas() {
+        try {
+
+            this.setInicio(Utils.getDataInicio(this.getPeriodo()));
+            this.setFim(Utils.getDataFim(this.getPeriodo()));
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasConferencia", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
+    public void geraLista() {
+        try {
+            custos = PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listByParams(inicio, fim);
+            if (custos != null) {
+                custos.sort((o1, o2) -> o2.getDataFaturamento().compareTo(o1.getDataFaturamento()));
+            }
+            PrimeFaces.current().executeScript("PF('loading').hide();");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
     @Override
     public void actionRemove(ActionEvent event) {
         try {
@@ -91,19 +124,18 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getEntity().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
             PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(this.getEntity());
            // this.actionNew(event);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
             RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada());
             carregaListaCusto();
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
     }
 
-    @Override
-    public void actionPersist(ActionEvent event) {
+    public void actionPersistContinuar(ActionEvent event) {
         try {
-            if(this.getEntity().getDataRegistro() != null) {
+            if(this.getEntity().getValor().doubleValue() <= this.getEntity().getPlanoTratamentoProcedimento().getValorDesconto().doubleValue()) {
                 this.getEntity().setDataFaturamento(Calendar.getInstance().getTime());
                 super.actionPersist(event);
                 if (this.getEntity().getPlanoTratamentoProcedimento().isFinalizado()) {
@@ -121,13 +153,19 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
                 }
                 
                 carregaListaCusto();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }else {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário informar a data do registro.");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Valor do custo é maior que o valor do procedimento");
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
+    }
+    
+    public void actionPersistFechar(ActionEvent event) {
+        actionPersistContinuar(event);
+        PrimeFaces.current().executeScript("PF('dlgNovoCusto').hide()");
     }
 
     public void handleClose(CloseEvent event) {
@@ -278,6 +316,36 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public void setTabelaCusto(DataTable tabelaCusto) {
         this.tabelaCusto = tabelaCusto;
+    }
+
+    
+    public String getPeriodo() {
+        return periodo;
+    }
+
+    
+    public void setPeriodo(String periodo) {
+        this.periodo = periodo;
+    }
+
+    
+    public Date getInicio() {
+        return inicio;
+    }
+
+    
+    public void setInicio(Date inicio) {
+        this.inicio = inicio;
+    }
+
+    
+    public Date getFim() {
+        return fim;
+    }
+
+    
+    public void setFim(Date fim) {
+        this.fim = fim;
     }
 
 }
