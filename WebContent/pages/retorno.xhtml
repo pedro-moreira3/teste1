@@ -21,69 +21,7 @@
 					#{(retornoMB.entity.id == 0 ? 'Cadastro' : 'Alteração')} de retorno
 				</p:outputPanel>
 			</f:facet>
-			<p:outputPanel id="viewRetorno">
-				<div class="ui-g ui-fluid">
-					<div class="ui-g-12 ui-lg-12">
-						<p:panelGrid columns="4" layout="grid"
-							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<h:outputLabel value="Paciente:" />
-							<p:autoComplete dropdown="true" queryDelay="1000"
-								minQueryLength="3" value="#{retornoMB.entity.paciente}"
-								completeMethod="#{retornoMB.geraSugestoesPaciente}" var="p"
-								itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
-								converter="paciente" required="true" size="46"
-								scrollHeight="400"
-								disabled="#{retornoMB.entity.paciente != null}">
-								<p:column headerText="Código" style="text-align: center;">
-									<h:outputText value="#{p.codigo}" />
-								</p:column>
-								<p:column headerText="Nome">
-									<h:outputText value="#{p.dadosBasico.nome}" />
-								</p:column>
-								<p:column headerText="Celular">
-									<h:outputText value="#{p.dadosBasico.celular}" />
-								</p:column>
-								<p:column headerText="Nome da Mãe">
-									<h:outputText value="#{p.nomeMae}" />
-								</p:column>
-							</p:autoComplete>
-							<h:outputLabel value="Status : " />
-							<p:selectOneMenu value="#{retornoMB.entity.retornar}"
-								converter="enumStatusRetorno">
-								<f:selectItem itemValue="#{null}"
-									itemLabel="Selecione uma opção" />
-								<f:selectItems value="#{retornoMB.statusPossiveis}" var="status"
-									itemValue="#{status}" itemLabel="#{status.descricao}" />
-							</p:selectOneMenu>
-							<p:outputLabel value="Data Contato : " for="dtContato" />
-							<p:calendar id="dtContato" required="true"
-								value="#{retornoMB.entity.dataRetorno}" pattern="dd/MM/yyyy"
-								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-100:+10" styleClass="dtContato" />
-							<p:outputLabel for="observacoesretornocadastro"
-								value="Observações : " />
-							<p:inputTextarea id="observacoesretornocadastro" rows="3"
-								cols="33" value="#{retornoMB.entity.observacoes}"
-								maxlength="200" />
-							<h:outputLabel value="Plano de Tratamento : " />
-							<h:outputText
-								value="#{retornoMB.entity.planoTratamento.descricao}" />
-							<h:outputLabel value="Data Finalização Plano de Tratamento : " />
-							<h:outputText
-								value="#{retornoMB.entity.planoTratamento.dataFinalizadoStr}" />
-
-							<p:outputLabel for="detalhesRetorno"
-								value="Detalhes do contato : " />
-							<p:inputTextarea id="detalhesRetorno" rows="3" cols="33"
-								value="#{retornoMB.entity.detalhesContato}" maxlength="200" />
-
-						</p:panelGrid>
-					</div>
-				</div>
-			</p:outputPanel>
-			<p:separator styleClass="SeparatorFull" />
+			<ui:include src="dlgretorno.xhtml" />
 			<p:panelGrid columns="2" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton icon="White fa fa-save" value="Salvar"
