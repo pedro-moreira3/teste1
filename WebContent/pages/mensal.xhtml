@@ -30,8 +30,8 @@
 							<h:graphicImage name="logo_idente.png" style="width:25%;"
 								library="images" />
 						</div>
-						<br /> <br />
-						<h:panelGroup>
+						<br /> <br /> <br /> <br /> <br /> <br />
+						<h:panelGroup rendered="false">
 							<p
 								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
 								<b>* ATENÇÃO: o desbloqueio pode levar até 30 minutos para
@@ -60,7 +60,7 @@
 
 
 		<p:outputPanel id="faturasHome">
-			<h:panelGroup rendered="#{faturasMB.subscriptionResponse != null and faturasMB.subscriptionResponse.recentInvoices != null}">
+			<h:panelGroup >
 				<div class="card">
 					<p:dataTable emptyMessage="Nenhuma Fatura no momento" id="faturas"
 						value="#{faturasMB.subscriptionResponse.recentInvoices}" var="objeto" rows="5"
@@ -86,7 +86,7 @@
 							<h:outputText value="	#{objeto.createdAt}" />
 						</p:column>
 					</p:dataTable>
-					<p:panelGrid columns="1"
+					<p:panelGrid columns="1" rendered="false"
 						style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
 						styleClass="form-group ui-panelgrid-blank ui-fluid" layout="grid">
 						<p:commandButton id="persist" icon="ui-icon-autorenew"
