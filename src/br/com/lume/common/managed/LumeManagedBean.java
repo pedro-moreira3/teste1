@@ -37,6 +37,7 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
+import br.com.lume.common.iugu.responses.SubscriptionResponse;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
@@ -86,15 +87,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         this.getEntity();
     }
     
-   // public SubscriptionResponse getSubscriptionResponse() {
-   //     return (SubscriptionResponse) JSFHelper.getSession().getAttribute("SubscriptionResponse");
-   // }
+    public SubscriptionResponse getSubscriptionResponse() {
+        return (SubscriptionResponse) JSFHelper.getSession().getAttribute("SubscriptionResponse");
+    }
 
-  //  public void carregarSubscriptionResponse() { 
-    //    Iugu.getInstance().atualizaFaturas(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
-    //    reloadViewSub();
- //   }
-    
     public Map<String, String> getListaVideosTutorial() {
         return Utils.getListaVideosTutorial();
     }

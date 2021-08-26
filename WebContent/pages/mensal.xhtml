@@ -1,47 +1,71 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
-	<ui:define name="content">	
-<style>	
-	.plano-show {
-	position:relative;
-	top:0;
-	left:0;
-	width:calc(100% - 60px);
-	border:solid 1px LightGray;
-	border-radius:15px;
-	padding:30px;
-	margin:0;
+	<ui:define name="content">
+		<style>
+.plano-show {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: calc(100% - 60px);
+	border: solid 1px LightGray;
+	border-radius: 15px;
+	padding: 30px;
+	margin: 0;
 }
+
 .plano-show * {
-	position:relative;
-	left:50%;
-	transform:translateX(-50%);
-	text-align:center;
+	position: relative;
+	text-align: center;
 }
-</style>		
+</style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<div class="plano-show">
 						<div class="ui-g-12 ui-lg-12">
-						<h:graphicImage name="logo_idente.png"  style="width:25%;left:12%" library="images" />
-					</div>
-						<br />	<br /><br /><br />	<br /><br /><br /><br />
-						
+							<h:graphicImage name="logo_idente.png" style="width:25%;"
+								library="images" />
+						</div>
+						<br /> <br />
+						<h:panelGroup>
+							<p
+								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
+								<b>* ATENÇÃO: o desbloqueio pode levar até 30 minutos para
+									ser realizado, caso o pagamento seja efetuado com PIX ou
+									CARTÃO. Caso o pagamento seja feito utilizando BOLETO, pode
+									demorar até 24hrs.</b>
+							</p>
+							<br />
+							<p
+								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
+								<b>Após efetuar o pagamento da fatura, clique no botão
+									Atualizar para liberar o acesso ou reefetue o login.</b>
+							</p>
+							<br />
+
+							<p:commandButton id="segundaViaFatura" icon="White fa fa-file-o"
+								style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
+								value="Gerar 2ª Via de Fatura" onstart="PF('loading').show();"
+								update=":lume:faturasHome" process="@this" styleClass="lime-btn"
+								disabled="false" oncomplete="PF('loading').hide();"/>
+						</h:panelGroup>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
 
 		<p:outputPanel id="faturasHome">
-			<h:panelGroup>
+			<h:panelGroup rendered="#{faturasMB.subscriptionResponse != null and faturasMB.subscriptionResponse.recentInvoices != null}">
 				<div class="card">
 					<p:dataTable emptyMessage="Nenhuma Fatura no momento" id="faturas"
-						value="#{mensalMB.listaFaturas}"
-						var="objeto" rows="5" paginatorPosition="bottom"
-						paginatorAlwaysVisible="true" paginator="true" rowKey="#{objeto}">
+						value="#{faturasMB.subscriptionResponse.recentInvoices}" var="objeto" rows="5"
+						paginatorPosition="bottom" paginatorAlwaysVisible="true"
+						paginator="true" rowKey="#{objeto}">
 						<f:facet name="header">Faturas</f:facet>
 						<p:column headerText="Dta. Vencimento">
 							<h:outputText value="#{objeto.dueDateStr}" />
@@ -62,7 +86,15 @@
 							<h:outputText value="	#{objeto.createdAt}" />
 						</p:column>
 					</p:dataTable>
-					
+					<p:panelGrid columns="1"
+						style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
+						styleClass="form-group ui-panelgrid-blank ui-fluid" layout="grid">
+						<p:commandButton id="persist" icon="ui-icon-autorenew"
+							value="Atualizar" onstart="PF('loading').show();"
+							update="faturasHome" 
+							process="@this" styleClass="NavyButton" disabled="false"
+							oncomplete="PF('loading').hide();" />
+					</p:panelGrid>
 				</div>
 			</h:panelGroup>
 		</p:outputPanel>
