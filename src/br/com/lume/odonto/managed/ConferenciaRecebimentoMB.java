@@ -213,8 +213,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                     List<PlanoTratamentoProcedimento> ptps = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(pt);
                     for (PlanoTratamentoProcedimento ptp : ptps) {
                         RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());    
-                    }
-                       
+                    }                       
                 }
                 
                 
