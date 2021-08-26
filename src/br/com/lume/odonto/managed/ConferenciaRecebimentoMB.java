@@ -28,9 +28,13 @@ import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
@@ -202,7 +206,18 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 //se for 0 a quantidade de recorrencia, para as fatura genericas, precisamos criar nova fatura ao pagar uma delas
                 if(l.getFatura().getFaturaRecorrente() != null && l.getFatura().getFaturaRecorrente().getQuantidadeRecorrencia() == 0) {
                     FaturaSingleton.getInstance().criaFaturaRecorrente(l.getFatura(),UtilsFrontEnd.getProfissionalLogado());
+                }                
+                
+                if (l.getFatura().getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) {
+                    PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
+                    List<PlanoTratamentoProcedimento> ptps = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(pt);
+                    for (PlanoTratamentoProcedimento ptp : ptps) {
+                        RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());    
+                    }                       
                 }
+                
+                
+                
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
