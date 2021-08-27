@@ -89,16 +89,57 @@
 		modal="true" responsive="true" appendTo=":lume" resizable="false"
 		width="90%">
 		<p:outputPanel id="pnEvolucao" style="margin-top: 20px">
-			<h:panelGroup styleClass="md-inputfield">
-				<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
-					disabled="#{evolucaoMB.entity.excluido == 'S'}"
-					value="#{evolucaoMB.entity.descricao}" autoResize="true"
-					required="true" maxlength="2000"
-					counterTemplate="{0} caracteres restantes." counter="counter" />
-				<p:outputLabel value="Descrição" for="eDescricao" />
-				<p:message for="eDescricao" styleClass="msg" />
-				<h:outputText id="counter" />
-			</h:panelGroup>
+			<p:panelGrid columns="1"
+								columnClasses="ui-grid-col-12" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								style="border:0px none; background-color:transparent;">
+				<h:panelGroup styleClass="md-inputfield">
+					<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
+						disabled="#{evolucaoMB.entity.excluido == 'S'}"
+						value="#{evolucaoMB.entity.descricao}" autoResize="true"
+						required="true" maxlength="2000"
+						counterTemplate="{0} caracteres restantes." counter="counter" />
+					<p:outputLabel value="Descrição" for="eDescricao" />
+					<p:message for="eDescricao" styleClass="msg" />
+					<h:outputText id="counter" />
+				</h:panelGroup>
+			</p:panelGrid>
+			<p:panelGrid columns="1"
+								columnClasses="ui-grid-col-12" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								style="border:0px none; background-color:transparent;">
+				<p:outputLabel for="planoTratamento"
+					value="Plano de tratamento: " />
+				<p:selectOneMenu id="planoTratamento"
+					disabled="#{evolucaoMB.planoTratamentos == null}"
+					value="#{evolucaoMB.planoTratamento}" converter="planoTratamento">
+					<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
+					<f:selectItems value="#{evolucaoMB.planoTratamentos}" var="pt"
+						itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+					<p:ajax update="gridPtps"
+						listener="#{evolucaoMB.handleSelectPT}" process="@this" />
+				</p:selectOneMenu>
+			</p:panelGrid>
+			<p:panelGrid columns="1" id="gridPtps"
+								columnClasses="ui-grid-col-12" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								style="border:0px none; background-color:transparent;">
+				<p:outputLabel for="planoTratamentoProcedimento"
+				value="Procedimento: " />
+				<p:selectOneMenu id="planoTratamentoProcedimento" required="#{evolucaoMB.planoTratamento != null}"				
+					disabled="#{evolucaoMB.planoTratamentoProcedimentos == null}"
+					value="#{evolucaoMB.planoTratamentoProcedimento}"
+					converter="planoTratamentoProcedimento">
+	
+					<p:ajax process="@this" />
+	
+					<f:selectItem itemLabel="Selecione um procedimento"
+						itemValue="#{null}" />
+					<f:selectItems value="#{evolucaoMB.planoTratamentoProcedimentos}"
+						var="ptp" itemValue="#{ptp}"
+						itemLabel="#{evolucaoMB.descricaoProcedimento(ptp)}" />
+				</p:selectOneMenu>	
+			</p:panelGrid>		
 		</p:outputPanel>
 		<p:separator styleClass="SeparatorFull" />
 		<p:panelGrid columns="4" layout="grid"
