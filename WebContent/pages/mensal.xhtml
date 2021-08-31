@@ -31,28 +31,6 @@
 								library="images" />
 						</div>
 						<br /> <br /> <br /> <br /> <br /> <br />
-						<h:panelGroup rendered="false">
-							<p
-								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
-								<b>* ATENÇÃO: o desbloqueio pode levar até 30 minutos para
-									ser realizado, caso o pagamento seja efetuado com PIX ou
-									CARTÃO. Caso o pagamento seja feito utilizando BOLETO, pode
-									demorar até 24hrs.</b>
-							</p>
-							<br />
-							<p
-								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
-								<b>Após efetuar o pagamento da fatura, clique no botão
-									Atualizar para liberar o acesso ou reefetue o login.</b>
-							</p>
-							<br />
-
-							<p:commandButton id="segundaViaFatura" icon="White fa fa-file-o"
-								style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
-								value="Gerar 2ª Via de Fatura" onstart="PF('loading').show();"
-								update=":lume:faturasHome" process="@this" styleClass="lime-btn"
-								disabled="false" oncomplete="PF('loading').hide();"/>
-						</h:panelGroup>
 					</div>
 				</div>
 			</div>
@@ -86,15 +64,6 @@
 							<h:outputText value="	#{objeto.createdAt}" />
 						</p:column>
 					</p:dataTable>
-					<p:panelGrid columns="1" rendered="false"
-						style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
-						styleClass="form-group ui-panelgrid-blank ui-fluid" layout="grid">
-						<p:commandButton id="persist" icon="ui-icon-autorenew"
-							value="Atualizar" onstart="PF('loading').show();"
-							update="faturasHome" 
-							process="@this" styleClass="NavyButton" disabled="false"
-							oncomplete="PF('loading').hide();" />
-					</p:panelGrid>
 				</div>
 			</h:panelGroup>
 		</p:outputPanel>
