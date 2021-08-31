@@ -41,7 +41,7 @@
 			<h:panelGroup >
 				<div class="card">
 					<p:dataTable emptyMessage="Nenhuma Fatura no momento" id="faturas"
-						value="#{faturasMB.subscriptionResponse.recentInvoices}" var="objeto" rows="5"
+						value="#{mensalMB.faturas}" var="objeto" rows="5"
 						paginatorPosition="bottom" paginatorAlwaysVisible="true"
 						paginator="true" rowKey="#{objeto}">
 						<f:facet name="header">Faturas</f:facet>
