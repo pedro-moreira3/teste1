@@ -56,10 +56,10 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     
     public void gerarSegundaViaFatura() {
         try {
-            assinatura = new SubscriptionService().find(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
+            assinatura = new SubscriptionService().find(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
             InvoiceResponse ultimaGerada = faturas.get(0);
             FaturasIugu fatura = new FaturasIugu();
-            fatura.setEmpresa(this.getLumeSecurity().getEmpresa());
+            fatura.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
             fatura.setIdClienteIugu(assinatura.getCustomerId());
             fatura.setIdAssinaturaIugu(assinatura.getId());
             fatura.setIdFaturaIugu(ultimaGerada.getId());
@@ -75,7 +75,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
             faturasIuguBO.persist(fatura);
             System.out.println("salvou OK");
 //            System.out.println("vai buscar assinatura");
-//            assinatura = new SubscriptionService().find(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
+//            assinatura = new SubscriptionService().find(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
 //            System.out.println("buscou assinatura OK");
 //            dataVencimentoAntiga = Utils.stringToDate(assinatura.getCreatedAt(), "yyyy-MM-dd");
 //            System.out.println(dataVencimentoAntiga);
@@ -126,10 +126,10 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     
     private void ativaAsinatura() throws Exception {
         System.out.println("chamou altera cobrança");
-        Iugu.getInstance().alteraCobranca(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco(), new Date(), true);
+        Iugu.getInstance().alteraCobranca(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco(), new Date(), true);
         System.out.println("altera cobranca OK");
         System.out.println("chamou ativa assinatura");
-        Iugu.getInstance().ativaAssinatura(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
+        Iugu.getInstance().ativaAssinatura(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
         System.out.println("ativa assinatura OK");
 //        getEntity().getAssinaturaIugu(Boolean.TRUE);
 
@@ -140,7 +140,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         System.out.println("chamou salvar fatura no banco");
         InvoiceResponse ultimaGerada = faturas.get(0);
         FaturasIugu fatura = new FaturasIugu();
-        fatura.setEmpresa(this.getLumeSecurity().getEmpresa());
+//        fatura.setEmpresa(UtilsFrontEnd.getEmpresaLogada());
         fatura.setIdClienteIugu(assinatura.getCustomerId());
         fatura.setIdAssinaturaIugu(assinatura.getId());
         fatura.setIdFaturaIugu(ultimaGerada.getId());
@@ -159,7 +159,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     
     public void carregarSubscriptionResponse() {
         faturas = new ArrayList<InvoiceResponse>();
-        faturas = Iugu.getInstance().atualizaFaturas(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
+        faturas = Iugu.getInstance().atualizaFaturas(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
         reloadViewSub();
     }
     
@@ -167,9 +167,9 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         System.out.println("chamou atualizar()");
         carregarSubscriptionResponse();
         try {
-            if (!Iugu.getInstance().isSuspenso(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco())) {
-                this.getLumeSecurity().getEmpresa().setBloqueado("N");
-                new EmpresaBO().persist(this.getLumeSecurity().getEmpresa());
+            if (!Iugu.getInstance().isSuspenso(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco())) {
+                UtilsFrontEnd.getEmpresaLogada().setBloqueado("N");
+                new EmpresaBO().persist(UtilsFrontEnd.getEmpresaLogada());
                 JSFHelper.redirect("home.jsf");
             }
         } catch (Exception e) {
