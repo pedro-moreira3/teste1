@@ -123,7 +123,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         InvoiceResponse ultimaGerada = faturas.get(0);
         FaturasIugu fatura = new FaturasIugu();
         fatura.setEmpresa(this.getLumeSecurity().getEmpresa());
-        fatura.setIdEmpresaIugu(assinatura.getCustomerId());
+        fatura.setIdClienteIugu(assinatura.getCustomerId());
         fatura.setIdAssinaturaIugu(assinatura.getId());
         fatura.setIdFaturaIugu(ultimaGerada.getId());
         fatura.setValorTotal(ultimaGerada.getTotalCents());
