@@ -50,6 +50,7 @@
 							<p:commandButton id="segundaViaFatura" icon="White fa fa-file-o"
 								style="width:calc(100% + 20px) !important;margin-left:-10px !important;"
 								value="Gerar 2ª Via de Fatura" onstart="PF('loading').show();"
+								actionListener="#{mensalMB.gerarSegundaViaFatura}"
 								update=":lume:faturasHome" process="@this" styleClass="lime-btn"
 								disabled="false" oncomplete="PF('loading').hide();"/>
 						</h:panelGroup>
