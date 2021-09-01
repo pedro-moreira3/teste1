@@ -56,49 +56,67 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     
     public void gerarSegundaViaFatura() {
         try {
-            System.out.println("vai buscar assinatura");
             assinatura = new SubscriptionService().find(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
-            System.out.println("buscou assinatura OK");
-            dataVencimentoAntiga = Utils.stringToDate(assinatura.getCreatedAt(), "yyyy-MM-dd");
-            System.out.println(dataVencimentoAntiga);
-            Date agora = new Date();
-            int diff = (int) ((agora.getTime() - Utils.stringToDate(converteDataIugu(faturas.get(0).getDueDate()), "dd-MM-yyyy").getTime())
-                              / (1000 * 60 * 60 * 24));
-            if (diff > 30) {
-                System.out.println("entrou gerar 2 faturas");
-                SubItem subItem = new SubItem(Mensagens.getMensagemOffLine("descricao.iugu.fatura.reativacao"), 1, assinatura.getPriceCents());
-                subItem.setRecurrent(false);
-                subItem.set_destroy(false);
-                Subscription subscription = new Subscription(null);
-                subscription.setSubItems(new ArrayList<SubItem>());
-                subscription.getSubItems().add(subItem);
-                subscription.setTwoStep(false);
-                subscription.setSuspendOnInvoiceExpired(true);
-                System.out.println("populou objeto para enviar pra api do iugu");
-                SubscriptionResponse result = new SubscriptionService().change(assinatura.getId(), subscription);
+            InvoiceResponse ultimaGerada = faturas.get(0);
+            FaturasIugu fatura = new FaturasIugu();
+            fatura.setEmpresa(this.getLumeSecurity().getEmpresa());
+            fatura.setIdClienteIugu(assinatura.getCustomerId());
+            fatura.setIdAssinaturaIugu(assinatura.getId());
+            fatura.setIdFaturaIugu(ultimaGerada.getId());
+            fatura.setValorTotal(ultimaGerada.getTotalCents());
+            fatura.setStatus(ultimaGerada.getStatus());
 
-                if (result != null && result.getSubitems().size() > 0) {
-                    System.out.println("retornou ok");
-                    ativaAsinatura();
-                    salvarFaturaPendente();
-                    atualizar();
-                    PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
-                    addInfo("OK","2ª via de fatura gerada com sucesso!");
-                    System.out.println("final fluxo 2 faturas ok");
-                } else {
-                    System.out.println("retornou sem adicionar subitem");
-                    addError("ERRO","Falha ao gerar 2ª via de fatura.");
-                }
+            fatura.setUltimoVencimentoAssinatura(Utils.stringToDate(assinatura.getExpiresAt(), "yyyy-MM-dd"));
+            System.out.println(fatura.getUltimoVencimentoAssinatura());
+            fatura.setVencimentoFatura(Utils.stringToDate(ultimaGerada.getDueDate(), "yyyy-MM-dd"));
+            System.out.println(fatura.getVencimentoFatura());
 
-            } else {
-                System.out.println("entrou gerar 1 fatura");
-                ativaAsinatura();
-                salvarFaturaPendente();
-                atualizar();
-                PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
-                addInfo("OK","2ª via de fatura gerada com sucesso!");
-                System.out.println("final fluxo 1 fatura ok");
-            }
+            System.out.println("populou objeto para salvar");
+            faturasIuguBO.persist(fatura);
+            System.out.println("salvou OK");
+//            System.out.println("vai buscar assinatura");
+//            assinatura = new SubscriptionService().find(this.getLumeSecurity().getEmpresa().getAssinaturaIuguBanco());
+//            System.out.println("buscou assinatura OK");
+//            dataVencimentoAntiga = Utils.stringToDate(assinatura.getCreatedAt(), "yyyy-MM-dd");
+//            System.out.println(dataVencimentoAntiga);
+//            Date agora = new Date();
+//            int diff = (int) ((agora.getTime() - Utils.stringToDate(converteDataIugu(faturas.get(0).getDueDate()), "dd-MM-yyyy").getTime())
+//                              / (1000 * 60 * 60 * 24));
+//            if (diff > 30) {
+//                System.out.println("entrou gerar 2 faturas");
+//                SubItem subItem = new SubItem(Mensagens.getMensagemOffLine("descricao.iugu.fatura.reativacao"), 1, assinatura.getPriceCents());
+//                subItem.setRecurrent(false);
+//                subItem.set_destroy(false);
+//                Subscription subscription = new Subscription(null);
+//                subscription.setSubItems(new ArrayList<SubItem>());
+//                subscription.getSubItems().add(subItem);
+//                subscription.setTwoStep(false);
+//                subscription.setSuspendOnInvoiceExpired(true);
+//                System.out.println("populou objeto para enviar pra api do iugu");
+//                SubscriptionResponse result = new SubscriptionService().change(assinatura.getId(), subscription);
+//
+//                if (result != null && result.getSubitems().size() > 0) {
+//                    System.out.println("retornou ok");
+//                    ativaAsinatura();
+//                    salvarFaturaPendente();
+//                    atualizar();
+//                    PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
+//                    addInfo("OK","2ª via de fatura gerada com sucesso!");
+//                    System.out.println("final fluxo 2 faturas ok");
+//                } else {
+//                    System.out.println("retornou sem adicionar subitem");
+//                    addError("ERRO","Falha ao gerar 2ª via de fatura.");
+//                }
+//
+//            } else {
+//                System.out.println("entrou gerar 1 fatura");
+//                ativaAsinatura();
+//                salvarFaturaPendente();
+//                atualizar();
+//                PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
+//                addInfo("OK","2ª via de fatura gerada com sucesso!");
+//                System.out.println("final fluxo 1 fatura ok");
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             addError("ERRO","Falha ao gerar 2ª via de fatura.");
