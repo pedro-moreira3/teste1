@@ -15,14 +15,7 @@
 		<url-pattern>/messages</url-pattern>
 		<url-pattern>/statusCallback</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>Iugu Servlet</servlet-name>
-		<servlet-class>br.com.lume.comprove.util.IuguHook</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Iugu Servlet</servlet-name>
-		<url-pattern>/iugu</url-pattern>
-	</servlet-mapping>
+	
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
 		<!-- <param-value>redmond</param-value> -->
