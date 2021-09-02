@@ -129,7 +129,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         fatura.setValorTotal(ultimaGerada.getTotalCents());
         fatura.setStatus(ultimaGerada.getStatus());
 
-        fatura.setUltimoVencimentoAssinatura(Utils.stringToDate(assinatura.getExpiresAt(), "yyyy-MM-dd"));
+        fatura.setUltimoVencimentoAssinatura(dataVencimentoAntiga);
         System.out.println(fatura.getUltimoVencimentoAssinatura());
         fatura.setVencimentoFatura(Utils.stringToDate(ultimaGerada.getDueDate(), "yyyy-MM-dd"));
         System.out.println(fatura.getVencimentoFatura());
