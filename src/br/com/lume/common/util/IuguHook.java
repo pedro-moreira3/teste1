@@ -14,13 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.lume.common.bo.FaturasIuguBO;
 import br.com.lume.common.iugu.Iugu;
 import br.com.lume.common.iugu.model.FaturasIugu;
+import br.com.lume.faturasiugu.FaturasIuguSingleton;
 import br.com.lume.security.entity.InvoiceStatusChange;
 
 
 public class IuguHook extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private FaturasIuguBO faturasIuguBO = new FaturasIuguBO();
 
     public IuguHook() {
     }
@@ -47,7 +47,7 @@ public class IuguHook extends HttpServlet {
             System.out.println("converteu objeto OK");
             if (invoice.getSubscriptionId() != null && invoice.getStatus().equals("paid")) {
                 System.out.println("status fatura == pago");
-                FaturasIugu fatura = faturasIuguBO.findByFaturaId(invoice.getId());
+                FaturasIugu fatura = FaturasIuguSingleton.getInstance().getBo().findByFaturaId(invoice.getId());
                 System.out.println("buscou se a fatura está salva no banco");
                 if (fatura != null) {
                     System.out.println("fatura != null");
@@ -78,7 +78,7 @@ public class IuguHook extends HttpServlet {
 
     private void atualizaStatusFaturaSalva(FaturasIugu fatura, InvoiceStatusChange invoiceRecebida) throws Exception {
         fatura.setStatus(invoiceRecebida.getStatus());
-        faturasIuguBO.persist(fatura);
+        FaturasIuguSingleton.getInstance().getBo().persist(fatura);
     }
 
     private InvoiceStatusChange converterObjetoIugu(String request) {

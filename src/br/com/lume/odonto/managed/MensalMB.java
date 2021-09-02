@@ -25,6 +25,7 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturasiugu.FaturasIuguSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
@@ -36,10 +37,9 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(MensalMB.class);
-
+    private List<InvoiceResponse> faturas;
     private SubscriptionResponse assinatura;
     private Date dataVencimentoAntiga;
-    private FaturasIuguBO faturasIuguBO = new FaturasIuguBO();
 
     public MensalMB() {
         super(EmpresaSingleton.getInstance().getBo());
@@ -48,21 +48,21 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     }
 
     private void carregarTela() {
-        if(UtilsFrontEnd.getEmpresaLogada().getIdIugu() != null && !UtilsFrontEnd.getEmpresaLogada().getIdIugu().isEmpty()) {
+//        if(UtilsFrontEnd.getEmpresaLogada().getIdIugu() != null && !UtilsFrontEnd.getEmpresaLogada().getIdIugu().isEmpty()) {
             
             this.carregarSubscriptionResponse();
-        }
+//        }
     }
     
     public void gerarSegundaViaFatura() {
         try {
             System.out.println("vai buscar assinatura");
-            assinatura = new SubscriptionService().find(this.getLumeSecurity().getEmpresa().getEmpStrAssinaturaIuguID());
+            assinatura = new SubscriptionService().find(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
             System.out.println("buscou assinatura OK");
-            dataVencimentoAntiga = Utils.stringToDate(assinatura.getExpiresAt(), "yyyy-MM-dd");
+            dataVencimentoAntiga = Utils.stringToDate(assinatura.getCreatedAt(), "yyyy-MM-dd");
             System.out.println(dataVencimentoAntiga);
             Date agora = new Date();
-            int diff = (int) ((agora.getTime() - Utils.stringToDate(converteDataIugu(this.getSubscriptionResponse().getRecentInvoices().get(0).getDueDate()), "dd-MM-yyyy").getTime())
+            int diff = (int) ((agora.getTime() - Utils.stringToDate(converteDataIugu(faturas.get(0).getDueDate()), "dd-MM-yyyy").getTime())
                               / (1000 * 60 * 60 * 24));
             if (diff > 30) {
                 System.out.println("entrou gerar 2 faturas");
@@ -82,7 +82,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
                     ativaAsinatura();
                     salvarFaturaPendente();
                     atualizar();
-                    PrimeFaces.current().executeScript("window.open('" + this.getSubscriptionResponse().getRecentInvoices().get(0).getSecureUrl() + "')");
+                    PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
                     addInfo("OK","2ª via de fatura gerada com sucesso!");
                     System.out.println("final fluxo 2 faturas ok");
                 } else {
@@ -95,7 +95,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
                 ativaAsinatura();
                 salvarFaturaPendente();
                 atualizar();
-                PrimeFaces.current().executeScript("window.open('" + this.getSubscriptionResponse().getRecentInvoices().get(0).getSecureUrl() + "')");
+                PrimeFaces.current().executeScript("window.open('" + faturas.get(0).getSecureUrl() + "')");
                 addInfo("OK","2ª via de fatura gerada com sucesso!");
                 System.out.println("final fluxo 1 fatura ok");
             }
@@ -108,10 +108,10 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     
     private void ativaAsinatura() throws Exception {
         System.out.println("chamou altera cobrança");
-        Iugu.getInstance().alteraCobranca(this.getLumeSecurity().getEmpresa().getEmpStrAssinaturaIuguID(), new Date(), true);
+        Iugu.getInstance().alteraCobranca(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco(), new Date(), true);
         System.out.println("altera cobranca OK");
         System.out.println("chamou ativa assinatura");
-        Iugu.getInstance().ativaAssinatura(this.getLumeSecurity().getEmpresa().getEmpStrAssinaturaIuguID());
+        Iugu.getInstance().ativaAssinatura(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
         System.out.println("ativa assinatura OK");
 //        getEntity().getAssinaturaIugu(Boolean.TRUE);
 
@@ -120,10 +120,10 @@ public class MensalMB extends LumeManagedBean<Empresa> {
     private void salvarFaturaPendente() throws Exception {
         this.carregarSubscriptionResponse();
         System.out.println("chamou salvar fatura no banco");
-        InvoiceResponse ultimaGerada = this.getSubscriptionResponse().getRecentInvoices().get(0);
+        InvoiceResponse ultimaGerada = faturas.get(0);
         FaturasIugu fatura = new FaturasIugu();
-        fatura.setEmpresa(this.getLumeSecurity().getEmpresa());
-        fatura.setIdEmpresaIugu(assinatura.getCustomerId());
+        fatura.setEmpresa(UtilsFrontEnd.getEmpresaLogada());
+        fatura.setIdClienteIugu(assinatura.getCustomerId());
         fatura.setIdAssinaturaIugu(assinatura.getId());
         fatura.setIdFaturaIugu(ultimaGerada.getId());
         fatura.setValorTotal(ultimaGerada.getTotalCents());
@@ -135,23 +135,23 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         System.out.println(fatura.getVencimentoFatura());
 
         System.out.println("populou objeto para salvar");
-        faturasIuguBO.persist(fatura);
+        FaturasIuguSingleton.getInstance().getBo().persist(fatura);
         System.out.println("salvou OK");
     }
     
     public void carregarSubscriptionResponse() {
-        Iugu.getInstance().atualizaFaturas(this.getLumeSecurity().getEmpresa().getEmpStrAssinaturaIuguID());
+        faturas = new ArrayList<InvoiceResponse>();
+        faturas = Iugu.getInstance().atualizaFaturas(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
         reloadViewSub();
     }
     
     public void atualizar() {
         System.out.println("chamou atualizar()");
-        this.carregarSubscriptionResponse();
+        carregarSubscriptionResponse();
         try {
-            if (!Iugu.getInstance().isSuspenso(this.getLumeSecurity().getEmpresa().getEmpStrAssinaturaIuguID())) {
-                this.getLumeSecurity().getEmpresa().setBloqueado("N");
-                new EmpresaBO().persist(this.getLumeSecurity().getEmpresa());
-//                this.getSessionManaged().setObjetosLiberados(null);
+            if (!Iugu.getInstance().isSuspenso(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco())) {
+                UtilsFrontEnd.getEmpresaLogada().setBloqueado("N");
+                new EmpresaBO().persist(UtilsFrontEnd.getEmpresaLogada());
                 JSFHelper.redirect("home.jsf");
             }
         } catch (Exception e) {
@@ -163,6 +163,16 @@ public class MensalMB extends LumeManagedBean<Empresa> {
         String split[] = new String[3];
         split = data.split("-");
         return split[2] + "-" + split[1] + "-" + split[0];
+    }
+
+    
+    public List<InvoiceResponse> getFaturas() {
+        return faturas;
+    }
+
+    
+    public void setFaturas(List<InvoiceResponse> faturas) {
+        this.faturas = faturas;
     }
 
     

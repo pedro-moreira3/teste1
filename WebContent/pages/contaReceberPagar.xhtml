@@ -1109,7 +1109,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 
 										<div class="SeparatorFull"></div>
-										<p:panelGrid columns="4" layout="grid"
+										<p:panelGrid columns="5" layout="grid"
+											columnClasses="ui-g-4,ui-g-2,ui-g-2,ui-g-2,ui-g-2"
 											styleClass="ui-panelgrid-blank form-group ui-fluid">
 											<p:commandButton id="pesquisarDetalhado"
 												icon="fa fa-search White" value="Pesquisar"
@@ -1117,10 +1118,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												update="extratoDetalhado,painelCheckbox,"
 												process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado,painelCheckbox"
 												styleClass="NavyButton" />
+												
 											<p:commandButton id="limparDetalhado"
 												icon="White fa fa-file-o" value="Limpar"
 												update="inicioDetalhado, fimDetalhado" process="@this"
-												actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}" />
+												actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}"
+												/>
+												
 											<p:commandButton value="Imprimir" type="button"
 												icon="White fa fa-print" styleClass="NavyButton">
 												<p:printer target="extratoDetalhado" />
@@ -1131,8 +1135,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												icon="fa fa-print White" process="@this"
 												oncomplete="PF('dlgImprimirDrc').show()"
 												update="lume:painelDrc" immediate="true"
-												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}"
-											 >												
+												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}" >												
+											 </p:commandButton>
+											 
+											 <p:commandButton id="imprimirDrcE" ype="button"	
+												value="Imprimir DRC-E" styleClass="NavyButton"										
+												icon="fa fa-print White" process="@this"
+												oncomplete="PF('dlgImprimirDrcE').show()"
+												update="lume:painelDrcE" immediate="true"
+												actionListener="#{relatorioContabilDetalhadoMB.gerarDrcE}" >												
 											 </p:commandButton>
 											 
 											
@@ -1177,6 +1188,33 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 						</p:panelGrid>		
 					</p:dialog>
+					
+					
+					
+					<p:dialog id="dlgImprimirDrcE" widgetVar="dlgImprimirDrcE"
+						appendTo=":lume" header="Imprimir DRC-E" height="600" width="900">
+
+						<p:panel id="painelDrcE">
+							<h:outputLabel id="drcE"
+							value="#{relatorioContabilDetalhadoMB.drce}"
+							escape="false" />	
+						</p:panel>
+						<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
+							<h:panelGroup>
+								<p:commandButton value="Imprimir DRC-E" type="button"										
+											icon="White fa fa-print" styleClass="NavyButton">
+											<p:printer target="painelDrcE" />
+								</p:commandButton>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Fechar" styleClass="NavyButton"
+									process="@this" oncomplete="PF('dlgImprimirDrcE').hide();" />
+							</h:panelGroup>
+						</p:panelGrid>		
+					</p:dialog>
+					
 
 					<p:dialog id="dlgAjustarValor" widgetVar="dlgAjustarValor"
 						appendTo=":lume" header="Ajustar valor" height="150" width="400">
