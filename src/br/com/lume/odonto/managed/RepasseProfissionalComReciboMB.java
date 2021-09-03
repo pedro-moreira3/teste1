@@ -34,6 +34,7 @@ import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
@@ -1153,6 +1154,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         //if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {    
         //    pendencias.add("Paciente ainda não pagou o procedimento;");
         // }
+        
+        
+        
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
             if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(
@@ -1173,6 +1177,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
             pendencias.add("Custos diretos ainda não conferidos;");
         }
+        
+        if(ptp.getFatura() != null && ptp.getFatura().getSubStatusFatura() != null) {
+            if(ptp.getFatura().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
+                pendencias.add("Observação: Procedimento está em uma fatura com planejamento pendente.");
+            }
+        }
 
         if (pendencias == null || pendencias.size() == 0) {
             pendencias.add("Sem pendência!");
@@ -1183,6 +1193,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public boolean existemPendencias(PlanoTratamentoProcedimento ptp) {
         verificaPendencias(ptp);
         if (pendencias != null && !pendencias.isEmpty() && pendencias.get(0).equals("Sem pendência!")) {
+            return false;
+        }
+        if(!pendencias.isEmpty() && pendencias.size() == 1 && pendencias.get(0).equals("Observação: Procedimento está em uma fatura com planejamento pendente.")) {
             return false;
         }
         return true;
