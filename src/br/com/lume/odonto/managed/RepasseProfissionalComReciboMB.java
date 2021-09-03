@@ -1178,9 +1178,14 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             pendencias.add("Custos diretos ainda não conferidos;");
         }
         
-        if(ptp.getFatura() != null && ptp.getFatura().getSubStatusFatura() != null) {
-            if(ptp.getFatura().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
+        RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+
+        
+        if(repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null && repasseFaturas.getFaturaOrigem().getSubStatusFatura() != null) {
+            if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
                 pendencias.add("Observação: Procedimento está em uma fatura com planejamento pendente.");
+            }else if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_VALIDAR)) {
+                pendencias.add("Observação: Procedimento está em uma fatura com conferência pendente.");
             }
         }
 
@@ -1196,6 +1201,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             return false;
         }
         if(!pendencias.isEmpty() && pendencias.size() == 1 && pendencias.get(0).equals("Observação: Procedimento está em uma fatura com planejamento pendente.")) {
+            return false;
+        }
+        if(!pendencias.isEmpty() && pendencias.size() == 1 && pendencias.get(0).equals("Observação: Procedimento está em uma fatura com conferência pendente.")) {
             return false;
         }
         return true;
