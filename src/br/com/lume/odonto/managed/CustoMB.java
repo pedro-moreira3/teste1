@@ -105,15 +105,15 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     
     public void geraLista() {
         try {
-            custos = PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listByParams(inicio, fim);
-            List<PlanoTratamentoProcedimentoCusto> custosTemp = new ArrayList<PlanoTratamentoProcedimentoCusto>();
-            custosTemp.addAll(custos);
-            //TODO fiz na emergencia, precisa retirar direto na query acima para evitar o for
-            for (PlanoTratamentoProcedimentoCusto planoTratamentoProcedimentoCusto : custosTemp) {
-                if(planoTratamentoProcedimentoCusto.getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getIdEmpresa() != UtilsFrontEnd.getEmpresaLogada().getEmpIntCod()) {
-                    custos.remove(planoTratamentoProcedimentoCusto);
-                }
-            }
+            custos = PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listByParams(UtilsFrontEnd.getEmpresaLogada(),inicio, fim);
+            List<PlanoTratamentoProcedimentoCusto> custos = new ArrayList<PlanoTratamentoProcedimentoCusto>();
+//            custosTemp.addAll(custos);
+//            //TODO fiz na emergencia, precisa retirar direto na query acima para evitar o for
+//            for (PlanoTratamentoProcedimentoCusto planoTratamentoProcedimentoCusto : custosTemp) {
+//                if(planoTratamentoProcedimentoCusto.getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getIdEmpresa() != UtilsFrontEnd.getEmpresaLogada().getEmpIntCod()) {
+//                    custos.remove(planoTratamentoProcedimentoCusto);
+//                }
+//            }
             if (custos != null) {
                 custos.sort((o1, o2) -> o2.getDataFaturamento().compareTo(o1.getDataFaturamento()));
             }
