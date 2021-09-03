@@ -106,7 +106,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     public void geraLista() {
         try {
             custos = PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listByParams(inicio, fim);
-            List<PlanoTratamentoProcedimentoCusto> custosTemp = custos;
+            List<PlanoTratamentoProcedimentoCusto> custosTemp = new ArrayList<PlanoTratamentoProcedimentoCusto>();
+            custosTemp.addAll(custos);
             //TODO fiz na emergencia, precisa retirar direto na query acima para evitar o for
             for (PlanoTratamentoProcedimentoCusto planoTratamentoProcedimentoCusto : custosTemp) {
                 if(planoTratamentoProcedimentoCusto.getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getIdEmpresa() != UtilsFrontEnd.getEmpresaLogada().getEmpIntCod()) {
