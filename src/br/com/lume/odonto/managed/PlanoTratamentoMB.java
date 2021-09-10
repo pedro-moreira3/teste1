@@ -1923,6 +1923,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(), valorPrimeiraParcelaOrcamento, valorParcela, diferencaCalculoParcelas,
                     getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(), observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
 
+            RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, 
+                    UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             calculaRepasses();
             //actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 
+import br.com.lume.common.exception.business.PTPSemDentistaExecutorException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.Mensagens;
@@ -211,9 +212,18 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 if (l.getFatura().getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) {
                     PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
                     List<PlanoTratamentoProcedimento> ptps = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(pt);
-                    for (PlanoTratamentoProcedimento ptp : ptps) {
-                        RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());    
-                    }                       
+                    
+                    for (PlanoTratamentoProcedimento ptp : ptps){
+                        try {
+                            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());
+                        }catch(PTPSemDentistaExecutorException ptpException) {
+                            this.addWarn("Repasse não calculado.", "O procedimento " + ptp.getDescricaoCompleta() + " ainda não foi executado.");
+                        }catch (Exception e) {
+                            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 
                 
