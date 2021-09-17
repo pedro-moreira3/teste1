@@ -46,10 +46,20 @@
 					rowKey="#{evolucao}" binding="#{evolucaoMB.tabelaEvolucao}">
 					<p:ajax event="rowSelect" update=":lume:tabViewPaciente:pnEvolucao" />
 					<f:facet name="header">Evolução</f:facet>
+					<p:column filterBy="#{evolucaoMB.getPlanoTratamentoFromEvolucao(evolucao)}"
+						sortBy="#{evolucaoMB.getPlanoTratamentoFromEvolucao(evolucao)}"
+						filterFunction="#{evolucaoMB.filtroSemAcento}"
+						filterMatchMode="contains" headerText="Plano Tratamento" width="15%">
+						<div style="width: 100%; text-align: left;">
+							<h:outputText
+								value="#{evolucaoMB.getPlanoTratamentoFromEvolucao(evolucao)}"
+								escape="false" />
+						</div>
+					</p:column>
 					<p:column filterBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
 						sortBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
 						filterFunction="#{evolucaoMB.filtroSemAcento}"
-						filterMatchMode="contains" headerText="Procedimento" width="30%">
+						filterMatchMode="contains" headerText="Procedimento" width="25%">
 						<div style="width: 100%; text-align: left;">
 							<h:outputText
 								value="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
@@ -58,7 +68,7 @@
 					</p:column>
 					<p:column filterBy="#{evolucao.descricao}"
 						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
-						width="40%" headerText="Descrição"
+						width="35%" headerText="Descrição"
 						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
