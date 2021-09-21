@@ -111,19 +111,23 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
 
-        actionTrocaDatasCriacao(false);
-        if (getDataInicio() != null && getDataFim() != null) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(getDataInicio());
-            c.add(Calendar.DAY_OF_MONTH, -1);
-            dataInicial = c.getTime();
-
-            c.setTime(getDataFim());
-            c.add(Calendar.DAY_OF_MONTH, +1);
-            dataFinal = c.getTime();
+//        actionTrocaDatasCriacao(false);
+//        if (getDataInicio() != null && getDataFim() != null) {
+//            Calendar c = Calendar.getInstance();
+//            c.setTime(getDataInicio());
+//            c.add(Calendar.DAY_OF_MONTH, -1);
+//            dataInicial = c.getTime();
+//
+//            c.setTime(getDataFim());
+//            c.add(Calendar.DAY_OF_MONTH, +1);
+//            dataFinal = c.getTime();
+//        }
+        
+        if (getDataInicio() == null && getDataFim() == null) {
+            actionTrocaDatasCriacao(false);
         }
 
-        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
+        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
                 UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
 
     }
