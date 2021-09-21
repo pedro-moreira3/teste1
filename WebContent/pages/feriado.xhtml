@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:confirmDialog id="confirmDialog"
+						message=" Você tem certeza que deseja excluir essa feriado?"
+						header="Excluir feriado?" severity="alert"
+						widgetVar="confirmation" appendToBody="true">
+						<p:commandButton id="confirm" value="Sim"
+							update=":lume:pnFeriado,:lume:dtFeriado"							
+							actionListener="#{feriadoMB.actionRemove}" process="@this" oncomplete="PF('confirmation').hide()"/>
+						<p:commandButton id="decline" value="Não"
+							onclick="PF('confirmation').hide()" type="button" />
+					</p:confirmDialog>				
+					<p:dialog id="dlg" widgetVar="dlg" header="Novo Feriado" responsive="true" modal="true" width="50%">
+						<p:panel id="pnDlg" styleClass="BordNone">							
+							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+								<p:outputPanel id="pnFeriado" styleClass="BordNone">								
+									<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="nome" value="Descrição : " />
+										<p:inputText id="nome" value="#{feriadoMB.entity.nome}" required="true" maxlength="100" />
+									</p:panelGrid>															
+								</p:outputPanel>						
+							</p:panelGrid>	
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{feriadoMB.actionPersist}"
+								update=":lume:pnDlg,:lume:dtFeriado" process=":lume:pnDlg"  styleClass="GreenButton" oncomplete="PF('dlg').hide();"/>
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+							</p:panelGrid>
+							<div class="EmptyBox20"></div>
+						</p:panel>
+					</p:dialog>	
+					<h:inputHidden id="idFeriado" value="#{feriadoMB.entity.id}" />
+							<h1>Feriado</h1>
+					<div class="EmptyBox20"></div>
+					<div class="SeparatorFull"></div>
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:commandButton id="new" icon="White fa fa-file-o"
+							value="Novo Feriado" actionListener="#{feriadoMB.actionNew}"
+							update=":lume:pnDlg" immediate="true"
+							oncomplete="PF('dlg').show();" />
+					</p:panelGrid>
+					
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtFeriado" value="#{feriadoMB.feriados}" var="feriado" rows="15" paginator="true"
+						selection="#{feriadoMB.entity}" selectionMode="single" rowKey="#{feriado}" paginatorPosition="bottom" >
+						<p:ajax event="rowSelect" update=":lume:pnFeriado" />
+						<f:facet name="header">feriados</f:facet>
+ 						<p:column headerText="Ações" width="20%">
+ 							<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
+							actionListener="#{feriadoMB.carregarEditar(feriado)}" style="width:33px !important" />
+							<h:outputText value="&#160;" /><h:outputText value="&#160;" />
+							<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:dtFeriado" title="Remover" process="@this"
+                           style="width:33px !important" actionListener="#{feriadoMB.carregarEditar(feriado)}"/>
+                  		</p:column>		
+						<p:column filterBy="#{feriado.nome}" sortBy="#{feriado.nome}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{feriadoMB.filtroSemAcento}">
+							<h:outputText value="#{feriado.nome}" title="#{feriado.id}" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

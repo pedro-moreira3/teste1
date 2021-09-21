@@ -123,6 +123,24 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
         }
         return infoPTP;
     }
+    
+    public String getPlanoTratamentoFromEvolucao(Evolucao evolucao) {
+        String infoPT = "";
+        if (evolucao.getPlanoTratamentoProcedimentos() != null && !evolucao.getPlanoTratamentoProcedimentos().isEmpty()) {
+            for (int i = 0; i < evolucao.getPlanoTratamentoProcedimentos().size(); i++) {
+                EvolucaoPlanoTratamentoProcedimento evoPTP = evolucao.getPlanoTratamentoProcedimentos().get(i);
+                infoPT += evoPTP.getPlanoTratamento();
+//                if (evoPTP.getPlanoTratamentoProcedimento() != null && evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr() != null && !evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr().isEmpty())
+//                    infoPTP += ", " + evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr();
+                // if (evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr() != null)
+                //     infoPTP += ", " + evoPTP.getPlanoTratamentoProcedimento().getDenteRegiaoStr();
+                infoPT += "; <br />";
+            }
+            if (infoPT != null && !infoPT.isEmpty() && infoPT.length() > 7)
+                infoPT = infoPT.substring(0, infoPT.length() - 7);
+        }
+        return infoPT;
+    }
 
     public void limpaEvolucoes() {
         this.setEntity(new Evolucao());

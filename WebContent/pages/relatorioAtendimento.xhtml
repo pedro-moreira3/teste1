@@ -509,9 +509,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{atendimento.planoTratamento.convenioStr}"
 								sortBy="#{atendimento.planoTratamento.convenioStr}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Convênio">
+								filterMatchMode="contains" headerText="Convênio"
+								rendered="#{atendimento.planoTratamento != null}">
 								<h:outputText
 									value="#{atendimento.planoTratamento.convenioStr}" />
+							</p:column>
+							
+							<p:column
+								filterBy="#{atendimento.convenioPaciente.dadosBasico.nome}"
+								sortBy="#{atendimento.convenioPaciente.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Convênio"
+								rendered="#{atendimento.planoTratamento == null }">
+								<h:outputText
+									value="#{atendimento.convenioPaciente.dadosBasico.nome}" />
 							</p:column>
 
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"
