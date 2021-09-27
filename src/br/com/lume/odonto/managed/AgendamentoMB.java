@@ -638,10 +638,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     ReservaSingleton.getInstance().getBo().mergeBatch(reservas);
                                 }
                             }
-                            this.getEntity().setStatusNovo(StatusAgendamentoUtil.REMARCADO.getSigla());
                             if (getEntity().getPlanoTratamento() != null) {
                                 this.getEntity().setConvenioPaciente(getEntity().getPlanoTratamento().getConvenio());
-                            }else if(getEntity().getPaciente().getConvenio() != null) {
+                            } else if (getEntity().getPaciente().getConvenio() != null) {
                                 this.getEntity().setConvenioPaciente(getEntity().getPaciente().getConvenio());
                             }
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
@@ -697,7 +696,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         this.getEntity().setStatusNovo(StatusAgendamentoUtil.REMARCADO.getSigla());
                         if (getEntity().getPlanoTratamento() != null) {
                             this.getEntity().setConvenioPaciente(getEntity().getPlanoTratamento().getConvenio());
-                        }else if(getEntity().getPaciente().getConvenio() != null) {
+                        } else if (getEntity().getPaciente().getConvenio() != null) {
                             this.getEntity().setConvenioPaciente(getEntity().getPaciente().getConvenio());
                         }
                         try {
@@ -789,10 +788,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 agendamento.setFilial(this.getEntity().getFilial());
                 agendamento.setHash(this.getEntity().getHash());
                 agendamento.setDescricao(this.getEntity().getDescricao());
-                this.getEntity().setStatusNovo(StatusAgendamentoUtil.REMARCADO.getSigla());
                 if (getEntity().getPlanoTratamento() != null) {
                     this.getEntity().setConvenioPaciente(getEntity().getPlanoTratamento().getConvenio());
-                }else if(getEntity().getPaciente().getConvenio() != null) {
+                } else if (getEntity().getPaciente().getConvenio() != null) {
                     this.getEntity().setConvenioPaciente(getEntity().getPaciente().getConvenio());
                 }
                 AgendamentoSingleton.getInstance().getBo().persist(agendamento);
@@ -806,10 +804,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     aptpsNovos.add(a);
                 }
                 agendamento.setPlanoTratamentoProcedimentosAgendamento(aptpsNovos);
-                this.getEntity().setStatusNovo(StatusAgendamentoUtil.REMARCADO.getSigla());
                 if (getEntity().getPlanoTratamento() != null) {
                     this.getEntity().setConvenioPaciente(getEntity().getPlanoTratamento().getConvenio());
-                }else if(getEntity().getPaciente().getConvenio() != null) {
+                } else if (getEntity().getPaciente().getConvenio() != null) {
                     this.getEntity().setConvenioPaciente(getEntity().getPaciente().getConvenio());
                 }
                 AgendamentoSingleton.getInstance().getBo().persist(agendamento);
@@ -1108,10 +1105,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void actionConfirmarPreCadastro(ActionEvent event) throws Exception {
 
         this.getEntity().setStatusNovo(StatusAgendamentoUtil.CONFIRMADO.getSigla());
-        this.getEntity().setStatusNovo(StatusAgendamentoUtil.REMARCADO.getSigla());
         if (getEntity().getPlanoTratamento() != null) {
             this.getEntity().setConvenioPaciente(getEntity().getPlanoTratamento().getConvenio());
-        }else if(getEntity().getPaciente().getConvenio() != null) {
+        } else if (getEntity().getPaciente().getConvenio() != null) {
             this.getEntity().setConvenioPaciente(getEntity().getPaciente().getConvenio());
         }
         try {
