@@ -687,6 +687,11 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
             this.dataInicio = getDataInicio(getFiltroPeriodo());
             this.dataFim = getDataFim(getFiltroPeriodo());
+            
+            if (Utils.dateToString(this.dataInicio).equals(Utils.dateToString(this.dataFim))) {
+                this.dataFim = Utils.adicionaDias(this.dataFim, 1);
+            }
+            
             if(updateComponent) {
                 PrimeFaces.current().ajax().update("lume:dataInicial");
                 PrimeFaces.current().ajax().update("lume:dataFinal");
