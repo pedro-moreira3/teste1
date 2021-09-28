@@ -686,7 +686,13 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         try {
 
             this.dataInicio = getDataInicio(getFiltroPeriodo());
+            this.dataInicio.setHours(0);
+            this.dataInicio.setMinutes(0);
+            this.dataInicio.setSeconds(0);
             this.dataFim = getDataFim(getFiltroPeriodo());
+            this.dataFim.setHours(0);
+            this.dataFim.setMinutes(0);
+            this.dataFim.setSeconds(0);
             
             if (Utils.dateToString(this.dataInicio).equals(Utils.dateToString(this.dataFim))) {
                 this.dataFim = Utils.adicionaDias(this.dataFim, 1);
