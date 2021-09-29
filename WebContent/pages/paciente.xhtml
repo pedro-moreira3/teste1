@@ -132,7 +132,7 @@
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.nome}"
 							filterBy="#{paciente.dadosBasico.nomeStr}"
-							filterMatchMode="contains" headerText="Nome"
+							 headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
 								process="@this" title="#{paciente.id}"
