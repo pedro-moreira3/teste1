@@ -91,7 +91,7 @@
 
 					<p:focus context=":lume:hiddenFocus" />
 					<p:outputLabel id="hiddenFocus" style="display:hidden" />
-					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage="" 
 						id="dtPrincipalPacientes" value="#{pacienteMB.entityList}"
 						var="paciente" rows="7" paginator="true" rowKey="#{paciente}"
 						paginatorPosition="bottom" widgetVar="dtPrincipalPacientes"
@@ -132,7 +132,8 @@
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.nome}"
 							filterBy="#{paciente.dadosBasico.nomeStr}"
-							 headerText="Nome">
+							filterMatchMode="contains" headerText="Nome"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
 								process="@this" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
