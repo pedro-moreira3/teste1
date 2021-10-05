@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.lume.common.bo.FaturasIuguBO;
 import br.com.lume.common.iugu.Iugu;
 import br.com.lume.common.iugu.model.FaturasIugu;
+import br.com.lume.common.iugu.responses.SubscriptionResponse;
+import br.com.lume.common.iugu.service.SubscriptionService;
 import br.com.lume.faturasiugu.FaturasIuguSingleton;
 import br.com.lume.security.entity.InvoiceStatusChange;
 
@@ -21,6 +23,8 @@ import br.com.lume.security.entity.InvoiceStatusChange;
 public class IuguHook extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    
+    private FaturasIuguBO bo = new FaturasIuguBO();
 
     public IuguHook() {
     }
@@ -47,20 +51,32 @@ public class IuguHook extends HttpServlet {
             System.out.println("converteu objeto OK");
             if (invoice.getSubscriptionId() != null && invoice.getStatus().equals("paid")) {
                 System.out.println("status fatura == pago");
-                FaturasIugu fatura = FaturasIuguSingleton.getInstance().getBo().findByFaturaId(invoice.getId());
-                System.out.println("buscou se a fatura está salva no banco");
-                if (fatura != null) {
-                    System.out.println("fatura != null");
-                    Date novaDataVencimento = atualizaDataVencimentoAssinatura(fatura.getUltimoVencimentoAssinatura());
-                    System.out.println("atualizou data de vencimento para enviar");
-                    Iugu.getInstance().alteraCobranca(fatura.getIdAssinaturaIugu(), novaDataVencimento, false);
-                    System.out.println("enviou alteração da data OK");
-                    atualizaStatusFaturaSalva(fatura, invoice);
-                    System.out.println("atualizou o status da fatura no banco");
-                    System.out.println("final fluxo de atualizacao de datas no hook do iugu");
-                } else {
-                    System.out.println("fatura == null");
-                }
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            SubscriptionResponse assinatura = new SubscriptionService().find(invoice.getSubscriptionId());
+                            Date novaDataVencimento = atualizaDataVencimentoAssinatura(Utils.stringToDate(converteDataIugu(assinatura.getCreatedAt())));
+                            System.out.println("atualizou data de vencimento para enviar");
+                            Iugu.getInstance().alteraCobranca(assinatura.getId(), novaDataVencimento, false);
+                            System.out.println("enviou alteração da data OK");
+
+                            FaturasIugu fatura = bo.findByFaturaId(invoice.getId());
+                            System.out.println("buscou se a fatura está salva no banco");
+                            if (fatura != null) {
+                                System.out.println("fatura != null");
+                                atualizaStatusFaturaSalva(fatura, invoice);
+                                System.out.println("atualizou o status da fatura no banco");
+                            } else {
+                                System.out.println("fatura == null");
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
 
         } catch (Exception e) {
@@ -74,6 +90,12 @@ public class IuguHook extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
         return resp;
 
+    }
+    
+    public static String converteDataIugu(String data) throws Exception {
+        String split[] = new String[3];
+        split = data.split("-");
+        return split[2] + "-" + split[1] + "-" + split[0];
     }
 
     private void atualizaStatusFaturaSalva(FaturasIugu fatura, InvoiceStatusChange invoiceRecebida) throws Exception {
