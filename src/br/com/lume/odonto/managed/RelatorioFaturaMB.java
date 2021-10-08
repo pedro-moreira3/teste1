@@ -254,9 +254,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     public String tipoSaldoFatura(Fatura fatura) {
 
         if (fatura.getTipoFatura().getRotulo().equals("RP") || fatura.getTipoFatura().getRotulo().equals("FR"))
-            return "Entrada";
+            return "Crédito";
         else
-            return "Saída";
+            return "Débito";
     }
 
     public String valorFatura(Fatura fatura) {
