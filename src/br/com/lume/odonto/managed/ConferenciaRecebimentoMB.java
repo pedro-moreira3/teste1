@@ -207,7 +207,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 //se for 0 a quantidade de recorrencia, para as fatura genericas, precisamos criar nova fatura ao pagar uma delas
                 if(l.getFatura().getFaturaRecorrente() != null && l.getFatura().getFaturaRecorrente().getQuantidadeRecorrencia() == 0) {
                     FaturaSingleton.getInstance().criaFaturaRecorrente(l.getFatura(),UtilsFrontEnd.getProfissionalLogado());
-                }                
+                }
                 
                 if (l.getFatura().getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) {
                     PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
@@ -215,9 +215,8 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                     
                     for (PlanoTratamentoProcedimento ptp : ptps){
                         try {
-                            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());
-                        }catch(PTPSemDentistaExecutorException ptpException) {
-                            this.addWarn("Repasse não calculado.", "O procedimento " + ptp.getDescricaoCompleta() + " ainda não foi executado.");
+                            if(ptp.getDentistaExecutor() != null)
+                                RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());
                         }catch (Exception e) {
                             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);

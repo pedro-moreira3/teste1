@@ -442,12 +442,12 @@ body .sideChkBox .ui-chkbox-label {
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
-								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+								<p:column sortBy="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}"
 									width="5%" filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									filterBy="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}"
 									headerText="Conferido?">
-									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
+									<h:outputText value="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
