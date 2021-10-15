@@ -166,7 +166,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             
             //
             if(mostrarSomenteConsultaInicial) {
-                List<Agendamento> agendamentosComConsultaInicial = new ArrayList<Agendamento>();
+                HashSet<Agendamento> agendamentosComConsultaInicial = new HashSet<Agendamento>();
                 for (Agendamento agendamento : this.getListaAtendimentos()) {
                     //TODO melhor jeito para mostrar consulta Inicial
                     if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
@@ -180,7 +180,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                         }
                     }
                 }
-                this.setListaAtendimentos(agendamentosComConsultaInicial);
+                this.setListaAtendimentos(new ArrayList<Agendamento>());
+                this.getListaAtendimentos().addAll(agendamentosComConsultaInicial);
             }
 
             
