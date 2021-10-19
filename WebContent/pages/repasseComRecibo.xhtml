@@ -473,10 +473,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 	
 
-		<p:dialog widgetVar="dlgImprimirRecibo" resizable="false"
+		<p:dialog widgetVar="dlgImprimirReciboRepasse" resizable="false"
 			header="Imprimir recibo de pagamento"
-			onHide="PF('dlgImprimirRecibo').toggleMaximize();"
-			onShow="PF('dlgImprimirRecibo').toggleMaximize();" modal="true"
+			onHide="PF('dlgImprimirReciboRepasse').toggleMaximize();"
+			onShow="PF('dlgImprimirReciboRepasse').toggleMaximize();" modal="true"
 			appendTo=":lume">
 			<p:outputPanel id="imprimirReciboReciboPnl"
 				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
@@ -742,7 +742,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				<p:column />
 				<p:column />
 				<p:commandButton styleClass="NavyButton" value="Fechar"
-					process="@this" oncomplete="PF('dlgImprimirRecibo').hide()" />
+					process="@this" oncomplete="PF('dlgImprimirReciboRepasse').hide()" />
 			</p:panelGrid>
 		</p:dialog>
 
@@ -986,7 +986,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton styleClass="NavyButton"
 					update=":lume:imprimirReciboReciboPnl" value="Visualizar impressao"
-					icon="fa fa-printer" oncomplete="PF('dlgImprimirRecibo').show()"
+					icon="fa fa-printer" oncomplete="PF('dlgImprimirReciboRepasse').show()"
 					process="@this" />
 				<p:column />
 				<p:column />

@@ -122,10 +122,6 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 //            c.add(Calendar.DAY_OF_MONTH, +1);
 //            dataFinal = c.getTime();
 //        }
-        
-        if (getDataInicio() == null && getDataFim() == null) {
-            actionTrocaDatasCriacao(false);
-        }
 
         this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
                 UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
@@ -682,27 +678,17 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         return null;
     }
 
-    public void actionTrocaDatasCriacao(boolean updateComponent) {
+    public void actionTrocaDatasCriacao() {
         try {
 
-            this.dataInicio = getDataInicio(getFiltroPeriodo());
-            this.dataInicio.setHours(0);
-            this.dataInicio.setMinutes(0);
-            this.dataInicio.setSeconds(0);
-            this.dataFim = getDataFim(getFiltroPeriodo());
-            this.dataFim.setHours(0);
-            this.dataFim.setMinutes(0);
-            this.dataFim.setSeconds(0);
-            
-            if (Utils.dateToString(this.dataInicio).equals(Utils.dateToString(this.dataFim))) {
-                this.dataFim = Utils.adicionaDias(this.dataFim, 1);
-            }
-            
-            if(updateComponent) {
-                PrimeFaces.current().ajax().update("lume:dataInicial");
-                PrimeFaces.current().ajax().update("lume:dataFinal");
-            }
+            this.dataInicio = getDataInicio(filtroPeriodo);
+            this.dataFim = getDataFim(filtroPeriodo);
+
+            PrimeFaces.current().ajax().update(":lume:dataInicial");
+            PrimeFaces.current().ajax().update(":lume:dataFinal");
+
         } catch (Exception e) {
+            this.addError("Erro no intervalo de datas", "");
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
