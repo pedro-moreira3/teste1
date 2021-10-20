@@ -36,9 +36,11 @@ import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fornecedor;
+import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
@@ -60,7 +62,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     private String tipoFatura;
 
     private DadosBasico origem;
-    
+
     private List<DadosBasico> dadosBasicos;
 
     private List<SelectItem> origens;
@@ -68,6 +70,11 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     private StatusFatura statusFatura;
     private List<StatusFatura> statussFatura;
     private SubStatusFatura[] subStatusFatura;
+
+    private BigDecimal somatorioValorAConferir;
+    private BigDecimal somatorioValorConferido;
+    private BigDecimal somatorioValorTotalFatura;
+    private BigDecimal somatorioValorPendente;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -82,6 +89,24 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         //origens = new ArrayList<SelectItem>();
         tipoFatura = "RP";
         atualizaTipoFatura();
+    }
+
+    public void updateSomatorio() {
+
+        this.setSomatorioValorAConferir(new BigDecimal(0));
+        this.setSomatorioValorConferido(new BigDecimal(0));
+        this.setSomatorioValorTotalFatura(new BigDecimal(0));
+        this.setSomatorioValorPendente(new BigDecimal(0));
+
+        for (Fatura fatura : this.getEntityList()) {
+            this.somatorioValorAConferir = this.somatorioValorAConferir.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO));
+            this.somatorioValorConferido = this.somatorioValorConferido.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO));
+            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(fatura.getDadosTabelaRepasseTotalFatura());
+            this.somatorioValorPendente = this.somatorioValorPendente.add(
+                    fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).add(
+                            LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO))));
+
+        }
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -101,7 +126,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     public List<Convenio> sugestoesConvenios(String query) {
         return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
-    
+
     public void geraListaSugestoes() {
         try {
 
@@ -112,11 +137,11 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public List<DadosBasico> geraSugestoes(String query) {
         List<DadosBasico> suggestions = new ArrayList<>();
         if (query.length() >= 3) {
-            if(dadosBasicos == null ){
+            if (dadosBasicos == null) {
                 geraListaSugestoes();
             }
             for (DadosBasico d : dadosBasicos) {
@@ -164,7 +189,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                 Paciente paciente = null;
                 Profissional profissional = null;
                 Fornecedor fornecedor = null;
-              //  Origem origem = null;
+                //  Origem origem = null;
 
                 if (this.origem != null) {
 
@@ -192,7 +217,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                     updateValues(fatura);
                 });
             }
-
+            updateSomatorio();
         } catch (Exception e) {
             this.log.error("Erro no actionFiltrar", e);
             this.addError("Erro ao filtrar", "Não foi possivel carregar os registros.", true);
@@ -221,8 +246,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
             return fatura.getPaciente().getDadosBasico().getNome();
         if (fatura.getFornecedor() != null)
             return fatura.getFornecedor().getDadosBasico().getNome();
-      //  if (fatura.getOrigem() != null)
-     //       return fatura.getOrigem().getDadosBasico().getNome();
+        //  if (fatura.getOrigem() != null)
+        //       return fatura.getOrigem().getDadosBasico().getNome();
 
         return "";
     }
@@ -278,17 +303,17 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     public String valorConferidoFatura(Fatura fatura) {
         return formatValue(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO).doubleValue());
     }
-    
+
     public String valorAPlanejar(Fatura fatura) {
-        BigDecimal retorno = fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO)
-                .add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO)));
-            
-        if(retorno.compareTo(new BigDecimal(0)) > 0) {
+        BigDecimal retorno = fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).add(
+                LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO)));
+
+        if (retorno.compareTo(new BigDecimal(0)) > 0) {
             return formatValue(retorno.doubleValue());
-        }else {
-            return formatValue(0);  
-        }        
-      
+        } else {
+            return formatValue(0);
+        }
+
     }
 
     public String formatValue(double value) {
@@ -532,6 +557,38 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public void setDadosBasico(List<DadosBasico> dadosBasico) {
         this.dadosBasicos = dadosBasico;
+    }
+
+    public BigDecimal getSomatorioValorAConferir() {
+        return somatorioValorAConferir;
+    }
+
+    public void setSomatorioValorAConferir(BigDecimal somatorioValorAConferir) {
+        this.somatorioValorAConferir = somatorioValorAConferir;
+    }
+
+    public BigDecimal getSomatorioValorConferido() {
+        return somatorioValorConferido;
+    }
+
+    public void setSomatorioValorConferido(BigDecimal somatorioValorConferido) {
+        this.somatorioValorConferido = somatorioValorConferido;
+    }
+
+    public BigDecimal getSomatorioValorTotalFatura() {
+        return somatorioValorTotalFatura;
+    }
+
+    public void setSomatorioValorTotalFatura(BigDecimal somatorioValorTotalFatura) {
+        this.somatorioValorTotalFatura = somatorioValorTotalFatura;
+    }
+
+    public BigDecimal getSomatorioValorPendente() {
+        return somatorioValorPendente;
+    }
+
+    public void setSomatorioValorPendente(BigDecimal somatorioValorPendente) {
+        this.somatorioValorPendente = somatorioValorPendente;
     }
 
 }
