@@ -166,7 +166,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 }
 </style>
 
-			<p:outputPanel id="viewFatura">
+		<p:outputPanel id="viewFatura">
 			<ui:include src="faturaViewPaciente.xhtml">
 				<ui:param name="showNewLancamento" value="F" />
 			</ui:include>
@@ -175,7 +175,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		</p:outputPanel>
 
 
-		<p:remoteCommand name="onHidePacienteFicha" process="@this"	 />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 
 
@@ -229,10 +229,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="Origem/Destino:" />
 
 											<p:autoComplete queryDelay="1000"
-												value="#{relatorioFaturaMB.origem}"
-												id="faturaOrigemDestino"
-												completeMethod="#{relatorioFaturaMB.geraSugestoes}"
-												var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
+												value="#{relatorioFaturaMB.origem}" id="faturaOrigemDestino"
+												completeMethod="#{relatorioFaturaMB.geraSugestoes}" var="d"
+												itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
 												converter="dadosBasico" size="46" minQueryLength="3"
 												dropdown="true">
 												<p:ajax event="itemSelect" process="@this" />
@@ -456,7 +455,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								<h:outputText value="#{relatorioFaturaMB.tipoSaldoFatura(m)}" />
 
-							</p:column>							
+							</p:column>
 
 							<p:column headerText="Valor à Conferir"
 								sortBy="#{relatorioFaturaMB.valorConferirFatura(m)}"
@@ -464,6 +463,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{relatorioFaturaMB.valorConferirFatura(m)}">
 								<h:outputText
 									value="#{relatorioFaturaMB.valorConferirFatura(m)}" />
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioFaturaMB.somatorioValorAConferir}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</p:column>
 							<p:column headerText="Valor Conferido"
 								sortBy="#{relatorioFaturaMB.valorConferidoFatura(m)}"
@@ -471,6 +478,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{relatorioFaturaMB.valorConferidoFatura(m)}">
 								<h:outputText
 									value="#{relatorioFaturaMB.valorConferidoFatura(m)}" />
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioFaturaMB.somatorioValorConferido}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</p:column>
 
 							<p:column headerText="Valor Total"
@@ -479,18 +494,32 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{relatorioFaturaMB.valorFatura(m)}">
 
 								<h:outputText value="#{relatorioFaturaMB.valorFatura(m)}" />
-
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioFaturaMB.somatorioValorTotalFatura}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</p:column>
-							
+
 							<p:column headerText="Valor Planejamento Pendente"
 								sortBy="#{relatorioFaturaMB.valorAPlanejar(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorAPlanejar(m)}">
 
 								<h:outputText value="#{relatorioFaturaMB.valorAPlanejar(m)}" />
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioFaturaMB.somatorioValorPendente}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 
-							</p:column>							
-							
 							<p:column headerText="Status da Fatura"
 								sortBy="#{m.statusFaturaString}" filterMatchMode="contains"
 								filterBy="#{m.statusFaturaString}">
@@ -498,7 +527,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{m.statusFaturaString}" />
 
 							</p:column>
-							
+
 							<p:column headerText="Sub Status da Fatura"
 								sortBy="#{m.subStatusFaturaString}" filterMatchMode="contains"
 								filterBy="#{m.subStatusFaturaString}">
