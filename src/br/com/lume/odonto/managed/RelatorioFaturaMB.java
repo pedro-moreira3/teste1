@@ -46,7 +46,6 @@ import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.profissional.ProfissionalSistemaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -157,83 +156,74 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         return suggestions;
     }
 
-    public void actionFiltrar() {
-        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
-        int count = 1;
-        for (Fatura fatura : faturas)
-            FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-            System.out.println(count);
-            count++;
+    public void actionFiltrar(ActionEvent event) {
+
+        try {
+
+            if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
+                this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
+            } else {
+
+                Date dataInicio = null;
+                if (inicio != null) {
+                    Calendar calInicio = Calendar.getInstance();
+                    calInicio.setTime(inicio);
+                    calInicio.set(Calendar.HOUR, 0);
+                    calInicio.set(Calendar.MINUTE, 0);
+                    calInicio.set(Calendar.SECOND, 0);
+                    calInicio.set(Calendar.MILLISECOND, 0);
+                    dataInicio = calInicio.getTime();
+                }
+
+                Date dataFim = null;
+                if (fim != null) {
+                    Calendar calFim = Calendar.getInstance();
+                    calFim.setTime(fim);
+                    calFim.set(Calendar.HOUR, 23);
+                    calFim.set(Calendar.MINUTE, 59);
+                    calFim.set(Calendar.SECOND, 59);
+                    calFim.set(Calendar.MILLISECOND, 999);
+                    dataFim = calFim.getTime();
+                }
+
+                Paciente paciente = null;
+                Profissional profissional = null;
+                Fornecedor fornecedor = null;
+                //  Origem origem = null;
+
+                if (this.origem != null) {
+
+                    if (this.origem.getSexo() != null) {
+
+                        profissional = ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
+
+                        if (profissional == null)
+                            paciente = PacienteSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
+
+//                    } else if (this.origem.getDocumento() == null && this.origem.getSexo() == null) {
+//
+//                        origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
+
+                    } else if (this.origem.getSexo() == null || this.origem.getSexo().isEmpty()) {
+
+                        fornecedor = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
+                    }
+                }
+
+                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, null,
+                        statusFatura, Arrays.asList(this.subStatusFatura)));
+
+                getEntityList().forEach(fatura -> {
+                    updateValues(fatura);
+                });
+            }
+            updateSomatorio();
+        } catch (Exception e) {
+            this.log.error("Erro no actionFiltrar", e);
+            this.addError("Erro ao filtrar", "Não foi possivel carregar os registros.", true);
+        }
+
     }
-    
-//    public void actionFiltrar(ActionEvent event) {
-//
-//        try {
-//
-//            if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
-//                this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-//            } else {
-//
-//                Date dataInicio = null;
-//                if (inicio != null) {
-//                    Calendar calInicio = Calendar.getInstance();
-//                    calInicio.setTime(inicio);
-//                    calInicio.set(Calendar.HOUR, 0);
-//                    calInicio.set(Calendar.MINUTE, 0);
-//                    calInicio.set(Calendar.SECOND, 0);
-//                    calInicio.set(Calendar.MILLISECOND, 0);
-//                    dataInicio = calInicio.getTime();
-//                }
-//
-//                Date dataFim = null;
-//                if (fim != null) {
-//                    Calendar calFim = Calendar.getInstance();
-//                    calFim.setTime(fim);
-//                    calFim.set(Calendar.HOUR, 23);
-//                    calFim.set(Calendar.MINUTE, 59);
-//                    calFim.set(Calendar.SECOND, 59);
-//                    calFim.set(Calendar.MILLISECOND, 999);
-//                    dataFim = calFim.getTime();
-//                }
-//
-//                Paciente paciente = null;
-//                Profissional profissional = null;
-//                Fornecedor fornecedor = null;
-//                //  Origem origem = null;
-//
-//                if (this.origem != null) {
-//
-//                    if (this.origem.getSexo() != null) {
-//
-//                        profissional = ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-//
-//                        if (profissional == null)
-//                            paciente = PacienteSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-//
-////                    } else if (this.origem.getDocumento() == null && this.origem.getSexo() == null) {
-////
-////                        origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-//
-//                    } else if (this.origem.getSexo() == null || this.origem.getSexo().isEmpty()) {
-//
-//                        fornecedor = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-//                    }
-//                }
-//
-//                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, null,
-//                        statusFatura, Arrays.asList(this.subStatusFatura)));
-//
-//                getEntityList().forEach(fatura -> {
-//                    updateValues(fatura);
-//                });
-//            }
-//            updateSomatorio();
-//        } catch (Exception e) {
-//            this.log.error("Erro no actionFiltrar", e);
-//            this.addError("Erro ao filtrar", "Não foi possivel carregar os registros.", true);
-//        }
-//
-//    }
 
     private void updateValues(Fatura fatura) {
         fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
