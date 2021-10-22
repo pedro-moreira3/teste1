@@ -312,7 +312,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public String statusLancamentoConferencia(Lancamento lc) {
         if (lc.getValidado().equals("S"))
-            return "Validado com sucesso";
+            return "Validado";
         else if (lc.getValidado().equals("N"))
             return "Não validado";
         else
