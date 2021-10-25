@@ -1697,7 +1697,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         negociacaoAtualizaListaParcelas();
     }
-
+    
     public void atualizaQuantidadeDeParcelas() {
         zeraValores();
         negociacaoTipoDesconto = "P";
@@ -1730,7 +1730,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void refazCalculos() {
-        negociacaoValorTotal = FaturaSingleton.getInstance().getValorTotal(getEntity());
+        negociacaoValorTotal = FaturaSingleton.getInstance().getTotal(getEntity());
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
         if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(
@@ -1740,10 +1740,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             return;
         }
 
+        BigDecimal valorPago = FaturaSingleton.getInstance().getTotalPago(getEntity());
+        
         if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
             valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
         BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
+        totalSemDesconto = totalSemDesconto.subtract(valorPago);
+        
         if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) != 0) {
             if (negociacaoValorDaPrimeiraParcela.compareTo(totalSemDesconto) > 0) {
                 this.addError("Erro", "Insira uma primeira parcela menor que o total!");
@@ -1791,14 +1795,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private void atualizaInfoParcelamentoNegociacao(boolean totalJaComDesconto, TipoNegociacao tipoNegociacao) {
         NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-
+        
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
             valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
         BigDecimal totalSemDesconto = null;
 
         totalSemDesconto = (totalJaComDesconto ? negociacaoValorTotal : negociacaoValorTotal.subtract(valorDeDesconto));
-
+        
+//        if(negociacaoConfirmacao != null && negociacaoConfirmacao.getFatura() != null) {
+//            if(FaturaSingleton.getInstance().getTotalPago(negociacaoConfirmacao.getFatura()).compareTo(BigDecimal.ZERO) > 0) {
+//                List<Lancamento> lancamentos = negociacaoConfirmacao.getFatura().getLancamentosFiltered();
+//                lancamentos.removeIf((lan) -> !(lan.getValidadoPorProfissional() != null && lan.getConferidoPorProfissional() != null));
+//                lancamentos.forEach((lan) -> {
+//                    negociacaoMensagemCalculo = "Parcela paga: " + lan.getValor() + "\n";
+//                });
+//            }
+//        }
+        
         if (tipoNegociacao == TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE) {
             negociacaoMensagemCalculo = "Entrada de " + ptFormat.format(negociacaoValorDaPrimeiraParcela) + " mais " + String.valueOf(negociacaoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
                     negociacaoValorDaParcela) + ". Total de " + ptFormat.format(totalSemDesconto);
@@ -1907,7 +1921,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         tooltipNegociacaoTarifasDisponiveis = TooltipHelper.getInstance().montaTabela(new String[] { "Produto", "Parcela Mínima", "Parcela Máxima" }, linhas);
     }
 
-    private void negociacaoAtualizaListaParcelas() {
+    private void negociacaoAtualizaListaParcelas() {        
         this.negociacaoParcelas = atualizaListaParcelas((negociacaoDataPagamento1Parcela != null ? negociacaoDataPagamento1Parcela : negociacaoDataPagamento), negociacaoDataPagamentoDemaisParcelas,
                 (negociacaoDataCredito1Parcela != null ? negociacaoDataCredito1Parcela : negociacaoDataCredito), negociacaoDataCreditoDemaisParcelas, negociacaoQuantidadeParcelas,
                 negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca,

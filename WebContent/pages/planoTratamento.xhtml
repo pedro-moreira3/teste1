@@ -2052,13 +2052,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
 				styleClass="NavyButton" />
+			<ui:remove>
 			<p:commandButton icon="White fa fa-gear" value="Não aprovar Orçamento"
 				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
 				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
 				styleClass="RedButton"
 				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').show()"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
-					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />	
+					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
+			</ui:remove>
 		</p:panelGrid>
 	</p:dialog>
 
