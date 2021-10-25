@@ -577,7 +577,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public void fazNada() {
-        LogIntelidenteSingleton.getInstance().makeLog("Não fez nada!");
+        //LogIntelidenteSingleton.getInstance().makeLog("Não fez nada!");
     }
 
     public ByteArrayInputStream getStreamOut() {
