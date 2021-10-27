@@ -1314,7 +1314,7 @@ body .height31 input {
 								<h:outputText for="statusFatura" value="Status da Fatura:" />
 								<p:outputLabel id="statusFatura"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFaturaString}"
+									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
 									readonly="true" escape="false">
 									<p:tooltip escape="false" for="@parent" position="bottom"
 										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
