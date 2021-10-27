@@ -128,7 +128,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         }
         
         System.out.println("chamou construtor");
-            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, null, null);
             faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
             System.out.println(faturas.size());
             int count = 0;
