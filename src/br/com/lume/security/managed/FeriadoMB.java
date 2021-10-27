@@ -56,17 +56,16 @@ public class FeriadoMB extends LumeManagedBean<Feriado> {
     }
 
 
-     @Override
-        public void actionNew(javax.faces.event.ActionEvent event) {
-            super.actionNew(event);
-            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
-            int count = 0;
-            for (Fatura fatura : faturas) {
-                FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-                count++;
-                System.out.println(count);
-            }
-        }
+  public void actionFiltrar(ActionEvent event) {
+  List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+  int count = 0;
+  for (Fatura fatura : faturas) {
+      FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
+      count++;
+      System.out.println(count);
+  }
+  
+}
 
     private void carregaFeriados() {
         eventModel.addEvent(new DefaultScheduleEvent("Evento teste", previousDay8Pm(), previousDay11Pm(), false));
