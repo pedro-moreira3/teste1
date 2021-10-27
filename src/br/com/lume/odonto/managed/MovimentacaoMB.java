@@ -3,9 +3,12 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -125,15 +128,17 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         }
         
         System.out.println("chamou construtor");
-        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(Utils.stringToDate("01-01-2021"), StatusFatura.A_RECEBER, null);
-        Collections.sort(faturas, Collections.reverseOrder());
-        System.out.println(faturas.size());
-        int count = 0;
-        for (Fatura fatura : faturas) {
-            FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-            count++;
-            System.out.println(count);
-        }
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+            faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
+            System.out.println(faturas.size());
+            int count = 0;
+            for (Fatura fatura : faturas) {
+                FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
+                System.out.println(fatura.getDataCriacao());
+                count++;
+                System.out.println(count);
+            }
+        
     }
 
     private void geraLista() {
