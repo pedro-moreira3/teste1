@@ -1,6 +1,5 @@
 package br.com.lume.security.managed;
 
-import java.awt.event.ActionEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,10 +15,6 @@ import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.faturamento.FaturaSingleton;
-import br.com.lume.odonto.entity.Fatura;
-import br.com.lume.odonto.entity.Fatura.StatusFatura;
-import br.com.lume.profissional.ProfissionalSistemaSingleton;
 import br.com.lume.security.bo.FeriadoBO;
 import br.com.lume.security.entity.Feriado;
 
@@ -47,14 +42,6 @@ public class FeriadoMB extends LumeManagedBean<Feriado> {
         this.setClazz(Feriado.class);
         initialDate = Calendar.getInstance().getTime();
         carregaFeriados();
-        System.out.println("chamou construtor");
-        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
-        int count = 0;
-        for (Fatura fatura : faturas) {
-            FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-            count++;
-            System.out.println(count);
-        }
     }
 
     @PostConstruct
@@ -62,18 +49,6 @@ public class FeriadoMB extends LumeManagedBean<Feriado> {
         setEventModel(new DefaultScheduleModel());
 
     }
-
-
-  public void actionFiltrar(ActionEvent event) {
-  List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
-  int count = 0;
-  for (Fatura fatura : faturas) {
-      FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-      count++;
-      System.out.println(count);
-  }
-  
-}
 
     private void carregaFeriados() {
         eventModel.addEvent(new DefaultScheduleEvent("Evento teste", previousDay8Pm(), previousDay11Pm(), false));
