@@ -25,6 +25,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -124,7 +125,9 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         }
         
         System.out.println("chamou construtor");
-        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(Utils.stringToDate("01-01-2021"), StatusFatura.A_RECEBER, null);
+        Collections.sort(faturas, Collections.reverseOrder());
+        System.out.println(faturas.size());
         int count = 0;
         for (Fatura fatura : faturas) {
             FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
