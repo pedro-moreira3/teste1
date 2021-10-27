@@ -24,7 +24,7 @@ public class AtualizacaoFaturas extends TimerTask implements Serializable, Execu
     public void run() {
         try {
             //pra enviar somente entre as 1 e 2 da manha
-            if (!GerenciadorTarefasAgendadas.isWithinRange(1, 2)) {
+            if (!GerenciadorTarefasAgendadas.isWithinRange(5, 6)) {
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Horário atual fora da range de 1 e 2 da manhã estabelecida!");
             } else if (ExecucaoTimerSingleton.getInstance().jaRodouHoje(this)) {
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Já rodou nesta data!");

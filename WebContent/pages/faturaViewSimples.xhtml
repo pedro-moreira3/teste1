@@ -721,7 +721,7 @@ body .height31 input {
 								<h:outputText for="statusFaturaSimples" value="Status da Fatura:" />
 								<p:outputLabel id="statusFaturaSimples"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
+									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
 									readonly="true" escape="false">
 									<p:tooltip escape="false" for="@parent" position="bottom"
 										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
@@ -894,18 +894,18 @@ body .height31 input {
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
-									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
+									sortBy="#{(l.validado == 'N' ? 'Não' : 'Sim')}" width="5%"
 									filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									filterBy="##{(l.validado == 'N' ? 'Não' : 'Sim')}"
 									headerText="Conferido?">
-									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
+									<h:outputText value="#{(l.validado == 'N' ? 'Não' : 'Sim')}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado eq 'C' or l.lancamentoExtornado eq 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
-									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									style="#{l.validado eq 'N' ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									headerText="Conferido Por">
 									<h:outputText

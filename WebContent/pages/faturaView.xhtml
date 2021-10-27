@@ -241,7 +241,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 								<p:inputText id="statusFatura"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
+									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 
@@ -249,7 +249,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:inputText id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
+									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:column
@@ -442,12 +442,13 @@ body .sideChkBox .ui-chkbox-label {
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
-								<p:column sortBy="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}"
+								<p:column styleClass="#{(l.validado eq 'C' or l.lancamentoExtornado eq 'S' ? 'lancamentoFalhaOperacao' : '')}"
+								sortBy="#{(l.validado eq 'N' ? 'Não' : 'Sim')}"
 									width="5%" filterMatchMode="contains"
-									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterBy="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}"
+									style="#{l.validado eq 'N' ? 'color: red' : ''}"
+									filterBy="#{(l.validado eq 'N' ? 'Não' : 'Sim')}"
 									headerText="Conferido?">
-									<h:outputText value="#{(l.pagamentoConferido eq 'S' ? 'Sim' : 'Não')}" />
+									<h:outputText value="#{(l.validado eq 'N' ? 'Não' : 'Sim')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
