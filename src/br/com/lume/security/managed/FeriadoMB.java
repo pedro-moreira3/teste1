@@ -47,6 +47,13 @@ public class FeriadoMB extends LumeManagedBean<Feriado> {
         this.setClazz(Feriado.class);
         initialDate = Calendar.getInstance().getTime();
         carregaFeriados();
+        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+        int count = 0;
+        for (Fatura fatura : faturas) {
+            FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
+            count++;
+            System.out.println(count);
+        }
     }
 
     @PostConstruct
