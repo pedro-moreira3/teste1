@@ -241,7 +241,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 								<p:inputText id="statusFatura"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
+									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 
@@ -249,7 +249,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:inputText id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.subStatusFaturaString}"
+									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:column

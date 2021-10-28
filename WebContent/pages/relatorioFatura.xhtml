@@ -522,19 +522,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<ui:remove>
 								<p:column headerText="Status da Fatura"
-									sortBy="#{m.statusFaturaString}" filterMatchMode="contains"
-									filterBy="#{m.statusFaturaString}">
+									sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+									filterBy="#{m.statusFaturaCompleto}">
 
-									<h:outputText value="#{m.statusFaturaString}" />
+									<h:outputText value="#{m.statusFaturaCompleto}" />
 
 								</p:column>
 							</ui:remove>
 
 							<p:column headerText="Status da Fatura"
-								sortBy="#{m.subStatusFaturaString}" filterMatchMode="contains"
-								filterBy="#{m.subStatusFaturaString}">
+								sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+								filterBy="#{m.statusFaturaCompleto}">
 
-								<h:outputText value="#{m.subStatusFaturaString}" />
+								<h:outputText value="#{m.statusFaturaCompleto}" />
 
 							</p:column>
 

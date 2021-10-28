@@ -1261,8 +1261,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:ajax process="@this"
 											update=":lume:pnNovoPagamentoRecebimento"
 											listener="#{lancamentoContabilMB.carrearListasPorTipoPagamento}" />
-										<f:selectItem itemLabel="Pagamento" itemValue="Pagar" />
-										<f:selectItem itemLabel="Recebimento" itemValue="Receber" />
+										<f:selectItem itemLabel="Pagamento" itemValue="Débito" />
+										<f:selectItem itemLabel="Recebimento" itemValue="Crédito" />
 									</p:selectOneRadio>
 
 									<p:outputLabel for="dadosBasicos" value="Origem/Destino : " />
