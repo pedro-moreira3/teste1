@@ -127,18 +127,6 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "",true);
         }
         
-        System.out.println("chamou construtor");
-            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, null, null);
-            faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
-            System.out.println(faturas.size());
-            int count = 0;
-            for (Fatura fatura : faturas) {
-                FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-                System.out.println(fatura.getDataCriacao());
-                count++;
-                System.out.println(count);
-            }
-        
     }
 
     private void geraLista() {
