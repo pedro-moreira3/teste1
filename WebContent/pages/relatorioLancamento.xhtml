@@ -97,9 +97,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
 							</h:panelGroup>
-							
-							
-							
+
+
+
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceberPagamento"
 									value="Período da data de recebimento:" />
@@ -115,67 +115,71 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicioPagamento" value="Data de recebimento inicio: " />
-								<p:calendar id="inicioPagamento" value="#{relatorioRecebimentoMB.inicioPagamento}"
+								<h:outputText for="inicioPagamento"
+									value="Data de recebimento inicio: " />
+								<p:calendar id="inicioPagamento"
+									value="#{relatorioRecebimentoMB.inicioPagamento}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="fimPagamento" value="Data de recebimento fim: " />
-								<p:calendar id="fimPagamento" value="#{relatorioRecebimentoMB.fimPagamento}"
+								<h:outputText for="fimPagamento"
+									value="Data de recebimento fim: " />
+								<p:calendar id="fimPagamento"
+									value="#{relatorioRecebimentoMB.fimPagamento}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
 							</h:panelGroup>
-							
+
 
 							<h:panelGroup>
-											<p:outputLabel for="faturaOrigemDestino"
-												value="Origem (Fornecedor, Profissional, Paciente):" />
+								<p:outputLabel for="faturaOrigemDestino"
+									value="Origem (Fornecedor, Profissional, Paciente):" />
 
-											<p:selectOneMenu id="faturaOrigemDestino"
-												converter="dadosBasico" value="#{relatorioRecebimentoMB.origemFiltro}"
-												style="min-width:0px;"
-												filter="true" filterMatchMode="contains">
+								<p:selectOneMenu id="faturaOrigemDestino"
+									converter="dadosBasico"
+									value="#{relatorioRecebimentoMB.origemFiltro}"
+									style="min-width:0px;" filter="true" filterMatchMode="contains">
 
-												<p:ajax event="itemSelect" process="@this" immediate="true" />
+									<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-												<f:selectItem
-													itemLabel="Selecione a Origem/Destino"
-													itemValue="#{null}" />
-												<f:selectItems value="#{relatorioRecebimentoMB.origens}" var="m"
-													itemLabel="#{m.nome}" itemValue="#{m}" />
+									<f:selectItem itemLabel="Selecione a Origem/Destino"
+										itemValue="#{null}" />
+									<f:selectItems value="#{relatorioRecebimentoMB.origens}"
+										var="m" itemLabel="#{m.nome}" itemValue="#{m}" />
 
-											</p:selectOneMenu>
-										</h:panelGroup>
-
-							<h:panelGroup>
-								<p:outputLabel for="status" value="Status do Recebimento: " />
-								<p:selectOneMenu id="status"
-									value="#{relatorioRecebimentoMB.status}"
-									converter="enumStatusLancamento"
-									style="display:inline-block;width:90%;">
-									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-									<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
-										var="status" itemLabel="#{status.descricao}"
-										itemValue="#{status}" />
-									<p:ajax
-										listener="#{relatorioRecebimentoMB.alteraStatusLancamento}"
-										update="subStatusRecebimento" process="@this,subStatusRecebimento" />
 								</p:selectOneMenu>
-								<h:outputLabel class="fa fa-question" id="tooltipStatus"
-									style="font-size:24px; margin-left:10px;" />
-								<p:tooltip for="tooltipStatus"
-									value="#{relatorioRecebimentoMB.getTooltipValue('relatorioRecebimento','statusrecebimento')}"
-									position="bottom" style="width:30%;" />
 							</h:panelGroup>
+							<ui:remove>
+								<h:panelGroup>
+									<p:outputLabel for="status" value="Status do Recebimento: " />
+									<p:selectOneMenu id="status"
+										value="#{relatorioRecebimentoMB.status}"
+										converter="enumStatusLancamento"
+										style="display:inline-block;width:90%;">
+										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+										<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
+											var="status" itemLabel="#{status.descricao}"
+											itemValue="#{status}" />
+										<p:ajax
+											listener="#{relatorioRecebimentoMB.alteraStatusLancamento}"
+											update="subStatusRecebimento"
+											process="@this,subStatusRecebimento" />
+									</p:selectOneMenu>
+									<h:outputLabel class="fa fa-question" id="tooltipStatus"
+										style="font-size:24px; margin-left:10px;" />
+									<p:tooltip for="tooltipStatus"
+										value="#{relatorioRecebimentoMB.getTooltipValue('relatorioRecebimento','statusrecebimento')}"
+										position="bottom" style="width:30%;" />
+								</h:panelGroup>
+							</ui:remove>
 
 							<h:panelGroup>
 								<p:outputLabel for="subStatusRecebimento"
-									value="Sub Status do Recebimento: " />
-								<p:selectCheckboxMenu id="subStatusRecebimento"
-									label="Sub Status" multiple="true"
-									style="top:7px;display:inline-block;width:90%;"
+									value="Status do Recebimento: " />
+								<p:selectCheckboxMenu id="subStatusRecebimento" label="Status"
+									multiple="true" style="top:7px;display:inline-block;width:90%;"
 									value="#{relatorioRecebimentoMB.subStatus}"
 									converter="enumSubStatusLancamento">
 									<f:selectItems value="#{relatorioRecebimentoMB.listaSubStatus}"
@@ -188,6 +192,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioRecebimentoMB.getTooltipValue('relatorioRecebimento','substatus')}"
 									position="bottom" style="width:30%;" />
 							</h:panelGroup>
+
 
 							<h:panelGroup>
 								<p:outputLabel for="confereciaForma" value="Forma de pagamento:" />
@@ -212,7 +217,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Pesquisar"
 								actionListener="#{relatorioRecebimentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal"
-								process="@this,inicio,fim,faturaOrigemDestino,subStatusRecebimento,status,inicioPagamento,fimPagamento"
+								process="@this,inicio,fim,faturaOrigemDestino,subStatusRecebimento,inicioPagamento,fimPagamento"
 								styleClass="OrangeButton" />
 
 							<ui:remove>
@@ -302,13 +307,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column
 								filterBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
 								sortBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
-								 filterFunction="#{relatorioRecebimentoMB.filtroSemAcento}"
+								filterFunction="#{relatorioRecebimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Plano de Tratamento">
 								<h:outputText
 									value="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
-								sortBy="#{lancamento.formaPagamentoStr}" filterFunction="#{relatorioRecebimentoMB.filtroSemAcento}"
+								sortBy="#{lancamento.formaPagamentoStr}"
+								filterFunction="#{relatorioRecebimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Forma de pagamento">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
@@ -319,7 +325,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<f:convertNumber />
 								</h:outputText>
 							</p:column>
-							<p:column headerText="Valor à conferir"
+							<p:column headerText="Valor a Receber"
 								filterBy="#{relatorioRecebimentoMB.valorConferir(lancamento)}"
 								sortBy="#{relatorioRecebimentoMB.valorConferir(lancamento)}"
 								filterMatchMode="contains">
@@ -337,7 +343,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</h:outputText>
 								</f:facet>
 							</p:column>
-							<p:column headerText="Valor conferido"
+							<p:column headerText="Valor Recebido"
 								filterBy="#{relatorioRecebimentoMB.valorConferido(lancamento)}"
 								sortBy="#{relatorioRecebimentoMB.valorConferido(lancamento)}"
 								filterMatchMode="contains">
@@ -359,7 +365,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								sortBy="#{relatorioRecebimentoMB.valorTotal(lancamento)}"
 								filterBy="#{relatorioRecebimentoMB.valorTotal(lancamento)}"
 								filterMatchMode="contains">
-								<h:outputText value="#{relatorioRecebimentoMB.valorTotal(lancamento)}">
+								<h:outputText
+									value="#{relatorioRecebimentoMB.valorTotal(lancamento)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
@@ -371,15 +378,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											minFractionDigits="2" />
 									</h:outputText>
 								</f:facet>
-							</p:column>							
-							<p:column filterBy="#{lancamento.status.descricao}"
-								sortBy="#{lancamento.status.descricao}" filterMatchMode="contains"
-								headerText="Status">
-								<h:outputText value="#{lancamento.status.descricao}" />
 							</p:column>
+							<ui:remove>
+								<p:column filterBy="#{lancamento.status.descricao}"
+									sortBy="#{lancamento.status.descricao}"
+									filterMatchMode="contains" headerText="Status">
+									<h:outputText value="#{lancamento.status.descricao}" />
+								</p:column>
+							</ui:remove>
 							<p:column filterBy="#{lancamento.subStatusDescricao}"
-								sortBy="#{lancamento.subStatusDescricao}" filterMatchMode="contains"
-								headerText="Sub Status">
+								sortBy="#{lancamento.subStatusDescricao}"
+								filterMatchMode="contains" headerText="Status">
 								<h:outputText value="#{lancamento.subStatusDescricao}" />
 							</p:column>
 						</p:dataTable>

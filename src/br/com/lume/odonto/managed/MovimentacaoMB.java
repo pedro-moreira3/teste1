@@ -3,9 +3,12 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +28,12 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.local.LocalSingleton;
@@ -37,13 +42,16 @@ import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Estoque;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.TransferenciaEstoque;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSistemaSingleton;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
@@ -118,6 +126,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "",true);
         }
+        
     }
 
     private void geraLista() {

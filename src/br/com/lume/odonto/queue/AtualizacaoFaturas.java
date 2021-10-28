@@ -30,9 +30,21 @@ public class AtualizacaoFaturas extends TimerTask implements Serializable, Execu
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Já rodou nesta data!");
             } else {
 
-                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
-                for (Fatura fatura : faturas)
+                System.out.println("chamou método de atualização dos status das faturas");
+                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, null, null);
+                faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
+                System.out.println(faturas.size());
+                int count = 0;
+                for (Fatura fatura : faturas) {
                     FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
+                    System.out.println(fatura.getDataCriacao());
+                    count++;
+                    System.out.println(count);
+                }
+                
+//                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
+//                for (Fatura fatura : faturas)
+//                    FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
 
                 ExecucaoTimerSingleton.getInstance().postResult(this, true, null);
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Execução concluida!");

@@ -112,6 +112,7 @@
 
 							</p:autoComplete>
 						</h:panelGroup>
+						<ui:remove>
 						<h:panelGroup>
 							<p:outputLabel for="status" value="Status da Fatura: " />
 							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
@@ -120,8 +121,9 @@
 									itemLabel="#{status.descricao}" itemValue="#{status}" />
 							</p:selectOneMenu>
 						</h:panelGroup>
+						</ui:remove>
 						<h:panelGroup>
-							<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+							<p:outputLabel for="subStatus" value="Status da Fatura: " />
 							<p:selectCheckboxMenu id="subStatus" label="SubStatus"
 								multiple="true" value="#{faturaPagtoMB.subStatusFatura}"
 								converter="enumSubStatusFatura" style="margin-top: 5px;">

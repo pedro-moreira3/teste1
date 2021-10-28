@@ -831,7 +831,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
         } else {
             this.setEntity(null);
-            pacienteSelecionado = null;
+            //pacienteSelecionado = null;
         }
     }
 

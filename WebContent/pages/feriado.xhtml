@@ -43,9 +43,9 @@
 					<p:panelGrid columns="4" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid">
 						<p:commandButton id="new" icon="White fa fa-file-o"
-							value="Novo Feriado" actionListener="#{feriadoMB.actionNew}"
-							update=":lume:pnDlg" immediate="true"
-							oncomplete="PF('dlg').show();" />
+							value="Novo Feriado" actionListener="#{feriadoMB.actionFiltrar}"
+							update=":lume:pnDlg" 
+							oncomplete="PF('loading').hide();" />
 					</p:panelGrid>
 					
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtFeriado" value="#{feriadoMB.feriados}" var="feriado" rows="15" paginator="true"

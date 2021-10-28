@@ -310,28 +310,28 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<f:selectItem itemValue="PF"
 													itemLabel="Pagamento de fornecedor" />
 
-												<p:ajax process="@this" event="change"
-													listener="#{relatorioFaturaMB.atualizaTipoFatura}"
-													update="statusFaturaFiltro" />
+												
 
 											</p:selectOneRadio>
 										</h:panelGroup>
 
-										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="statusFaturaFiltro"
-												value="Status da Fatura" />
-											<p:selectOneMenu id="statusFaturaFiltro"
-												converter="enumStatusFatura"
-												value="#{relatorioFaturaMB.statusFatura}" filter="true"
-												filterMatchMode="contains" style="top: 5px;">
-												<f:selectItems value="#{relatorioFaturaMB.statussFatura}"
-													var="status" itemLabel="#{status.descricao}"
-													itemValue="#{status}" />
-											</p:selectOneMenu>
-										</h:panelGroup>
+										<ui:remove>
+											<h:panelGroup styleClass="lumeField">
+												<p:outputLabel for="statusFaturaFiltro"
+													value="Status da Fatura" />
+												<p:selectOneMenu id="statusFaturaFiltro"
+													converter="enumStatusFatura"
+													value="#{relatorioFaturaMB.statusFatura}" filter="true"
+													filterMatchMode="contains" style="top: 5px;">
+													<f:selectItems value="#{relatorioFaturaMB.statussFatura}"
+														var="status" itemLabel="#{status.descricao}"
+														itemValue="#{status}" />
+												</p:selectOneMenu>
+											</h:panelGroup>
+										</ui:remove>
 
 										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+											<p:outputLabel for="subStatus" value="Status da Fatura: " />
 											<p:selectCheckboxMenu id="subStatus" label="SubStatus"
 												multiple="true" value="#{relatorioFaturaMB.subStatusFatura}"
 												converter="enumSubStatusFatura">
@@ -520,19 +520,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</f:facet>
 							</p:column>
 
+							<ui:remove>
+								<p:column headerText="Status da Fatura"
+									sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+									filterBy="#{m.statusFaturaCompleto}">
+
+									<h:outputText value="#{m.statusFaturaCompleto}" />
+
+								</p:column>
+							</ui:remove>
+
 							<p:column headerText="Status da Fatura"
-								sortBy="#{m.statusFaturaString}" filterMatchMode="contains"
-								filterBy="#{m.statusFaturaString}">
+								sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+								filterBy="#{m.statusFaturaCompleto}">
 
-								<h:outputText value="#{m.statusFaturaString}" />
-
-							</p:column>
-
-							<p:column headerText="Sub Status da Fatura"
-								sortBy="#{m.subStatusFaturaString}" filterMatchMode="contains"
-								filterBy="#{m.subStatusFaturaString}">
-
-								<h:outputText value="#{m.subStatusFaturaString}" />
+								<h:outputText value="#{m.statusFaturaCompleto}" />
 
 							</p:column>
 

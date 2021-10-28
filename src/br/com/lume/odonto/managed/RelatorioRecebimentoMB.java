@@ -61,13 +61,13 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     private Date inicio, fim, inicioPagamento, fimPagamento;
     private PeriodoBusca periodoBusca;
-    
+
     private PeriodoBusca periodoBuscaPagamento;
 
     private StatusLancamento status;
     private SubStatusLancamento[] subStatus;
     private List<SubStatusLancamento> listaSubStatus;
-   
+
     private BigDecimal somatorioValorConferirConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorConferidoConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorTotalConferencia = new BigDecimal(0);
@@ -76,7 +76,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     private List<Tarifa> tarifas = new ArrayList<>();
 
     private BigDecimal somaValor = new BigDecimal(0);
-    
+
     private List<SelectItem> origens;
 
     private DadosBasico origemFiltro;
@@ -90,8 +90,9 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.setClazz(RelatorioRecebimento.class);
         this.geraListaTarifa();
         this.geraListaOrigens();
+        alteraStatusLancamento();
     }
-    
+
     public void geraListaOrigens() {
         try {
 
@@ -146,52 +147,50 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     public void filtra() {
         try {
-            if (this.inicio == null && this.fim == null && this.inicioPagamento == null && this.fimPagamento == null ) {
+            if (this.inicio == null && this.fim == null && this.inicioPagamento == null && this.fimPagamento == null) {
                 this.addError("Selecione o período de crédito ou o período de pagamento.", "");
-            }
-            else if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
+            } else if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            }else if (this.inicioPagamento != null && this.fimPagamento != null && this.inicioPagamento.getTime() > this.fimPagamento.getTime()) {
+            } else if (this.inicioPagamento != null && this.fimPagamento != null && this.inicioPagamento.getTime() > this.fimPagamento.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            }
-            else {
+            } else {
                 this.lancamentos = new ArrayList<>();
 
                 this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
                 this.setSomatorioValorConferirConferencia(new BigDecimal(0));
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
-                
+
                 List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosRecebimento(this.inicio, this.fim, origemFiltro, formaPagamento,
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.inicioPagamento, this.fimPagamento);
-                
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.inicioPagamento, this.fimPagamento);
+
                 for (Lancamento l : lancamentosFiltrados) {
                     boolean addLancamento = false;
-                    
-                    if(this.status != null && this.subStatus != null && this.subStatus.length > 0) {
-                        if(this.status.equals(l.getStatus())) {
-                            
-                            for(int i = 0; i < this.subStatus.length ; i++)
-                                if(l.getSubStatus().contains(this.subStatus[i]))
+
+                    if (this.status != null && this.subStatus != null && this.subStatus.length > 0) {
+                        if (this.status.equals(l.getStatus())) {
+
+                            for (int i = 0; i < this.subStatus.length; i++)
+                                if (l.getSubStatus().contains(this.subStatus[i]))
                                     addLancamento = true;
                         }
-                    }else if(this.status != null) {
-                        if(this.status.equals(l.getStatus())) {
+                    } else if (this.status != null) {
+                        if (this.status.equals(l.getStatus())) {
                             addLancamento = true;
                         }
-                    }else {
+                    } else {
                         addLancamento = true;
                     }
-                    
-                    if(addLancamento) {
+
+                    if (addLancamento) {
                         this.lancamentos.add(l);
-                        
+
                         this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
                         this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferir(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
                         this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(this.valorTotal(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
                     }
 
                 }
-                
+
             }
         } catch (Exception e) {
             this.log.error(e);
@@ -200,7 +199,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     public void geraListaTarifa() {
         try {
-            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.RECEBIMENTO));
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO));
             if (this.getTarifas() != null)
                 Collections.sort(this.getTarifas());
         } catch (Exception e) {
@@ -209,7 +208,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void actionNew(ActionEvent arg0) {
         this.inicio = null;
@@ -219,25 +218,23 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.status = null;
         super.actionNew(arg0);
     }
-    
+
     public String planoTratamentoFromLancamento(Lancamento lancamento) {
         try {
             String planoTratamento = null;
-            if(lancamento.getFatura().getItens().get(0) != null && lancamento.getFatura().getItens().get(
-                    0).getOrigemOrcamento() != null) {
-                 planoTratamento = lancamento.getFatura().getItens().get(
+            if (lancamento.getFatura().getItens().get(0) != null && lancamento.getFatura().getItens().get(0).getOrigemOrcamento() != null) {
+                planoTratamento = lancamento.getFatura().getItens().get(
                         0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
-            }           
-          
+            }
 
             if (planoTratamento != null)
                 return planoTratamento;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
     }
-    
+
     public String dadosBasicosFromLancamento(Lancamento lancamento) {
         try {
             LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
@@ -249,24 +246,24 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         }
         return "";
     }
-    
+
     public String tipoPessoa(Lancamento lancamento) throws Exception {
-        
-        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);        
-       
-        if(lc != null) {
-            TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());   
-            if(tipo != null) {
+
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
+
+        if (lc != null) {
+            TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());
+            if (tipo != null) {
                 if (tipo.equals(TipoPessoa.PROFISSIONAL)) {
-                  return "Profissional";
+                    return "Profissional";
                 } else if (tipo.equals(TipoPessoa.PACIENTE)) {
-                  return "Paciente";
+                    return "Paciente";
                 } else if (tipo.equals(TipoPessoa.FORNECEDOR)) {
                     return "Fornecedor";
                 }
             }
         }
-        
+
         return "Paciente";
     }
 
@@ -279,7 +276,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     public void actionTrocaDatasPagamento() {
         try {
             setInicioPagamento(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaPagamento()));
@@ -294,8 +291,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.listaSubStatus = new ArrayList<>();
         this.subStatus = null;
         for (SubStatusLancamento subStatus : SubStatusLancamento.values())
-            if (subStatus.isSonOfStatusLancamento(this.status))
-                this.listaSubStatus.add(subStatus);
+            this.listaSubStatus.add(subStatus);
     }
 
     public BigDecimal valorConferir(Lancamento lc) {
@@ -317,14 +313,14 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         }
         return new BigDecimal(0);
     }
-    
+
     public BigDecimal valorTotal(Lancamento lc) {
         if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
             return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Relatório de recebimentos", tabelaRelatorio, type);
     }
@@ -404,7 +400,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     public void setListaSubStatus(List<SubStatusLancamento> listaSubStatus) {
         this.listaSubStatus = listaSubStatus;
     }
-    
+
     public BigDecimal getSomatorioValorConferirConferencia() {
         return somatorioValorConferirConferencia;
     }
@@ -453,52 +449,42 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.tarifas = tarifas;
     }
 
-    
     public PeriodoBusca getPeriodoBuscaPagamento() {
         return periodoBuscaPagamento;
     }
 
-    
     public void setPeriodoBuscaPagamento(PeriodoBusca periodoBuscaPagamento) {
         this.periodoBuscaPagamento = periodoBuscaPagamento;
     }
 
-    
     public Date getInicioPagamento() {
         return inicioPagamento;
     }
 
-    
     public void setInicioPagamento(Date inicioPagamento) {
         this.inicioPagamento = inicioPagamento;
     }
 
-    
     public Date getFimPagamento() {
         return fimPagamento;
     }
 
-    
     public void setFimPagamento(Date fimPagamento) {
         this.fimPagamento = fimPagamento;
     }
 
-    
     public List<SelectItem> getOrigens() {
         return origens;
     }
 
-    
     public void setOrigens(List<SelectItem> origens) {
         this.origens = origens;
     }
 
-    
     public DadosBasico getOrigemFiltro() {
         return origemFiltro;
     }
 
-    
     public void setOrigemFiltro(DadosBasico origemFiltro) {
         this.origemFiltro = origemFiltro;
     }

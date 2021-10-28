@@ -72,7 +72,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceber"
-									value="Período da data de crédito:" />
+									value="Período da data de débito:" />
 								<p:selectOneMenu id="filtroPeriodoAReceber"
 									value="#{relatorioPagamentoMB.periodoBusca}"
 									converter="enumPeriodoBusca">
@@ -85,14 +85,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicio" value="Data de crédito inicio: " />
+								<h:outputText for="inicio" value="Data de débito inicio: " />
 								<p:calendar id="inicio" value="#{relatorioPagamentoMB.inicio}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									 />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="fim" value="Data de crédito fim: " />
+								<h:outputText for="fim" value="Data de débito fim: " />
 								<p:calendar id="fim" value="#{relatorioPagamentoMB.fim}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									 />
@@ -309,7 +309,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<f:convertNumber />
 								</h:outputText>
 							</p:column>
-							<p:column headerText="Valor à conferir"
+							<p:column headerText="Valor a Pagar"
 								filterBy="#{relatorioPagamentoMB.valorConferir(lancamento)}"
 								sortBy="#{relatorioPagamentoMB.valorConferir(lancamento)}"
 								filterMatchMode="contains">
@@ -327,7 +327,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</h:outputText>
 								</f:facet>
 							</p:column>
-							<p:column headerText="Valor conferido"
+							<p:column headerText="Valor Pago"
 								filterBy="#{relatorioPagamentoMB.valorConferido(lancamento)}"
 								sortBy="#{relatorioPagamentoMB.valorConferido(lancamento)}"
 								filterMatchMode="contains">

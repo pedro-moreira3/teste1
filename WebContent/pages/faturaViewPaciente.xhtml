@@ -162,7 +162,8 @@ body .height31 input {
 			<div class="ui-g-12 ui-lg-12">
 
 				<p:outputPanel id="pnlAjusteLancamento">
-					<p:panelGrid columns="1" layout="grid" rendered="#{faturaPagtoMB.ajustarLancamento != null}"
+					<p:panelGrid columns="1" layout="grid"
+						rendered="#{faturaPagtoMB.ajustarLancamento != null}"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 						<h:panelGroup styleClass="md-combo">
@@ -217,7 +218,7 @@ body .height31 input {
 								locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
-								<p:ajax event="dateSelect" process="@this"/>
+								<p:ajax event="dateSelect" process="@this" />
 							</p:calendar>
 							<p:outputLabel for="ajustarLancamentoDataCredito"
 								value="Data de Crédito:" />
@@ -234,8 +235,7 @@ body .height31 input {
 
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.ajustarLancamento}"
-						update="pnlfaturaView" process="@this"
-						styleClass="GreenButton" />
+						update="pnlfaturaView" process="@this" styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgAjusteLancamento').hide()"
 						styleClass="NavyButton" />
@@ -333,14 +333,16 @@ body .height31 input {
 
 								<h:panelGroup styleClass="md-inputfield"
 									style="margin-top: 10px;" id="painelEntradaLancamento">
-									<p:inputNumber id="novoLancamentoValorPrimeiraParcela" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
+									<p:inputNumber id="novoLancamentoValorPrimeiraParcela"
+										rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
 										value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 										symbol="R$ " thousandSeparator=".">
 										<p:ajax process="@this"
 											oncomplete="novoLancamentoRefazCalculos()" />
 									</p:inputNumber>
-									<p:outputLabel for="novoLancamentoValorPrimeiraParcela" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
+									<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
+										rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
 										value="Valor da Entrada  (primeira parcela):" />
 									<p:message styleClass="msg"
 										for="novoLancamentoValorPrimeiraParcela" />
@@ -464,8 +466,8 @@ body .height31 input {
 						styleClass="GreenButton" />
 					<p:commandButton value="Salvar e Continuar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento(false)}"
-						update="pnlfaturaView, pnlNovoLancamento, novoLancamentoParcelasTable" process="@this, pnlNovoLancamento"
-						styleClass="GreenButton" />
+						update="pnlfaturaView, pnlNovoLancamento, novoLancamentoParcelasTable"
+						process="@this, pnlNovoLancamento" styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
 						styleClass="NavyButton" />
@@ -651,15 +653,17 @@ body .height31 input {
 									</p:outputPanel>
 								</h:panelGroup>
 
-								<h:panelGroup styleClass="md-inputfield taller" id="painelEntrada"
-									style="margin-top: 10px;" >
-									<p:inputNumber id="negociacaoValorPrimeiraParcela" rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
+								<h:panelGroup styleClass="md-inputfield taller"
+									id="painelEntrada" style="margin-top: 10px;">
+									<p:inputNumber id="negociacaoValorPrimeiraParcela"
+										rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
 										value="#{faturaPagtoMB.negociacaoValorDaPrimeiraParcela}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 										symbol="R$ " thousandSeparator=".">
 										<p:ajax process="@this" oncomplete="refazCalculos()" />
 									</p:inputNumber>
-									<p:outputLabel for="negociacaoValorPrimeiraParcela" rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
+									<p:outputLabel for="negociacaoValorPrimeiraParcela"
+										rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
 										value="Valor da Entrada  (primeira parcela):" />
 								</h:panelGroup>
 
@@ -1156,12 +1160,13 @@ body .height31 input {
 			</div>
 		</div>
 	</p:dialog>
-	
-	<p:dialog widgetVar="dlgImprimirRecibo" responsive="true" modal="true" 
+
+	<p:dialog widgetVar="dlgImprimirRecibo" responsive="true" modal="true"
 		appendTo=":lume" width="700px">
 		<f:facet name="header">
 			<p:outputPanel id="pnlImprimirReciboHeader">
-				<h:outputText value="Imprimir Recibo para o Paciente #{faturaPagtoMB.entity.paciente.dadosBasico.nome}" />
+				<h:outputText
+					value="Imprimir Recibo para o Paciente #{faturaPagtoMB.entity.paciente.dadosBasico.nome}" />
 			</p:outputPanel>
 		</f:facet>
 		<div class="ui-g ui-fluid">
@@ -1179,11 +1184,10 @@ body .height31 input {
 									itemValue="#{tr}" itemLabel="#{tr.descricao}" />
 							</p:selectOneRadio>
 						</h:panelGroup>
-						
+
 						<h:panelGroup styleClass="">
-							<p:selectBooleanCheckbox
-								styleClass="sideChkBox"
-								value="#{faturaPagtoMB.incluirLogo}" 
+							<p:selectBooleanCheckbox styleClass="sideChkBox"
+								value="#{faturaPagtoMB.incluirLogo}"
 								itemLabel="Incluir logo da Clínica na impressão do recibo" />
 						</h:panelGroup>
 
@@ -1200,9 +1204,8 @@ body .height31 input {
 						actionListener="#{faturaPagtoMB.actionPrintReciboLancamento}"
 						update="pnlImprimirReciboEscolhaLancamentoHeader, 
 								pnlImprimirReciboEscolhaLancamento,
-								@parent:@parent:faturaReciboInclude" 
-						process="@this, pnlImprimirRecibo"
-						styleClass="GreenButton" />
+								@parent:@parent:faturaReciboInclude"
+						process="@this, pnlImprimirRecibo" styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" oncomplete="PF('dlgImprimirRecibo').hide()"
 						styleClass="NavyButton" />
@@ -1211,9 +1214,9 @@ body .height31 input {
 			</div>
 		</div>
 	</p:dialog>
-	
-	<p:dialog widgetVar="dlgImprimirReciboEscolhaLancamento" responsive="true" modal="true" 
-		appendTo=":lume" width="700px">
+
+	<p:dialog widgetVar="dlgImprimirReciboEscolhaLancamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
 		<f:facet name="header">
 			<p:outputPanel id="pnlImprimirReciboEscolhaLancamentoHeader">
 				<h:outputText value="Escolha os Lançamentos a serem impressos" />
@@ -1222,36 +1225,33 @@ body .height31 input {
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<p:outputPanel id="pnlImprimirReciboEscolhaLancamento">
-					
+
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						value="#{faturaPagtoMB.lancamentosAEscolher}" var="l" rows="20"
-						selection="#{faturaPagtoMB.lancamentosImpressao}"
-						paginator="true" rowKey="#{l}" paginatorPosition="bottom">
+						selection="#{faturaPagtoMB.lancamentosImpressao}" paginator="true"
+						rowKey="#{l}" paginatorPosition="bottom">
 						<f:facet name="header">Lançamentos da Fatura</f:facet>
 
-						<p:column selectionMode="multiple" style="width:20px;text-align:center" />
-						<p:column
-							sortBy="#{l.dataPagamentoStr}"
+						<p:column selectionMode="multiple"
+							style="width:20px;text-align:center" />
+						<p:column sortBy="#{l.dataPagamentoStr}"
 							filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
 							width="20%" headerText="Data de Recebimento">
-								<h:outputText value="#{l.dataPagamentoStr}" />
+							<h:outputText value="#{l.dataPagamentoStr}" />
 						</p:column>
-						<p:column
-							sortBy="#{l.valor}" filterMatchMode="contains"
+						<p:column sortBy="#{l.valor}" filterMatchMode="contains"
 							filterBy="#{l.valor}" headerText="Valor" width="20%">
 							<h:outputText value="#{l.valor}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
-						<p:column
-							width="55%"
-							filterBy="#{l.formaPagamentoStr}"
+						<p:column width="55%" filterBy="#{l.formaPagamentoStr}"
 							headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
 							<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
 						</p:column>
-						
+
 					</p:dataTable>
-					
+
 				</p:outputPanel>
 
 				<p:separator styleClass="SeparatorFull" />
@@ -1265,7 +1265,8 @@ body .height31 input {
 						process="@this, pnlImprimirReciboEscolhaLancamento"
 						styleClass="GreenButton" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
-						process="@this" oncomplete="PF('dlgImprimirReciboEscolhaLancamento').hide()"
+						process="@this"
+						oncomplete="PF('dlgImprimirReciboEscolhaLancamento').hide()"
 						styleClass="NavyButton" />
 
 
@@ -1404,27 +1405,28 @@ body .height31 input {
 								</p:panel>
 							</p:panelGrid>
 
-							<p:dataTable id="dtItensFatura" filterDelay="1500" reflow="true" emptyMessage=""
-								value="#{faturaPagtoMB.entity.itensFiltered}" var="fi" rows="20"
-								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
+							<p:dataTable id="dtItensFatura" filterDelay="1500" reflow="true"
+								emptyMessage="" value="#{faturaPagtoMB.entity.itensFiltered}"
+								var="fi" rows="20" paginator="true" rowKey="#{fi}"
+								paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
 
 								<p:column headerText="Ações" style="width:80px !important;"
 									rendered="#{faturaPagtoMB.isAdmin()}">
-									<p:commandButton icon="fa fa-times-circle White" 
+									<p:commandButton icon="fa fa-times-circle White"
 										actionListener="#{faturaPagtoMB.cancelarItem(fi)}"
-										styleClass="RedButton" title="Cancelar item"
-										process="@this" update="dtItensFatura,@parent:@parent:@parent:@parent:@parent:pnlfaturaView">
-										<p:confirm header="Confirmar" message="Deseja realmente cancelar esse item da fatura ?"/>
+										styleClass="RedButton" title="Cancelar item" process="@this"
+										update="dtItensFatura,@parent:@parent:@parent:@parent:@parent:pnlfaturaView">
+										<p:confirm header="Confirmar"
+											message="Deseja realmente cancelar esse item da fatura ?" />
 									</p:commandButton>
 									<ui:remove>
-									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
-										oncomplete="PF('@parent:@parent:@parent:@parent:@parent:dlgAlterarItem').show();"
-										title="Alterar item"
-										process="@this" update="dlgAlterarItem"/>
+										<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+											oncomplete="PF('@parent:@parent:@parent:@parent:@parent:dlgAlterarItem').show();"
+											title="Alterar item" process="@this" update="dlgAlterarItem" />
 									</ui:remove>
 								</p:column>
-			
+
 								<p:column sortBy="#{fi.descricaoItem}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
 									headerText="Descrição">
@@ -1447,15 +1449,17 @@ body .height31 input {
 								<p:column sortBy="#{fi.valorComDesconto}"
 									filterMatchMode="contains" filterBy="#{fi.valorComDesconto}"
 									headerText="Valor com desconto" width="100">
-									
+
 									<p:inputNumber id="valortroca" value="#{fi.valorComDesconto}"
-										maxlength="13" maxValue="9999999999.99"
-										decimalSeparator="," symbol="R$ " thousandSeparator="."
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator="."
 										rendered="#{faturaPagtoMB.isAdmin()}">
-										<p:ajax process="@this" listener="#{faturaPagtoMB.persistAlteracaoValorItem(fi)}"/>
+										<p:ajax process="@this"
+											listener="#{faturaPagtoMB.persistAlteracaoValorItem(fi)}" />
 									</p:inputNumber>
-									
-									<h:outputText value="#{fi.valorComDesconto}" rendered="#{!faturaPagtoMB.isAdmin()}">
+
+									<h:outputText value="#{fi.valorComDesconto}"
+										rendered="#{!faturaPagtoMB.isAdmin()}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
@@ -1567,7 +1571,7 @@ body .height31 input {
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
 									<p:ajax process="@this" update="lancamentosFatura" />
 								</p:selectBooleanCheckbox>
-								
+
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
 									itemLabel="Mostrar lançamentos de estorno."
 									value="#{faturaPagtoMB.showLancamentosEstorno}">
@@ -1602,7 +1606,8 @@ body .height31 input {
 										oncomplete="PF('dlgAjusteLancamento').show();"
 										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
 										rendered="#{l.validado == 'S' and l.lancamentoExtornado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
-										process="@this" update="@parent:@parent:@parent:@parent:@parent:pnlAjusteLancamento">
+										process="@this"
+										update="@parent:@parent:@parent:@parent:@parent:pnlAjusteLancamento">
 									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar lançamento"
@@ -1679,13 +1684,13 @@ body .height31 input {
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
-									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
+									styleClass="#{(l.validado eq 'C' or l.lancamentoExtornado eq 'S' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{(l.validado eq 'N' ? 'Não' : 'Sim')}" width="5%"
 									filterMatchMode="contains"
-									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									style="#{l.validado eq 'N' ? 'color: red' : ''}"
+									filterBy="#{(l.validado eq 'N' ? 'Não' : 'Sim')}"
 									headerText="Conferido?">
-									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
+									<h:outputText value="#{(l.validado eq 'N' ? 'Não' : 'Sim')}" />
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
@@ -1714,7 +1719,8 @@ body .height31 input {
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
-				process="@this" update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable"
+				process="@this"
+				update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable"
 				styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0)}"
@@ -1755,26 +1761,30 @@ body .height31 input {
 			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
 		</ui:include>
 	</p:outputPanel>
-	
+
 	<p:outputPanel id="faturaReciboInclude">
 		<script>
-		function processAndSaveHtmlReciboContent() {
+			function processAndSaveHtmlReciboContent() {
 
-			if (typeof $('*[id*=fatura2PrintReciboInterno]:visible').val() != 'undefined') {
-				var htmlContentRecibo = $('*[id*=fatura2PrintReciboInterno]:visible')[0].innerHTML;
-				$('*[id*=hiddenReciboField]')[0].value = htmlContentRecibo;
+				if (typeof $('*[id*=fatura2PrintReciboInterno]:visible').val() != 'undefined') {
+					var htmlContentRecibo = $('*[id*=fatura2PrintReciboInterno]:visible')[0].innerHTML;
+					$('*[id*=hiddenReciboField]')[0].value = htmlContentRecibo;
+				}
+
 			}
-
-		}
 		</script>
-		<p:remoteCommand name="saveHtmlReciboPrint" onstart="processAndSaveHtmlReciboContent()"
+		<p:remoteCommand name="saveHtmlReciboPrint"
+			onstart="processAndSaveHtmlReciboContent()"
 			actionListener="#{faturaPagtoMB.salvaHtmlReciboContent()}"
 			process="@this, hiddenReciboField" />
-		<p:inputText value="#{faturaPagtoMB.htmlReciboContent}" id="hiddenReciboField" type="hidden" />
+		<p:inputText value="#{faturaPagtoMB.htmlReciboContent}"
+			id="hiddenReciboField" type="hidden" />
 		<ui:include src="/templates/faturaRecibo.xhtml">
 			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
-			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentosImpressao}" />
-			<ui:param name="valorTotalRecibo" value="#{faturaPagtoMB.valorTotalRecibo}" />
+			<ui:param name="lancamentos"
+				value="#{faturaPagtoMB.lancamentosImpressao}" />
+			<ui:param name="valorTotalRecibo"
+				value="#{faturaPagtoMB.valorTotalRecibo}" />
 			<ui:param name="mostrarLogo" value="#{faturaPagtoMB.incluirLogo}" />
 		</ui:include>
 	</p:outputPanel>
