@@ -113,14 +113,14 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
                 }
                 extrato += "</td><td>" + (lc.getNome() != null ? lc.getNome() : "");
                 extrato += "</td><td>" + (lc.getDescricao() != null ? lc.getDescricao() : "");
-                if (lc.getTipo().equals("Pagar")) {
+                if (lc.getTipo().equals("Débito")) {
                     cor = "red";
                 } else {
                     cor = "blue";
                 }
                 BigDecimal valor = lc.getValor();
                 valor = valor.abs();
-                if (lc.getTipo().equals("Pagar")) {
+                if (lc.getTipo().equals("Débito")) {
                     valor = valor.multiply(new BigDecimal(-1));
                 }
                 Lancamento lancamento = lc.getLancamento();
@@ -197,7 +197,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
         for (LancamentoContabilRelatorio lc : lcs) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();
-            if (lc.getTipo().equals("Pagar")) {
+            if (lc.getTipo().equals("Débito")) {
                 valor = valor.multiply(new BigDecimal(-1));
             }
             Lancamento lancamento = lc.getLancamento();
@@ -218,7 +218,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
         for (LancamentoContabilRelatorio lc : lancamentoContabeis) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();
-            if (lc.getTipo().equals("Pagar")) {
+            if (lc.getTipo().equals("Débito")) {
                 valor = valor.multiply(new BigDecimal(-1));
             }
             Lancamento lancamento = lc.getLancamento();

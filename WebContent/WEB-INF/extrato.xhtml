@@ -24,7 +24,7 @@
                 	<li><a href="relatorioContabil.jsf" class="menulink">                 	   
                          <li>
                          	<a href="relatorioContabil.jsf" class="menulink OvHidden"> 
-                         		<i class="fa fa-dollar Fs26 #{a.tipo == 'Pagar' ? 'RedLight' : 'GreenLight'}"></i> 
+                         		<i class="fa fa-dollar Fs26 #{a.tipo == 'Débito' ? 'RedLight' : 'GreenLight'}"></i> 
 		                        <span class="Fleft DispInlBlock">
 		                            <span class="DispBlock White Fs14 FontLatoRegular">
 		                            	<h:outputText value="#{a.valor}"><f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" /></h:outputText>
