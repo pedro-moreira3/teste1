@@ -247,7 +247,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
                 setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
                 setListaStatus(Fatura.getStatusFaturaLista(DirecaoFatura.CREDITO));
-                setStatus(Fatura.StatusFatura.A_RECEBER);
                 setShowLancamentosCancelados(false);
                 carregarProfissionais();
 
@@ -1673,7 +1672,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
 
         if (this.negociacaoQuantidadeParcelas == 1) {
-            this.negociacaoValorDaParcela = this.negociacaoValorTotal;
+            BigDecimal valorPago = FaturaSingleton.getInstance().getTotalPago(getEntity());
+            this.negociacaoValorDaParcela = this.negociacaoValorTotal.subtract(valorPago);
         }
 
         if ((this.negociacaoValorDaParcela == null || this.negociacaoValorDaParcela.compareTo(
@@ -1820,7 +1820,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoMensagemCalculo = "Pagamento em " + String.valueOf(negociacaoQuantidadeParcelas) + "x de " + ptFormat.format(negociacaoValorDaParcela) + ". Total de " + ptFormat.format(
                     totalSemDesconto);
         } else if (tipoNegociacao == TipoNegociacao.A_VISTA) {
-            negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(totalSemDesconto);
+            BigDecimal valorPago = FaturaSingleton.getInstance().getTotalPago(getEntity());
+            if(valorPago.compareTo(BigDecimal.ZERO) > 0)
+                negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(totalSemDesconto.subtract(valorPago)) 
+                    + ". Total de R$ " + ptFormat.format(totalSemDesconto);
+            else
+                negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(totalSemDesconto);
         }
 
         if (negociacaoValorDaPrimeiraParcelaDirefenca != null && negociacaoValorDaPrimeiraParcelaDirefenca.compareTo(BigDecimal.ZERO) != 0) {

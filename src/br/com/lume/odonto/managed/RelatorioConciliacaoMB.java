@@ -29,7 +29,6 @@ import br.com.lume.common.iugu.responses.ItemResponse;
 import br.com.lume.common.iugu.service.InvoiceService;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils.Mes;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -41,17 +40,14 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
 
     private Logger log = Logger.getLogger(RelatorioConciliacaoMB.class);
     
-    private DashboardModel dashboardModel;
-    private BarChartModel lineModel;
-    
     //DATA
     private BigDecimal receiveCurrentMonth = BigDecimal.ZERO;
     private BigDecimal pendingReceive = BigDecimal.ZERO;
     private BigDecimal subscribers = BigDecimal.ZERO;
     private BigDecimal totalInvoices = BigDecimal.ZERO;
     private BigDecimal totalPaidInvoices = BigDecimal.ZERO;
-    private List<ItemResponse> invoices = new ArrayList<ItemResponse>();
     private InvoiceResponse invoicesResponse;
+    private List<ItemResponse> invoices = new ArrayList<ItemResponse>();
     
     //FILTERS
     private String timeCourse;
@@ -86,7 +82,6 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
             } while(invoicesResponse.getItems().size() == 100);
             
             this.invoices.forEach((invoice) ->{
-                
                 String value[] = invoice.getTotal().split(" ");
                 this.totalInvoices = this.totalInvoices.add(new BigDecimal(value[1].replaceAll(",", ".")));
 
@@ -207,91 +202,6 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             return null;
         }
-    }
-    
-    public void generateChart() {
-        lineModel = new BarChartModel();
-        ChartData data = new ChartData();
-
-        List<Number> valuesAPagar = new ArrayList<>(), valuesAReceber = new ArrayList<>(), valuesPagos = new ArrayList<>(), valuesRecebidos = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-
-        Mes mesAtual = Mes.getMesAtual();
-        int mesAtualIdx = Arrays.asList(Mes.values()).indexOf(mesAtual), anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 0; i < 12; i++) {
-            BigDecimal valor;
-
-//            valor = LancamentoSingleton.getInstance().getBo().listContasAPagarValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
-//            valuesAPagar.add((valor == null ? 0d : valor.doubleValue()));
-//
-//            valor = LancamentoSingleton.getInstance().getBo().listContasAPagarValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.VALIDADO);
-//            valuesPagos.add((valor == null ? 0d : valor.doubleValue()));
-//
-//            valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
-//            valuesAReceber.add((valor == null ? 0d : valor.doubleValue()));
-//
-//            valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.VALIDADO);
-//            valuesRecebidos.add((valor == null ? 0d : valor.doubleValue()));
-
-            labels.add(mesAtual.getRotulo() + "/" + String.valueOf(anoAtual));
-            mesAtualIdx = mesAtualIdx - 1;
-            if (mesAtualIdx < 0) {
-                mesAtualIdx = 11;
-                anoAtual = anoAtual - 1;
-            }
-            mesAtual = Mes.values()[mesAtualIdx];
-        }
-        Collections.reverse(valuesAPagar);
-        Collections.reverse(valuesAReceber);
-        Collections.reverse(labels);
-
-        LineChartDataSet dataSetAPagar = new LineChartDataSet();
-        dataSetAPagar.setData(valuesAPagar);
-        dataSetAPagar.setFill(false);
-        dataSetAPagar.setLabel("Lançamentos a Pagar");
-        dataSetAPagar.setBorderColor("rgb(220, 53, 69)");
-        dataSetAPagar.setLineTension(0.1);
-        data.addChartDataSet(dataSetAPagar);
-
-        BarChartDataSet dataSetPagos = new BarChartDataSet();
-        dataSetPagos.setData(valuesPagos);
-        dataSetPagos.setLabel("Lançamentos Pagos");
-        dataSetPagos.setBorderColor("rgb(220, 53, 69)");
-        dataSetPagos.setBackgroundColor("rgba(220, 53, 69, 0.2)");
-        data.addChartDataSet(dataSetPagos);
-
-        LineChartDataSet dataSetAReceber = new LineChartDataSet();
-        dataSetAReceber.setData(valuesAReceber);
-        dataSetAReceber.setFill(false);
-        dataSetAReceber.setLabel("Lançamentos a Receber");
-        dataSetAReceber.setBorderColor("rgb(0, 123, 255)");
-        dataSetAReceber.setLineTension(0.1);
-        data.addChartDataSet(dataSetAReceber);
-
-        BarChartDataSet dataRecebidos = new BarChartDataSet();
-        dataRecebidos.setData(valuesRecebidos);
-        dataRecebidos.setLabel("Lançamentos Recebidos");
-        dataRecebidos.setBorderColor("rgb(0, 123, 255)");
-        dataRecebidos.setBackgroundColor("rgba(0, 123, 255, 0.2)");
-        data.addChartDataSet(dataRecebidos);
-
-        BarChartOptions options = new BarChartOptions();
-        Title title = new Title();
-        title.setDisplay(true);
-        title.setText("Movimentações Previstas/Efetivadas (R$)");
-        options.setTitle(title);
-
-        data.setLabels(labels);
-        lineModel.setOptions(options);
-        lineModel.setData(data);
-    }
-
-    public DashboardModel getDashboardModel() {
-        return dashboardModel;
-    }
-
-    public void setDashboardModel(DashboardModel dashboardModel) {
-        this.dashboardModel = dashboardModel;
     }
 
     public BigDecimal getReceiveCurrentMonth() {
