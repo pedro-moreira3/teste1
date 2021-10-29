@@ -570,9 +570,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:commandButton icon="fa fa fa-mail-reply"
 											rendered="#{p.dataProximoRetorno eq '' or p.dataProximoRetorno eq null}"
 											oncomplete="PF('dlgViewRetorno').show();resize('#lume\\:dlgViewRetorno');"
-											action="#{retornoMB.novoRetorno(p.idPaciente)}"
-											title="Marcar Retorno" process="@this"
-											update=":lume:idDlgViewRetorno"
+											actionListener="#{retornoMB.novoRetorno(p.idPaciente)}"
+											title="Marcar Retorno" process="@this" 
+											update=":lume:idDlgViewRetorno,:lume:viewRetorno"
 											style="width: 33px !important" />
 									<h:outputText
 										value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.dataProximoRetorno)}" />
@@ -655,9 +655,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:commandButton icon="White fa fa-save" value="Salvar"
-								actionListener="#{retornoMB.actionPersist}" process="viewRetorno,@this"
+								actionListener="#{retornoMB.actionPersist}" process="viewRetorno,@this" update=":lume:idDlgViewRetorno"
 								styleClass="GreenButton" onsuccess="PF('dlgViewRetorno').hide()"/>
-							<p:commandButton icon="White fa fa-close" value="Fechar"
+							<p:commandButton icon="White fa fa-close" value="Fechar" process="@this" update=":lume:idDlgViewRetorno"
 								styleClass="NavyButton" oncomplete="PF('dlgViewRetorno').hide()" />
 						</p:panelGrid>
 					</p:dialog>

@@ -58,7 +58,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void novoRetorno(Long idPaciente) {
         try {
-            this.actionNew(null);
+//            this.actionNew(null);
             this.paciente = PacienteSingleton.getInstance().getBo().find(idPaciente);
             Retorno retorno = new Retorno();
             retorno.setPaciente(paciente);
