@@ -477,14 +477,14 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     public void carregarMotivos() {
         try {
             if (getCategoria() != null)
-                setMotivos(MotivoSingleton.getInstance().getBo().listByCategoria(getCategoria(), "Pagar"));
+                setMotivos(MotivoSingleton.getInstance().getBo().listByCategoria(getCategoria(), "Débito"));
             else
-                setMotivos(MotivoSingleton.getInstance().getBo().listByTipo("Pagar"));
+                setMotivos(MotivoSingleton.getInstance().getBo().listByTipo("Débito"));
 
             if (getCategoriaRecebimento() != null)
-                setMotivosRecebimento(MotivoSingleton.getInstance().getBo().listByCategoria(getCategoriaRecebimento(), "Receber"));
+                setMotivosRecebimento(MotivoSingleton.getInstance().getBo().listByCategoria(getCategoriaRecebimento(), "Crédito"));
             else
-                setMotivosRecebimento(MotivoSingleton.getInstance().getBo().listByTipo("Receber"));
+                setMotivosRecebimento(MotivoSingleton.getInstance().getBo().listByTipo("Crédito"));
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

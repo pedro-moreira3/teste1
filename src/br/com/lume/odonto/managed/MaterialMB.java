@@ -153,7 +153,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //                for (LancamentoContabilRelatorio lc : lancamentoContabeis) {
 //                    BigDecimal valor = lc.getValor();
 //                    valor = valor.abs();
-//                    if (lc.getTipo().equals("Pagar")) {
+//                    if (lc.getTipo().equals("Débito")) {
 //                        valor = valor.multiply(new BigDecimal(-1));
 //                    }
 //                    Lancamento lancamento = lc.getLancamento();

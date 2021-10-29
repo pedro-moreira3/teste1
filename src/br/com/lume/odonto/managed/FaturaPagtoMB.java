@@ -188,7 +188,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private LancamentoContabil lancamentoContabilEditarItem;
 
-    private String tipo = "Pagar";
+    private String tipo = "Débito";
     private TipoCategoria tipoCategoria;
     private List<CategoriaMotivo> categorias;
     // private Tarifa formaPagamentoDigitacao;
@@ -1003,10 +1003,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             lancamentoContabilEditarItem = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
 
             if (faturaItem.getTipoSaldo().equals("S")) {
-                this.tipo = "Pagar";
+                this.tipo = "Débito";
                 //  lancamentoContabilEditarItem.setValor(lancamentoContabilEditarItem.getValor().negate());
             } else {
-                this.tipo = "Receber";
+                this.tipo = "Crédito";
             }
 
             carregarListasEditaritem();

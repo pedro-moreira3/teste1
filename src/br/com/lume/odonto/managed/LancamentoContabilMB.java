@@ -325,9 +325,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         carregarMotivos();
         try {
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
-            if ("Pagar".equals(tipo)) {
+            if ("Débito".equals(tipo)) {
                 tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.PAGAMENTO);
-            } else if ("Receber".equals(tipo)) {
+            } else if ("Crédito".equals(tipo)) {
                 tarifasDigitacao = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), FormaPagamento.RECEBIMENTO);
             }
         } catch (Exception e) {
@@ -367,10 +367,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
 
             if (faturaItem.getTipoSaldo().equals("S")) {
-                this.tipo = "Pagar";
+                this.tipo = "Débito";
                 lc.setValor(lc.getValor().negate());
             } else {
-                this.tipo = "Receber";
+                this.tipo = "Crédito";
             }
             if (faturaItem.getDescricaoItem() != null) {
                 lc.setDescricao(faturaItem.getDescricaoItem().replace(lc.getMotivo().getDescricao() + " - ", ""));
@@ -428,7 +428,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     @Override
     public void actionNew(ActionEvent event) {
         try {
-            tipo = "Pagar";
+            tipo = "Débito";
             recorrente = "N";
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listByTipo(tipo);
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
@@ -488,7 +488,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
                 SALDO tipoSaldo;
 
-                if (this.getEntity().getTipo().equals("Pagar")) {
+                if (this.getEntity().getTipo().equals("Débito")) {
                     this.getEntity().setValor((this.getEntity().getValor().negate()));
                     tipoSaldo = SALDO.SAIDA;
                 } else {
@@ -529,7 +529,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             TipoFatura tipoFatura;
             SALDO tipoSaldo;
             lc.setTipo(this.getEntity().getMotivo().getTipo());
-            if (lc.getTipo().equals("Pagar")) {
+            if (lc.getTipo().equals("Débito")) {
                 //  lc.setValor((this.getEntity().getValor().negate()));
                 tipoSaldo = SALDO.SAIDA;
                 tipoFatura = TipoFatura.FATURA_GENERICA_PAGAMENTO;
@@ -637,7 +637,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
             this.lancamentoContabeis.forEach((lc) -> {
                 BigDecimal valor = lc.getValor();
-                if (lc.getTipo().equals("Pagar") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+                if (lc.getTipo().equals("Débito") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
                     valor = valor.multiply(new BigDecimal(-1));
                 this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
             });
@@ -652,7 +652,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 //
 //        String silgaMotivo = lancamento.getMotivo().getSigla();
 //
-//        if (lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+//        if (lancamento.getTipo().equals("Débito") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
 //            value = value * (-1);
 //
 //        return "R$ " + df.format(value);
@@ -666,7 +666,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void carregaTela() {
-        // if (this.getEntity().getTipo().equals("Pagar")) {
+        // if (this.getEntity().getTipo().equals("Débito")) {
         //     this.getEntity().setValor((this.getEntity().getValor().negate()));
         // }
         categoria = getEntity().getMotivo().getCategoria();

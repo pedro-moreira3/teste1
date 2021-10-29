@@ -63,7 +63,7 @@ public class ContifyBatch implements Job {
                         String documento = lc.getDadosBasico() != null && lc.getDadosBasico().getDocumento() != null && !lc.getDadosBasico().getDocumento().isEmpty() ? lc.getDadosBasico().getDocumento() : "";
 
                         if (!documento.isEmpty()) {
-                            launchData.add(new LaunchData(Utils.dateToString(lc.getData(), "yyyy-MM-dd"), "Pagar".equals(lc.getTipo()) ? LaunchData.DESPESA : LaunchData.RECEITA,
+                            launchData.add(new LaunchData(Utils.dateToString(lc.getData(), "yyyy-MM-dd"), "Débito".equals(lc.getTipo()) ? LaunchData.DESPESA : LaunchData.RECEITA,
                                     "" + lc.getValor().abs().doubleValue(), documento, lc.getMotivo().getCodigoContify(), documento));
                             adicionaContact(lc, contactData);
                         }
