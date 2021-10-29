@@ -1,0 +1,226 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<style>
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.4px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+
+						<h1>Relatório de conciliação</h1>
+						<div class="SeparatorFull"></div>
+
+						<h:panelGroup
+							style="font-size:16px !important;color:white !important;align-items:center !important;">
+							<div class="ui-g-12 ui-md-6 ui-lg-4">
+								<div class="ui-g card colorbox colorbox-1 dashboard-box"
+									style="background-color: #407d38 !important;">
+									<div class="ui-g-2">
+										<i class="fa fa-dollar fa-2x"></i>
+									</div>
+									<div class="ui-g-8 center-normal">
+										<span class="colorbox-name center">Recebido no mês
+											atual<br />
+										</span> <span class="colorbox-name center"> <h:outputText
+												value="#{relatorioConciliacaoMB.receiveCurrentMonth}">
+												<f:convertNumber currencySymbol="R$ " type="currency" />
+											</h:outputText> <br />
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="ui-g-12 ui-md-6 ui-lg-4">
+								<div class="ui-g card colorbox colorbox-2 dashboard-box"
+									style="background-color: #5C6BC0 !important;">
+									<div class="ui-g-2">
+										<i class="fa fa-dollar fa-2x"></i>
+									</div>
+									<div class="ui-g-8 center-normal">
+										<span class="colorbox-name center">Saldo à receber<br /></span>
+										<span class="colorbox-name center"> <h:outputText
+												value="#{relatorioConciliacaoMB.pendingReceive}">
+												<f:convertNumber currencySymbol="R$ " type="currency" />
+											</h:outputText> <br />
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="ui-g-12 ui-md-6 ui-lg-4">
+								<div class="ui-g card colorbox colorbox-2 dashboard-box"
+									style="background-color: #FF9800 !important;">
+									<div class="ui-g-2">
+										<i class="fa fa-check fa-2x"></i>
+									</div>
+									<div class="ui-g-8 center-normal">
+										<span class="colorbox-name center">Assinantes<br /></span> <span
+											class="colorbox-name center"> <h:outputText
+												value="#{relatorioConciliacaoMB.subscribers}">
+												<f:convertNumber />
+											</h:outputText> <br />
+										</span>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+
+						<div style="clear: both" />
+					</p:outputPanel>
+
+					<p:outputPanel>
+						<p:fieldset id="pnDashboardConciliacao" header="Filtro"
+							toggleable="true" toggleSpeed="500">
+
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="timeCourse" value="Período de recebimento:" />
+									<p:selectOneMenu id="timeCourse"
+										value="#{relatorioConciliacaoMB.timeCourse}">
+
+										<p:ajax process="@this"
+											listener="#{relatorioConciliacaoMB.actionChangeDates}" />
+
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="M" itemLabel="Mês atual" />
+										<f:selectItem itemValue="O" itemLabel="Mês anterior" />
+										<f:selectItem itemValue="H" itemLabel="Últimos 3 meses" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+										<f:selectItem itemValue="A" itemLabel="Ano atual" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="initialDate" value="Data de recebimento de:" />
+									<p:calendar id="initialDate"
+										value="#{relatorioConciliacaoMB.initialDate}"
+										autocomplete="false" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="finalDate" value="Data de recebimento até:" />
+									<p:calendar id="finalDate"
+										value="#{relatorioConciliacaoMB.finalDate}"
+										autocomplete="false" />
+								</h:panelGroup>
+							</p:panelGrid>
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<p:commandButton value="Pesquisar"
+										icon="fa fa-search"
+										styleClass="NavyButton"
+										process="@this"
+										actionListener="#{relatorioConciliacaoMB.filter}">
+									</p:commandButton>
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:fieldset>
+
+						<br />
+						
+						<p:dataTable id="dtReport" widgetVar="dtReport"
+							value="#{relatorioConciliacaoMB.invoices}"
+							var="invoice" rowKey="#{invoice}" rows="10"
+							paginator="true" paginatorPosition="bottom" reflow="true"
+							emptyMessage="Nenhum registro encontrado"
+							binding="#{relatorioConciliacaoMB.tableReport}"
+							filterDelay="1000">
+							
+							<f:facet name="header">
+								Faturas
+							</f:facet>
+							
+							<p:column filterBy="#{invoice.email}"
+								sortBy="#{invoice.email}"
+								filterFunction="#{relatorioConciliacaoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="E-mail cliente">
+								<h:outputText
+									value="#{invoice.email}" />
+							</p:column>
+							
+							<p:column filterBy="#{invoice.customerId}"
+								sortBy="#{invoice.customerId}"
+								filterFunction="#{relatorioConciliacaoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Id Iugu do cliente">
+								<h:outputText
+									value="#{invoice.customerId}" />
+							</p:column>
+							
+							<p:column filterBy="#{invoice.items.get(0).description}"
+								sortBy="#{invoice.items.get(0).description}"
+								filterFunction="#{relatorioConciliacaoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Assinatura">
+								<h:outputText
+									value="#{invoice.items.get(0).description}" />
+							</p:column>
+							
+							<p:column filterBy="#{invoice.total}"
+								sortBy="#{invoice.total}"
+								filterFunction="#{relatorioConciliacaoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Valor da fatura">
+								<h:outputText title="#{invoice.total}"  
+									value="#{invoice.total}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioConciliacaoMB.totalInvoices}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+							
+							<p:column filterBy="#{(invoice.totalPaid != null ? invoice.totalPaid : '0' )}"
+								sortBy="#{(invoice.totalPaid != null ? invoice.totalPaid : '0' )}"
+								filterFunction="#{relatorioConciliacaoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Valor pago">
+								<h:outputText title="#{(invoice.totalPaid != null ? invoice.totalPaid : '0' )}"  
+									value="#{(invoice.totalPaid != null ? invoice.totalPaid : '0' )}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioConciliacaoMB.totalPaidInvoices}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+							
+						</p:dataTable>
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
