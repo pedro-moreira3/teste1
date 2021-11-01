@@ -208,6 +208,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     }
 
+    private void saldoFinalDetalhado(boolean isDrc, boolean isDrcE, List meses) {
+        
+    }
+    
     private void saldoFinalDetalhado(boolean isDrc, boolean isDrcE) {
         BigDecimal receitaBruta = new BigDecimal(0);
         BigDecimal gastosOdontologicos = new BigDecimal(0);
@@ -245,17 +249,41 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             String drcGastosOperacionais = "";
             String drcGastosOdontologicos = "";
             String drcGastosGerais = "";
+            Motivo motivo = null;
+            BigDecimal valor = null;
+            
+            //Variaveis para mostrar somatório de lancamentos por categoria para DRC, independente de motivo
+            BigDecimal somatorioReceitaBruta = BigDecimal.ZERO;
+            BigDecimal somatorioGastosOperacionais = BigDecimal.ZERO;
+            BigDecimal somatorioGastosOdontologicos = BigDecimal.ZERO;
+            BigDecimal somatorioGastosGerais = BigDecimal.ZERO;
+            
+            /*TODO - Pensar em uma forma de melhorar esse loop, talvez poderia ser construída a DRC e DRCE em um só loop usando os lancamentos contábeis.
+                E também dinamizar a construção do esquema para reduzir a quantidade de código*/
             for (Map.Entry<Motivo, BigDecimal> entry : categorias.entrySet()) {
-                Motivo motivo = entry.getKey();
-                BigDecimal valor = entry.getValue();
+                
+                motivo = entry.getKey();
+                valor = entry.getValue();
+                
                 if (motivo.getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.RECEITA_BRUTA)) {
                     if (!isDrcE) {
-                        drcGanhos += "<tr bgcolor=white>";
-                        drcGanhos += "<td width=\"50%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>";
-                        drcGanhos += "<td width=\"25%\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
-                        drcGanhos += "<td width=\"25%\">R$ " + valor + "</td>";
+                        if(!drcGanhos.contains(motivo.getCategoria().getDescricao())) {
+                            drcGanhos += "<tr style=\"font-size:12px;\" bgcolor=white>";
+                            drcGanhos += "<td width=\"50%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>";
+                            drcGanhos += "<td width=\"25%\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+                            drcGanhos += "<td width=\"25%\">R$ " + valor + "</td>";
+                            somatorioReceitaBruta = valor;
+                        } else {
+                            drcGanhos = drcGanhos.replaceAll("<td width=\"50%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>"
+                                    + "<td width=\"25%\">" + (somatorioReceitaBruta.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>"
+                                    + "<td width=\"25%\">R$ " + somatorioReceitaBruta + "</td>", 
+                                    "<td width=\"50%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>"
+                                    + "<td width=\"25%\">" + ((somatorioReceitaBruta.add(valor)).multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>"
+                                    + "<td width=\"25%\">R$ " + somatorioReceitaBruta.add(valor) + "</td>");
+                            somatorioReceitaBruta = somatorioReceitaBruta.add(valor);
+                        }
                     } else {
-                        drcGanhos += "<tr bgcolor=white>";
+                        drcGanhos += "<tr style=\"font-size:12px;\" bgcolor=white>";
                         drcGanhos += "<td width=\"30%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>";
                         drcGanhos += "<td width=\"30%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getDescricao() + "</td>";
                         drcGanhos += "<td width=\"15%\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
@@ -265,22 +293,60 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 }
                 if (motivo.getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.GASTOS_OPERACIONAIS)) {
                     if (!isDrcE) {
-                        drcGastosOperacionais += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
+                        if(!drcGastosOperacionais.contains(motivo.getCategoria().getDescricao())) {
+                            drcGastosOperacionais += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
+                            
+                            //reseta a soma por categoria para DRC
+                            somatorioGastosOperacionais = valor;
+                        } else {
+                            drcGastosOperacionais = 
+                                    drcGastosOperacionais.replace((colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), somatorioGastosOperacionais, receitaBruta, false)),
+                                            (colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), (somatorioGastosOperacionais.add(valor)), receitaBruta, false)));
+                            
+                            //soma os valores para mostrar por categoria os totais
+                            somatorioGastosOperacionais = somatorioGastosOperacionais.add(valor);
+                        }
                     } else {
                         drcGastosOperacionais += colunaDrcE("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(),motivo, valor, receitaBruta, false);
                     }
                 }
                 if (motivo.getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.GASTOS_ODONTOLOGICOS)) {
                     if (!isDrcE) {
-                        drcGastosOdontologicos += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
-                    }else {
+                        if(!drcGastosOdontologicos.contains(motivo.getCategoria().getDescricao())) {
+                            
+                            
+                            drcGastosOdontologicos += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
+                            
+                            //reseta a soma por categoria para DRC
+                            somatorioGastosOdontologicos = valor;
+                        } else {
+                            drcGastosOdontologicos =
+                                    drcGastosOdontologicos.replace((colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), somatorioGastosOdontologicos, receitaBruta, false)),
+                                            (colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), (somatorioGastosOdontologicos.add(valor)), receitaBruta, false)));
+                            
+                            //soma os valores para mostrar por categoria os totais
+                            somatorioGastosOdontologicos = somatorioGastosOdontologicos.add(valor);
+                        }
+                    } else {
                         drcGastosOdontologicos += colunaDrcE("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(),motivo, valor, receitaBruta, false);
                     }
                 }                
                 if (motivo.getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.GASTOS_GERAIS)) {
                     if (!isDrcE) {
-                    drcGastosGerais += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
-                    }else {
+                        if(!drcGastosGerais.contains(motivo.getCategoria().getDescricao())) {
+                            drcGastosGerais += colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), valor, receitaBruta, false);
+                            
+                            //reseta a soma por categoria para DRC
+                            somatorioGastosGerais = valor;
+                        } else {
+                            drcGastosGerais = 
+                                    drcGastosGerais.replace((colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), somatorioGastosGerais, receitaBruta, false)),
+                                            (colunaDrc("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(), (somatorioGastosGerais.add(valor)), receitaBruta, false)));
+                            
+                            //soma os valores para mostrar por categoria os totais
+                            somatorioGastosGerais = somatorioGastosGerais.add(valor);
+                        }
+                    } else {
                         drcGastosGerais += colunaDrcE("&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao(),motivo, valor, receitaBruta, false);
                     }
                 }
@@ -288,7 +354,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             //drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black\"><td  bgcolor=white colspan= 3>&nbsp;</td></tr>";
 
             if (!drcGanhos.equals("")) {
-                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drc += "<td width=\"50%\">" + TipoCategoria.RECEITA_BRUTA + "</td>";
                 drc += "<td width=\"25%\">100.00%</td>";
                 drc += "<td width=\"25%\">R$ " + receitaBruta + "</td>";
@@ -296,7 +362,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
                 drc += drcGanhos;
 
-                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drce += "<td width=\"30%\">" + TipoCategoria.RECEITA_BRUTA + "</td>";
                 drce += "<td width=\"40%\">&nbsp;</td>";
                 drce += "<td width=\"15%\">100.00%</td>";
@@ -308,14 +374,14 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             }
 
             if (!drcGastosOperacionais.equals("")) {
-                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drc += "<td width=\"50%\">" + TipoCategoria.GASTOS_OPERACIONAIS + "</td>";
                 drc += "<td width=\"25%\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
                 drc += "<td width=\"25%\">R$ " + gastosOperacionais + "</td>";
 
                 drc += drcGastosOperacionais;
 
-                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_OPERACIONAIS + "</td>";
                 drce += "<td width=\"40%\">&nbsp;</td>";
                 drce += "<td width=\"15%\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
@@ -326,14 +392,14 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             }
 
             if (!drcGastosOdontologicos.equals("")) {
-                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drc += "<td width=\"50%\">" + TipoCategoria.GASTOS_ODONTOLOGICOS + "</td>";
                 drc += "<td width=\"25%\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
                 drc += "<td width=\"25%\">R$ " + gastosOdontologicos + "</td>";
 
                 drc += drcGastosOdontologicos;
 
-                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_ODONTOLOGICOS + "</td>";
                 drce += "<td width=\"40%\">&nbsp;</td>";
                 drce += "<td width=\"15%\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
@@ -345,23 +411,23 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
             BigDecimal margem = receitaBruta.subtract(gastosOperacionais).subtract(gastosOdontologicos);
 
-            drc += "<tr><td  bgcolor=white colspan= 3>&nbsp;</td></tr>";
+            drc += "<tr style=\"font-size:14px;\"><td  bgcolor=white colspan= 3>&nbsp;</td></tr>";
             drc += colunaDrc("Margem de Contribuição", margem, receitaBruta, true);
             drc += "<tr><td  bgcolor=white colspan= 3>&nbsp;</td></tr>";
 
-            drce += "<tr><td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
+            drce += "<tr style=\"font-size:14px;\"><td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
             drce += colunaDrcE("Margem de Contribuição", null,margem, receitaBruta, true);
             drce += "<tr><td  bgcolor=white colspan= 4>&nbsp;</td></tr>";
 
             if (!drcGastosGerais.equals("")) {
-                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drc += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drc += "<td width=\"50%\">" + TipoCategoria.GASTOS_GERAIS + "</td>";
                 drc += "<td width=\"25%\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
                 drc += "<td width=\"25%\">R$ " + gastosGerais + "</td>";
 
                 drc += drcGastosGerais;
 
-                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;\">";
+                drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
                 drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_GERAIS + "</td>";
                 drce += "<td width=\"40%\">&nbsp;</td>";
                 drce += "<td width=\"15%\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
@@ -403,7 +469,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         drc += "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;\"><td colspan=\"3\" style=\"text-align:center\" width=\"100%\">DEMONSTRATIVO DE RESULTADO DO CONSULTÓRIO - " + "De: " + Utils.dateToStringSomenteDataBrasil(
                 inicio) + " " + "Até: " + Utils.dateToStringSomenteDataBrasil(fim) + "</td></tr>";
 
-        drc += "<tr bgcolor=white style=\"border-bottom: 2px solid black;background-color: #ddd;\">";
+        drc += "<tr bgcolor=white style=\"border-bottom: 2px solid black;background-color: #ddd;font-size:16px;\">";
         drc += "<td width=\"50%\">Categoria</td>";
         drc += "<td width=\"25%\">Porcentagem</td>";
         drc += "<td width=\"25%\">Total</td>";
@@ -421,7 +487,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         drce += "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;\"><td colspan=\"4\" style=\"text-align:center\" width=\"100%\">DEMONSTRATIVO DE RESULTADO DO CONSULTÓRIO - " + "De: " + Utils.dateToStringSomenteDataBrasil(
                 inicio) + " " + "Até: " + Utils.dateToStringSomenteDataBrasil(fim) + "</td></tr>";
 
-        drce += "<tr bgcolor=white style=\"border-bottom: 2px solid black;background-color: #ddd;\">";
+        drce += "<tr bgcolor=white style=\"border-bottom: 2px solid black;background-color: #ddd;font-size:16px;\">";
         drce += "<td width=\"30%\">Categoria</td>";
         drce += "<td width=\"40%\">Motivo</td>";
         drce += "<td width=\"15%\">Porcentagem</td>";
@@ -436,9 +502,9 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
     public String colunaDrc(String descricaoCategoria, BigDecimal valor, BigDecimal receitaBruta, boolean comEstilo) {
         String tr = "";
         if (comEstilo) {
-            tr = "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;\">";
+            tr = "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;font-size:14px;\">";
         } else {
-            tr = "<tr bgcolor=white>";
+            tr = "<tr bgcolor=white style=\"font-size:12px;\">";
         }
 
         tr += "<td width=\"50%\">" + descricaoCategoria + "</td>";
@@ -457,9 +523,9 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
     public String colunaDrcE(String descricaoCategoria,Motivo motivo, BigDecimal valor, BigDecimal receitaBruta, boolean comEstilo) {
         String tr = "";
         if (comEstilo) {
-            tr = "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;\">";
+            tr = "<tr bgcolor=white style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ABB2B9;font-size:14px;\">";
         } else {
-            tr = "<tr bgcolor=white>";
+            tr = "<tr bgcolor=white style=\"font-size:12px;\">";
         }
 
         tr += "<td width=\"30%\">" + descricaoCategoria + "</td>";
