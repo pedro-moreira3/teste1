@@ -1446,7 +1446,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         diferencaCalculoParcelas = valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))).subtract(
                                 orcamentoSelecionado.getValorTotalComDesconto());
                     } else {
-                        diferencaCalculoParcelas = (valorParcela.multiply(numeroParcelaOrcamento)).subtract(orcamentoSelecionado.getValorTotalComDesconto());
+                        diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract((valorParcela.multiply(numeroParcelaOrcamento)));
                     }
 
                     //  mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(

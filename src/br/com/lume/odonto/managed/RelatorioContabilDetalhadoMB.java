@@ -191,14 +191,14 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 //    extrato += "</td><td>";  
                 //}
 
-                if (lc.getTipo().equals("Pagar")) {
+                if (lc.getTipo().equals("Débito")) {
                     cor = "red";
                 } else {
                     cor = "blue";
                 }
                 BigDecimal valor = lc.getValor();
                 valor = valor.abs();
-                if (lc.getTipo().equals("Pagar")) {
+                if (lc.getTipo().equals("Débito")) {
                     valor = valor.multiply(new BigDecimal(-1));
                 }
                 extrato += "</td><td align=\"right\"> <font color=\"" + cor + "\">" + formatter.format(valor) + "</font></td></tr>";
@@ -742,7 +742,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         for (LancamentoContabilRelatorio lc : lcs) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();
-            if (lc.getTipo().equals("Pagar")) {
+            if (lc.getTipo().equals("Débito")) {
                 valor = valor.multiply(new BigDecimal(-1));
             }
             saldoInicial = saldoInicial.add(valor);
@@ -759,7 +759,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         for (LancamentoContabil lc : lancamentoContabeis) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();
-            if (lc.getTipo().equals("Pagar")) {
+            if (lc.getTipo().equals("Débito")) {
                 valor = valor.multiply(new BigDecimal(-1));
             }
             saldoFinal = saldoFinal.add(valor);
