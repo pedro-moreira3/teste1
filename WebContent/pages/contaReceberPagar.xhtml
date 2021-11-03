@@ -45,6 +45,27 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 	{
 	margin-top: -12px !important;
 }
+
+body .ui-selectcheckboxmenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectcheckboxmenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label
+	{
+	margin-top: 2.4px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
 </style>
 
 		<p:outputPanel id="viewFatura">
@@ -79,20 +100,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:tab id="tab1" title="Pagamentos/Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
-								
 
-								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>				
-										<h1>Pagamentos/Recebimentos</h1>
-									</h:panelGroup>	
-									<h:panelGroup>					
-										<p:commandButton value="Videos tutoriais"
-										icon="White fa fa-youtube-play White"
-										oncomplete="PF('dlgListaVideos').show()"	
-										actionListener="#{lancamentoContabilMB.setVideos()}"									
-										process="@this" update="painelVideoList"/>						
-									</h:panelGroup>
-								</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="grid"
+										columnClasses="ui-grid-col-10,ui-grid-col-2"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<h:panelGroup>
+											<h1>Pagamentos/Recebimentos</h1>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:commandButton value="Videos tutoriais"
+												icon="White fa fa-youtube-play White"
+												oncomplete="PF('dlgListaVideos').show()"
+												actionListener="#{lancamentoContabilMB.setVideos()}"
+												process="@this" update="painelVideoList" />
+										</h:panelGroup>
+									</p:panelGrid>
 
 									<div class="EmptyBox20"></div>
 
@@ -119,7 +142,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
 													<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
 													<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
-													<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />													
+													<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
 													<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
 
 												</p:selectOneMenu>
@@ -309,14 +332,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										</p:column>
 
-										<p:column filterBy="#{lc.dadosBasico.nome}" 
+										<p:column filterBy="#{lc.dadosBasico.nome}"
 											sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains"
 											headerText="Origem/Destino"
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
-											<h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" rendered="#{lc.dadosBasico != null and lc.dadosBasico.nome != null}"/>
-											<h:outputText value="#{lc.lancamento.tarifa.produto}" title="#{lc.id}" rendered="#{lc.dadosBasico eq null and lc.lancamento ne null and lc.lancamento.tarifa ne null}"/>
+											<h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}"
+												rendered="#{lc.dadosBasico != null and lc.dadosBasico.nome != null}" />
+											<h:outputText value="#{lc.lancamento.tarifa.produto}"
+												title="#{lc.id}"
+												rendered="#{lc.dadosBasico eq null and lc.lancamento ne null and lc.lancamento.tarifa ne null}" />
 										</p:column>
-										
+
 										<p:column
 											filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}"
 											sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}"
@@ -377,30 +403,32 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<div class="ui-g-12 ui-lg-12">
 
 									<p:outputPanel styleClass="BordNone">
-										
-										
-										
-								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>				
-										<h1>
-											Conferência de Recebimentos/Pagamentos
-											<h:outputLabel class="fa fa-question" id="tooltipTitulo"
-												style="font-size:24px; margin-left:10px;" />
-											<p:tooltip for="tooltipTitulo"
-												value="Nessa tela você pode validar os lançamentos de recebimento, conferindo os mesmos 
+
+
+
+										<p:panelGrid columns="2" layout="grid"
+											columnClasses="ui-grid-col-10,ui-grid-col-2"
+											styleClass="ui-panelgrid-blank ui-fluid form-group">
+											<h:panelGroup>
+												<h1>
+													Conferência de Recebimentos/Pagamentos
+													<h:outputLabel class="fa fa-question" id="tooltipTitulo"
+														style="font-size:24px; margin-left:10px;" />
+													<p:tooltip for="tooltipTitulo"
+														value="Nessa tela você pode validar os lançamentos de recebimento, conferindo os mesmos 
 												e também consultar os lançamentos conforme os filtros."
-												position="bottom" style="width:30%;" />
-										</h1>
-									</h:panelGroup>	
-									<h:panelGroup>					
-										<p:commandButton value="Videos tutoriais"
-										icon="White fa fa-youtube-play White"
-										oncomplete="PF('dlgListaVideos').show()"	
-										actionListener="#{conferenciaRecebimentoMB.setVideos()}"									
-										process="@this" update="painelVideoList"/>						
-									</h:panelGroup>
-								</p:panelGrid>
-										
+														position="bottom" style="width:30%;" />
+												</h1>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:commandButton value="Videos tutoriais"
+													icon="White fa fa-youtube-play White"
+													oncomplete="PF('dlgListaVideos').show()"
+													actionListener="#{conferenciaRecebimentoMB.setVideos()}"
+													process="@this" update="painelVideoList" />
+											</h:panelGroup>
+										</p:panelGrid>
+
 										<div class="SeparatorFull"></div>
 									</p:outputPanel>
 									<br />
@@ -613,12 +641,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText
 												value="#{conferenciaRecebimentoMB.origemDestinoLancamento(lc)}" />
 										</p:column>
-										<p:column filterBy="#{lc.pt.descricao}" filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
+										<p:column filterBy="#{lc.pt.descricao}"
+											filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.pt.descricao}" filterMatchMode="contains"
 											headerText="PlanoTratamento">
 											<h:outputText value="#{lc.pt.descricao}" title="#{lc.pt.id}" />
 										</p:column>
-										<p:column filterBy="#{lc.formaPagamentoStr}" filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
+										<p:column filterBy="#{lc.formaPagamentoStr}"
+											filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
 											headerText="Produto">
 											<h:outputText value="#{lc.formaPagamentoStr}"
@@ -644,9 +674,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column headerText="Data Crédito"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<p:calendar value="#{lc.dataCredito}" autocomplete="false" id="alteracaoDataCredito"
-												locale="#{lumeSecurity.locale}" mask="true"
-												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">											
+											<p:calendar value="#{lc.dataCredito}" autocomplete="false"
+												id="alteracaoDataCredito" locale="#{lumeSecurity.locale}"
+												mask="true"
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
 											</p:calendar>
 										</p:column>
 										<p:column headerText="Valor à conferir" id="valorAConferir"
@@ -701,7 +732,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{lc.valor}"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
 												required="true" maxlength="13" maxValue="9999999999.99"
-												decimalSeparator="," symbol="R$ " thousandSeparator=".">												
+												decimalSeparator="," symbol="R$ " thousandSeparator=".">
 											</p:inputNumber>
 
 											<f:facet name="footer">
@@ -721,7 +752,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											exportable="false">
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
-												update="dtLancamentoValidar" process="@this,valor,confereciaForma,alteracaoDataCredito"
+												update="dtLancamentoValidar"
+												process="@this,valor,confereciaForma,alteracaoDataCredito"
 												styleClass="GreenButton" title="Valor recebido"
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"
@@ -735,7 +767,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</div>
 							</div>
 						</p:tab>
-					
+
 						<p:tab id="tab4" title="Reajuste de contratos" rendered="false">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
@@ -778,25 +810,25 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 
 										<ui:remove>
-										<h:panelGroup id="dataInicioIGPM">
-											<p:outputLabel for="dataInicialIGPM"
-												value="Data de criação de:" />
-											<p:calendar id="dataInicialIGPM"
-												value="#{ajusteIGPMMB.dataInicial}" autocomplete="false"
-												locale="#{lumeSecurity.locale}" mask="true">
-												<p:ajax process="@this" />
-											</p:calendar>
-										</h:panelGroup>
+											<h:panelGroup id="dataInicioIGPM">
+												<p:outputLabel for="dataInicialIGPM"
+													value="Data de criação de:" />
+												<p:calendar id="dataInicialIGPM"
+													value="#{ajusteIGPMMB.dataInicial}" autocomplete="false"
+													locale="#{lumeSecurity.locale}" mask="true">
+													<p:ajax process="@this" />
+												</p:calendar>
+											</h:panelGroup>
 
-										<h:panelGroup id="dataFimIGPM">
-											<p:outputLabel for="dataFinalIGPM"
-												value="Data de criação até:" />
-											<p:calendar id="dataFinalIGPM"
-												value="#{ajusteIGPMMB.dataFinal}" autocomplete="false"
-												locale="#{lumeSecurity.locale}" mask="true">
-												<p:ajax process="@this" />
-											</p:calendar>
-										</h:panelGroup>
+											<h:panelGroup id="dataFimIGPM">
+												<p:outputLabel for="dataFinalIGPM"
+													value="Data de criação até:" />
+												<p:calendar id="dataFinalIGPM"
+													value="#{ajusteIGPMMB.dataFinal}" autocomplete="false"
+													locale="#{lumeSecurity.locale}" mask="true">
+													<p:ajax process="@this" />
+												</p:calendar>
+											</h:panelGroup>
 										</ui:remove>
 
 										<h:panelGroup>
@@ -831,14 +863,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup style="margin-top:10px;">
 											<h:outputLabel value="Período de reajuste: " />
-											
-											<p:selectOneRadio value="#{ajusteIGPMMB.periodoReajuste}" unselectable="true" 
-												layout="grid" columns="6">
+
+											<p:selectOneRadio value="#{ajusteIGPMMB.periodoReajuste}"
+												unselectable="true" layout="grid" columns="6">
 												<f:selectItem itemLabel="Anual" itemValue="A"
 													itemEscaped="false" />
 												<f:selectItem itemLabel="Semestral" itemValue="S"
 													itemEscaped="false" />
-													
+
 												<p:ajax process="@this" />
 											</p:selectOneRadio>
 										</h:panelGroup>
@@ -865,17 +897,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												<p:ajax process="@this" />
 											</p:selectManyCheckbox>
-											
-											<ui:remove>
-											<p:selectManyCheckbox value="#{ajusteIGPMMB.mostrarPlanosIgpm}"
-												layout="grid" columns="6">
-												<f:selectItem itemLabel="Planos que usam IGPM" itemValue="S"
-													itemEscaped="false" />
-												<f:selectItem itemLabel="Planos que não usam IGPM" itemValue="N"
-													itemEscaped="false" />
 
-												<p:ajax process="@this" />
-											</p:selectManyCheckbox>
+											<ui:remove>
+												<p:selectManyCheckbox
+													value="#{ajusteIGPMMB.mostrarPlanosIgpm}" layout="grid"
+													columns="6">
+													<f:selectItem itemLabel="Planos que usam IGPM"
+														itemValue="S" itemEscaped="false" />
+													<f:selectItem itemLabel="Planos que não usam IGPM"
+														itemValue="N" itemEscaped="false" />
+
+													<p:ajax process="@this" />
+												</p:selectManyCheckbox>
 											</ui:remove>
 										</h:panelGroup>
 									</p:outputPanel>
@@ -955,13 +988,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												styleClass="OrangeButton" title="Editar reajuste"
 												update=":lume:pnReajuste"
 												actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
-												
+
 											<ui:remove>
-											<p:commandButton icon="fa fa-edit" process="@this"
-												oncomplete="PF('dlgAplicarIGPM').show();"
-												styleClass="OrangeButton" title="Não se aplica"
-												update=":lume:pnReajuste"
-												actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
+												<p:commandButton icon="fa fa-edit" process="@this"
+													oncomplete="PF('dlgAplicarIGPM').show();"
+													styleClass="OrangeButton" title="Não se aplica"
+													update=":lume:pnReajuste"
+													actionListener="#{ajusteIGPMMB.carregarProcedimentosEditar(pt)}" />
 											</ui:remove>
 
 										</p:column>
@@ -1040,27 +1073,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 									<p:outputPanel id="pnExtratoDetalhado" styleClass="BordNone">
-
 										<p:outputPanel styleClass="BordNone">
-											
-											
-								<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>				
-										<h1>
-											Extrato Financeiro											
-										</h1>
-									</h:panelGroup>	
-									<h:panelGroup>					
-										<p:commandButton value="Videos tutoriais"
-										icon="White fa fa-youtube-play White"
-										oncomplete="PF('dlgListaVideos').show()"	
-										actionListener="#{relatorioContabilDetalhadoMB.setVideos()}"									
-										process="@this" update="painelVideoList"/>						
-									</h:panelGroup>
-								</p:panelGrid>
-											
-											
-											
+											<p:panelGrid columns="2" layout="grid"
+												columnClasses="ui-grid-col-10,ui-grid-col-2"
+												styleClass="ui-panelgrid-blank ui-fluid form-group">
+												<h:panelGroup>
+													<h1>Extrato Financeiro</h1>
+												</h:panelGroup>
+												<h:panelGroup>
+													<p:commandButton value="Videos tutoriais"
+														icon="White fa fa-youtube-play White"
+														oncomplete="PF('dlgListaVideos').show()"
+														actionListener="#{relatorioContabilDetalhadoMB.setVideos()}"
+														process="@this" update="painelVideoList" />
+												</h:panelGroup>
+											</p:panelGrid>
 											<div class="SeparatorFull"></div>
 										</p:outputPanel>
 										<p:panelGrid columns="4"
@@ -1118,103 +1145,126 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												update="extratoDetalhado,painelCheckbox,"
 												process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado,painelCheckbox"
 												styleClass="NavyButton" />
-												
+
 											<p:commandButton id="limparDetalhado"
 												icon="White fa fa-file-o" value="Limpar"
 												update="inicioDetalhado, fimDetalhado" process="@this"
-												actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}"
-												/>
-												
+												actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}" />
+
 											<p:commandButton value="Imprimir" type="button"
 												icon="White fa fa-print" styleClass="NavyButton">
 												<p:printer target="extratoDetalhado" />
 											</p:commandButton>
-											
-											<p:commandButton id="imprimirDrc" ype="button"	
-												value="Gerar DRC" styleClass="NavyButton"										
+
+											<p:commandButton id="imprimirDrc" ype="button"
+												value="Gerar DRC" styleClass="NavyButton"
 												icon="fa fa-print White" process="@this"
 												oncomplete="PF('dlgImprimirDrc').show()"
 												update="lume:painelDrc" immediate="true"
-												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}" >												
-											 </p:commandButton>
-											 
-											 <p:commandButton id="imprimirDrcE" ype="button"	
-												value="Gerar DRC-E" styleClass="NavyButton"										
+												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}">
+											</p:commandButton>
+
+											<p:commandButton id="imprimirDrcE" ype="button"
+												value="Gerar DRC-E" styleClass="NavyButton"
 												icon="fa fa-print White" process="@this"
 												oncomplete="PF('dlgImprimirDrcE').show()"
 												update="lume:painelDrcE" immediate="true"
-												actionListener="#{relatorioContabilDetalhadoMB.gerarDrcE}" >												
-											 </p:commandButton>
-											 
-											
+												actionListener="#{relatorioContabilDetalhadoMB.gerarDrcE}">
+											</p:commandButton>
+
+
 										</p:panelGrid>
 										<div class="SeparatorFull"></div>
 										<br />
 										<p:panel>
 											<h:outputLabel id="extratoDetalhado"
 												value="#{relatorioContabilDetalhadoMB.extrato}"
-												escape="false" />												
-										</p:panel>				
-														
+												escape="false" />
+										</p:panel>
+
 									</p:outputPanel>
 								</div>
 							</div>
 						</p:tab>
 					</p:tabView>
-					
-					
-					
-					
+
 					<p:dialog id="dlgImprimirDrc" widgetVar="dlgImprimirDrc"
-						appendTo=":lume" header="Imprimir DRC" height="600" width="800">
+						appendTo=":lume" header="Imprimir DRC" height="600" width="850">
+
+						<p:fieldset toggleable="false">
+
+							<p:panelGrid columns="3" layout="grid" id="pnFiltrosDRC"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<h:outputText for="filtroPeriodoDRC" value="Mês:" />
+									<p:selectCheckboxMenu id="filtroPeriodoDRC"
+										value="#{relatorioContabilDetalhadoMB.listaMesesSelecionados}">
+
+										<f:selectItems
+											value="#{relatorioContabilDetalhadoMB.listaMeses}" var="mes"
+											itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
+									</p:selectCheckboxMenu>
+								</h:panelGroup>
+
+								<h:panelGroup></h:panelGroup>
+
+								<h:panelGroup>
+									<p:commandButton value="Gerar DRC mensal" styleClass="NavyButton"
+										icon="fa fa-rotate-right White" process="lume:pnFiltrosDRC,@this"
+										update="lume:painelDrc"
+										action="#{relatorioContabilDetalhadoMB.gerarDrc}">
+									</p:commandButton>
+								</h:panelGroup>
+							</p:panelGrid>
+
+						</p:fieldset>
+						<br />
 
 						<p:panel id="painelDrc">
 							<h:outputLabel id="drc"
-							value="#{relatorioContabilDetalhadoMB.drc}"
-							escape="false" />	
+								value="#{relatorioContabilDetalhadoMB.drc}" escape="false" />
 						</p:panel>
 						<p:panelGrid columns="2" layout="grid"
-								styleClass="ui-panelgrid-blank ui-fluid form-group">
-							
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
 							<h:panelGroup>
-								<p:commandButton value="Imprimir DRC" type="button"										
-											icon="White fa fa-print" styleClass="NavyButton">
-											<p:printer target="painelDrc" />
+								<p:commandButton value="Imprimir DRC" type="button"
+									icon="White fa fa-print" styleClass="NavyButton">
+									<p:printer target="painelDrc" />
 								</p:commandButton>
 							</h:panelGroup>
 							<h:panelGroup>
 								<p:commandButton value="Fechar" styleClass="NavyButton"
 									process="@this" oncomplete="PF('dlgImprimirDrc').hide();" />
 							</h:panelGroup>
-						</p:panelGrid>		
+						</p:panelGrid>
 					</p:dialog>
-					
-					
-					
+
+
+
 					<p:dialog id="dlgImprimirDrcE" widgetVar="dlgImprimirDrcE"
 						appendTo=":lume" header="Imprimir DRC-E" height="600" width="900">
 
 						<p:panel id="painelDrcE">
 							<h:outputLabel id="drcE"
-							value="#{relatorioContabilDetalhadoMB.drce}"
-							escape="false" />	
+								value="#{relatorioContabilDetalhadoMB.drce}" escape="false" />
 						</p:panel>
 						<p:panelGrid columns="2" layout="grid"
-								styleClass="ui-panelgrid-blank ui-fluid form-group">
-							
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
 							<h:panelGroup>
-								<p:commandButton value="Imprimir DRC-E" type="button"										
-											icon="White fa fa-print" styleClass="NavyButton">
-											<p:printer target="painelDrcE" />
+								<p:commandButton value="Imprimir DRC-E" type="button"
+									icon="White fa fa-print" styleClass="NavyButton">
+									<p:printer target="painelDrcE" />
 								</p:commandButton>
 							</h:panelGroup>
 							<h:panelGroup>
 								<p:commandButton value="Fechar" styleClass="NavyButton"
 									process="@this" oncomplete="PF('dlgImprimirDrcE').hide();" />
 							</h:panelGroup>
-						</p:panelGrid>		
+						</p:panelGrid>
 					</p:dialog>
-					
+
 
 					<p:dialog id="dlgAjustarValor" widgetVar="dlgAjustarValor"
 						appendTo=":lume" header="Ajustar valor" height="150" width="400">
@@ -1324,7 +1374,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:outputLabel for="emailCadastro" value="Email : " />
 												<p:inputText id="emailCadastro"
 													value="#{lancamentoContabilMB.emailCadastro}"
-													maxlength="100" validatorMessage="E-mail inválido">													
+													maxlength="100" validatorMessage="E-mail inválido">
 												</p:inputText>
 												<p:message for="emailCadastro" styleClass="msg" />
 											</h:panelGroup>
@@ -1481,20 +1531,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									columnClasses="ui-g-4,ui-g-4,ui-g-4">
 
 									<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
-									process="@this,pnRecorrente,gridDados"
-									value="Salvar e Continuar"
-									actionListener="#{lancamentoContabilMB.actionPersistContinuar}"
-									update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples"
-									oncomplete="PF('dtLancamentoContabil').filter()" />
+										process="@this,pnRecorrente,gridDados"
+										value="Salvar e Continuar"
+										actionListener="#{lancamentoContabilMB.actionPersistContinuar}"
+										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples"
+										oncomplete="PF('dtLancamentoContabil').filter()" />
 
 									<p:commandButton id="persist" icon="White fa fa-save"
 										value="Salvar e Fechar"
 										actionListener="#{lancamentoContabilMB.actionPersistFechar}"
 										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
-										process="@this,pnRecorrente,gridDados"										
+										process="@this,pnRecorrente,gridDados"
 										oncomplete="PF('dtLancamentoContabil').filter();"
 										styleClass="GreenButton" />
-										
+
 									<p:commandButton value="Fechar" icon="White fa fa-close"
 										process="@this"
 										oncomplete="PF('dlgNovoPagamentoRecebimento').hide()"
@@ -1515,18 +1565,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:panelGrid id="pnNovoReajusteOrcamento" columns="2"
 									layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group">
-									
+
 									<h:panelGroup>
 										<p:outputLabel for="tipoReajuste" value="Tipo de reajuste:"
 											style="display:inline-block;width:80%;" />
-										<p:selectOneMenu id="tipoReajuste" value="#{ajusteIGPMMB.tipoRejusteSelecionado}">
+										<p:selectOneMenu id="tipoReajuste"
+											value="#{ajusteIGPMMB.tipoRejusteSelecionado}">
 											<f:selectItem itemLabel="Reajuste por valor" itemValue="V" />
-											<f:selectItem itemLabel="Reajuste por porcentagem" itemValue="P" />
-											<p:ajax process="@this,pnReajuste" update="pnReajuste"/>
+											<f:selectItem itemLabel="Reajuste por porcentagem"
+												itemValue="P" />
+											<p:ajax process="@this,pnReajuste" update="pnReajuste" />
 										</p:selectOneMenu>
 									</h:panelGroup>
-									
-									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
+
+									<h:panelGroup
+										rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
 										<p:outputLabel value="Informe o percentual de reajuste:"
 											style="display:inline-block;width:80%;" />
 										<p:inputNumber id="valorIGPM"
@@ -1544,8 +1597,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											value="Indice em percentual do IGPM atual."
 											style="width:10%;" />
 									</h:panelGroup>
-									
-									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
+
+									<h:panelGroup
+										rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
 										<p:outputLabel value="Informe o valor de reajuste:"
 											style="display:inline-block;width:80%;" />
 										<p:inputNumber id="valorIGPMV"
@@ -1564,7 +1618,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											style="width:10%;" />
 									</h:panelGroup>
 
-									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
+									<h:panelGroup
+										rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'P'}">
 										<p:outputLabel value="Desconto de IGPM:"
 											style="display:inline-block;width:60%;" />
 										<p:inputNumber id="descontoIGPM"
@@ -1581,8 +1636,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											value="Desconto em percentual do IGPM atual a ser aplicado."
 											style="width:10%;" />
 									</h:panelGroup>
-									
-									<h:panelGroup rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
+
+									<h:panelGroup
+										rendered="#{ajusteIGPMMB.tipoRejusteSelecionado eq 'V'}">
 										<p:outputLabel value="Desconto de IGPM:"
 											style="display:inline-block;width:60%;" />
 										<p:inputNumber id="descontoIGPMV"
@@ -1593,7 +1649,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												process="@this,tbViewProcedimentoOrcamento,resultadoIGPM"
 												update="tbViewProcedimentoOrcamento,resultadoIGPM" />
 										</p:inputNumber>
-										<h:outputLabel class="fa fa-question" id="tooltipIGPMDescontoV"
+										<h:outputLabel class="fa fa-question"
+											id="tooltipIGPMDescontoV"
 											style="font-size:24px; margin-left:10px;" />
 										<p:tooltip for="tooltipIGPMDescontoV"
 											value="Desconto em percentual do IGPM atual a ser aplicado."
@@ -1653,12 +1710,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<h:outputText value="#{procedimento.orcamento.descricao}" />
 											</div>
 										</p:column>
-										<p:column headerText="Data de criação do orçamento" filterMatchMode="contains"
+										<p:column headerText="Data de criação do orçamento"
+											filterMatchMode="contains"
 											filterBy="#{procedimento.orcamento.dataCriacaoStr}"
 											sortBy="#{procedimento.orcamento.dataCriacaoStr}"
 											filterFunction="#{ajusteIGPMMB.filtroSemAcento}">
 											<div style="width: 100%; text-align: left">
-												<h:outputText value="#{procedimento.orcamento.dataCriacaoStr}" />
+												<h:outputText
+													value="#{procedimento.orcamento.dataCriacaoStr}" />
 											</div>
 										</p:column>
 										<p:column headerText="Procedimento" filterMatchMode="contains"
@@ -1687,8 +1746,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</h:outputText>
 										</p:column>
 										<p:column headerText="Incluso?" width="50">
-											<p:selectBooleanCheckbox value="#{procedimento.procedimentoInclusoReajuste}">
-												<p:ajax process="@this"/>
+											<p:selectBooleanCheckbox
+												value="#{procedimento.procedimentoInclusoReajuste}">
+												<p:ajax process="@this" />
 											</p:selectBooleanCheckbox>
 										</p:column>
 									</p:dataTable>
