@@ -16,14 +16,6 @@ import javax.inject.Named;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.model.DashboardModel;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.bar.BarChartDataSet;
-import org.primefaces.model.charts.bar.BarChartModel;
-import org.primefaces.model.charts.bar.BarChartOptions;
-import org.primefaces.model.charts.line.LineChartDataSet;
-import org.primefaces.model.charts.optionconfig.title.Title;
-
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.iugu.responses.ItemResponse;
 import br.com.lume.common.iugu.service.InvoiceService;
