@@ -1338,7 +1338,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (parcela == null || this.descontosDisponiveis.get(parcela) == null) {
             percent = percformat.format(BigDecimal.ZERO);
         } else {
-            percent = percformat.format(this.descontosDisponiveis.get(parcela).getDesconto().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
+            if(this.descontosDisponiveis.get(parcela).getDesconto() != null) {
+                percent = percformat.format(this.descontosDisponiveis.get(parcela).getDesconto().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
+            }
+            
         }
         return percent;
     }
