@@ -608,7 +608,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 //     tarifa = null;
                 // }
 
-                Lancamento lancamento = LancamentoSingleton.getInstance().novoLancamento(fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, lc.getData(), lc.getData(),
+                Lancamento lancamento = LancamentoSingleton.getInstance().novoLancamento(null, fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, lc.getData(), lc.getData(),
                         formaPagamentoDigitacao, UtilsFrontEnd.getProfissionalLogado(), false, "", lc.getDescricao(), lc.getMotivo());
 
                 lc.setLancamento(lancamento);
