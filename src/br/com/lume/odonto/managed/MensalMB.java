@@ -64,7 +64,7 @@ public class MensalMB extends LumeManagedBean<Empresa> {
             Date agora = new Date();
             int diff = (int) ((agora.getTime() - Utils.stringToDate(converteDataIugu(faturas.get(0).getDueDate()), "dd-MM-yyyy").getTime())
                               / (1000 * 60 * 60 * 24));
-            if (diff > 30) {
+            if (diff > 23) {
                 System.out.println("entrou gerar 2 faturas");
                 SubItem subItem = new SubItem(Mensagens.getMensagemOffLine("descricao.iugu.fatura.reativacao"), 1, assinatura.getPriceCents());
                 subItem.setRecurrent(false);
