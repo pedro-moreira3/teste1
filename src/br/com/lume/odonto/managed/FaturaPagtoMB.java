@@ -476,7 +476,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.cancelaLancamentoValidado(extornarLancamento);
 
             //CRIA UM NOVO LANÇAMENTO
-            Lancamento l = LancamentoSingleton.getInstance().novoLancamento(extornarLancamento.getFatura(), ajustarLancamento.getValor(), ajustarLancamento.getFormaPagamento(),
+            Lancamento l = LancamentoSingleton.getInstance().novoLancamento(null, extornarLancamento.getFatura(), ajustarLancamento.getValor(), ajustarLancamento.getFormaPagamento(),
                     extornarLancamento.getNumeroParcela(), extornarLancamento.getParcelaTotal(), ajustarLancamento.getDataPagamento(), ajustarLancamento.getDataCredito(),
                     extornarLancamento.getTarifa(), UtilsFrontEnd.getProfissionalLogado(), false, null, null, null);
             //  }
@@ -915,10 +915,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     }
 
                     if ("CC".equals(getFormaPagamento())) {
-                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamento(null, getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado(), false, "", "", null);
                     } else {
-                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamento(null, getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado(), false, "", "", null);
                         now.add(Calendar.MONTH, 1);
                     }
@@ -926,7 +926,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamento(null, getEntity(), getValor(), getFormaPagamento(), getParcela(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado(), false, "", "", null);
 
             }

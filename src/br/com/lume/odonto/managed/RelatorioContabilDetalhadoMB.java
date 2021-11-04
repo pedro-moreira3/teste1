@@ -185,7 +185,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 //     extrato += "</td><td>";  
                 //}
                 if (motivoCheck) {
-                    extrato += "</td><td colspan=\"" + colspan + "\">" + (lc.getMotivo() != null ? lc.getMotivo().getDescricao() : "");
+                    extrato += "</td><td colspan=\"" + colspan + "\">" + (lc.getMotivo() != null ? lc.getDescricaoEstorno() : "");
                 }
                 //else {
                 //    extrato += "</td><td>";  
