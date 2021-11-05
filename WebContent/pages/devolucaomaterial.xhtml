@@ -72,11 +72,11 @@
                             		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Destino">
                                 <h:outputText value="#{reservaKit.reserva.local.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStrOrd}"
+                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStr}"
                             		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Data do Pedido">
                                 <h:outputText value="#{reservaKit.reserva.dataStr}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
+                            <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStr}" filterMatchMode="contains" headerText="Data da Utilização">
                                 <h:outputText value="#{reservaKit.reserva.prazoStr}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.quantidade}" sortBy="#{reservaKit.quantidade}" filterMatchMode="contains" headerText="Quantidade">

@@ -91,7 +91,7 @@
 						<p:column filterBy="#{marca.nome}" sortBy="#{marca.nome}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{marcaMB.filtroSemAcento}">
 							<h:outputText value="#{marca.nome}" title="#{marca.id}" />
 						</p:column>
-						<p:column filterBy="#{marca.dataCadastroStr}" sortBy="#{marca.dataCadastroStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+						<p:column filterBy="#{marca.dataCadastroStr}" sortBy="#{marca.dataCadastroStr}" filterMatchMode="contains" headerText="Data do Cadastro">
 							<h:outputText value="#{marca.dataCadastroStr}" />
 						</p:column>
 					</p:dataTable>

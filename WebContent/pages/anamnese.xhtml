@@ -109,7 +109,7 @@
 						rendered="#{pacienteAnamnese.profissional == null}" />
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.dataHoraStr}"
-					sortBy="#{pacienteAnamnese.dataHoraStrOrd}"
+					sortBy="#{pacienteAnamnese.dataHoraStr}"
 					filterMatchMode="contains" headerText="Data/Hora"
 					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText value="#{pacienteAnamnese.dataHoraStr}" />

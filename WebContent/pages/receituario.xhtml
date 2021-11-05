@@ -155,7 +155,7 @@
 							update=":lume:pnReceituario,:lume:pnReceituarioPrincipal"
 							listener="#{receituarioMB.atualizaTela}" />
 						<f:facet name="header">Receituários</f:facet>
-						<p:column headerText="Data" sortBy="#{rct.dataHoraStrOrd}"
+						<p:column headerText="Data" sortBy="#{rct.dataHoraStr}"
 							filterBy="#{rct.dataHoraStr}" filterMatchMode="contains">
 							<h:outputText value="#{rct.dataHoraStr}" title="#{rct.id}" />
 						</p:column>

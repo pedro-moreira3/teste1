@@ -1032,7 +1032,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 										<p:column filterBy="#{pt.dataHoraStr}"
 											filterFunction="#{ajusteIGPMMB.filtroSemAcento}"
 											filterMatchMode="contains" headerText="Data de Criação"
-											sortBy="#{pt.dataHoraStrOrd}">
+											sortBy="#{pt.dataHoraStr}">
 											<h:outputText value="#{pt.dataHoraStr}" />
 										</p:column>
 										<p:column filterBy="#{ajusteIGPMMB.dataAprovacaoOrc(pt)}"
@@ -1209,9 +1209,9 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 								<h:panelGroup></h:panelGroup>
 
 								<h:panelGroup>
-									<p:commandButton value="Gerar DRC mensal" styleClass="NavyButton"
-										icon="fa fa-rotate-right White" process="lume:pnFiltrosDRC,@this"
-										update="lume:painelDrc"
+									<p:commandButton value="Gerar DRC mensal"
+										styleClass="NavyButton" icon="fa fa-rotate-right White"
+										process="lume:pnFiltrosDRC,@this" update="lume:painelDrc"
 										action="#{relatorioContabilDetalhadoMB.gerarDrc}">
 									</p:commandButton>
 								</h:panelGroup>
@@ -1507,11 +1507,16 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 										<p:selectOneMenu id="diasRecorrente" required="false"
 											value="#{lancamentoContabilMB.diasRecorrente}" filter="true"
 											filterMatchMode="contains">
-											<f:selectItem itemValue="30" itemLabel="A cada 30 dias" />
-											<f:selectItem itemValue="15" itemLabel="A cada 15 dias" />
+											<f:selectItem itemValue="0" itemLabel="Dia fixo do mês" />
 											<f:selectItem itemValue="7" itemLabel="A cada 7 dias" />
+											<f:selectItem itemValue="14" itemLabel="A cada 14 dias" />
+											<f:selectItem itemValue="21" itemLabel="A cada 21 dias" />
+											<f:selectItem itemValue="28" itemLabel="A cada 28 dias" />
+											<f:selectItem itemValue="30" itemLabel="A cada 30 dias" />
 										</p:selectOneMenu>
 									</h:panelGroup>
+
+
 
 									<p:outputLabel for="quantidadeRecorrencia"
 										rendered="#{lancamentoContabilMB.recorrente eq 'S'}"

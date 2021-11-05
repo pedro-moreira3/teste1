@@ -83,7 +83,7 @@
                                 headerText="Solicitante" filterFunction="#{lavagemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagem.solicitante.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{lavagem.dataStr}" sortBy="#{lavagem.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+                            <p:column filterBy="#{lavagem.dataStr}" sortBy="#{lavagem.dataStr}" filterMatchMode="contains" headerText="Data do Cadastro">
                                 <h:outputText value="#{lavagem.dataStr}" />
                             </p:column>
                             <p:column filterBy="#{lavagem.resumo}" sortBy="#{lavagem.resumo}" filterMatchMode="contains" headerText="Resumo" filterFunction="#{lavagemMB.filtroSemAcento}">

@@ -281,7 +281,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</p:column>
 					<p:column filterBy="#{planoTratamento.dataHoraStr}"
 						filterMatchMode="contains" headerText="Data de Criação"
-						sortBy="#{planoTratamento.dataHoraStrOrd}">
+						sortBy="#{planoTratamento.dataHoraStr}">
 						<h:outputText value="#{planoTratamento.dataHoraStr}" />
 					</p:column>
 					<p:column headerText="Status"
@@ -975,7 +975,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:column headerText="Dta. de Execução"
 								filterMatchMode="contains" filterBy="#{plano.dataFinalizadoStr}"
 								styleClass="cabecalho hideOnEdit"
-								sortBy="#{plano.dataFinalizadoStrOrd}" width="70px;">
+								sortBy="#{plano.dataFinalizadoStr}" width="70px;">
 								<h:outputText value="#{plano.dataFinalizadoStr}" />
 							</p:column>
 							<p:column headerText="Executado Por" styleClass="hideOnEdit"
