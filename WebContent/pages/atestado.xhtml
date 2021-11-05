@@ -171,7 +171,7 @@
 							listener="#{atestadoMB.atualizaTela}" />
 						<f:facet name="header">Atestados</f:facet>
 						<p:column headerText="Data" sortBy="#{att.dataHoraStr}"
-							filterBy="#{att.dataHoraStrOrd}" filterMatchMode="contains">
+							filterBy="#{att.dataHoraStr}" filterMatchMode="contains">
 							<h:outputText value="#{att.dataHoraStr}" title="#{att.id}" />
 						</p:column>
 						<p:column filterBy="#{att.profissional.dadosBasico.prefixoNome}"

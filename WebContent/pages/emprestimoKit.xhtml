@@ -104,7 +104,7 @@
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Disponibilizado?">
                                     <h:outputText value="#{reservaKit.disponiblizado == true ? 'Sim' : 'Não'}" />
                                 </p:column>
-                                <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
+                                <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStr}" filterMatchMode="contains" headerText="Data da Utilização">
                                     <h:outputText value="#{reservaKit.reserva.prazoStr}" />
                                 </p:column>
                                 <p:column filterBy="#{reservaKit.reserva.observacao}" sortBy="#{reservaKit.reserva.observacao}"
