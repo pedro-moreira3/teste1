@@ -316,8 +316,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 if(this.listaMesesSelecionados != null && !this.listaMesesSelecionados.isEmpty())
                     for(Utils.Mes mes : this.listaMesesSelecionados)
                         drcGanhos += "<td width=\"auto\">" + Utils.stringToCurrency(this.totalCategoriaPorMes(categoria, mes)) + "</td>";
-                
-                drcGanhos += "<td width=\"auto\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+                if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                    drcGanhos += "<td width=\"auto\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+                else
+                    drcGanhos += "<td width=\"auto\">0%</td>";                
                 drcGanhos += "<td width=\"20%\"> " + Utils.stringToCurrency(valor) + "</td>";
             }
             if (categoria.getTipoCategoria().getDescricao().equals(TipoCategoria.GASTOS_OPERACIONAIS)) {
@@ -353,8 +355,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             if(this.listaMesesSelecionados != null && !this.listaMesesSelecionados.isEmpty())
                 for(Utils.Mes mes : this.listaMesesSelecionados)
                     drc += "<td width=\"auto\">R$" + Utils.stringToCurrency(this.totalTipoCategoriaPorMes(TipoCategoria.GASTOS_OPERACIONAIS, mes)) + "</td>";
-            
-            drc += "<td width=\"auto\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drc += "<td width=\"auto\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drc += "<td width=\"auto\">0%</td>";
             drc += "<td width=\"auto\">R$ " + Utils.stringToCurrency(gastosOperacionais) + "</td>";
 
             drc += drcGastosOperacionais;
@@ -367,8 +371,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             if(this.listaMesesSelecionados != null && !this.listaMesesSelecionados.isEmpty())
                 for(Utils.Mes mes : this.listaMesesSelecionados)
                     drc += "<td width=\"auto\">R$" + Utils.stringToCurrency(this.totalTipoCategoriaPorMes(TipoCategoria.GASTOS_ODONTOLOGICOS, mes)) + "</td>";
-            
-            drc += "<td width=\"auto\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drc += "<td width=\"auto\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drc += "<td width=\"auto\">0%</td>";
             drc += "<td width=\"auto\">R$ " + Utils.stringToCurrency(gastosOdontologicos) + "</td>";
 
             drc += drcGastosOdontologicos;
@@ -411,8 +417,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             if(this.listaMesesSelecionados != null && !this.listaMesesSelecionados.isEmpty())
                 for(Utils.Mes mes : this.listaMesesSelecionados)
                     drc += "<td width=\"auto\">R$" + Utils.stringToCurrency(this.totalTipoCategoriaPorMes(TipoCategoria.GASTOS_GERAIS, mes)) + "</td>";
-            
-            drc += "<td width=\"auto\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drc += "<td width=\"auto\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drc += "<td width=\"auto\">0%</td>";
             drc += "<td width=\"auto\">R$ " + gastosGerais + "</td>";
 
             drc += drcGastosGerais;
@@ -512,7 +520,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 drcGanhos += "<tr style=\"font-size:12px;\" bgcolor=white>";
                 drcGanhos += "<td width=\"30%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getCategoria().getDescricao() + "</td>";
                 drcGanhos += "<td width=\"30%\">&nbsp;&nbsp;&nbsp;&nbsp;" + motivo.getDescricao() + "</td>";
-                drcGanhos += "<td width=\"15%\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+                if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                    drcGanhos += "<td width=\"15%\">" + (valor.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+                else
+                    drcGanhos += "<td width=\"15%\">0%</td>";
                 drcGanhos += "<td width=\"15%\">R$ " + valor + "</td>";
             }
             if (motivo.getCategoria().getTipoCategoria().getDescricao().equals(TipoCategoria.GASTOS_OPERACIONAIS)) {
@@ -541,7 +552,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
             drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_OPERACIONAIS + "</td>";
             drce += "<td width=\"40%\">&nbsp;</td>";
-            drce += "<td width=\"15%\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drce += "<td width=\"15%\">" + (gastosOperacionais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drce += "<td width=\"15%\">0%</td>";
             drce += "<td width=\"15%\">R$ " + gastosOperacionais + "</td>";
 
             drce += drcGastosOperacionais;
@@ -551,7 +565,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
             drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_ODONTOLOGICOS + "</td>";
             drce += "<td width=\"40%\">&nbsp;</td>";
-            drce += "<td width=\"15%\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drce += "<td width=\"15%\">" + (gastosOdontologicos.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drce += "<td width=\"15%\">0%</td>";
             drce += "<td width=\"15%\">R$ " + gastosOdontologicos + "</td>";
 
             drce += drcGastosOdontologicos;
@@ -567,7 +584,10 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             drce += "<tr style=\"border-bottom: 2px solid black;border-top: 2px solid black;background-color: #ddd;font-size:14px;\">";
             drce += "<td width=\"30%\">" + TipoCategoria.GASTOS_GERAIS + "</td>";
             drce += "<td width=\"40%\">&nbsp;</td>";
-            drce += "<td width=\"15%\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            if(receitaBruta.compareTo(BigDecimal.ZERO) != 0)
+                drce += "<td width=\"15%\">" + (gastosGerais.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
+            else
+                drce += "<td width=\"15%\">0%</td>";
             drce += "<td width=\"15%\">R$ " + gastosGerais + "</td>";
 
             drce += drcGastosGerais;
