@@ -100,7 +100,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private String tipo = "Débito";
 
-    private int diasRecorrente = 30;
+    private int diasRecorrente ;
 
     private String recorrente = "N";
 
@@ -153,12 +153,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
-    
-    public void setVideos() {        
+
+    public void setVideos() {
         getListaVideosTutorial().clear();
         getListaVideosTutorial().put("como criar pagamento/recebimento sem recorrência", "https://www.youtube.com/v/eA96HagTCtI?autoplay=1");
-        getListaVideosTutorial().put("como criar pagamento/recebimento com recorrência", "https://www.youtube.com/v/MOtuj1mdN8c?autoplay=1");                
+        getListaVideosTutorial().put("como criar pagamento/recebimento com recorrência", "https://www.youtube.com/v/MOtuj1mdN8c?autoplay=1");
     }
 
 //    public void geraListaOrigens() {
@@ -448,15 +447,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.editando = false;
         ///   super.actionNew(event);
     }
-    
-   
+
     public void actionPersistContinuar(ActionEvent event) {
         actionPersist(event);
-        
+
         actionNew(event);
-        
-    //    setEntity(new LancamentoContabil());
-       // lancamentoContabilMB.entity.dadosBasic
+
+        //    setEntity(new LancamentoContabil());
+        // lancamentoContabilMB.entity.dadosBasic
         //   lancamentoContabilMB.entity.motivo
         //lancamentoContabilMB.entity.data
         //lancamentoContabilMB.entity.valor
@@ -468,9 +466,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 //this.diasRecorrente
 //this.quantidadeVezesRecorrencia
     }
-    
+
     public void actionPersistFechar(ActionEvent event) {
-        actionPersist(event);        
+        actionPersist(event);
         PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
     }
 
@@ -507,7 +505,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         actionNew(null);
         geraLista();
         updateSomatorio();
-        
+
         this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
     }
 
@@ -619,8 +617,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
                 FaturaSingleton.getInstance().atualizarStatusFatura(fatura, UtilsFrontEnd.getProfissionalLogado());
                 Calendar c = Calendar.getInstance();
-                c.setTime(lc.getData());
-                c.add(Calendar.DAY_OF_MONTH, diasRecorrente);
+                if(diasRecorrente != 0) {
+                    c.setTime(lc.getData());
+                    c.add(Calendar.DAY_OF_MONTH, diasRecorrente);
+                }else {
+                    c.setTime(lc.getData());
+                    c.add(Calendar.MONTH, 1);
+                }
+                
                 lc.setData(c.getTime());
 
             }   //  
