@@ -442,7 +442,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             }
         }
         
-        if (saldo.compareTo(new BigDecimal(0)) != 0) {
+        if (receitaBruta.compareTo(new BigDecimal(0)) != 0) {
             drc += "<td width=\"auto\">" + (saldo.multiply(new BigDecimal(100))).divide(receitaBruta, RoundingMode.HALF_UP) + "%</td>";
         } else {
             drc += "<td width=\"auto\">0</td>";
