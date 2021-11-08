@@ -81,7 +81,7 @@
 		<param-value>8</param-value>
 	</context-param>
 	<session-config>
-		<session-timeout>540</session-timeout>
+		<session-timeout>60</session-timeout>
 	</session-config>
 	<listener>
 		<listener-class>br.com.lume.odonto.email.EmailListener</listener-class>
