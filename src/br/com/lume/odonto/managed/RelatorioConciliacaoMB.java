@@ -16,11 +16,15 @@ import javax.inject.Named;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+
+import br.com.lume.common.iugu.Iugu;
+import br.com.lume.common.iugu.Iugu.StatusFaturaIugu;
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.iugu.responses.ItemResponse;
 import br.com.lume.common.iugu.service.InvoiceService;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.iuguConfig.IuguConfigSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -73,15 +77,28 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
                 this.invoices.addAll(filterInvoicesBySignature());
             } while(invoicesResponse.getItems().size() == 100);
             
-            this.invoices.forEach((invoice) ->{
-                String value[] = invoice.getTotal().split(" ");
-                this.totalInvoices = this.totalInvoices.add(new BigDecimal(value[1].replaceAll(",", ".")));
-
-                if(invoice.getPaidAt() != null && invoice.getTotalPaid() != null) {
-                    value = invoice.getTotalPaid().split(" ");
-                    this.totalPaidInvoices = this.totalPaidInvoices.add(new BigDecimal(value[1].replaceAll(",", ".")));
+            for(ItemResponse invoice : this.invoices) {
+                String value[] = null;
+                if(invoice.getTotal().contains("BRL")) {
+                    value = invoice.getTotal().split(" ");
+                    this.totalInvoices = this.totalInvoices.add(new BigDecimal(value[0]));
+                    
+                    if(invoice.getPaidAt() != null && invoice.getTotalPaid() != null) {
+                        value = invoice.getTotalPaid().split(" ");
+                        this.totalPaidInvoices = this.totalPaidInvoices.add(new BigDecimal(value[0]));
+                    }
+                    
+                }else {
+                    value = invoice.getTotal().split(" ");
+                    this.totalInvoices = this.totalInvoices.add(new BigDecimal(value[1].replaceAll(",", ".")));
+                    
+                    if(invoice.getPaidAt() != null && invoice.getTotalPaid() != null) {
+                        value = invoice.getTotalPaid().split(" ");
+                        this.totalPaidInvoices = this.totalPaidInvoices.add(new BigDecimal(value[1].replaceAll(",", ".")));
+                    }
+                    
                 }
-            });
+            }
         } catch (Exception e) {
             log.error("Erro no filter", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -100,7 +117,7 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
             if(item.getPaidAt() != null && item.getTotalPaid() != null) {
                 String value[] = item.getTotalPaid().split(" ");
                 this.receiveCurrentMonth = this.receiveCurrentMonth.add(new BigDecimal(value[1].replaceAll(",", ".")));
-            } else if((item.getPaidAt() == null && item.getStatusStr() != null) && item.getStatusStr().toLowerCase().equals("pending") && item.getTotal() != null) {
+            } else if((item.getPaidAt() == null && item.getStatus() != null) && item.getStatus().toLowerCase().equals(StatusFaturaIugu.PENDENTE.getDescricao()) && item.getTotal() != null) {
                 String value[] = item.getTotal().split(" ");
                 this.pendingReceive = this.pendingReceive.add(new BigDecimal(value[1].replaceAll(",", ".")));
             }
@@ -114,8 +131,8 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
         boolean existe = false;
         for(ItemResponse item : invoicesResponse.getItems()) {
             if(item.getItems().get(0).getDescription().toUpperCase().contains("INTELIDENTE") 
-                    && item.getStatusStr() != null 
-                    && (item.getStatusStr().toLowerCase().equals("pending") || item.getStatusStr().toLowerCase().equals("paid"))) {
+                    && item.getStatus() != null 
+                    && (item.getStatus().toLowerCase().equals("pending") || item.getStatus().toLowerCase().equals("paid"))) {
                 existe = false;
                 for(ItemResponse i : this.invoices)
                     if(i.getId().equals(item.getId()))
