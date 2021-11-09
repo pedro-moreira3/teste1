@@ -88,6 +88,13 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     public void filtra() {
         try {
+            Calendar c = Calendar.getInstance();
+            c.setTime(fim);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+            c.set(Calendar.SECOND, 59);
+            c.set(Calendar.MILLISECOND, 59);
+            fim = c.getInstance().getTime();
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else if (!origemDestinoCheck && !grupoCheck && !categoriaCheck && !motivoCheck) {
