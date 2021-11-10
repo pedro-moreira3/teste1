@@ -2,7 +2,6 @@ package br.com.lume.security.managed;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -13,9 +12,6 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.CryptMD5;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.faturamento.FaturaSingleton;
-import br.com.lume.odonto.entity.Fatura;
-import br.com.lume.profissional.ProfissionalSistemaSingleton;
 import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Usuario;
 
@@ -36,17 +32,6 @@ public class TrocarSenhaMB extends LumeManagedBean<Usuario> {
     public TrocarSenhaMB() {
         super(new UsuarioBO());
         this.setClazz(Usuario.class);
-        System.out.println("chamou método de atualização dos status das faturas");
-        List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, null, null);
-        faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
-        System.out.println(faturas.size());
-        int count = 0;
-        for (Fatura fatura : faturas) {
-            FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
-            System.out.println(fatura.getDataCriacao());
-            count++;
-            System.out.println(count);
-        }
     }
 
     @Override
