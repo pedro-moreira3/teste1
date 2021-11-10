@@ -167,16 +167,20 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                     boolean addLancamento = false;
 
                     if (this.status != null && this.subStatus != null && this.subStatus.length > 0) {
-                        if (this.status.equals(l.getStatus())) {
+                        for (int i = 0; i < subStatus.length; i++) {
+                            if (l.getStatusCompleto().equalsIgnoreCase(this.subStatus[i].toString()))
+                                addLancamento = true;
+//                            break;
+                        }
 
-                            for (int i = 0; i < this.subStatus.length; i++)
-                                if (l.getSubStatus().contains(this.subStatus[i]))
-                                    addLancamento = true;
+                    } else if (this.subStatus.length > 0) {
+                        for (int i = 0; i < subStatus.length; i++) {
+                            System.out.println(this.subStatus[i] + "  " + l.getStatusCompleto());
+                            if (l.getStatusCompleto().equalsIgnoreCase(this.subStatus[i].toString()))
+                                addLancamento = true;
+//                            break;
                         }
-                    } else if (this.status != null) {
-                        if (this.status.equals(l.getStatus())) {
-                            addLancamento = true;
-                        }
+
                     } else {
                         addLancamento = true;
                     }

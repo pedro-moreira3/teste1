@@ -31,7 +31,7 @@ public class AtualizacaoFaturas extends TimerTask implements Serializable, Execu
             } else {
 
                 System.out.println("chamou método de atualização dos status das faturas");
-                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, null, null);
+                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
                 faturas.sort((o1,o2) -> o2.getDataCriacao().compareTo(o1.getDataCriacao()));
                 System.out.println(faturas.size());
                 int count = 0;
