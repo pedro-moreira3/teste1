@@ -233,6 +233,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
+        
+        this.itemAlteracao = new FaturaItem();
 
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
