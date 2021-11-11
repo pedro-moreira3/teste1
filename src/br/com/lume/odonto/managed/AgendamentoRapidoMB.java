@@ -575,6 +575,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 agendamentosAnterioresHoraInicio.add(agendamentoExistente);
                 //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
                 //precisa começar a partir da hora de término   
+                if (horariopadraoInico == null && UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());
+                    horariopadraoInico = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+                }
                 LocalTime horariopadraoInicoAux = horariopadraoInico;
                 while (agendamentoExistente.getFim().after(dataInicioManha)) {
                     horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
