@@ -452,7 +452,7 @@
 					</p:autoComplete>					
 					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
 						<p:commandButton id="cadastroPaciente"
-							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							rendered="#{!agendamentoMB.visivel}"
 							process="@this"
 							disabled="#{agendamentoMB.pacienteSelecionado == null}"
 							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
@@ -462,7 +462,7 @@
 							oncomplete="PF('dlgFichaPaciente').show()" />
 						<p:commandButton id="novoPaciente"
 							rendered="#{!agendamentoMB.visivel}" icon="fa fa-plus White"
-							title="Novo Paciente" disabled="#{agendamentoMB.entity.id != 0}" 
+							title="Novo Paciente" disabled="#{agendamentoMB.entity.id != 0 or agendamentoMB.visivelDadosPaciente }" 
 							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
 							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
