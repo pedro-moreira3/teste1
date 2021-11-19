@@ -466,7 +466,7 @@
 							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
 							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
-							rendered="#{agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							rendered="#{agendamentoMB.visivel}"
 							icon="fa fa-minus White" title="Cancelar"
 							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
 							actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
