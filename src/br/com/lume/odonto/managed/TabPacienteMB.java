@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
@@ -252,6 +253,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPacienteRO(Paciente paciente, String namePanel) {
         try {
+            if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)
+                this.pacienteMB.setVisivelDadosPaciente(false);
             this.pacienteMB.abreReadOnly(paciente, namePanel);
             this.tabview.setActiveIndex(0);
         } catch (Exception e) {

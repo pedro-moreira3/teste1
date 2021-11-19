@@ -1185,7 +1185,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
                 pendencias.add("Observação: Procedimento está em uma fatura com planejamento pendente.");
             }else if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_CONFERIR)) {
-                pendencias.add("Observação: Procedimento está em uma fatura com conferência pendente.");
+                pendencias.add("Observação:Recebimento à conferir.");
             }
         }
 
