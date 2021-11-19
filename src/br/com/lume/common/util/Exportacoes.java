@@ -139,9 +139,10 @@ public class Exportacoes implements Serializable {
                 }
 
                 if (obj != null) {
-                    if (obj instanceof BigDecimal) {
 
-                        BigDecimal valor = (BigDecimal) obj;
+                    if (obj instanceof BigDecimal || obj instanceof Double) {
+
+                        BigDecimal valor = (obj instanceof Double ? new BigDecimal((Double) obj) : (BigDecimal) obj);
                         valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
 
 //                        if(dadoColuna.getConverter() != null) {
