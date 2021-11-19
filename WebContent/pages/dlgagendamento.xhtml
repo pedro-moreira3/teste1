@@ -452,7 +452,7 @@
 					</p:autoComplete>					
 					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
 						<p:commandButton id="cadastroPaciente"
-							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							rendered="#{!agendamentoMB.visivel}"
 							process="@this"
 							disabled="#{agendamentoMB.pacienteSelecionado == null}"
 							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
