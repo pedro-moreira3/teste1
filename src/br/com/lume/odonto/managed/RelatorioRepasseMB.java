@@ -189,50 +189,13 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
                     }
-                    
-                   System.out.println("123123123"+rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
                  
                     if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) < 0
                            ) {
                         map.put(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId(), valorTotal(rfl.getLancamentoRepasse()));
-                        
-                      //  ptpid - valor do pagamento
-                                            
-//                        System.out.println("--------------------------: " +
-//                        rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome() + " - " + 
-//                        rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getProcedimento().getDescricao());
-//                        System.out.println("--------------------------");
                     }
                     
                 }
-                
-//                for(RepasseFaturasLancamento rfl : this.getEntityList()) {
-//                    if (map.containsKey(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId())) {
-//                        if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) > 0) {
-//                          //  if(rfl.getLancamentoRepasse().getStatusSemSubStatus().contains("A Pagar")) {
-//                            BigDecimal valorExistente = map.get(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId());
-//                            if(valorExistente.compareTo(valorTotal(rfl.getLancamentoRepasse())) == 0) {
-//                                System.out.println("--------------------------: " +
-//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome() + " - " + 
-//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + " - " + 
-//                                valorTotal(rfl.getLancamentoRepasse()) + " id rfl - " + 
-//                                rfl.getId() + " - " + 
-//                                rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId() );
-//                                rfl.getLancamentoRepasse().setAtivo("N");
-//                                
-//                                rfl.getRepasseFaturas().getFaturaRepasse().setAtivo(false);
-//                                FaturaSingleton.getInstance().getBo().persist( rfl.getRepasseFaturas().getFaturaRepasse());
-//                                System.out.println("id fATURA para nao ativo: " + rfl.getRepasseFaturas().getFaturaRepasse().getId());
-//                                System.out.println("id alterado para nao ativo: " + rfl.getLancamentoRepasse().getId());
-//                                LancamentoSingleton.getInstance().getBo().persist(rfl.getLancamentoRepasse());
-//                              //  rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId() +
-//                                System.out.println("--------------------------");
-//                            }
-//                        }
-//                    }
-//                }
-                
-                
             }
 
             updateSomatorio();
