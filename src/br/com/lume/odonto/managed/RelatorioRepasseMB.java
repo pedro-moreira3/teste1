@@ -27,6 +27,7 @@ import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
+import br.com.lume.odonto.entity.Lancamento.SubStatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -286,8 +287,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     }
     
     public void carregarStatusLancamentos() {
-        for(StatusLancamento status : StatusLancamento.values()) {
-            if(status.getDirecaoLancamento().equals(DirecaoLancamento.DEBITO))
+        for(SubStatusLancamento status : SubStatusLancamento.values()) {
                 this.statusLancamentos.add(status.getDescricao());
         }
     }
