@@ -351,6 +351,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
             this.carregarLancamentosValidar();
+            LancamentoSingleton.getInstance().recalculaValoresPtAsync(l.getFatura());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             e.printStackTrace();
