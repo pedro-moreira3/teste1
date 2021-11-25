@@ -242,6 +242,9 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         setEntity(recibo);
         if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
             //List<Long> idsPtps = new ArrayList<Long>();
+            
+            getEntity().getReciboLancamentos().removeIf(l -> !l.getLancamento().isAtivo());
+            
             Map<Long, ReciboRepasseProfissionalLancamento> recibosMap = new HashMap<Long, ReciboRepasseProfissionalLancamento>();
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
