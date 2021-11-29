@@ -19,6 +19,7 @@ import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.pacienteAnotacao.PacienteAnotacaoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 /**
@@ -52,6 +53,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     @ManagedProperty(value = "#{evolucaoMB}")
     private EvolucaoMB evolucaoMB;
+    
+    @ManagedProperty(value = "#{anotacoesMB}")
+    private AnotacoesMB anotacoesMB;
 
     @ManagedProperty(value = "#{pacienteFinanceiroMB}")
     private PacienteFinanceiroMB pacienteFinanceiroMB;
@@ -104,7 +108,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
         }else if("Anotações".equals(event.getTab().getTitle())) {
-            pacienteMB.carregarAnotacoes();
+            anotacoesMB.setEntityList(PacienteAnotacaoSingleton.getInstance().getBo().listByPaciente(pacienteMB.getEntity()));
         }else if("Documentos".equals(event.getTab().getTitle())) {
             pacienteMB.carregarDocumentosPaciente();
         }
@@ -261,6 +265,16 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
+    }
+
+    
+    public AnotacoesMB getAnotacoesMB() {
+        return anotacoesMB;
+    }
+
+    
+    public void setAnotacoesMB(AnotacoesMB anotacoesMB) {
+        this.anotacoesMB = anotacoesMB;
     }
 
 

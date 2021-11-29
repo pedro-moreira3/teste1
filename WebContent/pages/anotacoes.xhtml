@@ -9,24 +9,102 @@
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 
-			<p:outputPanel id="viewAnotacoes"
-				style="width:720px;vertical-align:center;">
-				<p:editor id="editorAnotacoes" widgetVar="editorAnotacoes"
-					value="#{pacienteMB.entity.anotacoes}" width="600" height="400"
-					immediate="true" binding="#{pacienteMB.editorAnotacoes}" maxlength="8000"/>
+			<p:outputPanel id="viewAnotacoes" style="vertical-align:center;">
+
+				<p:panelGrid columns="3" layout="grid" id="botoesAnotacao"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:commandButton icon="ui-icon-add"
+						oncomplete="PF('dlgNovaAnotacao').show()" value="Nova Anotação"
+						actionListener="#{anotacoesMB.actionNew}" update="pnlNovaAnotacao"
+						process="@this" />
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup></h:panelGroup>
+				</p:panelGrid>
+				<p:dataTable filterDelay="1500" reflow="true"
+					emptyMessage="Nenhuma anotação encontrada." id="dtAnotacoes"
+					value="#{anotacoesMB.entityList}" var="anotacao" rows="15"
+					paginator="true" paginatorPosition="bottom"
+					rowKey="#{anotacao}">
+					<f:facet name="header">Anotações</f:facet>
+
+
+					<p:column headerText="Ações" style="width:5% !important">
+						<p:commandButton id="btnView" icon="White fa fa-eye"
+							process="@this">
+							<p:ajax process="@this"
+								listener="#{anotacoesMB.visualizaAnotacao(anotacao)}"
+								oncomplete="PF('dlgAnotacao').show();"
+								update="lume:tabViewPaciente:pnlVisualizaAnotacao" />
+						</p:commandButton>
+					</p:column>
+					<p:column filterBy="#{anotacao.descricao}"
+						sortBy="#{anotacao.descricao}" filterMatchMode="contains"
+						width="35%" headerText="Descrição"
+						filterFunction="#{anotacaoMB.filtroSemAcento}">
+						<h:outputText value="#{anotacao.descricao}" />
+					</p:column>
+					<p:column filterBy="#{anotacao.profissional.dadosBasico.nome}"
+						sortBy="#{anotacao.profissional.dadosBasico.nome}"
+						filterMatchMode="contains" headerText="Profissional"
+						filterFunction="#{anotacaoMB.filtroSemAcento}" width="10%">
+						<h:outputText value="#{anotacao.profissional.dadosBasico.nome}" />
+					</p:column>
+					<p:column filterBy="#{anotacao.dataStr}" width="10%"
+						sortBy="#{anotacao.dataStr}" filterMatchMode="contains"
+						headerText="Data">
+						<h:outputText value="#{anotacao.dataStr}" />
+					</p:column>
+				</p:dataTable>
 			</p:outputPanel>
-
-			<p:panelGrid columns="4" layout="grid"
-				styleClass="ui-panelgrid-blank ui-fluid form-group">
-
-				<p:commandButton id="persistAnotacoes" icon="White fa fa-save"
-					actionListener="#{pacienteMB.actionPersistAnotacoes}"
-					process="@this,viewAnotacoes" value="Salvar documento"
-					styleClass="GreenButton" />
-
-			</p:panelGrid>
 
 		</div>
 	</div>
+
+	<p:dialog widgetVar="dlgAnotacao" responsive="true" modal="true"
+		appendTo=":lume" width="700px">
+		<p:ajax event="close" resetValues="true" update="@this"
+			listener="#{anotacoesMB.closeDlg}" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlVisualizaAnotacao">
+					<p:inputTextarea id="visualizaranotacao"
+						value="#{anotacoesMB.anotacaoSelecionada.descricao}"
+						disabled="true">
+					</p:inputTextarea>
+
+				</p:outputPanel>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgNovaAnotacao" responsive="true" modal="true"
+		appendTo=":lume" width="700px">
+		<p:ajax event="close" resetValues="true" update="@this"
+			listener="#{anotacoesMB.closeDlg}" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<f:facet name="header">Nova Anotação</f:facet>
+				<p:outputPanel id="pnlNovaAnotacao">
+					<p:inputTextarea rows="10" cols="5" id="novaAnotacao"
+						value="#{anotacoesMB.entity.descricao}">
+					</p:inputTextarea>
+
+				</p:outputPanel>
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+					<p:commandButton icon="White fa fa-save" value="Salvar Anotação"
+						styleClass="GreenButton" oncomplete="PF('dlgNovaAnotacao').hide()"
+						actionListener="#{anotacoesMB.actionPersist}" process="@this, novaAnotacao"
+						update="pnlNovaAnotacao" />
+
+					<p:commandButton id="fechar" icon="White fa fa-close"
+						oncomplete="PF('dlgNovaAnotacao').hide()" process="@this"
+						update="viewAnotacoes" value="Fechar" styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
 
 </ui:composition>
