@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +79,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private StringBuilder cabecalhoHtml = new StringBuilder("");
     private StringBuilder modeloHtmlSemCabecalho = new StringBuilder("");
     private StringBuilder rodapeHtml = new StringBuilder("");
+    
+    private BigDecimal somatorioValorTotal = new BigDecimal(0);
 
     private Tag tag;
     private Tag tagPlano;
@@ -125,6 +128,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
         this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
                 UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+        if(getEntityList().size() > 0) {
+            for(DocumentoEmitido doc : getEntityList()) {
+                if(doc.getValor() != 0) {
+                    somatorioValorTotal.add(new BigDecimal(doc.getValor())).setScale(2, BigDecimal.ROUND_HALF_UP);
+                }
+            }
+        }else {
+            somatorioValorTotal = new BigDecimal(0);
+        }
+        
 
     }
 
@@ -1057,6 +1070,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void setMostraLogoCentral(boolean mostraLogoCentral) {
         this.mostraLogoCentral = mostraLogoCentral;
+    }
+
+    
+    public BigDecimal getSomatorioValorTotal() {
+        return somatorioValorTotal;
+    }
+
+    
+    public void setSomatorioValorTotal(BigDecimal somatorioValorTotal) {
+        this.somatorioValorTotal = somatorioValorTotal;
     }
 
 }

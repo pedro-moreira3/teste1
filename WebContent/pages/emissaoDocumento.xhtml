@@ -12,26 +12,31 @@
 				<div class="card card-w-title">
 
 					<p:outputPanel id="pnEmissaoPrincipal" styleClass="BordNone">
-						
-						
-						
-							<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
-									styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>
-										<h1>Emissão de documentos
-											<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
-											<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('emissaoDocumento', 'titulo')}" position="bottom" />
-										</h1>								
-									</h:panelGroup>
-									<h:panelGroup>
-									<p:commandButton value="Video tutorial"
-											icon="White fa fa-youtube-play White"
-											oncomplete="PF('dlgVideo').show()"
-											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1')}"
-											process="@this,painelVideo" update="painelVideo"/>
-									</h:panelGroup>
-	
-						</p:panelGrid>	
+
+
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-10,ui-grid-col-2"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup>
+								<h1>
+									Emissão de documentos
+									<h:outputLabel class="fa fa-question" id="tooltipTitulo"
+										style="font-size:24px; margin-left:10px;" />
+									<p:tooltip for="tooltipTitulo"
+										value="#{tarifaMB.getTooltipValue('emissaoDocumento', 'titulo')}"
+										position="bottom" />
+								</h1>
+							</h:panelGroup>
+							<h:panelGroup>
+								<p:commandButton value="Video tutorial"
+									icon="White fa fa-youtube-play White"
+									oncomplete="PF('dlgVideo').show()"
+									actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/DZNYZcL_7rM?autoplay=1')}"
+									process="@this,painelVideo" update="painelVideo" />
+							</h:panelGroup>
+
+						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset>
@@ -124,7 +129,7 @@
 								</h:panelGroup>
 
 								<h:panelGroup>
-									<h:outputText for="dataFinal" value="Data de emissao até:" />
+									<h:outputText for="dataFinal" value="Data de emissão até:" />
 									<p:calendar id="dataFinal"
 										value="#{emissaoDocumentoMB.dataFim}" autocomplete="false" />
 								</h:panelGroup>
@@ -157,28 +162,25 @@
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Ações">
-							
-								
-								<p:commandButton icon="White fa fa-print" process="@this" styleClass="NavyButton"
-								update=":lume:impressaoDoc" title="Imprimir"
-								actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
-								oncomplete="PF('dlgPrint').show()"
-								 />
-								<ui:remove> 
-								<p:commandButton icon="White fa fa-copy" process="@this" styleClass="NavyButton"
-								update=":lume:dlgEmitirDocumento, :lume:dlgEmissao" title="Copiar para um novo documento "
-								actionListener="#{emissaoDocumentoMB.copiar(documento)}"
-								oncomplete="PF('dlgEmitirDocumento').show()"
-								 /> 
+
+								<p:commandButton icon="White fa fa-print" process="@this"
+									styleClass="NavyButton" update=":lume:impressaoDoc"
+									title="Imprimir"
+									actionListener="#{emissaoDocumentoMB.loadDoc(documento)}"
+									oncomplete="PF('dlgPrint').show()" />
+								<ui:remove>
+									<p:commandButton icon="White fa fa-copy" process="@this"
+										styleClass="NavyButton"
+										update=":lume:dlgEmitirDocumento, :lume:dlgEmissao"
+										title="Copiar para um novo documento "
+										actionListener="#{emissaoDocumentoMB.copiar(documento)}"
+										oncomplete="PF('dlgEmitirDocumento').show()" />
 								</ui:remove>
-								 
-								
-								
 							</p:column>
 
 							<p:column filterBy="#{documento.tipoDoc.nome}"
-								sortBy="#{documento.tipoDoc.nome}"
-								filterMatchMode="contains" headerText="Tipo do documento">
+								sortBy="#{documento.tipoDoc.nome}" filterMatchMode="contains"
+								headerText="Tipo do documento">
 								<h:outputText value="#{documento.tipoDoc.nome}" />
 							</p:column>
 
@@ -198,6 +200,33 @@
 								sortBy="#{documento.emitidoPor.dadosBasico.nome}"
 								filterMatchMode="contains" headerText="Emitido por">
 								<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{documento.emitidoPara.dadosBasico.documento}"
+								rendered="#{emissaoDocumentoMB.filtroTipoDocumento.nome eq 'Recibo'}"
+								sortBy="#{documento.emitidoPara.dadosBasico.documento}"
+								filterMatchMode="contains" headerText="CPF">
+								<h:outputText
+									value="#{documento.emitidoPara.dadosBasico.documento}" />
+							</p:column>
+
+							<p:column filterBy="#{documento.valor}"
+								rendered="#{emissaoDocumentoMB.filtroTipoDocumento.nome eq 'Recibo'}"
+								sortBy="#{documento.valor}" filterMatchMode="contains"
+								headerText="Valor">
+								<h:outputText value="#{documento.valor}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{emissaoDocumentoMB.somatorioValorTotal}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</p:column>
 
 							<p:column filterBy="#{documento.dataEmissaoStr}"
@@ -220,137 +249,153 @@
 				</p:commandLink>
 			</ui:remove>
 
-			
+
 
 		</h:inputHidden>
 
 
-	<p:dialog widgetVar="dlgPrint" responsive="true" modal="true"
-		appendTo=":lume" resizable="false"
-		onHide="PF('dlgPrint').toggleMaximize();"
-		onShow="PF('dlgPrint').toggleMaximize();">
-		<f:facet name="header">
-			<h:outputText id="headerPrint"
-				value="Imprimir" />				
-		</f:facet>
-		<p:panel  id="impressaoDocPai" style="border:0px">
-		
+		<p:dialog widgetVar="dlgPrint" responsive="true" modal="true"
+			appendTo=":lume" resizable="false"
+			onHide="PF('dlgPrint').toggleMaximize();"
+			onShow="PF('dlgPrint').toggleMaximize();">
+			<f:facet name="header">
+				<h:outputText id="headerPrint" value="Imprimir" />
+			</f:facet>
+			<p:panel id="impressaoDocPai" style="border:0px">
+
 				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogo}">
-						<table style="width: 100%; border-collapse: collapse;">
-							<thead>
-								<tr>
-									<th style="border:0px; padding: 5px; width: 10%">
-										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft" id="logo" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
-									</th>
-									<th style="border: 0px; padding: 5px; width: 90%;text-align:left">
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
-									
-									</th>	
-								
-									
-								</tr>
-								</thead>
-						</table>	
+					<table style="width: 100%; border-collapse: collapse;">
+						<thead>
+							<tr>
+								<th style="border: 0px; padding: 5px; width: 10%"><p:graphicImage
+										rendered="#{emissaoDocumentoMB.mostraLogo}" styleClass="Fleft"
+										id="logo"
+										value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}"
+										stream="false" /></th>
+								<th
+									style="border: 0px; padding: 5px; width: 90%; text-align: left">
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+
+								</th>
+
+
+							</tr>
+						</thead>
+					</table>
 				</p:outputPanel>
 				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraLogoCentral}">
 					<table style="width: 100%; border-collapse: collapse;">
-							<thead>
-								<tr>
-									<th style="border:0px; padding: 5px; width: 100%;">
-										<p:graphicImage  rendered="#{emissaoDocumentoMB.mostraLogoCentral}" id="logoCentral" value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}" stream="false" />	
-									</th>
-								</tr>
-							</thead>
-						</table>	
-				</p:outputPanel>		
-				<p:outputPanel rendered="#{!emissaoDocumentoMB.mostraLogo}">	
-						<table style="width: 100%; border-collapse: collapse;">
-							<thead>
-								<tr>									
-									<th style="border: 0px; padding: 5px; width: 100%;text-align:left">
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"  rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>				
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
-									
-									</th>
-								</tr>
-								</thead>
-						</table>			
-			</p:outputPanel>
-		
-		<h:outputText id="impressaoDoc" value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
-		<p:outputPanel rendered="#{emissaoDocumentoMB.mostraRodape}">	
-						<table style="width: 100%; border-collapse: collapse;">
-							<thead>
-								<tr>									
-									<th style="border: 0px; padding: 5px; width: 100%;text-align:center;font-size:11px;font-weight:normal !important">											
-										<p:outputLabel escape="false" value="#{cadastroEmpresaMB.entity.empStrNme} - #{cadastroEmpresaMB.entity.enderecoCompletoFormatado} - #{cadastroEmpresaMB.entity.empChaFone}&lt;br /&gt;" rendered="#{emissaoDocumentoMB.mostraRodape}"></p:outputLabel>										
-									</th>
-								</tr>
-								</thead>
-						</table>			
-			</p:outputPanel>
-		</p:panel>
+						<thead>
+							<tr>
+								<th style="border: 0px; padding: 5px; width: 100%;"><p:graphicImage
+										rendered="#{emissaoDocumentoMB.mostraLogoCentral}"
+										id="logoCentral"
+										value="../../imagens/#{cadastroEmpresaMB.entity.empStrLogoWCache}"
+										stream="false" /></th>
+							</tr>
+						</thead>
+					</table>
+				</p:outputPanel>
+				<p:outputPanel rendered="#{!emissaoDocumentoMB.mostraLogo}">
+					<table style="width: 100%; border-collapse: collapse;">
+						<thead>
+							<tr>
+								<th
+									style="border: 0px; padding: 5px; width: 100%; text-align: left">
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.empStrNme} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.enderecoCompletoFormatado} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.empChaFone} &lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraCabecalho}"></p:outputLabel>
+
+								</th>
+							</tr>
+						</thead>
+					</table>
+				</p:outputPanel>
+
+				<h:outputText id="impressaoDoc"
+					value="#{emissaoDocumentoMB.modeloHtml.toString()}" escape="false" />
+				<p:outputPanel rendered="#{emissaoDocumentoMB.mostraRodape}">
+					<table style="width: 100%; border-collapse: collapse;">
+						<thead>
+							<tr>
+								<th
+									style="border: 0px; padding: 5px; width: 100%; text-align: center; font-size: 11px; font-weight: normal !important">
+									<p:outputLabel escape="false"
+										value="#{cadastroEmpresaMB.entity.empStrNme} - #{cadastroEmpresaMB.entity.enderecoCompletoFormatado} - #{cadastroEmpresaMB.entity.empChaFone}&lt;br /&gt;"
+										rendered="#{emissaoDocumentoMB.mostraRodape}"></p:outputLabel>
+								</th>
+							</tr>
+						</thead>
+					</table>
+				</p:outputPanel>
+			</p:panel>
 			<h:panelGroup style="display:block;margin-left:3px;">
-					<p:selectBooleanCheckbox id="cabecalhoEmpresa"
-						value="#{emissaoDocumentoMB.mostraCabecalho}">
-						<p:ajax event="change" process="@this"
-							update="impressaoDocPai"
-							listener="#{emissaoDocumentoMB.montaCabecalho}" />
-					</p:selectBooleanCheckbox>
-					<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
-					
-					<p:spacer width="20" height="0" />
-					
-					<p:selectBooleanCheckbox id="logoCabecalho"
-						value="#{emissaoDocumentoMB.mostraLogo}">
-						<p:ajax event="change" process="@this"
-							update="impressaoDocPai"
-							listener="#{emissaoDocumentoMB.montaCabecalho}"
-							/>
-					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="logoCabecalho" value="Incluir logo" />	
-						
-					<p:spacer width="20" height="0" />
-					<p:selectBooleanCheckbox id="mostraLogoCentral"
-						value="#{emissaoDocumentoMB.mostraLogoCentral}">
-						<p:ajax event="change" process="@this"
-							update="impressaoDocPai"
-							listener="#{emissaoDocumentoMB.montaCabecalho}"
-							/>
-					</p:selectBooleanCheckbox>						
-					<p:outputLabel for="mostraLogoCentral" value="Incluir logo centralizada" />	
-								
-					<p:spacer width="20" height="0" />
-					<p:selectBooleanCheckbox id="rodape"
-						value="#{emissaoDocumentoMB.mostraRodape}">
-						<p:ajax event="change" process="@this"
-							update="impressaoDocPai"
-							listener="#{emissaoDocumentoMB.montaCabecalho}"
-							/>
-					</p:selectBooleanCheckbox>	
-					<p:outputLabel for="rodape" value="Incluir rodapé" />	
-					
-				</h:panelGroup>
-		
-		<p:panelGrid columns="2" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
-				<p:printer target=":lume:impressaoDocPai" />
-			</p:commandButton>
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgPrint').hide()"/>
-		</p:panelGrid>				
-	</p:dialog>
+				<p:selectBooleanCheckbox id="cabecalhoEmpresa"
+					value="#{emissaoDocumentoMB.mostraCabecalho}">
+					<p:ajax event="change" process="@this" update="impressaoDocPai"
+						listener="#{emissaoDocumentoMB.montaCabecalho}" />
+				</p:selectBooleanCheckbox>
+				<p:outputLabel for="cabecalhoEmpresa" value="Incluir cabeçalho" />
+
+				<p:spacer width="20" height="0" />
+
+				<p:selectBooleanCheckbox id="logoCabecalho"
+					value="#{emissaoDocumentoMB.mostraLogo}">
+					<p:ajax event="change" process="@this" update="impressaoDocPai"
+						listener="#{emissaoDocumentoMB.montaCabecalho}" />
+				</p:selectBooleanCheckbox>
+				<p:outputLabel for="logoCabecalho" value="Incluir logo" />
+
+				<p:spacer width="20" height="0" />
+				<p:selectBooleanCheckbox id="mostraLogoCentral"
+					value="#{emissaoDocumentoMB.mostraLogoCentral}">
+					<p:ajax event="change" process="@this" update="impressaoDocPai"
+						listener="#{emissaoDocumentoMB.montaCabecalho}" />
+				</p:selectBooleanCheckbox>
+				<p:outputLabel for="mostraLogoCentral"
+					value="Incluir logo centralizada" />
+
+				<p:spacer width="20" height="0" />
+				<p:selectBooleanCheckbox id="rodape"
+					value="#{emissaoDocumentoMB.mostraRodape}">
+					<p:ajax event="change" process="@this" update="impressaoDocPai"
+						listener="#{emissaoDocumentoMB.montaCabecalho}" />
+				</p:selectBooleanCheckbox>
+				<p:outputLabel for="rodape" value="Incluir rodapé" />
+
+			</h:panelGroup>
+
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
+					<p:printer target=":lume:impressaoDocPai" />
+				</p:commandButton>
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgPrint').hide()" />
+			</p:panelGrid>
+		</p:dialog>
 
 
 		<p:dialog id="dlgEmitirDocumento" widgetVar="dlgEmitirDocumento"
 			header="Emitir documento" responsive="true" modal="true"
 			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
 			onShow="PF('dlgEmitirDocumento').toggleMaximize();">
-			<p:ajax event="close" resetValues="true" update="dtDocumentos" listener="#{emissaoDocumentoMB.pesquisar()}"/>
+			<p:ajax event="close" resetValues="true" update="dtDocumentos"
+				listener="#{emissaoDocumentoMB.pesquisar()}" />
 			<p:outputPanel id="dlgEmissao">
 				<ui:include src="dlgemitirdocumento.xhtml" />
 				<p:panelGrid columns="2" layout="grid"
@@ -360,18 +405,20 @@
 						icon="fa fa-save"
 						actionListener="#{emissaoDocumentoMB.emitirNovoDocumento()}"
 						disabled="#{emissaoDocumentoMB.entity.id > 0}"
-						process="@this,:lume:documentoImprimir" update=":lume:documentoImprimir,dlgEmissao">
+						process="@this,:lume:documentoImprimir"
+						update=":lume:documentoImprimir,dlgEmissao">
 					</p:commandButton>
 					<p:commandButton value="Fechar" icon="fa fa-close"
 						oncomplete="PF('dlgEmitirDocumento').hide();" process="@this" />
-					
-<ui:remove>
-					<p:commandButton id="impDoc" value="Imprimir documento"
-						styleClass="NavyButton" icon="fa fa-print" oncomplete="PF('dlgPrint').show()"
-						process="@this" update=":lume:impressaoDoc"
-						actionListener="#{emissaoDocumentoMB.loadDoc(documento)}">						
-					</p:commandButton>				
-</ui:remove>
+
+					<ui:remove>
+						<p:commandButton id="impDoc" value="Imprimir documento"
+							styleClass="NavyButton" icon="fa fa-print"
+							oncomplete="PF('dlgPrint').show()" process="@this"
+							update=":lume:impressaoDoc"
+							actionListener="#{emissaoDocumentoMB.loadDoc(documento)}">
+						</p:commandButton>
+					</ui:remove>
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
