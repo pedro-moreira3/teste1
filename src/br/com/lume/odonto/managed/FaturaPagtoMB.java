@@ -1255,7 +1255,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             DocumentoEmitido de = new DocumentoEmitido(this.htmlReciboContent, documento, dominio, UtilsFrontEnd.getProfissionalLogado(), getEntity().getPaciente(), null, new Date());
-
+            de.setValor(valorTotalRecibo.doubleValue());
             DocumentoEmitidoSingleton.getInstance().getBo().persist(de);
 
         } catch (Exception e) {

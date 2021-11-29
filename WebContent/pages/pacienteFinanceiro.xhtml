@@ -325,10 +325,10 @@ hr.hrSaldo {
 					</h:outputText>
 				</p:column>
 				<p:column headerText="Status"
-					sortBy="#{fatura.subStatusFaturaString}"
-					filterBy="#{fatura.subStatusFaturaString}"
+					sortBy="#{fatura.statusFaturaCompleto}"
+					filterBy="#{fatura.statusFaturaCompleto}"
 					filterMatchMode="contains">
-					<h:outputText value="#{fatura.subStatusFaturaString}" />
+					<h:outputText value="#{fatura.statusFaturaCompleto}" />
 				</p:column>
 
 			</p:dataTable>
