@@ -124,7 +124,7 @@
 								</h:panelGroup>
 
 								<h:panelGroup>
-									<h:outputText for="dataFinal" value="Data de emissao até:" />
+									<h:outputText for="dataFinal" value="Data de emissão até:" />
 									<p:calendar id="dataFinal"
 										value="#{emissaoDocumentoMB.dataFim}" autocomplete="false" />
 								</h:panelGroup>
@@ -157,7 +157,6 @@
 							<f:facet name="header">Documentos emitidos</f:facet>
 
 							<p:column headerText="Ações">
-							
 								
 								<p:commandButton icon="White fa fa-print" process="@this" styleClass="NavyButton"
 								update=":lume:impressaoDoc" title="Imprimir"
@@ -171,9 +170,6 @@
 								oncomplete="PF('dlgEmitirDocumento').show()"
 								 /> 
 								</ui:remove>
-								 
-								
-								
 							</p:column>
 
 							<p:column filterBy="#{documento.tipoDoc.nome}"
@@ -194,10 +190,16 @@
 								<h:outputText value="#{documento.emitidoPara.dadosBasico.nome}" />
 							</p:column>
 
-							<p:column filterBy="#{documento.emitidoPor.dadosBasico.nome}"
+							<p:column filterBy="#{documento.emitidoPor.dadosBasico.nome}" 
 								sortBy="#{documento.emitidoPor.dadosBasico.nome}"
 								filterMatchMode="contains" headerText="Emitido por">
 								<h:outputText value="#{documento.emitidoPor.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{documento.emitidoPara.dadosBasico.documento}" rendered="#{emissaoDocumentoMB.filtroTipoDocumento.nome eq 'Recibo'}"
+								sortBy="#{documento.emitidoPara.dadosBasico.documento}"
+								filterMatchMode="contains" headerText="CPF">
+								<h:outputText value="#{documento.emitidoPara.dadosBasico.documento}" />
 							</p:column>
 
 							<p:column filterBy="#{documento.dataEmissaoStr}"

@@ -44,35 +44,23 @@
 						</div>
 						<div style="width:100%;margin-bottom:5px;border:solid 1px gray;padding:0;">
 							<div style="display:flex;">
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-							          Recebemos de
+							      	<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          Recebemos de: #{f.paciente.dadosBasico.nome}
 							      	</div>
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:left;">
-							          	#{f.paciente.dadosBasico.nome}
+						  	</div>
+						  	<div style="display:flex;">
+							      	<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
+							          na data de: #{faturaPagtoMB.nowDate}
 							      	</div>
 						  	</div>
 						  	<div style="display:flex;">
 							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-							          na data de
-							      	</div>
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:left;">
-							          	#{faturaPagtoMB.nowDate}
+							          inscrito no CPF/RG: #{(f.paciente.dadosBasico.documento != null ? f.paciente.dadosBasico.documento : f.paciente.dadosBasico.rg)}
 							      	</div>
 						  	</div>
 						  	<div style="display:flex;">
 							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-							          inscrito no CPF/RG
-							      	</div>
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:left;">
-							          	#{(f.paciente.dadosBasico.documento != null ? f.paciente.dadosBasico.documento : f.paciente.dadosBasico.rg)}
-						      		</div>
-						  	</div>
-						  	<div style="display:flex;">
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
-							          a importância de
-							      	</div>
-							      	<div style="width:50%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;text-align:left;">
-							      		<h:outputText value="#{valorTotalRecibo}">
+							          a importância de: <h:outputText value="#{valorTotalRecibo}">
 							      			<f:convertNumber type="currency" currencySymbol="R$"
 												maxFractionDigits="2" />
 							      		</h:outputText>
@@ -82,6 +70,13 @@
 						      		<div style="width:100%;height:24px;line-height:24px;padding:2px;padding-left:8px;padding-right:8px;">
 									Correspondente ao pagamento de tratamento odontológico.      	
 								</div>
+						  	</div>
+						  	<div style="display:flex;">
+							      	<div style="width:100%;;padding:2px;padding-left:8px;padding-right:8px;">
+							          Observações:
+							          <br /><br /><br /><br />
+							          <hr style="margin:5px;border-top: solid 1px black" />
+							      	</div>
 						  	</div>
 						</div>
 						<div style="width:100%;border:solid 1px gray;padding:0;margin:0;">
