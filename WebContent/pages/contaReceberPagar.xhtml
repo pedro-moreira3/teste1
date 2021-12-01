@@ -66,6 +66,11 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 	{
 	margin-top: -12px !important;
 }
+
+body .ui-confirm-dialog 
+	{
+	width: 50% !important;
+}
 </style>
 
 		<p:outputPanel id="viewFatura">
@@ -629,7 +634,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 										<p:column filterBy="#{lc.fatura.tipoFaturaDescricao}"
 											sortBy="#{lc.fatura.tipoFaturaDescricao}"
 											filterFunction="#{conferenciaRecebimentoMB.filtroSemAcento}"
-											filterMatchMode="contains" headerText="Tipo da Fatura">
+											filterMatchMode="contains" headerText="Tipo">
 											<h:outputText value="#{lc.fatura.tipoFaturaDescricao}"
 												title="#{lc.id}" />
 										</p:column>
@@ -704,8 +709,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 											filterMatchMode="contains">
 											<h:outputText
 												value="#{conferenciaRecebimentoMB.valorConferido(lc)}">
-												<f:convertNumber currencySymbol="R$" type="currency"
-													minFractionDigits="2" />
+												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
 											</h:outputText>
 											<f:facet name="footer">
 												<h:outputText value="Total " />
@@ -724,8 +728,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 											<h:outputText
 												rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
 												value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
-												<f:convertNumber currencySymbol="R$" type="currency"
-													minFractionDigits="2" />
+												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
 											</h:outputText>
 											<p:inputNumber id="valor"
 												rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"
@@ -1497,7 +1500,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 								<p:panelGrid columns="2" layout="grid" id="pnRecorrente"
 									styleClass="ui-panelgrid-blank form-group ui-fluid"
 									columnClasses="ui-g-6,ui-g-6">
-
+ 
 
 									<p:outputLabel for="diasRecorrente"
 										value="De quanto em quanto tempo? "
@@ -1513,10 +1516,24 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 											<f:selectItem itemValue="21" itemLabel="A cada 21 dias" />
 											<f:selectItem itemValue="28" itemLabel="A cada 28 dias" />
 											<f:selectItem itemValue="30" itemLabel="A cada 30 dias" />
+											<p:ajax process="@this"
+												update="dataRecorrenteLabel,dataRecorrentePnl" />
 										</p:selectOneMenu>
 									</h:panelGroup>
-
-
+									<h:panelGroup id="dataRecorrenteLabel">
+										<p:outputLabel for="dataRecorrente" value="Data : "
+											rendered="#{lancamentoContabilMB.diasRecorrente == 0 and lancamentoContabilMB.recorrente eq 'S'}" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField" id="dataRecorrentePnl">
+										<p:calendar id="dataRecorrente" required="true"
+											value="#{lancamentoContabilMB.dataRecorrente}"
+											pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+											locale="#{lumeSecurity.locale}"
+											timeZone="#{lumeSecurity.timeZone}" navigator="true"
+											yearRange="-100:+10"
+											rendered="#{lancamentoContabilMB.diasRecorrente == 0 and lancamentoContabilMB.recorrente eq 'S'}">
+										</p:calendar>
+									</h:panelGroup>
 
 									<p:outputLabel for="quantidadeRecorrencia"
 										rendered="#{lancamentoContabilMB.recorrente eq 'S'}"
@@ -1540,7 +1557,11 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 										value="Salvar e Continuar"
 										actionListener="#{lancamentoContabilMB.actionPersistContinuar}"
 										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples"
-										oncomplete="PF('dtLancamentoContabil').filter()" />
+										oncomplete="PF('dtLancamentoContabil').filter()">
+										<p:confirm header="Atenção" style="width:50% !important;"
+											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes. Para evitar erros, é necessário aguardar o sistema terminar o processo. Deseja continuar agora?"
+											icon="ui-icon-alert" />
+									</p:commandButton>
 
 									<p:commandButton id="persist" icon="White fa fa-save"
 										value="Salvar e Fechar"
@@ -1548,7 +1569,11 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
 										process="@this,pnRecorrente,gridDados"
 										oncomplete="PF('dtLancamentoContabil').filter();"
-										styleClass="GreenButton" />
+										styleClass="GreenButton">
+										<p:confirm header="Atenção"
+											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes.\nPara evitar erros, é necessário aguardar o sistema terminar o processo.\n Deseja continuar agora?"
+											icon="ui-icon-alert" />
+									</p:commandButton>
 
 									<p:commandButton value="Fechar" icon="White fa fa-close"
 										process="@this"
