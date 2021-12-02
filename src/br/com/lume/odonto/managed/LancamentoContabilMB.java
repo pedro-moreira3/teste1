@@ -654,8 +654,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
             this.lancamentoContabeis.forEach((lc) -> {
                 BigDecimal valor = lc.getValor();
-                if (lc.getTipo().equals("Débito") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
-                    valor = valor.multiply(new BigDecimal(-1));
                 this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
             });
         }

@@ -262,14 +262,11 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         this.setSomatorioValorTotalConferencia(new BigDecimal(0));
 
         for (Lancamento l : this.getEntityList()) {
-            this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
-            this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
+                this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
+                this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
 
-            if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) > 0) {
-                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValorComDesconto()));
-            } else {
-                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValor()));
-            }
+                    this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(this.valorConferido(l)));
+            
         }
     }
 
@@ -288,26 +285,49 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             return new BigDecimal(0);
         }
         if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return l.getValor();
+            if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+                return l.getValor().multiply(new BigDecimal(-1)) ;
+            }else {
+                return l.getValor();
+            }
         }
-        return l.getValorComDesconto();
+        if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+            return l.getValorComDesconto().multiply(new BigDecimal(-1)) ;
+        }else {
+            return l.getValorComDesconto();
+        }
     }
 
     public BigDecimal valorConferido(Lancamento l) {
         if (l.getValidadoPorProfissional() != null) {
             if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-                return l.getValor();
+                if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+                    return l.getValor().multiply(new BigDecimal(-1)) ;
+                }else {
+                    return l.getValor();
+                }
             }
-            return l.getValorComDesconto();
+            if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+                return l.getValorComDesconto().multiply(new BigDecimal(-1)) ;
+            }else {
+                return l.getValorComDesconto();
+            }
         }
-        return new BigDecimal(0);
-    }
+        return new BigDecimal(0);   }
 
     public BigDecimal valorTotal(Lancamento l) {
         if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
-            return l.getValor();
+            if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+                return l.getValor().multiply(new BigDecimal(-1)) ;
+            }else {
+                return l.getValor();
+            }
         }
-        return l.getValorComDesconto();
+        if("Débito".equals(l.getFatura().getTipoFaturaDescricao())) {
+            return l.getValorComDesconto().multiply(new BigDecimal(-1)) ;
+        }else {
+            return l.getValorComDesconto();
+        }
     }
 
     public String statusLancamentoConferencia(Lancamento lc) {
