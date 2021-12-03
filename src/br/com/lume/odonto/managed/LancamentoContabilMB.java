@@ -524,7 +524,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     //TODO mover para o singleton
     private void criarFaturaGenerica(LancamentoContabil lc) {
-
         String descricaoItem = Utils.descricaoItemFaturaGenerica(lc);
 
         try {
@@ -532,7 +531,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             SALDO tipoSaldo;
             lc.setTipo(this.getEntity().getMotivo().getTipo());
             if (lc.getTipo().equals("Débito")) {
-                //  lc.setValor((this.getEntity().getValor().negate()));
                 tipoSaldo = SALDO.SAIDA;
                 tipoFatura = TipoFatura.FATURA_GENERICA_PAGAMENTO;
             } else {
@@ -574,11 +572,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                     fatura = FaturaSingleton.getInstance().criaFaturaGenerica(FornecedorSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
                             faturaItem);
                 }
-//                } else if (tipo.equals(TipoPessoa.ORIGEM)) {
-//                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(OrigemSingleton.getInstance().getBo().findByDadosBasicos(lc.getDadosBasico()), UtilsFrontEnd.getProfissionalLogado(),
-//                            faturaItem);
-//                }
-                //
+
                 if (recorrente.equals("S")) {
                     //TODO mover isso para o singleton
                     FaturaRecorrente faturaRecorrente = new FaturaRecorrente();
@@ -605,15 +599,15 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 fatura.setTipoFatura(tipoFatura);
 
                 FaturaSingleton.getInstance().getBo().persist(fatura);
-                //Tarifa tarifa = formaPagamentoDigitacao;
-                // if(tipoFatura.equals(TipoFatura.FATURA_GENERICA_PAGAMENTO)) {
-                //     tarifa = null;
-                // }
 
                 Lancamento lancamento = new Lancamento();
                 if(i == 0) {
-                    lancamento = LancamentoSingleton.getInstance().novoLancamento(null, fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, dataRecorrente, dataRecorrente,
+                    if(recorrente.equals("S"))
+                        lancamento = LancamentoSingleton.getInstance().novoLancamento(null, fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, dataRecorrente, dataRecorrente,
                             formaPagamentoDigitacao, UtilsFrontEnd.getProfissionalLogado(), false, "", lc.getDescricao(), lc.getMotivo());
+                    else
+                        lancamento = LancamentoSingleton.getInstance().novoLancamento(null, fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, lc.getData(), lc.getData(),
+                                formaPagamentoDigitacao, UtilsFrontEnd.getProfissionalLogado(), false, "", lc.getDescricao(), lc.getMotivo());
                 }else {
                     lancamento = LancamentoSingleton.getInstance().novoLancamento(null, fatura, lc.getValor(), formaPagamentoDigitacao.getTipo(), 1, 1, lc.getData(), lc.getData(),
                             formaPagamentoDigitacao, UtilsFrontEnd.getProfissionalLogado(), false, "", lc.getDescricao(), lc.getMotivo());
@@ -622,7 +616,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 lc.setLancamento(lancamento);
 
                 lancamento = LancamentoSingleton.getInstance().confereRetornaLancamento(lancamento, UtilsFrontEnd.getProfissionalLogado());
-
                 lancamento.calculaStatusESubStatus();
 
                 FaturaSingleton.getInstance().atualizarStatusFatura(fatura, UtilsFrontEnd.getProfissionalLogado());
@@ -630,7 +623,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 if(diasRecorrente != 0) {
                     c.setTime(lc.getData());
                     c.add(Calendar.DAY_OF_MONTH, diasRecorrente);
-                }else if(i == 0){
+                }else if(i == 0 && dataRecorrente != null){
                     c.setTime(dataRecorrente);
                     c.add(Calendar.MONTH, 1);
                 }else {
@@ -639,9 +632,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 }
                 
                 lc.setData(c.getTime());
-
-            }   //  
-
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
@@ -654,8 +645,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
             this.lancamentoContabeis.forEach((lc) -> {
                 BigDecimal valor = lc.getValor();
-                if (lc.getTipo().equals("Débito") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
-                    valor = valor.multiply(new BigDecimal(-1));
                 this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
             });
         }
