@@ -781,7 +781,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							rendered="#{reciboRepasseProfissionalMB.showIfCalculo(reciboRepasseProfissionalMB.entity)}"
 							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
 							var="reciboLancamento" filterDelay="1000" reflow="true"
-							emptyMessage="Nenhum repasse encontrado"
+							emptyMessage="Nenhum repasse encontrado" widgetVar="dtReciboRepasseLancamentos"
 							id="dtReciboRepasseLancamentos" rows="15" paginator="true"
 							paginatorPosition="bottom" rowKey="#{reciboLancamento}">
 							<f:facet name="header">
@@ -1917,8 +1917,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<p:column headerText="Ações" width="15%">
 									<p:commandButton title="Visualizar Recibo"
 										styleClass="NavyButton" icon="fa fa-eye" process="@this"
-										update=":lume:visualizarReciboPnl"
-										action="#{reciboRepasseProfissionalMB.preparaVisualizacao(recibo)}" />
+										update=":lume:visualizarReciboPnl, :lume:dtReciboRepasseLancamentos"
+										action="#{reciboRepasseProfissionalMB.preparaVisualizacao(recibo)}"
+										oncomplete="PF('dtReciboRepasseLancamentos').filter();"/>
 									<p:commandButton title="Pagar" styleClass="GreenButton"
 										icon="fa fa-check" oncomplete="PF('dlgConfirmarPagamanto').show();"
 										actionListener="#{reciboRepasseProfissionalMB.preparaAprovarRecibo(recibo)}"
