@@ -194,7 +194,9 @@
 								process="@this,:lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples" title="#{f.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPacienteSemFinanceiro(f.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples,:lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								update=":lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples,:lume:tabViewPaciente:pnDadosPaciente, 
+								:lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente, 
+								:lume:tabViewPaciente:pnlIndicacao" />
 
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"

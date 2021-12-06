@@ -19,7 +19,6 @@ import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
-import br.com.lume.pacienteAnotacao.PacienteAnotacaoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 /**
@@ -33,6 +32,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     private Logger log = Logger.getLogger(TabPacienteMB.class);
 
+    
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
@@ -53,9 +53,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     @ManagedProperty(value = "#{evolucaoMB}")
     private EvolucaoMB evolucaoMB;
-    
-    @ManagedProperty(value = "#{anotacoesMB}")
-    private AnotacoesMB anotacoesMB;
 
     @ManagedProperty(value = "#{pacienteFinanceiroMB}")
     private PacienteFinanceiroMB pacienteFinanceiroMB;
@@ -108,12 +105,12 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
         }else if("Anotações".equals(event.getTab().getTitle())) {
-            anotacoesMB.setEntityList(PacienteAnotacaoSingleton.getInstance().getBo().listByPaciente(pacienteMB.getEntity()));
+            pacienteMB.carregarAnotacoes();
         }else if("Documentos".equals(event.getTab().getTitle())) {
             pacienteMB.carregarDocumentosPaciente();
         }
     }
-
+    
 //    public void refreshDadosPaciente() {
 //        try {
 //            if (pacienteMB.getEntity() != null && pacienteMB.getEntity().getId() != null && pacienteMB.getEntity().getId() > 0) {
@@ -268,14 +265,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     }
 
     
-    public AnotacoesMB getAnotacoesMB() {
-        return anotacoesMB;
-    }
-
-    
-    public void setAnotacoesMB(AnotacoesMB anotacoesMB) {
-        this.anotacoesMB = anotacoesMB;
-    }
 
 
 }
