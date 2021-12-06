@@ -21,7 +21,10 @@
 	<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
 		onHide="PF('dlgFichaPaciente').toggleMaximize();onHidePacienteFicha();"
 		onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
-		appendTo=":lume">
+		appendTo=":lume" >
+		<p:ajax event="close" resetValues="true"
+				update="@this,:lume:tabViewPaciente:pnDadosPaciente"
+				listener="#{pacienteMB.closeDlg}" />
 		<f:facet name="header">
 			<p:outputPanel id="pnPrincipalFichaHeader">
 				<h:outputText
