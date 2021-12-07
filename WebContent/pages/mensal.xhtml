@@ -31,7 +31,7 @@
 								library="images" />
 						</div>
 						<br /> <br /> <br /> <br /> <br /> <br />
-						<h:panelGroup >
+						<h:panelGroup rendered="#{mensalMB.subscriptionResponse.recentInvoices != null and mensalMB.subscriptionResponse.recentInvoices[0].status eq 'expired' and mensalMB.entidadeSelecionada.isValido}">
 							<p
 								style="font-size: 16px; font-style: italic; margin-bottom: 5px;!important">
 								<b>* ATENÇÃO: o desbloqueio pode levar até 30 minutos para
