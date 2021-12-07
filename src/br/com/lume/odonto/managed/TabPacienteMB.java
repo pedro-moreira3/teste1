@@ -56,6 +56,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     @ManagedProperty(value = "#{pacienteFinanceiroMB}")
     private PacienteFinanceiroMB pacienteFinanceiroMB;
+    
+    @ManagedProperty(value = "#{anotacoesMB}")
+    private AnotacoesMB anotacoesMB;
 
     private org.primefaces.component.tabview.TabView tabview = null;   
 
@@ -105,7 +108,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
         }else if("Anotações".equals(event.getTab().getTitle())) {
-            pacienteMB.carregarAnotacoes();
+            anotacoesMB.carregarAnotacoes(getPacienteMB().getEntity());
         }else if("Documentos".equals(event.getTab().getTitle())) {
             pacienteMB.carregarDocumentosPaciente();
         }
@@ -262,6 +265,16 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
+    }
+
+    
+    public AnotacoesMB getAnotacoesMB() {
+        return anotacoesMB;
+    }
+
+    
+    public void setAnotacoesMB(AnotacoesMB anotacoesMB) {
+        this.anotacoesMB = anotacoesMB;
     }
 
     
