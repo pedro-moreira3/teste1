@@ -1055,6 +1055,7 @@ public class Exportacoes implements Serializable {
                 table.getRowData();
 
                 List<UIColumn> tabelaColunas = table.getColumns();
+                tabelaColunas.remove(0);
                 
                 cont = deducoes = 0;
                 bDeducoes = true;
