@@ -303,9 +303,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
-    public void carregarAnotacoes() {
-        this.editorAnotacoes.setSubmittedValue(this.getEntity().getAnotacoes());
-    }
+    
 
     public StreamedContent getImagemUsuario() {
         try {

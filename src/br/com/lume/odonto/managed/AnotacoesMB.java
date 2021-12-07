@@ -46,6 +46,10 @@ public class AnotacoesMB extends LumeManagedBean<PacienteAnotacao> {
     public void actionNew(ActionEvent event) {
         this.setEntity(new PacienteAnotacao());
     }
+    
+    public void carregarAnotacoes(Paciente paciente) {
+        this.setEntityList(PacienteAnotacaoSingleton.getInstance().getBo().listByPaciente(paciente));
+    }
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -75,9 +79,6 @@ public class AnotacoesMB extends LumeManagedBean<PacienteAnotacao> {
         this.anotacaoSelecionada = anotacao;
     }
     
-    public static void main(String[] args) {
-        atualizaAnotacaoBD();
-    }
     
     public static void atualizaAnotacaoBD() {
         PacienteAnotacao pan = new PacienteAnotacao();
