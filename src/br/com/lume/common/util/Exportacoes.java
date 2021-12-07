@@ -1265,7 +1265,7 @@ public class Exportacoes implements Serializable {
 
         int quantidadeLinhas = tabela.getRowCount();
 
-        if (quantidadeLinhas > 1) {
+        if (quantidadeLinhas > 0) {
             for (int i = 0; i < 1; i++) {
 
                 tabela.setRowIndex(i);
