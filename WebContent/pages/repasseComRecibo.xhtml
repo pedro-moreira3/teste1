@@ -1727,7 +1727,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															styleClass="GreenSplitButton"
 															actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('xls')}"
 															ajax="false"
-															process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+															process=":lume:dtPrincipalRepasseDiaria, @this"
 															update="@this" immediate="true"
 															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -1737,8 +1737,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															<p:menuitem value="Exportar tabela para PDF"
 																icon="fa fa fa-file-pdf-o"
 																actionListener="#{repasseProfissionalComReciboMB.exportarTabelaDiaria('pdf')}"
-																ajax="false"
-																process=":lume:tabViewRepasseProfissional:dtPrincipalRepasseDiaria, @this"
+																ajax="false" process=":lume:dtPrincipalRepasseDiaria, @this"
 																immediate="true"
 																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 																<p:fileDownload
@@ -1766,8 +1765,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												binding="#{repasseProfissionalComReciboMB.tabelaRepasseDiaria}"
 												selection="#{repasseProfissionalComReciboMB.diariasSelecionadas}">
 												<f:facet name="header">Diárias</f:facet>
-												<p:column selectionMode="multiple" style="width:16px;" />
-												<p:column width="80" headerText="Ações">
+												<p:column selectionMode="multiple" style="width:16px;" exportable="false" />
+												<p:column width="80" headerText="Ações" exportable="false">
 													<p:commandButton icon="fa fa-eye"
 														process="@this" title="Editar Diária" 
 														update=":lume:viewMarcacaoPonto, :lume:pnlPonto, :lume:pnlPontoHeader"
@@ -1778,10 +1777,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{diaria.profissional.dadosBasico.prefixoNome}"
 													sortBy="#{diaria.profissional.dadosBasico.prefixoNome}"
 													filterMatchMode="contains"
+													headerText="Dentista Executor"
 													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Dentista Executor" />
-													</f:facet>
 													<h:outputText
 														value="#{diaria.profissional.dadosBasico.prefixoNome}" />
 												</p:column>
@@ -1789,10 +1786,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{diaria.allPTPsDiaria}"
 													sortBy="#{diaria.allPTPsDiaria}"
 													filterMatchMode="contains"
+													headerText="Procedimentos executados no dia"
 													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Procedimentos executados no dia" />
-													</f:facet>
 													<h:outputText
 														value="#{diaria.allPTPsDiaria}" />
 												</p:column>
