@@ -1016,7 +1016,7 @@ public class Exportacoes implements Serializable {
     private ByteArrayInputStream exportarTabelaRepassePDF(String header, DataTable table, 
             List<RepasseFaturasLancamento> repasses) {
         try {
-            int colunasValidas = 24;
+            int colunasValidas = 25;
             Document documento = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
             ByteArrayOutputStream outputData = new ByteArrayOutputStream();
             PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
@@ -1055,7 +1055,7 @@ public class Exportacoes implements Serializable {
                 table.getRowData();
 
                 List<UIColumn> tabelaColunas = table.getColumns();
-                tabelaColunas.remove(0);
+//                tabelaColunas.remove(0);
                 
                 cont = deducoes = 0;
                 bDeducoes = true;
