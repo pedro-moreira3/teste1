@@ -111,7 +111,7 @@ public class Exportacoes implements Serializable {
             }
 
             for (int j = 0; j < colunasValidas.size(); j++) {
-
+                    
                 if (i == 0) {
 
                     styleTitulo.setAlignment(HorizontalAlignment.CENTER);
@@ -131,7 +131,7 @@ public class Exportacoes implements Serializable {
 
                 HtmlOutputText dadoColuna = null;
                 Object obj = tabelaColunas.get(colunasValidas.get(j)).getSortBy();
-
+                
                 List children = tabelaColunas.get(colunasValidas.get(j)).getChildren();
                 if (children != null && !children.isEmpty()) {
                     if (children.get(0) instanceof HtmlOutputText)
@@ -1261,7 +1261,6 @@ public class Exportacoes implements Serializable {
     
     
     private ArrayList<Integer> validarColunas(DataTable tabela) {
-
         ArrayList<Integer> colunasValidas = new ArrayList<Integer>();
 
         int quantidadeLinhas = tabela.getRowCount();
@@ -1273,15 +1272,14 @@ public class Exportacoes implements Serializable {
                 tabela.getRowData();
 
                 List<UIColumn> tabelaColunas = tabela.getColumns();
-
+                
                 for (int j = 0; j < tabelaColunas.size(); j++) {
-
-                    if (tabelaColunas.get(j).isExportable()) {
+                    
+                    if (tabelaColunas.get(j).isExportable() && tabelaColunas.get(j).isRendered()) {
 
                         if (!((tabelaColunas.get(j).getChildren().toString().contains("HtmlPanelGroup")))) {
                             colunasValidas.add(j);
                         }
-
                     }
                 }
 

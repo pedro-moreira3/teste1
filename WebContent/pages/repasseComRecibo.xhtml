@@ -777,13 +777,42 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							</p:panel>
 						</p:panelGrid>
 
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{reciboRepasseProfissionalMB.exportarTabela('xls')}"
+									ajax="false" process="dtReciboRepasseLancamentos,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{reciboRepasseProfissionalMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{reciboRepasseProfissionalMB.exportarTabela('pdf')}"
+										ajax="false" process="dtReciboRepasseLancamentos,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{reciboRepasseProfissionalMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+						
 						<p:dataTable 
 							rendered="#{reciboRepasseProfissionalMB.showIfCalculo(reciboRepasseProfissionalMB.entity)}"
 							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
 							var="reciboLancamento" filterDelay="1000" reflow="true"
 							emptyMessage="Nenhum repasse encontrado" widgetVar="dtReciboRepasseLancamentos"
 							id="dtReciboRepasseLancamentos" rows="15" paginator="true"
-							paginatorPosition="bottom" rowKey="#{reciboLancamento}">
+							paginatorPosition="bottom" rowKey="#{reciboLancamento}"
+							binding="#{reciboRepasseProfissionalMB.tabelaLancamentosRecibos}">
+							
 							<f:facet name="header">
 								<h:outputText value="Repasses de Profissionais" />
 							</f:facet>
