@@ -831,8 +831,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(
                                 new BigDecimal(0)) != 0) {
                             lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
-                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(lancamentosDeOrigem.get(cont).getValor(), 4, BigDecimal.ROUND_HALF_UP));
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos());
+                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(
+                                            new BigDecimal(fatura.getLancamentos().size()), 4, BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP));
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().multiply(
+                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercCustoDireto().divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP)));
                         } else {
                             lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(new BigDecimal(0));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
@@ -1184,8 +1186,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if(repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null && repasseFaturas.getFaturaOrigem().getSubStatusFatura() != null) {
             if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
                 pendencias.add("Observação: Procedimento está em uma fatura com planejamento pendente.");
-            }else if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_CONFERIR)) {
-                pendencias.add("Observação:Recebimento à conferir.");
+            }else if(!repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.VALIDADO)) {
+                pendencias.add("Observação: Recebimento à conferir.");
             }
         }
 
