@@ -305,7 +305,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 recibosAgrupados.add(entry.getValue());
 
             quantidadeRepasses = recibosAgrupados.size();
-
+            getEntity().getReciboLancamentos().sort((l1,l2) -> l1.getDados().getPaciente().compareTo(l2.getDados().getPaciente()));
         }
         
         if(showIfCalculo(recibo))
