@@ -237,7 +237,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     public Double getValorLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboValores.get(profissional);
     }
-
+    
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
         setEntity(recibo);
         if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
@@ -305,8 +305,13 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 recibosAgrupados.add(entry.getValue());
 
             quantidadeRepasses = recibosAgrupados.size();
-
+            getEntity().getReciboLancamentos().sort((l1,l2) -> l1.getDados().getPaciente().compareTo(l2.getDados().getPaciente()));
         }
+        
+        if(showIfCalculo(recibo))
+            PrimeFaces.current().executeScript("PF('dtReciboRepasseLancamentos').filter();");
+        else if(showIfDiaria(recibo))
+            PrimeFaces.current().executeScript("PF('dtReciboRepasseDiarias').filter();");
         PrimeFaces.current().executeScript("PF('dlgVisualizarRecibo').show()");
     }
 
