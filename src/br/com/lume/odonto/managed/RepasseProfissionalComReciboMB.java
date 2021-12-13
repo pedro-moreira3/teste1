@@ -1153,13 +1153,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
             pendencias.add("Procedimento ainda não executado;");
         }
-        //if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {    
-        //    pendencias.add("Paciente ainda não pagou o procedimento;");
-        // }
         
-        
-        
-
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
             if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(
                     new BigDecimal(0)) == 0)) {
@@ -1181,7 +1175,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         
         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-
         
         if(repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null && repasseFaturas.getFaturaOrigem().getSubStatusFatura() != null) {
             if(repasseFaturas.getFaturaOrigem().getSubStatusFatura().contains(SubStatusFatura.A_PLANEJAR)) {
