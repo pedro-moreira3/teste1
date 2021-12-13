@@ -65,7 +65,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     List<ReciboRepasseProfissionalLancamento> recibosAgrupados;
 
     //EXPORTAÇÃO TABELA
-    private DataTable tabelaLancamentos, tabelaRecibos;
+    private DataTable tabelaLancamentos, tabelaRecibos, tabelaLancamentosRecibos;
 
     private int quantidadeRepasses = 0;
     
@@ -237,7 +237,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     public Double getValorLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboValores.get(profissional);
     }
-
+    
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
         setEntity(recibo);
         if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
@@ -305,8 +305,13 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 recibosAgrupados.add(entry.getValue());
 
             quantidadeRepasses = recibosAgrupados.size();
-
+            getEntity().getReciboLancamentos().sort((l1,l2) -> l1.getDados().getPaciente().compareTo(l2.getDados().getPaciente()));
         }
+        
+        if(showIfCalculo(recibo))
+            PrimeFaces.current().executeScript("PF('dtReciboRepasseLancamentos').filter();");
+        else if(showIfDiaria(recibo))
+            PrimeFaces.current().executeScript("PF('dtReciboRepasseDiarias').filter();");
         PrimeFaces.current().executeScript("PF('dlgVisualizarRecibo').show()");
     }
 
@@ -469,6 +474,10 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         return aplicaHora(data, 23, 59, 59, 999);
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Recibo dos profissionais", tabelaLancamentosRecibos, type);
+    }
+    
     private Date aplicaHora(Date data, int hora, int minuto, int segundo, int millis) {
         if (data == null)
             return null;
@@ -689,6 +698,14 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setDataRepassar(Date dataRepassar) {
         this.dataRepassar = dataRepassar;
+    }
+
+    public DataTable getTabelaLancamentosRecibos() {
+        return tabelaLancamentosRecibos;
+    }
+
+    public void setTabelaLancamentosRecibos(DataTable tabelaLancamentosRecibos) {
+        this.tabelaLancamentosRecibos = tabelaLancamentosRecibos;
     }
 
 }

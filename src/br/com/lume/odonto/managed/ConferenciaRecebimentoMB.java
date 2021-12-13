@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.util.SystemOutLogger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 
@@ -208,25 +209,6 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                 if(l.getFatura().getFaturaRecorrente() != null && l.getFatura().getFaturaRecorrente().getQuantidadeRecorrencia() == 0) {
                     FaturaSingleton.getInstance().criaFaturaRecorrente(l.getFatura(),UtilsFrontEnd.getProfissionalLogado());
                 }
-                
-                if (l.getFatura().getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) {
-                    PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
-                    List<PlanoTratamentoProcedimento> ptps = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(pt);
-                    
-                    for (PlanoTratamentoProcedimento ptp : ptps){
-                        try {
-                            if(ptp.getDentistaExecutor() != null)
-                                RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura(), UtilsFrontEnd.getEmpresaLogada());
-                        }catch (Exception e) {
-                            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-                            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                
-                
-                
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
