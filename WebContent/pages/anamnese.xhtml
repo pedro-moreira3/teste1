@@ -228,18 +228,18 @@
 									<p:panelGrid columns="12" layout="grid" 
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTextoLivre}">
-											<p:outputLabel escape="false" value="#{anamnese.pergunta.descricaoComQuebraLinha}" />											
+											<p:outputLabel escape="false" value="#{anamnese.pergunta.descricaoComQuebraLinha}" style="font-size: 12px; !important"/>											
 										</p:panelGrid>
 									
 										<p:panelGrid columns="2" layout="grid" 
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}">
 											<p:outputLabel for="texte"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao}" style="font-size: 12px; !important"/>
 											<h:panelGroup>
 												<p:inputText id="texte" value="#{anamnese.resposta}"
 													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
@@ -252,10 +252,11 @@
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
 											<p:outputLabel for="onMenu" rendered="#{!pacienteMB.abrirComoImpressao}"
-												value="#{anamnese.pergunta.descricao} (Marque apenas uma resposta)" />
+												value="#{anamnese.pergunta.descricao} (Marque apenas uma resposta)" 
+												style="font-size: 12px; !important"/>
 											<h:panelGroup rendered="#{!pacienteMB.abrirComoImpressao}">
 												<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
 													style="width: 340px;" converter="resposta"
@@ -282,17 +283,18 @@
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
 											<p:outputLabel for="checkBox"
-												value="#{anamnese.pergunta.descricao} (Marque quantas respostas quiser)." />
+												value="#{anamnese.pergunta.descricao} (Marque quantas respostas quiser)." 
+												style="font-size: 12px; !important"/>
 											<h:panelGroup>
 												<p:selectManyCheckbox id="checkBox"
 													value="#{anamnese.respostas}"
 													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
 													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-													layout="responsive" columns="3">
+													layout="grid" columns="3"  style="font-size: 12px; !important">
 													<f:selectItems value="#{anamnese.pergunta.respostas}"
 														var="resposta" itemLabel="#{resposta.descricao}"
 														itemValue="#{resposta.descricao}" />
@@ -304,15 +306,16 @@
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
 											<p:outputLabel for="onRadio"
-												value="#{anamnese.pergunta.descricao} (Marque sim ou não)." />
+												value="#{anamnese.pergunta.descricao} (Marque sim ou não)."
+												style="font-size: 12px; !important" />
 											<h:panelGroup>
 												<h:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
 													disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
 													required="#{anamnese.pergunta.requerida and !pacienteMB.abrirComoImpressao}"
-													style="font-size: 16px; !important"													
+													style="font-size: 12px; !important;margin-top:-10px !important;"													
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
 													<f:selectItem itemLabel="Sim" itemValue="Sim" />
 													<f:selectItem itemLabel="Não" itemValue="Não" />
@@ -324,10 +327,11 @@
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;"
+											style="border:0px none; background-color:transparent;margin-top:-20px !important;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}">
 											<p:outputLabel for="numero"
-												value="#{anamnese.pergunta.descricao}" />
+												value="#{anamnese.pergunta.descricao}" 
+												style="font-size: 12px; !important"/>
 											<h:panelGroup>
 												<p:inputText value="#{anamnese.resposta}"
 													style="width: 340px;" disabled="#{pacienteMB.readonly or pacienteMB.abrirComoImpressao}"
