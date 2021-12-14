@@ -57,7 +57,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					<p:autoComplete dropdown="true" queryDelay="1000"
 						minQueryLength="3" value="#{retornoMB.entity.paciente}"
 						completeMethod="#{retornoMB.geraSugestoesPaciente}" var="p"
-						itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
+						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 						converter="paciente" required="true" size="46" scrollHeight="400"
 						disabled="#{retornoMB.entity.paciente != null}">
 						<p:column headerText="Código" style="text-align: center;">
