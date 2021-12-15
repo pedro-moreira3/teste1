@@ -58,6 +58,7 @@ import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.repasse.bo.RepasseFaturasBO;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -830,11 +831,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
                         if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(
                                 new BigDecimal(0)) != 0) {
-                            lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
-                                    lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(
-                                            new BigDecimal(fatura.getLancamentos().size()), 4, BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP));
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().multiply(
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercCustoDireto().divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP)));
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(
+                                            new BigDecimal(fatura.getLancamentos().size()), 4, BigDecimal.ROUND_HALF_UP));
+                            lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado()
+                                    .divide(lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos(), 4, BigDecimal.ROUND_HALF_UP));
                         } else {
                             lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(new BigDecimal(0));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
