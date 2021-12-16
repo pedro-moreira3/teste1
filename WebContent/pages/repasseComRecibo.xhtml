@@ -1938,7 +1938,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<f:facet name="header">
 									<h:outputText value="Recibos de Repasses" />
 								</f:facet>
-								<p:column headerText="Ações" width="15%">
+								<p:column headerText="Ações" width="10%">
 									<p:commandButton title="Visualizar Recibo"
 										styleClass="NavyButton" icon="fa fa-eye" process="@this"
 										update=":lume:visualizarReciboPnl, :lume:dtReciboRepasseLancamentos"
@@ -1961,12 +1961,12 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									</p:commandButton>
 								</p:column>
 								<p:column headerText="Profissional" filterMatchMode="contains"
-									width="20%" filterBy="#{recibo.profissional.dadosBasico.nome}"
+									width="15%" filterBy="#{recibo.profissional.dadosBasico.nome}"
 									sortBy="#{recibo.profissional.dadosBasico.nome}">
 									<h:outputText value="#{recibo.profissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Descrição" filterMatchMode="contains"
-									width="20%" filterBy="#{recibo.descricao}"
+									width="15%" filterBy="#{recibo.descricao}"
 									sortBy="#{recibo.descricao}">
 									<h:outputText value="#{recibo.descricao}" />
 								</p:column>
@@ -1975,7 +1975,12 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<p:column headerText="Qtde. Repasses/Diárias" filterMatchMode="contains"
+								<p:column headerText="Data de Pagamento" filterMatchMode="contains"
+									width="10%" filterBy="#{recibo.dataPagamentoStr}"
+									sortBy="#{recibo.dataPagamento}">
+									<h:outputText value="#{recibo.dataPagamentoStr}" />
+								</p:column>
+								<p:column headerText="Qtde. Repasses/ Diárias" filterMatchMode="contains"
 									width="5%" filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
