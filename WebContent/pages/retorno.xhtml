@@ -273,6 +273,11 @@
 								filterMatchMode="contains" headerText="Data do Agendamento">								
 								<h:outputText value="#{retorno.agendamento.inicioStr}" />
 							</p:column>
+							<p:column filterBy="#{retorno.dataProximoAgendamento}"
+								sortBy="#{retorno.dataProximoAgendamento}"
+								filterMatchMode="contains" headerText="Data do Próximo Agendamento">								
+								<h:outputText value="#{retorno.dataProximoAgendamento}" />
+							</p:column>
 
 						</p:dataTable>
 					</p:outputPanel>
