@@ -73,6 +73,7 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.DominioAux;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.MotivoInativacaoPaciente;
 import br.com.lume.odonto.entity.Paciente;
@@ -338,6 +339,18 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public boolean showOutros() {
         if (indicacao != null) {
             if (indicacao.getNome().equals("Outros")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean showPerfilInstagram() {
+        if(getEntity().getDominioaux() == null) {
+            getEntity().setDominioaux(new DominioAux());
+        }
+        if (indicacao != null) {
+            if (indicacao.getNome().equals("Instagram")) {
                 return true;
             }
         }
