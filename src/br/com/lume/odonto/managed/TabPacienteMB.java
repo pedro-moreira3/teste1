@@ -221,6 +221,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         try {
             this.pacienteFinanceiroMB.setDisableFinanceiro(false);
             this.pacienteMB.setEntity(paciente);
+            System.out.println(this.pacienteMB.getEntity().getDadosBasico().getDocumento());
             this.pacienteMB.setIndicacao(paciente.getIndicacaoDominio());
             this.tabview.setActiveIndex(0);
         } catch (Exception e) {

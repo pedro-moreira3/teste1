@@ -135,7 +135,7 @@
 							filterMatchMode="contains" headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
-								process="@this" title="#{paciente.id}"
+								process="@this" title="#{paciente.id}" update=":lume:tabViewPaciente:documento"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
 								oncomplete="attTabViewPaciente();" />
 						</p:column>
