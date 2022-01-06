@@ -28,10 +28,12 @@
 								<div
 									style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
 									<table style="width: 100%;">
-										<tr >
-											<td style="width: 220px;"><h:outputText rendered="#{pacienteMB.entity.id != null}" value="Código Automático: #{pacienteMB.entity.id}" /></td>											
+										<tr>
+											<td style="width: 220px;"><h:outputText
+													rendered="#{pacienteMB.entity.id != null}"
+													value="Código Automático: #{pacienteMB.entity.id}" /></td>
 										</tr>
-									</table>	
+									</table>
 									<table style="width: 100%;">
 										<tr>
 											<td style="width: 60px;"><h:outputText value="Código: " /></td>
@@ -121,8 +123,7 @@
 							<p:inputText id="nome"
 								value="#{pacienteMB.entity.dadosBasico.nome}" maxlength="100" />
 
-							<p:outputLabel for="nomePreferencial"
-								value="Nome Preferencial: "
+							<p:outputLabel for="nomePreferencial" value="Nome Preferencial: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="nomePreferencial"
 								value="#{pacienteMB.entity.dadosBasico.nomePreferencial}"
@@ -140,13 +141,12 @@
 									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
 									styleClass="GreenButton" />
 							</h:panelGroup>
-							<p:outputLabel for="telResidencia"
-								value="Segundo telefone: "
+							<p:outputLabel for="telResidencia" value="Segundo telefone: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="telResidencia" maxlength="20"
 								value="#{pacienteMB.entity.dadosBasico.telefone}"
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-								rendered="#{pacienteMB.visivelDadosPaciente}" />	
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="nomeMae" value="Nome da Mãe: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
@@ -186,7 +186,8 @@
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White"
 									actionListener="#{pacienteMB.actionBuscaCep}"
-									update="endereco, bairro, cidade, estado" process="@this, @parent" />
+									update="endereco, bairro, cidade, estado"
+									process="@this, @parent" />
 							</h:panelGroup>
 
 							<p:outputLabel for="endereco" value="Endereço: "
@@ -238,11 +239,12 @@
 								locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
-								<p:ajax event="dateSelect" update="lblResponsavel,lblDocumento,idade"
-									listener="#{pacienteMB.validaIdade}" process="@this,idade"/>
+								<p:ajax event="dateSelect"
+									update="lblResponsavel,lblDocumento,idade"
+									listener="#{pacienteMB.validaIdade}" process="@this,idade" />
 							</p:calendar>
-							
-									
+
+
 
 							<p:outputLabel for="sexo" value="Sexo: " />
 							<p:selectOneRadio id="sexo"
@@ -250,34 +252,37 @@
 								<f:selectItem itemLabel="Masculino" itemValue="M" />
 								<f:selectItem itemLabel="Feminino" itemValue="F" />
 							</p:selectOneRadio>
-	
+
 							<p:outputLabel for="particularidades" value="Particularidades: " />
 							<p:inputTextarea id="particularidades" rows="3" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.particularidades}"
 								maxlength="500" />
-							
-							<p:outputLabel for="profissao" value="Profissão:"/>
-							<p:inputText id="profissao" value="#{pacienteMB.entity.dadosBasico.profissao}"/>
-							
-							<p:outputLabel for="empresaOndeTrabalha" value="Empresa onde trabalha:"/>
+
+							<p:outputLabel for="profissao" value="Profissão:" />
+							<p:inputText id="profissao"
+								value="#{pacienteMB.entity.dadosBasico.profissao}" />
+
+							<p:outputLabel for="empresaOndeTrabalha"
+								value="Empresa onde trabalha:" />
 							<p:inputTextarea id="empresaOndeTrabalha" rows="2" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.empresaOndeTrabalha}"
-								maxlength="500" />							
+								maxlength="500" />
 							<p:outputLabel for="estadoCivil" value="Estado Civil: "
-									rendered="#{pacienteMB.visivelDadosPaciente}" />
-							<p:selectOneMenu id="estadoCivil" value="#{pacienteMB.estadoCivil}"
-									converter="dominio" autoWidth="false"
-									rendered="#{pacienteMB.visivelDadosPaciente}">
-									<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-									<f:selectItems value="#{pacienteMB.listaEstadoCivil}" var="estadoCivil"
-										itemValue="#{estadoCivil}" itemLabel="#{estadoCivil.nome}" />	
-									<p:ajax event="itemSelect" process="@this"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectOneMenu id="estadoCivil"
+								value="#{pacienteMB.estadoCivil}" converter="dominio"
+								autoWidth="false" rendered="#{pacienteMB.visivelDadosPaciente}">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+								<f:selectItems value="#{pacienteMB.listaEstadoCivil}"
+									var="estadoCivil" itemValue="#{estadoCivil}"
+									itemLabel="#{estadoCivil.nome}" />
+								<p:ajax event="itemSelect" process="@this"
 									update="legado,pnlPacAntigo"
-									listener="#{pacienteMB.mudaEstadoCivil}" />								
+									listener="#{pacienteMB.mudaEstadoCivil}" />
 							</p:selectOneMenu>
-								
-							<p:outputLabel id="idade"  value="#{pacienteMB.idadeDoPaciente()}" />	
-								
+
+							<p:outputLabel id="idade" value="#{pacienteMB.idadeDoPaciente()}" />
+
 						</p:panelGrid>
 					</p:fieldset>
 				</p:panelGrid>
@@ -323,10 +328,11 @@
 								scrollHeight="400" maxlength="200" minQueryLength="3"
 								rendered="#{pacienteMB.visivelDadosPaciente}">
 							</p:autoComplete>
-							
-							<p:outputLabel for="carteiraTitularConvenio" value="Carteira do titular do convênio:"/>
+
+							<p:outputLabel for="carteiraTitularConvenio"
+								value="Carteira do titular do convênio:" />
 							<p:inputText id="carteiraTitularConvenio"
-								value="#{pacienteMB.entity.carteiraConvenioTitular}"/>
+								value="#{pacienteMB.entity.carteiraConvenioTitular}" />
 						</p:panelGrid>
 					</p:fieldset>
 				</p:panelGrid>
@@ -345,7 +351,7 @@
 							style="border:0px none; background-color:transparent;">
 							<p:outputLabel id="lblResponsavel" for="responsavel"
 								value="Nome do Responsável: " />
-							<p:inputText id="responsavel"							
+							<p:inputText id="responsavel"
 								value="#{pacienteMB.entity.dadosBasico.responsavel}"
 								maxlength="100" />
 							<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
@@ -359,10 +365,10 @@
 							</p:inputMask>
 							<p:outputLabel id="lblRgResponsavel" for="rgResponsavel"
 								value="RG do Responsável: " />
-							<p:inputText id="rgResponsavel"							
+							<p:inputText id="rgResponsavel"
 								value="#{pacienteMB.entity.dadosBasico.rgResponsavel}"
 								maxlength="100" />
-						
+
 
 							<p:outputLabel for="telefoneResponsavel"
 								value="Telefone do Responsável: " />
@@ -452,6 +458,14 @@
 									itemLabel="#{profissional.dadosBasico.prefixoNome}"
 									itemValue="#{profissional}" />
 							</p:selectOneMenu>
+
+							<p:outputLabel for="profissionalIndicacao"
+								value="Perfil Instagram:"
+								rendered="#{pacienteMB.showPerfilInstagram()}" />
+							<p:inputText id="perfilInstagram"
+								rendered="#{pacienteMB.showPerfilInstagram()}"
+								value="#{pacienteMB.entity.dominioaux.descricao}"
+								required="false" maxlength="200" />
 
 						</p:panelGrid>
 						<p:panelGrid columns="4"

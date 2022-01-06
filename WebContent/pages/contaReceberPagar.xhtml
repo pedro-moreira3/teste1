@@ -1159,7 +1159,7 @@ body .ui-confirm-dialog
 												<p:printer target="extratoDetalhado" />
 											</p:commandButton>
 
-											<p:commandButton id="imprimirDrc" ype="button"
+											<p:commandButton id="imprimirDrc" type="button"
 												value="Gerar DRC" styleClass="NavyButton"
 												icon="fa fa-print White" process="@this"
 												oncomplete="PF('dlgImprimirDrc').show()"
@@ -1167,7 +1167,7 @@ body .ui-confirm-dialog
 												actionListener="#{relatorioContabilDetalhadoMB.gerarDrc}">
 											</p:commandButton>
 
-											<p:commandButton id="imprimirDrcE" ype="button"
+											<p:commandButton id="imprimirDrcE" type="button"
 												value="Gerar DRC-E" styleClass="NavyButton"
 												icon="fa fa-print White" process="@this"
 												oncomplete="PF('dlgImprimirDrcE').show()"
@@ -1223,7 +1223,7 @@ body .ui-confirm-dialog
 						</p:fieldset>
 						<br />
 
-						<p:panel id="painelDrc">
+						<p:panel id="painelDrc" >
 							<h:outputLabel id="drc"
 								value="#{relatorioContabilDetalhadoMB.drc}" escape="false" />
 						</p:panel>
@@ -1571,7 +1571,7 @@ body .ui-confirm-dialog
 										oncomplete="PF('dtLancamentoContabil').filter();"
 										styleClass="GreenButton">
 										<p:confirm header="Atenção"
-											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes.\nPara evitar erros, é necessário aguardar o sistema terminar o processo.\n Deseja continuar agora?"
+											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes. Para evitar erros, é necessário aguardar o sistema terminar o processo. Deseja continuar agora?"
 											icon="ui-icon-alert" />
 									</p:commandButton>
 
