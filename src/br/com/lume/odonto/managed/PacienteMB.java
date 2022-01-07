@@ -347,7 +347,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public boolean showPerfilInstagram() {
         if(getEntity().getDominioaux() == null) {
-            getEntity().setDominioaux(new DominioAux());
+            //getEntity().setDominioaux(new DominioAux());
         }
         if (indicacao != null) {
             if (indicacao.getNome().equals("Instagram")) {
