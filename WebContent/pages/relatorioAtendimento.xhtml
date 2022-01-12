@@ -154,6 +154,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 	{
 	margin-top: -12px !important;
 }
+
+body.body .ui-dialog .ui-dialog-buttonpane .ui-button, body .ui-dialog .ui-dialog-footer .ui-button
+	{
+	background: #e8e8e8 !important;
+}
 </style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -266,7 +271,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax event="itemSelect" process="@this" />
 											</p:autoComplete>
 										</h:panelGroup>
-										
+
 										<h:panelGroup>
 											<h:outputText for="filtroProfissionalUltAgendamento"
 												value="Ultimo agendamento realizado por:" />
@@ -280,7 +285,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax event="itemSelect" process="@this" />
 											</p:autoComplete>
 										</h:panelGroup>
-										
+
 
 										<h:panelGroup>
 
@@ -302,14 +307,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:panelGrid>
 
 								</p:outputPanel>
-								
-								<p:outputPanel>								
+
+								<p:outputPanel>
 									<br />
 									<h:panelGroup style="display:block;margin-left:3px;">
 										<p:selectBooleanCheckbox id="checkConsultaInicial"
-											value="#{relatorioAtendimentoMB.mostrarSomenteConsultaInicial}">											
-										</p:selectBooleanCheckbox>		
-										<p:outputLabel for="checkConsultaInicial" value="Mostrar somente agendamentos com Consulta Inicial: " />								
+											value="#{relatorioAtendimentoMB.mostrarSomenteConsultaInicial}">
+										</p:selectBooleanCheckbox>
+										<p:outputLabel for="checkConsultaInicial"
+											value="Mostrar somente agendamentos com Consulta Inicial: " />
 									</h:panelGroup>
 
 									<br />
@@ -342,7 +348,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
-											itemValue="A" itemEscaped="false" />										
+											itemValue="A" itemEscaped="false" />
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 											itemValue="C" itemEscaped="false" />
@@ -387,11 +393,27 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup>
 											<p:commandButton value="Pesquisar"
-												action="#{relatorioAtendimentoMB.popularLista}"
+												oncomplete="PF('confirmation').show()"
 												icon="White fa fa-search"
-												update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
 												process="@this,:lume:filtroRelatorio"
 												styleClass="NavyButton" />
+											<p:confirmDialog id="confirmDialog" width="35%"
+												message="Devido a grande quantidade de registros, períodos maiores do que 6 meses serão exportados diretamente em arquivo Excel."
+												header="Aviso" severity="alert" widgetVar="confirmation"
+												appendToBody="true">
+												<p:commandButton id="confirm" value="OK" process="@this"
+													update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio,confirmDialog"
+													 icon="ui-icon-check"
+													ajax="false" immediate="true"
+													actionListener="#{relatorioAtendimentoMB.popularLista}"
+													onclick="PF('confirmation').hide();PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload
+														value="#{relatorioAtendimentoMB.arquivoDownload}" />
+												</p:commandButton>
+												<p:commandButton id="decline" value="Cancelar"
+													onclick="PF('confirmation').hide()" type="button"
+													icon="ui-icon-close" />
+											</p:confirmDialog>
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -520,7 +542,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" headerText="Dentista executor">
 								<h:outputText
 									value="#{atendimento.profissional.dadosBasico.nome}" />
-							</p:column>							
+							</p:column>
 
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.verificaSeTemAgendamentoInicial(atendimento)}"
@@ -966,7 +988,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
-										
+
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 											itemValue="C" itemEscaped="false" />
