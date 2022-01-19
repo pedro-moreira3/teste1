@@ -16,7 +16,6 @@ import org.primefaces.component.menu.AbstractMenu;
 import org.primefaces.component.menu.BaseMenuRenderer;
 import org.primefaces.component.menuitem.UIMenuItem;
 import org.primefaces.component.submenu.UISubmenu;
-import org.primefaces.expression.SearchExpressionFacade;
 import org.primefaces.model.menu.MenuElement;
 import org.primefaces.model.menu.MenuItem;
 import org.primefaces.model.menu.Separator;
@@ -327,7 +326,7 @@ public class UltimaMenuRenderer extends BaseMenuRenderer {
 
         builder.init()
                 .source(clientId)
-                .form(SearchExpressionFacade.resolveClientId(context, component, source.getForm()))
+                .form(source,form)
                 .process(component, source.getProcess())
                 .update(component, source.getUpdate())
                 .async(source.isAsync())
@@ -344,7 +343,7 @@ public class UltimaMenuRenderer extends BaseMenuRenderer {
                 .params(component);
 
         if (form != null) {
-            builder.form(form.getClientId(context));
+            builder.form(source,form);
         }
 
         builder.preventDefault();
@@ -377,7 +376,7 @@ public class UltimaMenuRenderer extends BaseMenuRenderer {
                 .params(params);
 
         if (form != null) {
-            builder.form(form.getClientId(context));
+            builder.form(source,form);
         }
 
         builder.preventDefault();

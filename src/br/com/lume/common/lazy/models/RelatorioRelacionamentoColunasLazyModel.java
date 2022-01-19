@@ -1,17 +1,21 @@
 package br.com.lume.common.lazy.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.collections.ComparatorUtils;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.filter.FilterConstraint;
+import org.primefaces.util.LocaleUtils;
 
-import br.com.lume.common.lazy.sorters.RelatorioRelacionamentoColunasLazySorter;
-import br.com.lume.common.util.Utils;
 import br.com.lume.odonto.entity.RelatorioRelacionamentoColunas;
 
 public class RelatorioRelacionamentoColunasLazyModel extends LazyDataModel<RelatorioRelacionamentoColunas> {
@@ -35,77 +39,52 @@ public class RelatorioRelacionamentoColunasLazyModel extends LazyDataModel<Relat
     }
 
     @Override
-    public Object getRowKey(RelatorioRelacionamentoColunas estoque) {
-        return estoque.getId();
+    public String getRowKey(RelatorioRelacionamentoColunas estoque) {
+        return String.valueOf(estoque.getId());
     }
 
     @Override
-    public List<RelatorioRelacionamentoColunas> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-        return load(first, pageSize, Arrays.asList(new SortMeta(null, sortField, sortOrder, null)), filters);
+    public List<RelatorioRelacionamentoColunas> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+        List<RelatorioRelacionamentoColunas> customers = datasource.stream()
+                .skip(first)
+                .filter(o -> filter(FacesContext.getCurrentInstance(), filterBy.values(), o))
+                .limit(pageSize)
+                .collect(Collectors.toList());
+
+        if (!sortBy.isEmpty()) {
+            List<Comparator<RelatorioRelacionamentoColunas>> comparators = sortBy.values().stream()
+                    .map(o -> new LazySorter<RelatorioRelacionamentoColunas>(o.getField(), o.getOrder()))
+                    .collect(Collectors.toList());
+            Comparator<RelatorioRelacionamentoColunas> cp = ComparatorUtils.chainedComparator(comparators);
+            customers.sort(cp);
+        }
+
+        return customers;
     }
 
-    @Override
-    public List<RelatorioRelacionamentoColunas> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, Object> filters) {
-        List<RelatorioRelacionamentoColunas> data = new ArrayList<>();
+    private boolean filter(FacesContext context, Collection<FilterMeta> filterBy, Object o) {
+        boolean matching = true;
 
-        //filter
-        for (RelatorioRelacionamentoColunas pa : getDatasource()) {
-            boolean match = true;
+        for (FilterMeta filter : filterBy) {
+            FilterConstraint constraint = filter.getConstraint();
+            Object filterValue = filter.getFilterValue();
 
-            if (filters != null) {
-                for (String key : filters.keySet()) {
-                    try {
-                        String filterField = key;
-                        Object filterValue = filters.get(key);
-                        if(filterValue == null) {
-                            continue;
-                        }
-
-                        String fieldValue = Utils.valueOf(filterField, pa, String.class);
-                        fieldValue = Utils.unaccent(fieldValue).toUpperCase();
-                        String filterValueStr = String.valueOf(filterValue);
-                        filterValueStr = Utils.unaccent(filterValueStr).toUpperCase();
-
-                        if (fieldValue.contains(filterValueStr)) {
-                            continue;
-                        } else {
-                            match = false;
-                            break;
-                        }
-                    } catch (Exception e) {
-                        match = false;
-                    }
-                }
-            }
-
-            if (match) {
-                data.add(pa);
-            }
-        }
-
-        //sort
-        if (multiSortMeta != null && !multiSortMeta.isEmpty()) {
-            for (SortMeta meta : multiSortMeta) {
-                Collections.sort(data, new RelatorioRelacionamentoColunasLazySorter(meta.getSortField(), meta.getSortOrder()));
-            }
-        }
-
-        //rowCount
-        int dataSize = data.size();
-        this.setRowCount(data.size());
-
-        //paginate
-        if (dataSize > pageSize) {
             try {
-                data = data.subList(first, first + pageSize);
-            } catch (IndexOutOfBoundsException e) {
-                data = data.subList(first, first + (dataSize % pageSize));
+                Field field = o.getClass().getDeclaredField(filter.getField());
+                field.setAccessible(true);
+                Object columnValue = String.valueOf(String.valueOf(field.get(o)));
+                matching = constraint.isMatching(context, columnValue, filterValue, LocaleUtils.getCurrentLocale());
             }
-        } else {
-            return data;
+            catch (Exception e) {
+                matching = false;
+            }
+
+            if (!matching) {
+                break;
+            }
         }
 
-        return data;
+        return matching;
     }
 
     private List<RelatorioRelacionamentoColunas> getDatasource() {

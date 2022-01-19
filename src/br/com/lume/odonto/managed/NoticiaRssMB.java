@@ -7,13 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -24,7 +24,7 @@ import br.com.lume.odonto.entity.NoticiaRss;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.xml.RSSBuilder;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
@@ -35,8 +35,6 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
     private UploadedFile arquivo;
 
     private List<NoticiaRss> noticiasRss;
-
-  
 
     private Date dataAtual;
 
@@ -84,7 +82,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
     private void salvaArquivo() throws Exception {
         if (this.arquivo != null) {
-            InputStream inputstream = this.arquivo.getInputstream();
+            InputStream inputstream = this.arquivo.getInputStream();
             String path = System.getProperty("images");
             this.getEntity().setImagem(this.getEntity().getId() + "." + Utils.getExtensao(this.arquivo.getFileName()));
             File file = new File(path + this.getEntity().getImagem());

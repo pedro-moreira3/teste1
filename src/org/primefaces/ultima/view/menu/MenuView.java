@@ -17,14 +17,15 @@ package org.primefaces.ultima.view.menu;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
+
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 
-@ManagedBean
+@Named
 public class MenuView {
     
     private MenuModel model;
@@ -34,36 +35,42 @@ public class MenuView {
 		model = new DefaultMenuModel();
 		
 		//First submenu
-        DefaultSubMenu firstSubmenu = new DefaultSubMenu("Dynamic Submenu");
+        DefaultSubMenu firstSubmenu = DefaultSubMenu.builder()
+                .label("Dynamic Submenu").build();
         
-        DefaultMenuItem item = new DefaultMenuItem("External");
+        DefaultMenuItem item = DefaultMenuItem.builder()
+                .value("External").build();
 		item.setUrl("http://www.primefaces.org");
         item.setIcon("ui-icon-home");
-		firstSubmenu.addElement(item);
+		firstSubmenu.getElements().add(item);
         
-        model.addElement(firstSubmenu);
+        model.getElements().add(firstSubmenu);
 		
 		//Second submenu
-		DefaultSubMenu secondSubmenu = new DefaultSubMenu("Dynamic Actions");
+		DefaultSubMenu secondSubmenu = DefaultSubMenu.builder()
+		        .label("Dynamic Actions").build();
 
-		item = new DefaultMenuItem("Save");
+		item = DefaultMenuItem.builder()
+		        .value("Save").build();
 		item.setIcon("ui-icon-disk");
         item.setCommand("#{menuView.save}");
         item.setUpdate("messages");
-		secondSubmenu.addElement(item);
+        secondSubmenu.getElements().add(item);
         
-        item = new DefaultMenuItem("Delete");
+        item = DefaultMenuItem.builder()
+                .value("Delete").build();
         item.setIcon("ui-icon-close");
         item.setCommand("#{menuView.delete}");
         item.setAjax(false);
-        secondSubmenu.addElement(item);
+        secondSubmenu.getElements().add(item);
         
-        item = new DefaultMenuItem("Redirect");
+        item = DefaultMenuItem.builder()
+                .value("Redirect").build();
         item.setIcon("ui-icon-search");
         item.setCommand("#{menuView.redirect}");
-		secondSubmenu.addElement(item);
+		secondSubmenu.getElements().add(item);
 
-        model.addElement(secondSubmenu);
+        model.getElements().add(secondSubmenu);
 	}
 
 	public MenuModel getModel() {

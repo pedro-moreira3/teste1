@@ -69,9 +69,6 @@ public class MenuBO extends BO<Usuario> {
 
     public MenuModel getMenuTree(Sistema sistema, Set<Objeto> labelsPermitidas, List<Objeto> objetosPermitidos, boolean mostraURL, List<Objeto> objetosRaizBySistema) {
         MenuModel model = new DefaultMenuModel();
-//        DefaultSubMenu root = new DefaultSubMenu();
-//        root.setLabel("");
-//        model.addElement(root);
 
         HashMap<Long, Submenu> raizesMenu = new HashMap<>();
         for (Objeto objeto : objetosRaizBySistema) {
@@ -79,29 +76,23 @@ public class MenuBO extends BO<Usuario> {
                 if (labelsPermitidas != null) {
                     if (labelsPermitidas.contains(objeto)) {
                         DefaultSubMenu submenu = new DefaultSubMenu();
-                        submenu.setId("sb" + idMenu++ + idMenu++);
                         submenu.setLabel(objeto.getObjStrDes());
                         submenu.setIcon(objeto.getIcone());
-//                        submenu.setIcon("fa fa-caret-right");
-                        //submenu.setExpanded(true);
 
-                        model.addElement(submenu);
+                        model.getElements().add(submenu);
                         raizesMenu.put(objeto.getObjIntCod(), submenu);
                     }
                 } else {
                     DefaultSubMenu submenu = new DefaultSubMenu();
                     submenu.setIcon(objeto.getIcone());
-                    submenu.setId("ssb" + idMenu++);
                     submenu.setLabel(objeto.getObjStrDes());
-                    model.addElement(submenu);
+                    model.getElements().add(submenu);
                     raizesMenu.put(objeto.getObjIntCod(), submenu);
                 }
             } else {
                 if (objetosPermitidos != null) {
                     if (objetosPermitidos.contains(objeto)) {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        //mi.setIcon(objeto.getIcone());
-                        mi.setId("mi" + idMenu++ + idMenu++);
                         if(objeto.getCaminho().equals("home.jsf")) {
                             mi.setIcon(objeto.getIcone());
                         }
@@ -109,34 +100,29 @@ public class MenuBO extends BO<Usuario> {
                         if (mostraURL) {
                             mi.setUrl(objeto.getCaminho());
                         }
-                        model.addElement(mi);
+                        model.getElements().add(mi);
                     }
                 } else {
                     DefaultMenuItem mi = new DefaultMenuItem();
-                    //mi.setIcon(objeto.getIcone());
-                    mi.setId("mmi" + idMenu++);
                     mi.setValue(objeto.getObjStrDes());
                     if (mostraURL) {
                         mi.setUrl(objeto.getCaminho());
                     }
-                    model.addElement(mi);
+                    model.getElements().add(mi);
                 }
             }
             this.getMenuTree(objeto, model, raizesMenu, labelsPermitidas, objetosPermitidos, mostraURL);
         }
         if(!OdontoPerfil.PARCEIRO.equals(UtilsFrontEnd.getPerfilLogado())) {
             DefaultMenuItem miLogoff = new DefaultMenuItem();
-            miLogoff.setId("mi" + Calendar.getInstance().getTimeInMillis() + idMenu++);
             miLogoff.setUrl("sobre.jsf");
             miLogoff.setValue("Atualizações");
-            model.addElement(miLogoff);
+            model.getElements().add(miLogoff);
         }    
         return model;
     }
 
     private void getMenuTree(Objeto objetoPai, MenuModel model, HashMap<Long, Submenu> raizesMenu, Set<Objeto> labelsPermitidas, List<Objeto> objetosPermitidos, boolean mostraURL) {
-        // log.debug("Meu pai � :> " + objetoPai.getObjStrDes() +
-        // "["+objetoPai.getCaminho()+"]");
         List<Objeto> objetosFilhos = new ObjetoBO().getAllObjetosFilhos(objetoPai);
         if (objetosFilhos != null) {
             for (Objeto filho : objetosFilhos) {
@@ -145,7 +131,6 @@ public class MenuBO extends BO<Usuario> {
                         if (labelsPermitidas.contains(filho)) {
                             DefaultSubMenu submenu = new DefaultSubMenu();
                             submenu.setIcon(filho.getIcone());
-                            submenu.setId("sbb" + idMenu++ + idMenu++);
                             submenu.setLabel(filho.getObjStrDes());
                             raizesMenu.get(objetoPai.getObjIntCod()).getElements().add(submenu);
                             raizesMenu.put(filho.getObjIntCod(), submenu);
@@ -153,7 +138,6 @@ public class MenuBO extends BO<Usuario> {
                     } else {
                         DefaultSubMenu submenu = new DefaultSubMenu();
                         submenu.setIcon(filho.getIcone());
-                        submenu.setId("sbb" + idMenu++);
                         submenu.setLabel(filho.getObjStrDes());
                         raizesMenu.get(objetoPai.getObjIntCod()).getElements().add(submenu);
                         raizesMenu.put(filho.getObjIntCod(), submenu);
@@ -162,19 +146,12 @@ public class MenuBO extends BO<Usuario> {
                     if (objetosPermitidos != null) {
                         if (objetosPermitidos.contains(filho)) {
                             DefaultMenuItem mi = new DefaultMenuItem();
-                            //mi.setIcon(filho.getIcone());
-                            mi.setId("mib" + idMenu++ + idMenu++);
                             mi.setValue(filho.getObjStrDes());
                             mi.setCommand("#{menuMB.redireciona(\""+filho.getCaminho()+"\")}");
-//                            if (mostraURL) {
-//                                mi.setUrl(filho.getCaminho());
-//                            }
                             raizesMenu.get(objetoPai.getObjIntCod()).getElements().add(mi);
                         }
                     } else {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        //mi.setIcon(filho.getIcone());
-                        mi.setId("mib" + idMenu++);
                         mi.setValue(filho.getObjStrDes());
                         if (mostraURL) {
                             mi.setUrl(filho.getCaminho());
