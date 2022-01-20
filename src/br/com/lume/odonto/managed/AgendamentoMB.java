@@ -167,6 +167,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Date dataAgendamentoInicial;
     private Date dataAgendamentoFinal;
     private List<Afastamento> afastamentos = new ArrayList<>();
+    
+    private String statusColorBlack[] = {"P","D","O","H","F"};
 
     private Date chegouAsEstadoInicial = null;
 
@@ -1174,6 +1176,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                         .startDate(Utils.convertToLocalDateTimeViaInstant(afastamento.getInicio()))
                                         .endDate(Utils.convertToLocalDateTimeViaInstant(afastamento.getFim()))
                                         .data(afastamento)
+                                        .textColor("black")
                                         .styleClass(StatusAgendamentoUtil.findBySigla("F").getStyleCss())
                                         .build());
                             }
@@ -1221,6 +1224,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     .startDate(Utils.convertToLocalDateTimeViaInstant(agendamento.getInicio()))
                                     .endDate(Utils.convertToLocalDateTimeViaInstant(agendamento.getFim()))
                                     .data(agendamento)
+                                    .textColor((Arrays.asList(statusColorBlack).contains(agendamento.getStatusNovo()) ? "black" : "white"))
                                     .styleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss())
                                     .build();
 
