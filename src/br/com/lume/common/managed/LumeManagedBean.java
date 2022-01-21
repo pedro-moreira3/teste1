@@ -364,77 +364,45 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public void exportarTabela(String header, DataTable tabela, String type) {
-        this.exportacao = Exportacoes.getInstance();
-        
-        try (ByteArrayInputStream arq = (this.exportacao.exportarTabela(header, tabela, type))){
-            String nameFile = header + "." + type;
-            String contentType;
-            
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTabela(header, tabela, type));
+
             if (type.equals("xls"))
-                contentType = "application/vnd.ms-excel";
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
             else if (type.equals("pdf"))
-                contentType = "application/pdf";
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
             else
-                contentType = "application/csv";
-                
-            this.setArquivoDownload(
-                    DefaultStreamedContent.builder()
-                    .name(nameFile)
-                    .contentType(contentType)
-                    .stream(() -> { return arq; }).build());
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
 
         } catch (Exception e) {
             this.addError("Erro", "Erro na exportação do documento.");
             e.printStackTrace();
         }
     }
-
+    
     public void exportarTabelaRepasse(String header, DataTable tabela, List<RepasseFaturasLancamento> repasses, String type) {
-        this.exportacao = Exportacoes.getInstance();
-        
-        try (ByteArrayInputStream arq = this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type)){
-            String nameFile = header + "." + type;
-            String contentType;
-            
-            if (type.equals("xls"))
-                contentType = "application/vnd.ms-excel";
-            else if (type.equals("pdf"))
-                contentType = "application/pdf";
-            else
-                contentType = "application/csv";
-                
-            this.setArquivoDownload(
-                    DefaultStreamedContent.builder()
-                    .name(nameFile)
-                    .contentType(contentType)
-                    .stream(() -> { return arq;}).build());
-            
-        } catch (Exception e) {
-            this.addError("Erro", "Erro na exportação do documento.");
-            e.printStackTrace();
-        }
-    }
 
-    public void exportarTreeTable(String header, TreeTable tabela, String type) {
-        this.exportacao = Exportacoes.getInstance();
-        
-        try (ByteArrayInputStream arq = this.exportacao.exportarTreeTabela(header, tabela, type)){
+        ByteArrayInputStream arq = null;
+        try {
+            this.exportacao = Exportacoes.getInstance();
 
-            String nameFile = header + "." + type;
-            String contentType;
-            
-            if (type.equals("xls"))
-                contentType = "application/vnd.ms-excel";
-            else if (type.equals("pdf"))
-                contentType = "application/pdf";
-            else
-                contentType = "application/csv";
-                
-            this.setArquivoDownload(
-                    DefaultStreamedContent.builder()
-                    .name(nameFile)
-                    .contentType(contentType)
-                    .stream(() -> { return arq; }).build());
+            if (type.equals("xls")) {
+                arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            }else if (type.equals("pdf")) {
+                arq = (this.exportacao.exportarTabelaRelatorioRepasse(header, tabela, repasses, type));
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            }
+            else {
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+            }
+
+            arq.close();
 
         } catch (Exception e) {
             this.addError("Erro", "Erro na exportação do documento.");
@@ -515,6 +483,28 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             return digitsResult;
         }
 
+    }
+    
+    public void exportarTreeTable(String header, TreeTable tabela, String type) {
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTreeTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
+
+        } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
+            e.printStackTrace();
+        }
     }
 
     public boolean filtroSemAcento(Object value, Object filter, Locale locale) {

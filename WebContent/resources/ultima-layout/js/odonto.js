@@ -139,6 +139,8 @@ function topPage() {
 
 		PrimeFaces.locales['pt'] = {
 			closeText : 'Fechar',
+			prevText : '&#x3c;Anterior',
+			nextText : 'Próximo&#x3e;',
 			currentText : 'Hoje',
 			monthNames : [ 'Janeiro', 'Fevereiro', 'Março', 'Abril',
 					'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
@@ -167,6 +169,8 @@ function topPage() {
 			if ($.datepicker) {
 				$.datepicker.regional['pt-BR'] = {
 					closeText : 'Fechar',
+					prevText : '&#x3c;Anterior',
+					nextText : 'Pr&oacute;ximo&#x3e;',
 					currentText : 'Hoje',
 					monthNames : [ 'Janeiro', 'Fevereiro', 'Mar&ccedil;o',
 							'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',

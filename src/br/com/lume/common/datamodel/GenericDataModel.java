@@ -56,11 +56,11 @@ public class GenericDataModel<E> extends ListDataModel<E> implements SelectableD
     }
 
     @Override
-    public String getRowKey(E obj) {
+    public Object getRowKey(E obj) {
         try {
             Method getId = obj.getClass().getMethod(this.getMethodId());
             Object id = getId.getReturnType().cast(getId.invoke(obj));
-            return String.valueOf(id);
+            return id;
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {

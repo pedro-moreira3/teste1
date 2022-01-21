@@ -4,17 +4,14 @@ import java.io.Serializable;
 import java.util.Calendar;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-
 import org.primefaces.event.timeline.TimelineSelectEvent;
 import org.primefaces.model.timeline.TimelineEvent;
 import org.primefaces.model.timeline.TimelineModel;
-
-import br.com.lume.common.util.Utils;
  
-@Named(value="basicTimelineView")
+@ManagedBean(name="basicTimelineView")
 @ViewScoped
 public class TimeLineView implements Serializable {  
    
@@ -35,80 +32,49 @@ public class TimeLineView implements Serializable {
    
         Calendar cal = Calendar.getInstance();         
         cal.set(2014, Calendar.JUNE, 12, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("PrimeUI 1.1")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
-        
-        cal.set(2014, Calendar.OCTOBER, 11, 0, 0, 0);
-        
-        model.add(TimelineEvent.builder()
-        .data("Primefaces 5.1.3")
-        .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("PrimeUI 1.1", cal.getTime()));  
+           
+        cal.set(2014, Calendar.OCTOBER, 11, 0, 0, 0);  
+        model.add(new TimelineEvent("Primefaces 5.1.3", cal.getTime())); 
          
         cal.set(2015, Calendar.DECEMBER, 8, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("PrimeUI 2.2")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("PrimeUI 2.2", cal.getTime()));
  
-        cal.set(2015, Calendar.MARCH, 10, 0, 0, 0);
-        model.add(TimelineEvent.builder()
-                .data("Sentinel-Layout 1.1")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build()); 
+        cal.set(2015, Calendar.MARCH, 10, 0, 0, 0);  
+        model.add(new TimelineEvent("Sentinel-Layout 1.1", cal.getTime())); 
          
         cal.set(2015, Calendar.APRIL, 3, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Spark-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Spark-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.MAY, 15, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Ronin-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Ronin-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.JULY, 10, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Modena-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Modena-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.JUNE, 15, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Rio-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Rio-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.SEPTEMBER, 4, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Adamantium-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Adamantium-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.DECEMBER, 14, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Titan-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Titan-Layout 1.0", cal.getTime()));
          
         cal.set(2015, Calendar.OCTOBER, 12, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Volt-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build()); 
+        model.add(new TimelineEvent("Volt-Layout 1.0", cal.getTime())); 
          
         cal.set(2016, Calendar.JANUARY, 28, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Atlas-Layout 1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());
+        model.add(new TimelineEvent("Atlas-Layout 1.0", cal.getTime()));
    
         cal.set(2016, Calendar.FEBRUARY, 24, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("PrimeUI 4.1.0")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());  
+        model.add(new TimelineEvent("PrimeUI 4.1.0", cal.getTime()));  
    
         cal.set(2016, Calendar.FEBRUARY, 29, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("Primefaces 5.3.8")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());  
+        model.add(new TimelineEvent("Primefaces 5.3.8", cal.getTime()));  
    
         cal.set(2016, Calendar.FEBRUARY, 29, 0, 0, 0);  
-        model.add(TimelineEvent.builder()
-                .data("PrimeNG 0.5")
-                .startDate(Utils.convertToLocalDateViaInstant(cal.getTime())).build());    
+        model.add(new TimelineEvent("PrimeNG 0.5", cal.getTime()));    
     }  
    
     public void onSelect(TimelineSelectEvent e) {  

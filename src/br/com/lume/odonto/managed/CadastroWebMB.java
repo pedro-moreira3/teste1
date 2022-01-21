@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -21,7 +21,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.file.UploadedFile;
+import org.primefaces.model.UploadedFile;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.OdontoPerfil;
@@ -47,6 +47,26 @@ import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
+
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.EspecialidadeBO;
+// import br.com.lume.odonto.bo.FilialBO;
+// import br.com.lume.odonto.bo.ItemBO;
+// import br.com.lume.odonto.bo.KitBO;
+// import br.com.lume.odonto.bo.PerguntaBO;
+// import br.com.lume.odonto.bo.ProcedimentoBO;
+// import br.com.lume.odonto.bo.ProcedimentoKitBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.EspecialidadeBO;
+//import br.com.lume.odonto.bo.FilialBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.KitBO;
+//import br.com.lume.odonto.bo.PerguntaBO;
+//import br.com.lume.odonto.bo.ProcedimentoBO;
+//import br.com.lume.odonto.bo.ProcedimentoKitBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
+
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -64,11 +84,14 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.PerfilSingleton;
 import br.com.lume.security.UsuarioSingleton;
+// import br.com.lume.security.bo.EmpresaBO;
+// import br.com.lume.security.bo.PerfilBO;
+// import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
 import br.com.lume.tarifa.TarifaSingleton;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
@@ -78,9 +101,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private Profissional profissional = new Profissional();
 
+    // private ProfissionalBO profissionalBO;
+
     private Filial filial;
 
     private boolean skip;
+
+    //  private FilialBO filialBO;
 
     private Usuario usuario;
 
@@ -88,7 +115,19 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private DualListModel<Especialidade> especialidadePickList = new DualListModel<>();
 
-    private List<Dominio> dominios;
+    private List<Dominio> dominios;    
+ 
+    // private EspecialidadeBO especialidadeBO;
+
+    // private ProcedimentoBO procedimentoBO;
+
+    //  private UsuarioBO usuarioBO;
+
+    //  private PerfilBO perfilBO;
+
+    //  private DominioBO dominioBO;
+
+    //   private EmpresaBO empresaBO;
 
     private boolean dadosClinica;
 
@@ -103,6 +142,14 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
     public CadastroWebMB() {
         super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
+        //   filialBO = new FilialBO();
+        //  profissionalBO = new ProfissionalBO();
+        //  especialidadeBO = new EspecialidadeBO();
+        //   procedimentoBO = new ProcedimentoBO();
+        //   usuarioBO = new UsuarioBO();
+        //    perfilBO = new PerfilBO();
+        //    dominioBO = new DominioBO();
+        //    empresaBO = new EmpresaBO();
         pnInicialVisivel = true;
         this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
         if(UtilsFrontEnd.getAfiliacaoLogada() != null) {
@@ -355,7 +402,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
     public void uploadCertificado(FileUploadEvent event) {
         try {
             anexo = event.getFile();
-            profissional.setCertificado(anexo.getContent());
+            profissional.setCertificado(anexo.getContents());
         } catch (Exception e) {
             this.addError("Erro ao fazer upload de certificado", "");
             log.error("Erro ao fazer upload de certificado", e);
@@ -465,6 +512,9 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
                 this.addError("CEP não encontado!", "");
 
             }
+            
+            
+            
 
         }
     }

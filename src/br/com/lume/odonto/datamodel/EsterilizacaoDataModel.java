@@ -27,7 +27,7 @@ public class EsterilizacaoDataModel extends ListDataModel<Esterilizacao> impleme
     }
 
     @Override
-    public String getRowKey(Esterilizacao arg0) {
-        return String.valueOf(arg0.getId());
+    public Object getRowKey(Esterilizacao arg0) {
+        return arg0.getId();
     }
 }

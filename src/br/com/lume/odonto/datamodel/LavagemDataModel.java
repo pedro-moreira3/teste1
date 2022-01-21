@@ -27,7 +27,7 @@ public class LavagemDataModel extends ListDataModel<Lavagem> implements Selectab
     }
 
     @Override
-    public String getRowKey(Lavagem arg0) {
-        return String.valueOf(arg0.getId());
+    public Object getRowKey(Lavagem arg0) {
+        return arg0.getId();
     }
 }

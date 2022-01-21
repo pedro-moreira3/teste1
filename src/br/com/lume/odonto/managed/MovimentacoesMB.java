@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.charts.ChartData;
@@ -38,7 +38,7 @@ import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.entity.Empresa;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
@@ -70,8 +70,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
             lineModel = new BarChartModel();
             ChartData data = new ChartData();
 
-            List<Object> valuesAPagar = new ArrayList<>(), valuesAReceber = new ArrayList<>();
-            List<Number> valuesPagos = new ArrayList<>(), valuesRecebidos = new ArrayList<>();
+            List<Number> valuesAPagar = new ArrayList<>(), valuesAReceber = new ArrayList<>(), valuesPagos = new ArrayList<>(), valuesRecebidos = new ArrayList<>();
             List<String> labels = new ArrayList<>();
 
             Mes mesAtual = Mes.getMesAtual();

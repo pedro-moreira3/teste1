@@ -132,41 +132,7 @@ div.ui-selectoneradio label {
 .ui-selectonemenu-label {
 	margin: 0px !important;
 }
-
-.fc-direction-ltr .fc-button-group>.fc-button:not(:last-child){
-	border-top-right-radius: 3px;
-	border-bottom-right-radius: 3px;
 }
-
-.fc .fc-button-primary{
-	background-color: #607D8B;
-	border-color: #ffffff;
-}
-
-.fc .fc-button-primary:disabled{
-	background-color: #607D8B;
-	border-color: #ffffff;
-}
-
-.fc .fc-button-primary:not(:disabled):active, .fc .fc-button-primary:not(:disabled).fc-button-active{
-	background-color: #607D8B;
-	border-color: #ffffff;
-}
-
-.fc th{
-	text-align: center;
-	background-color: #607D8B;
-	color: #ffffff;
-}
-
-.fc-media-screen .fc-timegrid-event{
-	position: relative;
-	top: 0;
-    bottom: 1px;
-    left: 0;
-    right: 0;
-}
-
 </style>
 		<script type="text/javascript"
 			src="https://www.gstatic.com/charts/loader.js"></script>
@@ -903,15 +869,14 @@ div.ui-selectoneradio label {
 								actionListener="#{agendamentoMB.carregarAgenda()}"
 								process="@this" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
-								slotEventOverlap="false"
+								axisFormat="HH:mm" slotEventOverlap="false"
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
 								slotMinutes="15" widgetVar="myschedule" locale="pt"
-								view="agendaDay" slotLabelInterval="00:30" timeFormat="HH:mm"
-								slotDuration="00:15" timeZone="#{lumeSecurity.timeZone}"
-								minTime="07:00" maxTime="21:00" allDaySlot="false"
-								draggable="false" tooltip="true" resizable="false"
-								initialDate="#{agendamentoMB.initialDate}"
-								slotLabelFormat="'HH:mm'">
+								timeZone="#{lumeSecurity.timeZone}" firstHour="8"
+								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
+								maxTime="21:00" allDaySlot="false" draggable="false"
+								tooltip="true" resizable="false"
+								initialDate="#{agendamentoMB.initialDate}">
 
 								<p:ajax event="viewChange" process="@this"
 									update=":lume:formularioPrincipal,:lume:formularioPrincipalProf, :lume:initialDate" />
@@ -1122,23 +1087,23 @@ div.ui-selectoneradio label {
 				updateSchedule();
 			}
 
-			//if (PrimeFaces.widget.Schedule != undefined) {
-			//	PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
-			//	PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
-			//		cfg.views = {
-			//			month : {
-			//				columnFormat: 'ddd'
-			//			},
-			//			week : {
-			//				columnFormat: 'ddd D/MM'
-			//			},
-			//			day : {
-			//				columnFormat: 'dddd'
-			//			}
-			//		};
-			//		this._oldInit.apply(this, arguments);
-			//	};
-			//}
+			if (PrimeFaces.widget.Schedule != undefined) {
+				PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
+				PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
+					cfg.views = {
+						month : {
+							columnFormat : 'ddd'
+						},
+						week : {
+							columnFormat : 'ddd D/MM'
+						},
+						day : {
+							columnFormat : 'dddd'
+						}
+					};
+					this._oldInit.apply(this, arguments);
+				};
+			}
 
 			function printSchedule() {
 				var elm = document.getElementById("lume:schedule");
@@ -1152,26 +1117,31 @@ div.ui-selectoneradio label {
 				header.style.borderTop = "solid 1px black";
 				header.style.borderRight = "solid 1px black";
 				header.style.marginBottom = "0";
-				var header2 = header.getElementsByClassName("fc-toolbar-chunk");
-				header2[0].remove();
-				header2[1].remove();
-				header2[0].style.margin = ".5em";
+				var header2Del = header.getElementsByClassName("fc-left")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				header2Del = header.getElementsByClassName("fc-right")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				header2Del = header.getElementsByClassName("fc-clear")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				var header2Change = header.getElementsByClassName("fc-center")[0];
+				header2Change.style.margin = ".5em";
 
 				var monthButton = document
-						.getElementsByClassName("fc-dayGridMonth-button")[0];
-				if (!monthButton.classList.contains("fc-button-active")) {
+						.getElementsByClassName("fc-month-button")[0];
+				if (!monthButton.classList.contains("ui-state-active")) {
 					var horasColumn = toPrint
-							.getElementsByClassName("fc-timegrid-cols")[0]
+							.getElementsByClassName("fc-slats")[0]
 							.getElementsByTagName("tr");
 					for (var i = 0; i < horasColumn.length; i++) {
 						var nowStr = "" + new Date().getTime();
 						horasColumn[i].setAttribute("id", nowStr + i);
 					}
 
-					var events = toPrint.getElementsByClassName('fc-timegrid-event-harness');
-					for(var i = 0; i < events.lenght; i++){
-						events[i].setAttribute('position','relative');
-					}
+					var divHeight = toPrint.getElementsByClassName("fc-body")[0]
+							.getElementsByClassName("fc-scroller")[0];
+					divHeight.style.removeProperty("height");
+					divHeight.style.transform = "scale(1, .71) translateY(-275px)";
+					divHeight.style.marginBottom = "-389.76px";
 					//configurações para escala 100% e folha A4
 				}
 
@@ -1187,8 +1157,8 @@ div.ui-selectoneradio label {
 				newWin.focus();
 
 				var monthButton = document
-						.getElementsByClassName("fc-dayGridMonth-button")[0];
-				if (!monthButton.classList.contains("fc-button-active")) {
+						.getElementsByClassName("fc-month-button")[0];
+				if (!monthButton.classList.contains("ui-state-active")) {
 					var divsAg = newWin.document
 							.getElementsByClassName("fc-content-skeleton")[0]
 							.getElementsByClassName("fc-time-grid-event");

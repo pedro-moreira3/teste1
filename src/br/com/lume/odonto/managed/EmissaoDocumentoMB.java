@@ -13,11 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-
 import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.component.ckeditor.CKEditor;
 import org.primefaces.model.DefaultStreamedContent;
@@ -39,6 +38,9 @@ import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.CID;
+// import br.com.lume.odonto.bo.DocumentoBO;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.Dominio;
@@ -53,7 +55,7 @@ import br.com.lume.security.entity.Empresa;
 import br.com.lume.tag.TagSingleton;
 import br.com.lume.tagEntidade.TagEntidadeSingleton;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
@@ -260,10 +262,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             try {
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
                 FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");
-                arquivo = DefaultStreamedContent.builder()
-                        .name(doc.getDocumentoModelo().getDescricao() + ".pdf")
-                        .contentType("application/pdf")
-                        .stream(() -> { return in; }).build();
+                arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
             } catch (Exception e) {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar o documento.");
                 e.printStackTrace();

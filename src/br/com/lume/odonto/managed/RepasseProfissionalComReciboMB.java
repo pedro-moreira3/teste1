@@ -10,12 +10,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -56,6 +58,7 @@ import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.repasse.bo.RepasseFaturasBO;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -65,12 +68,12 @@ import br.com.lume.security.entity.Empresa;
 /**
  * @author ricardo.poncio
  */
-
-@Named
+@ManagedBean
 @ViewScoped
 public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratamentoProcedimento> {
 
     private static final long serialVersionUID = 1L;
+    //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
     private boolean semPendencias = false, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
@@ -308,6 +311,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
     }
 
+//    public void aprovarRecibo(ReciboRepasseProfissional r) {
+//        try {
+//            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+//            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+//        } catch (Exception e) {
+//            addError("Erro!", e.getMessage());
+//        }
+//        // pesquisar();
+//    }
+
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
         reciboRepasseProfissional = recibo;
         if (reciboRepasseProfissional.getReciboLancamentos() != null && !reciboRepasseProfissional.getReciboLancamentos().isEmpty()) {
@@ -475,8 +488,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                            }
                         }
 
-                        if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) || (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO)) || 
-                                (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.DIARIA)) ) {
+                        if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) || (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
                             removerPtp.add(ptp);
                             continue;
                         }
@@ -484,6 +496,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     }
                     if (ptp.getFatura() != null) {
                         ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));
+
+                        FaturaSingleton.getInstance().getTotalPago(ptp.getFatura());
 
                         ptp.setValorPago(FaturaSingleton.getInstance().getTotalPago(ptp.getFatura()));
 

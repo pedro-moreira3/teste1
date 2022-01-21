@@ -12,9 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,7 +45,7 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
@@ -506,10 +506,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             outputData.close();
             workbook.close();
 
-            this.setArquivoDownload(DefaultStreamedContent.builder()
-                    .name("Relatorio Agendamento.xls")
-                    .contentType("application/vnd.ms-excel")
-                    .stream(() -> {return inputData;}).build());
+            this.setArquivoDownload(new DefaultStreamedContent(inputData, "application/vnd.ms-excel", "Relatorio Agendamento.xls"));
             inputData.close();
         } catch (Exception e) {
             e.printStackTrace();
