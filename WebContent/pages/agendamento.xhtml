@@ -1152,31 +1152,26 @@ div.ui-selectoneradio label {
 				header.style.borderTop = "solid 1px black";
 				header.style.borderRight = "solid 1px black";
 				header.style.marginBottom = "0";
-				var header2Del = header.getElementsByClassName("fc-left")[0];
-				header2Del.parentNode.removeChild(header2Del);
-				header2Del = header.getElementsByClassName("fc-right")[0];
-				header2Del.parentNode.removeChild(header2Del);
-				header2Del = header.getElementsByClassName("fc-clear")[0];
-				header2Del.parentNode.removeChild(header2Del);
-				var header2Change = header.getElementsByClassName("fc-center")[0];
-				header2Change.style.margin = ".5em";
+				var header2 = header.getElementsByClassName("fc-toolbar-chunk");
+				header2[0].remove();
+				header2[1].remove();
+				header2[0].style.margin = ".5em";
 
 				var monthButton = document
-						.getElementsByClassName("fc-month-button")[0];
-				if (!monthButton.classList.contains("ui-state-active")) {
+						.getElementsByClassName("fc-dayGridMonth-button")[0];
+				if (!monthButton.classList.contains("fc-button-active")) {
 					var horasColumn = toPrint
-							.getElementsByClassName("fc-slats")[0]
+							.getElementsByClassName("fc-timegrid-cols")[0]
 							.getElementsByTagName("tr");
 					for (var i = 0; i < horasColumn.length; i++) {
 						var nowStr = "" + new Date().getTime();
 						horasColumn[i].setAttribute("id", nowStr + i);
 					}
 
-					var divHeight = toPrint.getElementsByClassName("fc-body")[0]
-							.getElementsByClassName("fc-scroller")[0];
-					divHeight.style.removeProperty("height");
-					divHeight.style.transform = "scale(1, .71) translateY(-275px)";
-					divHeight.style.marginBottom = "-389.76px";
+					var events = toPrint.getElementsByClassName('fc-timegrid-event-harness');
+					for(var i = 0; i < events.lenght; i++){
+						events[i].setAttribute('position','relative');
+					}
 					//configurações para escala 100% e folha A4
 				}
 
@@ -1192,8 +1187,8 @@ div.ui-selectoneradio label {
 				newWin.focus();
 
 				var monthButton = document
-						.getElementsByClassName("fc-month-button")[0];
-				if (!monthButton.classList.contains("ui-state-active")) {
+						.getElementsByClassName("fc-dayGridMonth-button")[0];
+				if (!monthButton.classList.contains("fc-button-active")) {
 					var divsAg = newWin.document
 							.getElementsByClassName("fc-content-skeleton")[0]
 							.getElementsByClassName("fc-time-grid-event");
