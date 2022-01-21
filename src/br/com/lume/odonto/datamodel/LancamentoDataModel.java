@@ -27,7 +27,7 @@ public class LancamentoDataModel extends ListDataModel<Lancamento> implements Se
     }
 
     @Override
-    public Object getRowKey(Lancamento arg0) {
-        return arg0.getId();
+    public String getRowKey(Lancamento arg0) {
+        return String.valueOf(arg0.getId());
     }
 }
