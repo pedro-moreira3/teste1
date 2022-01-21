@@ -1,22 +1,25 @@
 package br.com.lume.common.lazy.models;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Comparator;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
-
-import org.apache.commons.collections.ComparatorUtils;
-import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.filter.FilterConstraint;
-import org.primefaces.util.LocaleUtils;
+import org.primefaces.model.SortOrder;
 
+import br.com.lume.common.lazy.sorters.PlanoTratamentoLazySorter;
+import br.com.lume.common.log.LogIntelidenteSingleton;
+import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
+import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 public class PlanoTratamentoLazyModel extends LazyDataModel<PlanoTratamento> {
 
@@ -39,52 +42,96 @@ public class PlanoTratamentoLazyModel extends LazyDataModel<PlanoTratamento> {
     }
 
     @Override
-    public String getRowKey(PlanoTratamento estoque) {
-        return String.valueOf(estoque.getId());
+    public Object getRowKey(PlanoTratamento estoque) {
+        return estoque.getId();
     }
 
     @Override
-    public List<PlanoTratamento> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-        List<PlanoTratamento> pts = datasource.stream()
-                .skip(first)
-                .filter(o -> filter(FacesContext.getCurrentInstance(), filterBy.values(), o))
-                .limit(pageSize)
-                .collect(Collectors.toList());
-
-        if (!sortBy.isEmpty()) {
-            List<Comparator<PlanoTratamento>> comparators = sortBy.values().stream()
-                    .map(o -> new LazySorter<PlanoTratamento>(o.getField(), o.getOrder()))
-                    .collect(Collectors.toList());
-            Comparator<PlanoTratamento> cp = ComparatorUtils.chainedComparator(comparators);
-            pts.sort(cp);
-        }
-
-        return pts;
+    public List<PlanoTratamento> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+        return load(first, pageSize, Arrays.asList(new SortMeta(null, sortField, sortOrder, null)), filters);
     }
 
-    private boolean filter(FacesContext context, Collection<FilterMeta> filterBy, Object o) {
-        boolean matching = true;
+    @Override
+    public List<PlanoTratamento> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, Object> filters) {
+        List<PlanoTratamento> data = new ArrayList<>();
 
-        for (FilterMeta filter : filterBy) {
-            FilterConstraint constraint = filter.getConstraint();
-            Object filterValue = filter.getFilterValue();
+        //filter
+        for (PlanoTratamento pt : getDatasource()) {
+            boolean match = true;
 
-            try {
-                Field field = o.getClass().getDeclaredField(filter.getField());
-                field.setAccessible(true);
-                Object columnValue = String.valueOf(String.valueOf(field.get(o)));
-                matching = constraint.isMatching(context, columnValue, filterValue, LocaleUtils.getCurrentLocale());
+            if (filters != null) {
+                for (String key : filters.keySet()) {
+                    try {
+                        String filterField = key;
+                        Object filterValue = filters.get(key);
+                        if(filterValue == null) {
+                            continue;
+                        }
+
+                        String fieldValue = Utils.valueOf(filterField, pt, String.class);
+                        fieldValue = Utils.unaccent(fieldValue).toUpperCase();
+                        String filterValueStr = String.valueOf(filterValue);
+                        filterValueStr = Utils.unaccent(filterValueStr).toUpperCase();
+
+                        if (fieldValue.contains(filterValueStr)) {
+                            continue;
+                        } else {
+                            match = false;
+                            break;
+                        }
+                    } catch (Exception e) {
+                        match = false;
+                    }
+                }
             }
-            catch (Exception e) {
-                matching = false;
-            }
 
-            if (!matching) {
-                break;
+            if (match) {
+                data.add(pt);
             }
         }
 
-        return matching;
+        //sort
+        if (multiSortMeta != null && !multiSortMeta.isEmpty()) {
+            for (SortMeta meta : multiSortMeta) {
+                Collections.sort(data, new PlanoTratamentoLazySorter(meta.getSortField(), meta.getSortOrder()));
+            }
+        }
+
+        //rowCount
+        int dataSize = data.size();
+        this.setRowCount(data.size());
+
+        //paginate
+        if (dataSize > pageSize) {
+            try {
+                data = data.subList(first, first + pageSize);
+            } catch (IndexOutOfBoundsException e) {
+                data = data.subList(first, first + (dataSize % pageSize));
+            }
+        } else {
+            return data;
+        }
+
+        //transients
+        data.forEach(pt -> {
+            try {
+                pt.setValor(PlanoTratamentoSingleton.getInstance().getBo().getTotalPT(pt));
+                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(pt);
+                if (faturas != null && !faturas.isEmpty()) {
+                    if (pt.getValorAConferir() == null)
+                        pt.setValorAConferir(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(faturas, true, ValidacaoLancamento.NAO_VALIDADO));
+                    if (pt.getValorAReceber() == null)
+                        pt.setValorAReceber(FaturaSingleton.getInstance().getTotalNaoPagoFromPaciente(faturas));
+                } else {
+                    pt.setValorAConferir(BigDecimal.ZERO);
+                    pt.setValorAReceber(BigDecimal.ZERO);
+                }
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        });
+
+        return data;
     }
 
     private List<PlanoTratamento> getDatasource() {

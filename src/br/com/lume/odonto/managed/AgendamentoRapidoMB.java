@@ -1,7 +1,6 @@
 package br.com.lume.odonto.managed;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -12,8 +11,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -45,7 +44,7 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
@@ -695,9 +694,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         return substituidosretorno;
     }
 
-    public void carregaDisponibilidadeFromAgendamento(Paciente paciente, Profissional profissionalDentroAgenda, LocalDate dataAgendamento) {
+    public void carregaDisponibilidadeFromAgendamento(Paciente paciente, Profissional profissionalDentroAgenda, Date dataAgendamento) {
         filtroPorProfissional = profissionalDentroAgenda;
-        data = Utils.convertToDateViaInstant(dataAgendamento);
+        data = dataAgendamento;
         this.paciente = paciente;
         populaAgenda();
     }

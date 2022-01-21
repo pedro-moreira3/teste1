@@ -23,25 +23,26 @@ import java.util.Map;
 
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.editor.Editor;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.file.UploadedFile;
+import org.primefaces.model.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -72,6 +73,7 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.DominioAux;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.MotivoInativacaoPaciente;
 import br.com.lume.odonto.entity.Paciente;
@@ -92,7 +94,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Usuario;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class PacienteMB extends LumeManagedBean<Paciente> {
 
@@ -119,6 +121,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private String filtroStatus = "A";
 
+    private Editor editorAnotacoes;
+
     private List<ConfiguracaoAnamnese> configuracoesAnamneses;
 
     private List<ConfiguracaoAnamnese> configuracaoSelecionada;
@@ -140,7 +144,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private List<Agendamento> historicoAgendamentos;
 
+    //  private Paciente pacienteIndicacao;
+
+    //  private Profissional profissionalIndicacao;
+
     private boolean habilitaSalvar;
+
+    //  private Paciente pacienteIndicacao;
+
+    //  private Profissional profissionalIndicacao;
 
     private List<Profissional> profissionais;
 
@@ -269,10 +281,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             try {
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
                 FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");
-                arquivo = DefaultStreamedContent.builder()
-                        .name(doc.getDocumentoModelo().getDescricao())
-                        .contentType("application/pdf")
-                        .stream(() -> { return in; }).build();
+                arquivo = new DefaultStreamedContent(in, null, doc.getDocumentoModelo().getDescricao() + ".pdf");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -302,10 +311,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + getEntity().getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
-                        .name(getEntity().getNomeImagem())
-                        .contentType("image/" + getEntity().getNomeImagem().split("\\.")[1])
-                        .stream(() -> {return byteArrayInputStream;}).build();
+                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + getEntity().getNomeImagem().split("\\.")[1], getEntity().getNomeImagem());
                 return defaultStreamedContent;
             }
         } catch (Exception e) {
@@ -425,17 +431,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
-        scFoto = DefaultStreamedContent.builder()
-                .stream(() -> {return new ByteArrayInputStream(data);}).build();
+        scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
     }
 
     public void uploadPhotoImg(FileUploadEvent event) {
         try {
             uploadedFile = event.getFile();
             if (uploadedFile != null) {
-                data = event.getFile().getContent();
-                scFoto = DefaultStreamedContent.builder()
-                        .stream(() -> {return new ByteArrayInputStream(data);}).build();
+                data = event.getFile().getContents();
+                scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
                 addInfo("Sucesso", "Arquivo recebido com sucesso!");
             } else {
                 throw new Exception("Arquivo corrompido, tente novamente!");
@@ -449,7 +453,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void rodarImagem(ActionEvent event) {
         if (uploadedFile != null) {
             try {
-                InputStream in = new ByteArrayInputStream(uploadedFile.getContent());
+
+                InputStream in = new ByteArrayInputStream(uploadedFile.getContents());
                 BufferedImage image = ImageIO.read(in);
 
                 final double rads = Math.toRadians(90);
@@ -469,8 +474,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
                 data = baos.toByteArray();
-                scFoto = DefaultStreamedContent.builder()
-                        .stream(() -> {return new ByteArrayInputStream(data);}).build();
+                scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
                 System.out.println(scFoto);
                 ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
             } catch (IOException e) {
@@ -486,7 +490,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
         try {
             UploadedFile file = event.getFile();
-            inputStream = file.getInputStream();
+            inputStream = file.getInputstream();
             errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado());
             geraLista();
 
@@ -1341,6 +1345,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setMostrarPerguntasAnamnese(boolean mostrarPerguntasAnamnese) {
         this.mostrarPerguntasAnamnese = mostrarPerguntasAnamnese;
+    }
+
+    public Editor getEditorAnotacoes() {
+        return editorAnotacoes;
+    }
+
+    public void setEditorAnotacoes(Editor editorAnotacoes) {
+        this.editorAnotacoes = editorAnotacoes;
     }
 
     public List<Dominio> getListaEstadoCivil() {

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -28,8 +28,8 @@ import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
 import br.com.lume.security.entity.Usuario;
 
-@Named
-@ViewScoped
+@ManagedBean
+@SessionScoped
 public class LumeSecurity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +54,8 @@ public class LumeSecurity implements Serializable {
 
     private String paginaAtual;
 
+   // private HelpBO helpBO = new HelpBO();
+
     public LumeSecurity() {
         log.debug("Criando LumeSecurity!");
         sistemaAtual = SistemaSingleton.getInstance().getBo().getSistemaBySigla("ODONTO");
@@ -73,10 +75,7 @@ public class LumeSecurity implements Serializable {
       if (empresa != null && empresa.getEmpStrLogo() != null) {
           ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                   FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + empresa.getEmpStrLogo())));
-          DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
-                  .name(empresa.getEmpStrLogo())
-                  .contentType("image/" + empresa.getEmpStrLogo().split("\\.")[1])
-                  .stream(() -> {return byteArrayInputStream;}).build();
+          DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + empresa.getEmpStrLogo().split("\\.")[1], empresa.getEmpStrLogo());
           return defaultStreamedContent;
       }
   } catch (Exception e) {
@@ -208,10 +207,7 @@ public class LumeSecurity implements Serializable {
             if (profissional != null && profissional.getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
-                        .name(profissional.getNomeImagem())
-                        .contentType("image/" + profissional.getNomeImagem().split("\\.")[1])
-                        .stream(() -> {return byteArrayInputStream;}).build();
+                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + profissional.getNomeImagem().split("\\.")[1], profissional.getNomeImagem());
                 return defaultStreamedContent;
             }
         } catch (Exception e) {

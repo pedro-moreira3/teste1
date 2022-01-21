@@ -9,12 +9,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.faces.annotation.ManagedProperty;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
@@ -33,7 +34,7 @@ import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.MenuMB;
 import br.com.lume.security.validator.GenericValidator;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
@@ -189,7 +190,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         if (nomeImagem != null && !nomeImagem.equals("")) {
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
-        InputStream initialStream = event.getFile().getInputStream();
+        InputStream initialStream = event.getFile().getInputstream();
         byte[] buffer = new byte[initialStream.available()];
         initialStream.read(buffer);
         if (targetFile == null || !targetFile.exists()) {

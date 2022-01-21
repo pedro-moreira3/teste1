@@ -4,22 +4,27 @@ import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hpsf.Array;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.file.UploadedFile;
+import org.primefaces.model.UploadedFile;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.importacao.Importacao;
+import br.com.lume.importacao.ImportacaoPaciente;
 import br.com.lume.importacao.Importacao.CampoImportacao;
 import br.com.lume.importacao.Importacao.TipoImportacao;
 import br.com.lume.logImportacao.LogImportacaoSingleton;
@@ -68,7 +73,7 @@ public class ImportacaoMB extends LumeManagedBean<LogImportacao> {
     public void carregarArquivo(FileUploadEvent evt){
         this.arquivoCarregado = evt.getFile();
         try {
-            this.bufferArquivo = new BufferedInputStream(evt.getFile().getInputStream()); // load file
+            this.bufferArquivo = new BufferedInputStream(evt.getFile().getInputstream()); // load file
         }catch (Exception e) {
         }
     }

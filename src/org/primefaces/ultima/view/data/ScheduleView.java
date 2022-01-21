@@ -16,16 +16,14 @@
 package org.primefaces.ultima.view.data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
@@ -36,9 +34,7 @@ import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
-import br.com.lume.common.util.Utils;
-
-@Named
+@ManagedBean
 @ViewScoped
 public class ScheduleView implements Serializable {
 
@@ -51,38 +47,20 @@ public class ScheduleView implements Serializable {
     @PostConstruct
 	public void init() {
 		eventModel = new DefaultScheduleModel();
-		eventModel.addEvent(DefaultScheduleEvent.builder()
-		        .title("Champions League Match")
-		        .startDate(Utils.convertToLocalDateTimeViaInstant(previousDay8Pm()))
-		        .endDate(Utils.convertToLocalDateTimeViaInstant(previousDay11Pm())).build());
-		eventModel.addEvent(DefaultScheduleEvent.builder()
-		        .title("Birthday Party")
-		        .startDate(Utils.convertToLocalDateTimeViaInstant(today1Pm()))
-		        .endDate(Utils.convertToLocalDateTimeViaInstant(today6Pm())).build());
-		eventModel.addEvent(DefaultScheduleEvent.builder()
-		        .title("Breakfast at Tiffanys")
-		        .startDate(Utils.convertToLocalDateTimeViaInstant(nextDay9Am()))
-		        .endDate(Utils.convertToLocalDateTimeViaInstant(nextDay11Am())).build());
-		eventModel.addEvent(DefaultScheduleEvent.builder()
-		        .title("Plant the new garden stuff")
-		        .startDate(Utils.convertToLocalDateTimeViaInstant(theDayAfter3Pm()))
-		        .endDate(Utils.convertToLocalDateTimeViaInstant(fourDaysLater3pm())).build());
+		eventModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
+		eventModel.addEvent(new DefaultScheduleEvent("Birthday Party", today1Pm(), today6Pm()));
+		eventModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys", nextDay9Am(), nextDay11Am()));
+		eventModel.addEvent(new DefaultScheduleEvent("Plant the new garden stuff", theDayAfter3Pm(), fourDaysLater3pm()));
 		
 		lazyEventModel = new LazyScheduleModel() {
 			
 			@Override
-			public void loadEvents(LocalDateTime start, LocalDateTime end) {
-				Date random = getRandomDate(Utils.convertToDateViaInstant(start));
-				addEvent(DefaultScheduleEvent.builder()
-				        .title("Lazy Event 1")
-				        .startDate(Utils.convertToLocalDateTimeViaInstant(random))
-				        .endDate(Utils.convertToLocalDateTimeViaInstant(random)).build());
+			public void loadEvents(Date start, Date end) {
+				Date random = getRandomDate(start);
+				addEvent(new DefaultScheduleEvent("Lazy Event 1", random, random));
 				
-				random = getRandomDate(Utils.convertToDateViaInstant(start));
-				addEvent(DefaultScheduleEvent.builder()
-				        .title("Lazy Event 2")
-				        .startDate(Utils.convertToLocalDateTimeViaInstant(random))
-				        .endDate(Utils.convertToLocalDateTimeViaInstant(random)).build());
+				random = getRandomDate(start);
+				addEvent(new DefaultScheduleEvent("Lazy Event 2", random, random));
 			}	
 		};
 	}
@@ -209,10 +187,7 @@ public class ScheduleView implements Serializable {
 	}
 	
 	public void onDateSelect(SelectEvent selectEvent) {
-		event = DefaultScheduleEvent.builder()
-		        .title("")
-		        .startDate(Utils.convertToLocalDateTimeViaInstant((Date) selectEvent.getObject()))
-		        .endDate(Utils.convertToLocalDateTimeViaInstant((Date) selectEvent.getObject())).build();
+		event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
 	}
 	
 	public void onEventMove(ScheduleEntryMoveEvent event) {
@@ -222,7 +197,7 @@ public class ScheduleView implements Serializable {
 	}
 	
 	public void onEventResize(ScheduleEntryResizeEvent event) {
-		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDeltaStart() + ", Minute delta:" + event.getMinuteDeltaStart());
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
 		
 		addMessage(message);
 	}

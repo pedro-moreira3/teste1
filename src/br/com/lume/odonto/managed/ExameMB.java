@@ -11,19 +11,20 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.annotation.ManagedProperty;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
 import javax.imageio.ImageIO;
-import javax.inject.Named;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.imgscalr.Scalr;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.file.UploadedFile;
+import org.primefaces.model.UploadedFile;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -33,10 +34,12 @@ import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.exame.ExameSingleton;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ExameBO;
 import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.util.OdontoMensagens;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class ExameMB extends LumeManagedBean<Exame> {
 
@@ -72,9 +75,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
         if (file != null) {
             try {
                 ByteArrayInputStream bis = new ByteArrayInputStream(file);
-                arquivo = DefaultStreamedContent.builder()
-                        .name(nome)
-                        .stream(() -> { return bis; }).build();
+                arquivo = new DefaultStreamedContent(bis, null, nome);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -136,7 +137,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
             String extensao = Utils.getExtensao(this.arquivo.getFileName());
             if (extensao.equalsIgnoreCase("jpg") || extensao.equalsIgnoreCase("jpeg") || extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("png") || extensao.equalsIgnoreCase("bmp")) {
                 try {
-                    BufferedImage img = ImageIO.read(event.getFile().getInputStream()); // load image
+                    BufferedImage img = ImageIO.read(event.getFile().getInputstream()); // load image
                     //BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     ImageIO.write(img, extensao, baos);
@@ -169,7 +170,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
         entry.setSize(this.arquivo.getSize());
         try {
             zos.putNextEntry(entry);
-            zos.write(this.arquivo.getContent());
+            zos.write(this.arquivo.getContents());
             zos.closeEntry();
             zos.close();
         } catch (IOException e) {

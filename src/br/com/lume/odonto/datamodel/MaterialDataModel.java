@@ -27,7 +27,7 @@ public class MaterialDataModel extends ListDataModel<Material> implements Select
     }
 
     @Override
-    public String getRowKey(Material arg0) {
-        return String.valueOf(arg0.getId());
+    public Object getRowKey(Material arg0) {
+        return arg0.getId();
     }
 }

@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
@@ -15,10 +16,14 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hpsf.Array;
+import org.primefaces.PrimeFaces;
+import org.primefaces.json.JSONObject;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.mensagem.MensagemSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
@@ -50,6 +55,8 @@ public class MensagemMB extends LumeManagedBean<Mensagem> implements Serializabl
     private boolean switchAllPatro = true;
     private boolean switchAllClientes = true;
     private boolean switchAllUsuarios = true;
+    
+    //MessagesManager m = null;
 
     public MensagemMB() {
         super(MensagemSingleton.getInstance().getBo());

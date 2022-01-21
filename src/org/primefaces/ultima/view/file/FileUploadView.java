@@ -16,13 +16,13 @@
 package org.primefaces.ultima.view.file;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
 
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.file.UploadedFile;
+import org.primefaces.model.UploadedFile;
 
-@Named
+@ManagedBean
 public class FileUploadView {
     
     private UploadedFile file;

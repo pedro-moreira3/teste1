@@ -15,7 +15,6 @@ import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Utils;
 import br.com.lume.security.bo.FeriadoBO;
 import br.com.lume.security.entity.Feriado;
 
@@ -52,11 +51,7 @@ public class FeriadoMB extends LumeManagedBean<Feriado> {
     }
 
     private void carregaFeriados() {
-        eventModel.addEvent(DefaultScheduleEvent.builder()
-                .title("Evento teste")
-                .startDate(Utils.convertToLocalDateTimeViaInstant(previousDay8Pm()))
-                .endDate(Utils.convertToLocalDateTimeViaInstant(previousDay11Pm()))
-                .allDay(false).build());
+        eventModel.addEvent(new DefaultScheduleEvent("Evento teste", previousDay8Pm(), previousDay11Pm(), false));
     }
 
     private Date previousDay8Pm() {
