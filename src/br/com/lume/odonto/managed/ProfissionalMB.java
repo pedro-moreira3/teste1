@@ -9,12 +9,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
+import javax.faces.view.ViewScoped;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,7 +25,7 @@ import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
@@ -54,8 +54,6 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalEspecialidade;
 import br.com.lume.odonto.entity.ProfissionalFilial;
 import br.com.lume.odonto.exception.DataNascimentoException;
-import br.com.lume.odonto.exception.RegistroConselhoNuloException;
-import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -69,7 +67,7 @@ import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
 import br.com.lume.security.validator.GenericValidator;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
@@ -198,8 +196,6 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void carregaPerfis() {
         perfis = new ArrayList<>();
-        // List<Perfil> allPerfisBySistema = perfilBO.getAllPerfisBySistema(new
-        // SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual()));
         List<Perfil> allPerfisBySistema = PerfilSingleton.getInstance().getBo().getAllPerfisBySistema(this.getLumeSecurity().getSistemaAtual());
         for (Perfil perfil : allPerfisBySistema) {
             if (!perfil.getPerStrDes().equals(OdontoPerfil.PACIENTE) && !perfil.getPerStrDes().equals(OdontoPerfil.ADMINISTRADORES)) {
@@ -461,7 +457,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
-        scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
+        scFoto = DefaultStreamedContent.builder()
+                .stream(() -> {return new ByteArrayInputStream(data);}).build();
     }
 
     public StreamedContent getImagemUsuario() {
@@ -472,7 +469,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             if (profissional != null && profissional.getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + profissional.getNomeImagem().split("\\.")[1], profissional.getNomeImagem());
+                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
+                        .name(profissional.getNomeImagem())
+                        .contentType("image/" + profissional.getNomeImagem().split("\\.")[1])
+                        .stream(() -> {return byteArrayInputStream;}).build();
                 return defaultStreamedContent;
             }
         } catch (Exception e) {
@@ -549,11 +549,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
             this.actionPersist(event);
 
-            // if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            // } else {
-            //     this.addError("Erro ao inativar profissional", "");
-            // }
 
             this.carregarProfissionais();
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -577,7 +573,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     public void uploadCertificado(FileUploadEvent event) {
         try {
             anexo = event.getFile();
-            this.getEntity().setCertificado(anexo.getContents());
+            this.getEntity().setCertificado(anexo.getContent());
         } catch (Exception e) {
             this.addError("Erro ao fazer upload de certificado", "");
             log.error("Erro ao fazer upload de certificado", e);

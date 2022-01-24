@@ -8,34 +8,30 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.help.HelpSingleton;
-//import br.com.lume.odonto.bo.HelpBO;
 import br.com.lume.odonto.entity.Help;
 import br.com.lume.odonto.entity.HelpImg;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.security.ObjetoSingleton;
-//import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.entity.Objeto;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class HelpMB extends LumeManagedBean<Help> {
 
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(HelpMB.class);
-
- //   private ObjetoBO objetoBO;
 
     private Objeto objetoSelecionado;
 
@@ -48,7 +44,6 @@ public class HelpMB extends LumeManagedBean<Help> {
     public HelpMB() {
         super(HelpSingleton.getInstance().getBo());
         this.setClazz(Help.class);
-     //   this.objetoBO = new ObjetoBO();
         this.carregarTelas();
         this.carregarHelp();
     }
@@ -101,7 +96,7 @@ public class HelpMB extends LumeManagedBean<Help> {
             String filename = FilenameUtils.getBaseName(uploadedFile.getFileName());
             String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
             Path file = Files.createTempFile(folder, filename + "-", "." + extension);
-            try (InputStream input = uploadedFile.getInputstream()) {
+            try (InputStream input = uploadedFile.getInputStream()) {
                 Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
             }
             this.imagem = new HelpImg(file.getFileName().toString(), filename, this.getEntity());
