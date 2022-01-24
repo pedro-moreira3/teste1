@@ -1105,6 +1105,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                 Date start = Utils.convertToDateViaInstant(startDateTime);
                 Date end = Utils.convertToDateViaInstant(endDateTime);
+                initialDateConsult = start;
                 
                 if (!initialDate.equals(start)) {
                     initialDate = Utils.convertToLocalDateViaInstant(start);
@@ -1294,11 +1295,20 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void onDateSelect(SelectEvent selectEvent) {
+        Calendar c = Calendar.getInstance();
         if (selectEvent != null) {
             LocalDateTime date = (LocalDateTime) selectEvent.getObject();
             this.setInicio(Utils.convertToDateViaInstant(date));
             date.plusMinutes(tempoConsulta);
             this.setFim(Utils.convertToDateViaInstant(date));
+            
+            c.setTime(this.inicio);
+            c.add(Calendar.HOUR_OF_DAY, -1);
+            this.inicio = c.getTime();
+            
+            c.setTime(this.fim);
+            c.add(Calendar.HOUR_OF_DAY, -1);
+            this.fim = c.getTime();
         }
 
         this.setEntity(new Agendamento());
@@ -1905,6 +1915,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setInitialDate(LocalDate date) {
         this.initialDate = date;
+        this.initialDateConsult = Utils.convertToDateViaInstant(date);
     }
 
     public String getAtendimentosChart() {

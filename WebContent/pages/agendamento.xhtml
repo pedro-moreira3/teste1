@@ -664,11 +664,12 @@ div.ui-selectoneradio label {
 
 											<h:panelGroup styleClass="md-inputfield">
 												<p:calendar id="initialDate"
-													value="#{agendamentoMB.initialDateConsult}" pattern="dd/MM/yyyy"
+													value="#{agendamentoMB.initialDateConsult}"
+													pattern="dd/MM/yyyy"
 													mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
-													timeZone="#{lumeSecurity.timeZone}" navigator="true"
-													yearRange="-100:+10"
+													timeZone="#{lumeSecurity.timeZone}" 
+													navigator="true" yearRange="-100:+10"
 													style="margin-top:10px;margin-bottom:10px;display: inline-block;">
 
 													<p:ajax event="dateSelect" process="@this" />
@@ -908,13 +909,12 @@ div.ui-selectoneradio label {
 								actionListener="#{agendamentoMB.carregarAgenda()}"
 								process="@this" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
-								slotEventOverlap="false"
+								slotEventOverlap="false" clientTimeZone="America/Halifax"
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
 								slotMinutes="15" widgetVar="myschedule" locale="pt"
 								view="agendaDay" slotLabelInterval="00:30" timeFormat="HH:mm"
-								slotDuration="00:15" timeZone="#{lumeSecurity.timeZone}"
-								minTime="07:00" maxTime="21:00" allDaySlot="false"
-								tooltip="true"
+								slotDuration="00:15" timeZone="America/Halifax"
+								minTime="07:00" maxTime="21:00" allDaySlot="false" tooltip="true"
 								initialDate="#{agendamentoMB.initialDate}"
 								slotLabelFormat="'HH:mm'">
 
