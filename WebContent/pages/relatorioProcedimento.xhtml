@@ -358,11 +358,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:selectOneMenu>
 
 									</h:panelGroup>
-									
+
 									<h:panelGroup>
 										<p:outputLabel style="margin:0px;" for="filtroEspecialidade"
 											value="Especialidade: " />
-										<p:selectOneMenu id="filtroEspecialidade"	
+										<p:selectOneMenu id="filtroEspecialidade"
 											style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 											value="#{relatorioProcedimentoMB.filtroPorEspecialidade}"
 											converter="especialidade">
@@ -520,22 +520,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{procedimento.dentistaExecutor.dadosBasico.nome}"
 								sortBy="#{procedimento.dentistaExecutor.dadosBasico.nome}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains"
-								headerText="Dentista executor">
+								filterMatchMode="contains" headerText="Dentista executor">
 								<h:outputText
 									value="#{procedimento.dentistaExecutor.dadosBasico.prefixoNome}" />
 							</p:column>
 
 							<ui:remove>
-							<p:column
-								filterBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
-								sortBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
-								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains"
-								headerText="Procedimento finalizado por">
-								<h:outputText
-									value="#{procedimento.finalizadoPorProfissional.dadosBasico.prefixoNome}" />
-							</p:column>
+								<p:column
+									filterBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
+									sortBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
+									filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Procedimento finalizado por">
+									<h:outputText
+										value="#{procedimento.finalizadoPorProfissional.dadosBasico.prefixoNome}" />
+								</p:column>
 							</ui:remove>
 
 							<p:column filterBy="#{procedimento.planoTratamento.descricao}"
@@ -552,20 +551,45 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{procedimento.procedimento.descricao}" />
 							</p:column>
 							
-							<p:column filterBy="#{procedimento.procedimento.especialidade.descricao}"
+							<p:column filterBy="#{procedimento.denteRegiao}"
+								sortBy="#{procedimento.denteRegiao}"
+								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Dente/Região">
+								<h:outputText value="#{procedimento.denteRegiao}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{procedimento.procedimento.especialidade.descricao}"
 								sortBy="#{procedimento.procedimento.especialidade.descricao}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Especialidade">
-								<h:outputText value="#{procedimento.procedimento.especialidade.descricao}" />
+								<h:outputText
+									value="#{procedimento.procedimento.especialidade.descricao}" />
 							</p:column>
 
 							<p:column
 								filterBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
 								sortBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Staus do procedimento">
+								filterMatchMode="contains" headerText="Status do procedimento">
 								<h:outputText
 									value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.statusPagamentoStr}"
+								sortBy="#{procedimento.statusPagamentoStr}"
+								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Status do pagamento">
+								<h:outputText value="#{procedimento.statusPagamentoStr}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.valorProcedimentoOrcamento}"
+								sortBy="#{procedimento.valorProcedimentoOrcamento}"
+								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Preço do Procedimento">
+								<h:outputText value="#{procedimento.valorProcedimentoOrcamento}">
+									<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+								</h:outputText>
 							</p:column>
 
 							<p:column
@@ -586,30 +610,30 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<ui:remove>
-							<p:column filterBy="#{procedimento.planoTratamento.inicio}"
-								sortBy="#{procedimento.planoTratamento.inicio}"
-								filterMatchMode="contains" headerText="Inicio do tratamento">
-								<h:outputText
-									value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
-							</p:column>
+								<p:column filterBy="#{procedimento.planoTratamento.inicio}"
+									sortBy="#{procedimento.planoTratamento.inicio}"
+									filterMatchMode="contains" headerText="Inicio do tratamento">
+									<h:outputText
+										value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
+								</p:column>
 
-							<p:column filterBy="#{procedimento.planoTratamento.fim}"
-								sortBy="#{procedimento.planoTratamento.fim}"
-								filterMatchMode="contains" headerText="Término do tratamento">
-								<h:outputText
-									value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
-							</p:column>
-							
-							<p:column
-								filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
-								sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
-								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Status do pagamento">
-								<h:outputText
-									value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
-							</p:column>
-							
-							
+								<p:column filterBy="#{procedimento.planoTratamento.fim}"
+									sortBy="#{procedimento.planoTratamento.fim}"
+									filterMatchMode="contains" headerText="Término do tratamento">
+									<h:outputText
+										value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
+								</p:column>
+
+								<p:column
+									filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
+									sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
+									filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+									filterMatchMode="contains" headerText="Status do pagamento">
+									<h:outputText
+										value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
+								</p:column>
+
+
 								<p:column>
 									<p:commandButton icon="White fa fa-eye" width="5%">
 										<f:setPropertyActionListener value="#{procedimento}"
@@ -962,7 +986,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</p:dialog>
 
 
-					
+
 					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>

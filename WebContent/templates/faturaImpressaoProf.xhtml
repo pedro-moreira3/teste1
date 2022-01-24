@@ -13,7 +13,7 @@
 		onShow="PF('dlgPrintFatura').toggleMaximize();attPrintFatura();">
 		<f:facet name="header">
 			<h:outputText id="faturaViewPrintHeaderProf"
-				value="Fatura '#{f.dataCriacaoStr}' do Paciente #{f.paciente.dadosBasico.nome}" />
+				value="Fatura '#{f.dataCriacaoStr}'" />
 		</f:facet>
 		<p:outputPanel id="faturaViewPrintProf"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
@@ -33,7 +33,7 @@
 					<span style="font-size: 14px;">Paciente:
 						#{f.paciente.dadosBasico.nome}</span>
 					<br />
-					<span style="font-size: 14px;">Data de CriaÃ§Ã£o:
+					<span style="font-size: 14px;">Data de Criação:
 						#{f.dataCriacaoStr}</span>
 					<br />
 					<span style="font-size: 14px;">Status da Fatura:
@@ -66,7 +66,7 @@
 						<div style="width: 1%" />
 						<h:panelGroup
 							style="text-align: center; border: 1px solid #bdbdbd; width: 32.33%; padding: 12px 16px;">
-							<span> <b><h:outputText value="Valor Ã  Receber" /></b>
+							<span> <b><h:outputText value="Valor à Receber" /></b>
 							</span>
 							<br />
 							<span> <h:outputText
@@ -84,7 +84,7 @@
 							Itens</caption>
 						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
 							<th
-								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">DescriÃ§Ã£o</th>
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 150px; display: none;">Tipo
 								do Saldo</th>
@@ -113,14 +113,14 @@
 						style="width: calc(100% - 22px); border: 1px solid #bdbdbd; padding: 10px;">
 						<p:selectBooleanCheckbox
 							style="display: inline-flex; width: 100%;"
-							itemLabel="Mostrar lanÃ§amentos cancelados." value="#{show}"
+							itemLabel="Mostrar lançamentos cancelados." value="#{show}"
 							disabled="true" />
 					</div>
 					<table width="100%"
 						style="border: 1px solid #bdbdbd; border-collapse: collapse; margin-top: 10px;">
 						<caption
 							style="border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; font-weight: bold">
-							LanÃ§amentos</caption>
+							Lançamentos</caption>
 						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Forma
@@ -129,7 +129,7 @@
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Valor</th>
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Data
-								de CrÃ©dito</th>
+								de Crédito</th>
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Data
 								de Pagamento</th>
@@ -158,7 +158,7 @@
 										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.dataPagamentoStr}</td>
 									<td
 										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{(lanc.validado
-										== 'S' ? 'Sim' : 'NÃ£o')}</td>
+										== 'S' ? 'Sim' : 'Não')}</td>
 									<td
 										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.validadoPorProfissional.dadosBasico.nome}</td>
 									<td

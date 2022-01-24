@@ -34,7 +34,7 @@
 
 							<p:outputLabel for="cep" value="CEP : " />
 							<h:panelGroup style="display: flex !important">
-								<p:inputMask id="cep"  value="#{fornecedorMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999">
+								<p:inputMask id="cep"  value="#{fornecedorMB.entity.dadosBasico.cep}" mask="99999-999">
 									<f:validator validatorId="cepValidator" />
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White" actionListener="#{fornecedorMB.actionBuscaCep}"
@@ -45,7 +45,7 @@
 							<p:inputText id="endereco"  value="#{fornecedorMB.entity.dadosBasico.endereco}" maxlength="200" />
 
 							<p:outputLabel for="numero" value="Número : " />
-							<p:inputMask id="numero"  mask="9?99999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" style="width: 100% !important" />
+							<p:inputMask id="numero"  mask="999999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" style="width: 100% !important" />
 
 							<p:outputLabel for="bairro" value="Bairro : " />
 							<p:inputText id="bairro"  value="#{fornecedorMB.entity.dadosBasico.bairro}" maxlength="200"/>

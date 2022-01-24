@@ -286,84 +286,98 @@ span.lumeField label {
 	border-color: #F00 !important;
 	background-color: #F00 !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .clienteNaClinica {
 	border-color: #00FF7F !important;
 	background-color: #00FF7F !important;
 	color: #000 !important;
+	height:100% !important;
 }
 
 .agendamentoConfirmado {
 	border-color: blue !important;
 	background-color: blue !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .agendamentoAtendido {
 	border-color: #49826C !important;
 	background-color: #49826C !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .agendamentoPrecadastro {
 	border-color: yellow !important;
 	background-color: yellow !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .agendamentoCancelado {
 	border-color: #800080 !important;
 	background-color: #800080 !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .agendamentoFalta {
 	border-color: #B22222 !important;
 	background-color: #B22222 !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .agendamentoAfastamento {
 	border-color: #FF9 !important;
 	background-color: #FF9 !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .agendamentoEncaixe {
 	border-color: #00BFFF !important;
 	background-color: #00BFFF !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .emAtendimento {
 	border-color: #C1FFC1 !important;
 	background-color: #C1FFC1 !important;
 	color: #000 !important;
+	height:100% !important;
 }
 
 .agendamentoRemarcado {
 	border-color: #D050D0 !important;
 	background-color: #D050D0 !important;
 	color: #fff !important;
+	height:100% !important;
 }
 
 .agendamentoErroAgendamento {
 	border-color: #c4c4c4 !important;
 	background-color: #c4c4c4 !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .agendamentoConsultaInicial {
 	border-color: #f77213 !important;
 	background-color: #f77213 !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .agendamentoEncaixeAtendido {
 	border-color: #99d8a9 !important;
 	background-color: #99d8a9 !important;
 	color: black !important;
+	height:100% !important;
 }
 
 .legend-title {
