@@ -274,11 +274,17 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
         this.setSomatorioValorTotalRestante(new BigDecimal(0));
         this.setSomatorioValorTotalPago(new BigDecimal(0));
 
+        List<PlanoTratamentoProcedimento> procedimentosContabilizados = new ArrayList<PlanoTratamentoProcedimento>();
+        
         for (RepasseFaturasLancamento rfl : this.getEntityList()) {
             this.somatorioValorTotalLancamentos = this.somatorioValorTotalLancamentos.add(this.valorTotal(rfl.getLancamentoRepasse()));
             this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
             this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
-            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+            
+            if(!procedimentosContabilizados.contains(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento()))
+                this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+            
+            procedimentosContabilizados.add(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento());
         }
     }
     
