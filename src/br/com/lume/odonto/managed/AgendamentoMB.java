@@ -107,6 +107,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private List<Agendamento> agendamentos, agendamentosAfastamento = new ArrayList<>();
 
     private Date inicio, fim;
+    
+    private Date initialDateConsult;
 
     private Date chegouAsDentroAgenda;
 
@@ -1101,8 +1103,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             @Override
             public void loadEvents(LocalDateTime startDateTime, LocalDateTime endDateTime) {
 
-                Date start = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Date end = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                Date start = Utils.convertToDateViaInstant(startDateTime);
+                Date end = Utils.convertToDateViaInstant(endDateTime);
                 
                 if (!initialDate.equals(start)) {
                     initialDate = Utils.convertToLocalDateViaInstant(start);
@@ -1171,8 +1173,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 descricao += breakLine;
 
                                 this.addEvent(DefaultScheduleEvent.builder()
-                                        .description(descricao)
-                                        .title(afastamento.getProfissional().getDadosBasico().getNome())
+                                        .title(descricao)
                                         .startDate(Utils.convertToLocalDateTimeViaInstant(afastamento.getInicio()))
                                         .endDate(Utils.convertToLocalDateTimeViaInstant(afastamento.getFim()))
                                         .data(afastamento)
@@ -1219,8 +1220,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
 
                             DefaultScheduleEvent event = DefaultScheduleEvent.builder()
-                                    .description(descricao)
-                                    .title(agendamento.getProfissional().getDadosBasico().getNome() + " - " + agendamento.getPaciente().getDadosBasico().getNome())
+                                    .title(descricao)
                                     .startDate(Utils.convertToLocalDateTimeViaInstant(agendamento.getInicio()))
                                     .endDate(Utils.convertToLocalDateTimeViaInstant(agendamento.getFim()))
                                     .data(agendamento)
@@ -1903,8 +1903,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         return initialDate;
     }
 
-    public void setInitialDate(LocalDate initialDate) {
-        this.initialDate = initialDate;
+    public void setInitialDate(LocalDate date) {
+        this.initialDate = date;
     }
 
     public String getAtendimentosChart() {
@@ -2282,6 +2282,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setRetorno(Retorno retorno) {
         this.retorno = retorno;
+    }
+
+    public Date getInitialDateConsult() {
+        return initialDateConsult;
+    }
+
+    public void setInitialDateConsult(Date initialDateConsult) {
+        this.initialDateConsult = initialDateConsult;
+        setInitialDate(Utils.convertToLocalDateViaInstant(initialDateConsult));
     }
 
 //    public PushContext getSomeChannel() {

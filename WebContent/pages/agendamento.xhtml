@@ -167,6 +167,11 @@ div.ui-selectoneradio label {
     right: 0;
 }
 
+.agendamentoErroAgendamento, .agendamentoConsultaInicial, .agendamentoEncaixeAtendido, .agendamentoRemarcado, .agendamentoPrecadastro, .agendamentoAfastamento,
+	.agendamentoNaoConfirmado, .agendamentoFalta, .agendamentoEncaixe, .emAtendimento, .agendamentoConfirmado, .clienteNaClinica, .agendamentoCancelado, .agendamentoAtendido{
+	height:100% !important;
+}
+
 </style>
 		<script type="text/javascript"
 			src="https://www.gstatic.com/charts/loader.js"></script>
@@ -658,8 +663,8 @@ div.ui-selectoneradio label {
 											<h:panelGroup></h:panelGroup>
 
 											<h:panelGroup styleClass="md-inputfield">
-												<p:calendar id="initialDate" required="false"
-													value="#{agendamentoMB.initialDate}" pattern="dd/MM/yyyy"
+												<p:calendar id="initialDate"
+													value="#{agendamentoMB.initialDateConsult}" pattern="dd/MM/yyyy"
 													mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
 													timeZone="#{lumeSecurity.timeZone}" navigator="true"
@@ -909,7 +914,7 @@ div.ui-selectoneradio label {
 								view="agendaDay" slotLabelInterval="00:30" timeFormat="HH:mm"
 								slotDuration="00:15" timeZone="#{lumeSecurity.timeZone}"
 								minTime="07:00" maxTime="21:00" allDaySlot="false"
-								draggable="false" tooltip="true" resizable="false"
+								tooltip="true"
 								initialDate="#{agendamentoMB.initialDate}"
 								slotLabelFormat="'HH:mm'">
 
