@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
@@ -22,10 +22,6 @@ import org.primefaces.event.FileUploadEvent;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
-//import br.com.lume.odonto.bo.PacienteBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoBO;
-//import br.com.lume.odonto.bo.ProcedimentoBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Paciente;
@@ -40,7 +36,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.validator.CnpjValidator;
 import br.com.lume.security.validator.CpfValidator;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class ImportaMB implements Serializable {
 
@@ -64,25 +60,10 @@ public class ImportaMB implements Serializable {
 
     private int i = 1, errosPaciente = 0, okPacientes = 0, errosPlano = 0, okPlano = 0, erroGenerico = 0;
 
-  //  private PacienteBO pacienteBO;
-
- //   private ProcedimentoBO procedimentoBO;
-
-  //  private ProfissionalBO profissionalBO;
-
- //   private PlanoTratamentoBO planoTratamentoBO;
-
- //   private ConvenioProcedimentoBO convenioProcedimentoBO;
-
     private FacesContext facesContext;
 
     public ImportaMB() {
         this.actionNew();
-      //  pacienteBO = new PacienteBO();
-     //   procedimentoBO = new ProcedimentoBO();
-      //  profissionalBO = new ProfissionalBO();
-      //  planoTratamentoBO = new PlanoTratamentoBO();
-      //  convenioProcedimentoBO = new ConvenioProcedimentoBO();
     }
 
     private void actionNew() {
@@ -103,7 +84,7 @@ public class ImportaMB implements Serializable {
     public void importar(FileUploadEvent event) {
         try {
             this.actionNew();
-            BufferedReader br = new BufferedReader(new InputStreamReader(event.getFile().getInputstream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(event.getFile().getInputStream()));
             String string;
             String tipo = "";
             br.readLine();

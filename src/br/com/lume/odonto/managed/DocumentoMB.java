@@ -1,10 +1,5 @@
 package br.com.lume.odonto.managed;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,9 +8,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -29,7 +24,6 @@ import org.primefaces.model.menu.MenuModel;
 import br.com.lume.atestado.AtestadoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -39,10 +33,6 @@ import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
 import br.com.lume.documentoGenerico.DocumentoGenericoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.Atestado;
-import br.com.lume.odonto.entity.Contrato;
-// import br.com.lume.odonto.bo.DocumentoBO;
-// import br.com.lume.odonto.bo.DominioBO;
-// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoEmitido;
 import br.com.lume.odonto.entity.DocumentoGenerico;
@@ -61,7 +51,7 @@ import br.com.lume.tag.TagSingleton;
 import br.com.lume.tagEntidade.TagEntidadeSingleton;
 import br.com.lume.termoConsentimento.TermoConsentimentoSingleton;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class DocumentoMB extends LumeManagedBean<Documento> {
 
@@ -92,8 +82,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private DataTable tabelaDocumentos;
     
     private boolean mostrarCabecalho = false;
-
-    //  private DominioBO dominioBO;
 
     public DocumentoMB() {
         super(DocumentoSingleton.getInstance().getBo());
@@ -133,7 +121,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             }
             DocumentoEmitidoSingleton.getInstance().getBo().persistBatch(docsEmitidos);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -319,7 +306,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 submenu.setId(entidade.getEntidade());
                 submenu.setLabel(entidade.getDescricao());
 
-                menuModel.addElement(submenu);
+                menuModel.getElements().add(submenu);
                 Collections.sort(entidade.getTags());
                 for (TagEntidade tag : entidade.getTags()) {
                     DefaultMenuItem menuItem = new DefaultMenuItem();
@@ -332,7 +319,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                         menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
                     }
 
-                    submenu.addElement(menuItem);
+                    submenu.getElements().add(menuItem);
                 }
             }
         }

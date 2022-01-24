@@ -15,14 +15,24 @@
  */
 package org.primefaces.ultima.view.data.datatable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.collections.ComparatorUtils;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.filter.FilterConstraint;
 import org.primefaces.ultima.domain.Car;
+import org.primefaces.util.LocaleUtils;
+
+import br.com.lume.common.lazy.models.LazySorter;
 
 /**
  * Dummy implementation of LazyDataModel that uses a list to mimic a real datasource like a database.
@@ -46,63 +56,52 @@ public class LazyCarDataModel extends LazyDataModel<Car> {
     }
 
     @Override
-    public Object getRowKey(Car car) {
-        return car.getId();
+    public String getRowKey(Car car) {
+        return String.valueOf(car.getId());
     }
 
     @Override
-    public List<Car> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
-        List<Car> data = new ArrayList<Car>();
+    public List<Car> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+        List<Car> customers = datasource.stream()
+                .skip(first)
+                .filter(o -> filter(FacesContext.getCurrentInstance(), filterBy.values(), o))
+                .limit(pageSize)
+                .collect(Collectors.toList());
 
-        //filter
-        for(Car car : datasource) {
-            boolean match = true;
-
-            if (filters != null) {
-                for (Iterator<String> it = filters.keySet().iterator(); it.hasNext();) {
-                    try {
-                        String filterProperty = it.next();
-                        Object filterValue = filters.get(filterProperty);
-                        String fieldValue = String.valueOf(car.getClass().getField(filterProperty).get(car));
-
-                        if(filterValue == null || fieldValue.startsWith(filterValue.toString())) {
-                            match = true;
-                    }
-                    else {
-                            match = false;
-                            break;
-                        }
-                    } catch(Exception e) {
-                        match = false;
-                    }
-                }
-            }
-
-            if(match) {
-                data.add(car);
-            }
+        if (!sortBy.isEmpty()) {
+            List<Comparator<Car>> comparators = sortBy.values().stream()
+                    .map(o -> new LazySorter<Car>(o.getField(), o.getOrder()))
+                    .collect(Collectors.toList());
+            Comparator<Car> cp = ComparatorUtils.chainedComparator(comparators);
+            customers.sort(cp);
         }
 
-        //sort
-        if(sortField != null) {
-            Collections.sort(data, new LazySorter(sortField, sortOrder));
-        }
-
-        //rowCount
-        int dataSize = data.size();
-        this.setRowCount(dataSize);
-
-        //paginate
-        if(dataSize > pageSize) {
-            try {
-                return data.subList(first, first + pageSize);
-            }
-            catch(IndexOutOfBoundsException e) {
-                return data.subList(first, first + (dataSize % pageSize));
-            }
-        }
-        else {
-            return data;
-        }
+        return customers;
     }
+
+    private boolean filter(FacesContext context, Collection<FilterMeta> filterBy, Object o) {
+        boolean matching = true;
+
+        for (FilterMeta filter : filterBy) {
+            FilterConstraint constraint = filter.getConstraint();
+            Object filterValue = filter.getFilterValue();
+
+            try {
+                Field field = o.getClass().getDeclaredField(filter.getField());
+                field.setAccessible(true);
+                Object columnValue = String.valueOf(String.valueOf(field.get(o)));
+                matching = constraint.isMatching(context, columnValue, filterValue, LocaleUtils.getCurrentLocale());
+            }
+            catch (Exception e) {
+                matching = false;
+            }
+
+            if (!matching) {
+                break;
+            }
+        }
+
+        return matching;
+    }
+
 }
