@@ -862,7 +862,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setPlanoTratamento(planoTratamento);
         ptp.setProcedimento(procedimento);
 
-        ptp.setValorDescontoLabel(ptp.getValor());
+        ptp.setValorDescontoLabel(this.valorProc);
         ptp.setValorLabel(procedimento.getValor());
         ptp.setQtdConsultas(0);
         ptp.setDenteObj(null);
@@ -888,13 +888,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             ptp.setValor(procedimento.getValor());
             ptp.setValorConvenio(false);
         }
-        ptp.setValorDesconto(ptp.getValor());
+        ptp.setValorDesconto(this.valorProc);
     }
 
     public void populaValorProc() {
         if (procedimentoSelecionado != null) {
             BigDecimal valorConvenio = Utils.resolveDescontoConvenio(procedimentoSelecionado, getEntity());
-            if (valorConvenio != null) {
+            if (valorConvenio != null && this.getEntity().getPaciente().getConvenio() != null && this.getEntity().getPaciente().getConvenio().getExcluido().equals(Status.NAO)) {
                 this.valorProc = valorConvenio;
             } else {
                 this.valorProc = procedimentoSelecionado.getValor();
