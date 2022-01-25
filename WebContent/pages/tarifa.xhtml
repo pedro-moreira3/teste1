@@ -75,7 +75,7 @@
 								<p:tooltip for="tooltipPrazo" id="tTipPrazo" widgetVar="tTipPrazo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'prazo')}" />								
 							</p:outputPanel>	
 							<p:outputPanel>	
-								<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="99999" required="true" />
+								<p:inputNumber id="prazo" value="#{tarifaMB.entity.prazo}" maxlength="6" required="true" />
 							</p:outputPanel>
 						</p:panelGrid>	
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
@@ -115,7 +115,7 @@
 								<p:tooltip for="tooltipParcelaMinima" id="tTipParcelaMin" widgetVar="tTipParcelaMin" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMinima')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
-								<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="999" style="width:100% !important" required="true"/>
+								<p:inputNumber id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" maxlength="3" style="width:100% !important" required="true"/>
 							</p:outputPanel>						
 							<p:outputPanel style="margin-bottom:-15px">	
 								<p:outputLabel for="parcelaMaxima" value="Quantidade máxima de parcelas (dias):"/>
@@ -123,7 +123,7 @@
 								<p:tooltip for="tooltipParcelaMaxima" id="tTipParcelaMax" widgetVar="tTipParcelaMax" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMaxima')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
-								<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="999" style="width:100% !important" required="true"/>
+								<p:inputNumber id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" maxlength="3" style="width:100% !important" required="true"/>
 							</p:outputPanel>	
 							<p:outputPanel></p:outputPanel>
 							<p:outputPanel></p:outputPanel>
@@ -136,7 +136,7 @@
 								<p:tooltip for="tooltipPeriodicidade" id="tTipPerio" widgetVar="tTipPerio" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'periodicidade')}" />
 							</p:outputPanel>
 							<p:outputPanel>
-								<p:inputMask id="periodicidade" value="#{tarifaMB.entity.periodicidade}" mask="99999" />
+								<p:inputNumber id="periodicidade" value="#{tarifaMB.entity.periodicidade}" maxlength="5" />
 							</p:outputPanel>	
 						</p:panelGrid>
 						<p:panelGrid  columns="6" columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-2" layout="grid" styleClass="ui-panelgrid-blank"
