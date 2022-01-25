@@ -570,7 +570,8 @@
 					pattern="dd/MM/yyyy HH:mm" mask="true" timeInput="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.inicio)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
-					<p:ajax event="close"
+					
+					<p:ajax event="change"
 						listener="#{agendamentoMB.onCalendarAgChange}" process="@this"
 						update=":lume:fim" />
 				</p:calendar>
@@ -582,7 +583,7 @@
 					pattern="dd/MM/yyyy HH:mm" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
-					<p:ajax event="close"
+					<p:ajax event="change"
 						listener="#{agendamentoMB.onCalendarAgChangeDataFim}"
 						process="@this" />
 				</p:calendar>
