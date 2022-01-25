@@ -511,11 +511,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
                             if (afastamento.getInicio().equals(
                                     agendamento.getInicio()) || (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                agendamento.setDescricao("Horário bloqueado");
-                            } else if ((afastamento.getInicio().before(agendamento.getInicio()) && afastamento.getFim().after(agendamento.getInicio())
-
-                            )) {
-                                agendamento.setDescricao("Horário bloqueado");
+                                agendamento.setDescricao("Profissional afastado.");
+                            } else if ((afastamento.getInicio().before(agendamento.getInicio()) && afastamento.getFim().after(agendamento.getInicio()))) {
+                                agendamento.setDescricao("Profissional afastado");
                             }
 
                         }
