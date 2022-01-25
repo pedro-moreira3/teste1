@@ -24,7 +24,7 @@
 
 								<p:outputLabel for="cep" value="CEP : " />
 								<h:panelGroup style="display: flex !important;">
-									<p:inputMask id="cep" value="#{pacienteExternoMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999" styleClass="Wid80 MarRight10">
+									<p:inputMask id="cep" value="#{pacienteExternoMB.entity.dadosBasico.cep}" mask="99999-999" styleClass="Wid80 MarRight10">
 										<f:validator validatorId="cepValidator" />
 									</p:inputMask>
 									<p:commandButton id="cepsearch" icon="fa fa-search White" actionListener="#{pacienteExternoMB.actionBuscaCep}"
