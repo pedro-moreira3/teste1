@@ -930,6 +930,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
 								id="clValor" width="80px;">
+								<ui:remove>
 								<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
@@ -937,8 +938,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
 
 								</p:inputNumber>
-								<h:outputText value="#{plano.valorDesconto}"
-									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
+								</ui:remove>
+								<h:outputText value="#{plano.valorDesconto}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
