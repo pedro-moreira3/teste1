@@ -75,15 +75,15 @@
 		<p:outputPanel id="pnPrincipalExame">
 			<h3>Atenção: Apenas arquivos com as seguintes extensões são permitidos: JPG, JPEG, GIF, PNG ou PDF.</h3>
 			<p:fileUpload multiple="false" mode="advanced" dragDropSupport="true"
-				rendered="true" update="nomeAnexo"
+				rendered="true" update="nomeAnexo" 
 				allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|bmp|GIF|JPEG|PNG|PDF|JPG|BMP)$/"
 				label="Clique aqui e escolha o exame"
 				invalidFileMessage="Apenas imagens e arquivos PDF podem ser utilizados."
 				invalidSizeMessage="Tamanho excedeu o limite." auto="true"
 				sizeLimit="10240000" id="exame"
 				 accept=".gif,.jpg,.jpeg,.png,.bmp,.pdf"
-				fileUploadListener="#{exameMB.uploadArquivo}"
-				styleClass="NavyButton" icon="fa fa-cloud-upload" />
+				listener="#{exameMB.uploadArquivo}"
+				styleClass="NavyButton" icon="fa fa-cloud-upload"  />
 
 			<p:separator styleClass="SeparatorFull" />
 			<br />
