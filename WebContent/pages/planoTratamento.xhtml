@@ -936,7 +936,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
-
 								</p:inputNumber>
 								</ui:remove>
 								<h:outputText value="#{plano.valorDesconto}">
@@ -1229,9 +1228,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							columnClasses="ui-g-3,ui-g-3" rendered="#{planoTratamentoMB.ptpInserirMuitasVezes}"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:outputLabel value="Quantas vezes?" />
-							<p:inputMask
+							<p:inputNumber
 								value="#{planoTratamentoMB.ptpInserirQuantasVezes}"
-								mask="99" />
+								maxlength="2" />
 						</p:panelGrid>
 					</p:outputPanel>
 				</div>
