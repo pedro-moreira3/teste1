@@ -572,7 +572,7 @@
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
 					
 					<p:ajax process="@this"/>
-					<p:ajax event="valueChange"
+					<p:ajax event="close"
 						listener="#{agendamentoMB.onCalendarAgChange}" process="@this"
 						update=":lume:fim" />
 						
@@ -587,7 +587,7 @@
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
 					
 					<p:ajax process="@this"/>
-					<p:ajax event="valueChange"
+					<p:ajax event="close"
 						listener="#{agendamentoMB.onCalendarAgChangeDataFim}"
 						process="@this" />
 						
