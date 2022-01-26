@@ -363,7 +363,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                 } else if (((afastamento.getInicio().after(dataPadraoInicioManha)) || afastamento.getInicio().equals(dataPadraoInicioManha)) && (afastamento.getFim().after(
                                         dataPadraoFimTarde) || afastamento.getFim().equals(dataPadraoFimTarde))) {
                                     minutosAfastamento = ChronoUnit.MINUTES.between(afastamento.getInicio().toInstant(), dataPadraoFimTarde.toInstant());
-                                } else if (afastamento.getInicio().before(dataPadraoInicioManha) && afastamento.getFim().after(dataPadraoFimTarde)) {
+                                } else if (afastamento.getInicio().before(dataPadraoInicioManha) && (afastamento.getFim().after(dataPadraoFimTarde) || afastamento.getFim().equals(dataPadraoFimTarde))) {
                                     minutosAfastamento = ChronoUnit.MINUTES.between(dataPadraoInicioManha.toInstant(), dataPadraoFimTarde.toInstant());
                                 }
                             }
@@ -511,9 +511,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
                             if (afastamento.getInicio().equals(
                                     agendamento.getInicio()) || (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                agendamento.setDescricao("Profissional afastado.");
+                                agendamento.setDescricao("Horário bloqueado");
                             } else if ((afastamento.getInicio().before(agendamento.getInicio()) && afastamento.getFim().after(agendamento.getInicio()))) {
-                                agendamento.setDescricao("Profissional afastado");
+                                agendamento.setDescricao("Horário bloqueado");
                             }
 
                         }
