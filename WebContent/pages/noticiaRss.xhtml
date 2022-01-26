@@ -27,7 +27,7 @@
 								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10" mindate="#{noticiaRssMB.dataAtual}" mask="true"/>
 
 							<h:outputLabel value="Imagem : " />
-							<p:fileUpload id="imagem" fileUploadListener="#{noticiaRssMB.uploadArquivo}" mode="advanced" label="Anexar" auto="true" rendered="true"
+							<p:fileUpload id="imagem" listener="#{noticiaRssMB.uploadArquivo}" mode="advanced" label="Anexar" auto="true" rendered="true"
 								allowTypes="/(\.|\/)(gif|jpeg|png|jpg)$/" sizeLimit="10485760" invalidFileMessage="Apenas imagens."
 								invalidSizeMessage="Tamanho excedeu o limite." styleClass="Wid50" style="margin-left: -5px;"/>
 						</p:panelGrid>

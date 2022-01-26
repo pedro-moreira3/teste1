@@ -12,7 +12,7 @@
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 							<h:outputLabel value="Arquivo : " />
-							<p:fileUpload id="arquivo" fileUploadListener="#{importaMB.importar}" mode="advanced" label="Anexar" auto="true" rendered="true" styleClass="Wid50"/>
+							<p:fileUpload id="arquivo" listener="#{importaMB.importar}" mode="advanced" label="Anexar" auto="true" rendered="true" styleClass="Wid50"/>
 
 						</p:panelGrid>
 					</p:panel>

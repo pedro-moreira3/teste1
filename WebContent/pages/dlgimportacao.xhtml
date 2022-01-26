@@ -129,7 +129,7 @@ li.orcamento-li {
 								styleClass="ui-panelgrid-blank ui-fluid form-group">
 								<h:panelGroup>
 									<p:fileUpload id="arquivoUpload"
-										fileUploadListener="#{importacaoMB.carregarArquivo}"
+										listener="#{importacaoMB.carregarArquivo}"
 										multiple="false" mode="advanced" auto="true"
 										allowTypes="/(\.|\/)(txt|xls|csv|xlsx)$/"
 										label="Selecione o arquivo" style="display:block;"

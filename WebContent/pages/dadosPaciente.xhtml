@@ -542,7 +542,7 @@
 					invalidSizeMessage="Arquivo muito grande! Tamanho não suportado."
 					auto="true" sizeLimit="1000000"
 					update="photoPacienteUpload,botoesGirar"
-					fileUploadListener="#{pacienteMB.uploadPhotoImg}"
+					listener="#{pacienteMB.uploadPhotoImg}"
 					styleClass="BotaoCrud cyan-btn" icon="fa fa-cloud-upload" />
 				<p:outputPanel id="photoPacienteUpload" style="position: relative;">
 					<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
