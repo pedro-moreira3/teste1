@@ -11,11 +11,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.annotation.ManagedProperty;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
 import javax.imageio.ImageIO;
-import javax.inject.Named;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -36,7 +36,7 @@ import br.com.lume.exame.ExameSingleton;
 import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.util.OdontoMensagens;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class ExameMB extends LumeManagedBean<Exame> {
 
