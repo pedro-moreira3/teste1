@@ -2613,6 +2613,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
 
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
             PrimeFaces.current().executeScript("PF('procedimentosTableInPT').filter()");
         }
     }
