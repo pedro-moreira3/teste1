@@ -571,9 +571,11 @@
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.inicio)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
 					
-					<p:ajax event="change"
+					<p:ajax process="@this"/>
+					<p:ajax event="close"
 						listener="#{agendamentoMB.onCalendarAgChange}" process="@this"
 						update=":lume:fim" />
+						
 				</p:calendar>
 				<p:outputLabel for="inicio" value="Data/Hora Inicial" />
 				<p:message styleClass="msg" for="inicio" />
@@ -583,9 +585,12 @@
 					pattern="dd/MM/yyyy HH:mm" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
-					<p:ajax event="change"
+					
+					<p:ajax process="@this"/>
+					<p:ajax event="close"
 						listener="#{agendamentoMB.onCalendarAgChangeDataFim}"
 						process="@this" />
+						
 				</p:calendar>
 				<p:outputLabel for="fim" value="Data/Hora Final" />
 				<p:message styleClass="msg" for="fim" />

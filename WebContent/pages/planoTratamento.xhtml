@@ -930,13 +930,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
 								id="clValor" width="80px;">
+
 								<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
-
 								</p:inputNumber>
+								
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
 									<f:convertNumber currencySymbol="R$" type="currency"
@@ -1228,9 +1229,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							columnClasses="ui-g-3,ui-g-3" rendered="#{planoTratamentoMB.ptpInserirMuitasVezes}"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:outputLabel value="Quantas vezes?" />
-							<p:inputMask
+							<p:inputNumber
 								value="#{planoTratamentoMB.ptpInserirQuantasVezes}"
-								mask="99" />
+								maxlength="2" />
 						</p:panelGrid>
 					</p:outputPanel>
 				</div>
@@ -1246,13 +1247,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Continuar"
 					actionListener="#{planoTratamentoMB.salvarContinuar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 					oncomplete="PF('procedimentosTableInPT').filter()" />
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 					oncomplete="PF('procedimentosTableInPT').filter()" />
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgNovoProcedimento').hide();"

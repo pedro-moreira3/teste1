@@ -205,7 +205,7 @@
 
 					<h:panelGroup>
 						<p:fileUpload id="documentoUpload"
-							fileUploadListener="#{pacienteMB.carregarArquivo()}"
+							listener="#{pacienteMB.carregarArquivo()}"
 							multiple="false" mode="advanced" auto="true"
 							allowTypes="/(\.|\/)(txt|xls|csv|xlsx|pdf)$/"
 							label="Selecione o arquivo" style="display:block;" />
