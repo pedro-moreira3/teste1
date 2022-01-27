@@ -931,15 +931,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
 								id="clValor" width="80px;">
 
+								<ui:remove>
 								<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
 								</p:inputNumber>
+								</ui:remove>
 								
-								<h:outputText value="#{plano.valorDesconto}"
-									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
+								<h:outputText value="#{plano.valorDesconto}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
@@ -1166,10 +1167,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Nro. Sequencial: " />
-						<p:inputNumber maxValue="99" decimalPlaces="0"
+						<p:inputNumber maxValue="99" decimalPlaces="0" id="nrSequencial"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.sequencial}" />
 						<h:outputText value="Prioridade: " />
-						<p:inputNumber maxValue="99" decimalPlaces="0"
+						<p:inputNumber maxValue="99" decimalPlaces="0" id="nrPrioridade"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />	
 					
 							
@@ -1185,7 +1186,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 							converter="procedimento" forceSelection="true" scrollHeight="400"
 							minQueryLength="3">
-							<p:ajax event="itemSelect" process="@this,painelValor" listener="#{planoTratamentoMB.populaValorProc()}"
+							<p:ajax event="itemSelect" process="@this" listener="#{planoTratamentoMB.populaValorProc()}"
 								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
 						</p:autoComplete>						
 					</p:panelGrid>

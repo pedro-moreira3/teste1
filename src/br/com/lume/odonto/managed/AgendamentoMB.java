@@ -412,12 +412,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     }
 
-    public void agendarNoRelatorioRelacionamento(Paciente pac, Profissional pro) {
-        onDateSelect(null);
-        profissional = pro;
-        profissionalDentroAgenda = pro;
-        setPacienteSelecionado(pac);
-        atualizaPickList();
+    public void agendarNoRelatorioRelacionamento(long pac) {
+        try {
+            onDateSelect(null);
+            profissional = UtilsFrontEnd.getProfissionalLogado();
+            profissionalDentroAgenda = UtilsFrontEnd.getProfissionalLogado();
+            
+            Paciente paciente = PacienteSingleton.getInstance().getBo().find(pac);
+            
+            setPacienteSelecionado(paciente);
+            atualizaPickList();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isReserva() {

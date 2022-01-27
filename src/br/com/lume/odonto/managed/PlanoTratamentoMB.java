@@ -88,8 +88,10 @@ import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamento.bo.PlanoTratamentoBO;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoRegiaoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.bo.PlanoTratamentoProcedimentoBO;
 import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
@@ -838,7 +840,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         planoTratamentoProcedimentoSelecionado.setSequencial(sequencial);
                         sequencial++;
                     }
-                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
+                    PlanoTratamentoProcedimentoBO ptpBO = new PlanoTratamentoProcedimentoBO();
+                    ptpBO.persist(this.planoTratamentoProcedimentoSelecionado);
+                    //PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
                 }
             }
 
@@ -846,7 +850,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
             getEntity().getPlanoTratamentoProcedimentos().add(this.planoTratamentoProcedimentoSelecionado);
 
-            PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
+            //PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
+            PlanoTratamentoBO ptBO = new PlanoTratamentoBO();
+            ptBO.persist(getEntity());
+            
             carregarPlanoTratamentoProcedimentos();
             this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
 
