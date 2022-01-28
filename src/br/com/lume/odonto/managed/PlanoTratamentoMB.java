@@ -97,10 +97,8 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
 import br.com.lume.regiaoRegiao.RegiaoRegiaoSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
-import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.retorno.RetornoSingleton;
-import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
@@ -799,17 +797,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         handleDenteRegiaoSelected();
     }
 
-    public void actionAdicionarProcedimento(ActionEvent event) {
+    //Monta PTP para persistencia
+    private void populaPtp() {
         try {
             PlanoTratamentoProcedimentoRegiao.TipoRegiao local = isDenteOrRegiao(this.denteRegiaoEscolhida);
-
-            if (this.procedimentoSelecionado == null) {
-                this.addInfo("Escolha um procedimento antes de salvar.", "");
-                return;
-            }
-
+            
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
                 atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado, getPaciente());
+            
             if (local != null) {
                 if (local == PlanoTratamentoProcedimentoRegiao.TipoRegiao.DENTE) {
                     if (getEntity().getOdontograma() == null) {
@@ -829,32 +824,58 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 actionPersistFaces(planoTratamentoProcedimentoSelecionado);
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void actionAdicionarProcedimento(ActionEvent event) {
+        try {
+            if (this.procedimentoSelecionado == null) {
+                this.addInfo("Escolha um procedimento antes de salvar.", "");
+                return;
+            }
+            
+            List<PlanoTratamentoProcedimento> ptpsPersist = new ArrayList<PlanoTratamentoProcedimento>();
+            boolean persist = false;
 
-            if (planoTratamentoProcedimentoSelecionado.getId() == 0) {
+            if(planoTratamentoProcedimentoSelecionado.getId() != 0) {
+                populaPtp();
+                ptpsPersist.add(planoTratamentoProcedimentoSelecionado);
+            }else if (planoTratamentoProcedimentoSelecionado.getId() == 0) {
+                persist = true;
                 int sequencial = 1;
                 for (int i = 0; i < (getPtpInserirMuitasVezes() != null && getPtpInserirMuitasVezes().booleanValue() && getPtpInserirQuantasVezes() != null && getPtpInserirQuantasVezes().intValue() > 0 ? getPtpInserirQuantasVezes().intValue() : 1); i++) {
-                    planoTratamentoProcedimentoSelecionado.setId(0l);
-                    planoTratamentoProcedimentoSelecionado.setDente(null);
+
+                    populaPtp();
+                    
                     planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
                     if (planoTratamentoProcedimentoSelecionado.getPlanoTratamento().isOrtodontico()) {
                         planoTratamentoProcedimentoSelecionado.setSequencial(sequencial);
                         sequencial++;
                     }
-                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
+                    
+                    ptpsPersist.add(planoTratamentoProcedimentoSelecionado);
+                    planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
                 }
             }
-
+            
+            if(persist) {
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persistBatch(ptpsPersist);
+                this.planoTratamentoProcedimentos.addAll(ptpsPersist);
+            } else {
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimentoSelecionado);
+            }
+            
+            //this.planoTratamentoProcedimentos.stream().sorted(Comparator.comparing(PlanoTratamentoProcedimento::isFinalizado));
+            
             if (getEntity().getPlanoTratamentoProcedimentos() == null)
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
             
-            //PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
-            PlanoTratamentoBO ptBO = new PlanoTratamentoBO();
-            ptBO.persist(getEntity());
+            PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
             
-            carregarPlanoTratamentoProcedimentos();
             this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
-            
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             e.printStackTrace();

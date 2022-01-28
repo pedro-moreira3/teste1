@@ -1343,7 +1343,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimentoEditar"
 					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 					oncomplete="PF('procedimentosTableInPT').filter()" />
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgEditarProcedimento').hide();"
