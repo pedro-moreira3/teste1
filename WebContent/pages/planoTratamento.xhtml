@@ -959,6 +959,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									disabled="#{(plano.finalizado and plano.dataFinalizado != null) or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}"
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
+									
 									<p:ajax process="@this" update="@this"
 										listener="#{planoTratamentoMB.fazNada()}" />
 									
@@ -994,11 +995,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton id="persistPlanoTratamento"
 								icon="White fa fa-save" value="Salvar procedimentos"
 								actionListener="#{planoTratamentoMB.actionPersist}"
-								update=":lume:tabViewPaciente:dtProcedimentosSelecionadospt,:lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:dtProcedimentosSelecionadospt,
+								update=":lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:dtProcedimentosSelecionadospt,
 									:lume:tabViewPaciente:dtPlanoTratamento, :lume:tabViewPaciente:evolucaoView, :lume:tabViewPaciente:botoesFinalizaPT"
-								process=":lume:tabViewPaciente:pnViewPlanoTratamento,@this"
+								process="@this"
 								styleClass="GreenButton"
-								oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter()"
+								oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter();"
 								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:panelGrid>
 					</div>
@@ -1282,8 +1283,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.sequencial}" />
 						<h:outputText value="Prioridade: " />
 						<p:inputNumber maxValue="99" decimalPlaces="0"
-							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />	
-					
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />
 							
 					</p:panelGrid>
 
@@ -2229,7 +2229,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		header="Evolução - Finalizar procedimento" responsive="true"
 		modal="true" appendTo=":lume">
 		<p:ajax event="close"
-			update=":lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:dtProcedimentosSelecionadospt "
+			update=":lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT "
 			listener="#{planoTratamentoMB.closeEvolucao}" process="@this" />
 		<p:outputPanel id="evolucaoView">
 			<p:panelGrid columns="1" layout="grid"
@@ -2294,7 +2294,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update=":lume:tabViewPaciente:evolucaoView, :lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:dtProcedimentosSelecionadospt,
 					:lume:tabViewPaciente:pgFinalizar, :lume:tabViewPaciente:botoesFinalizaPT, :lume:tabViewPaciente:pnViewPlanoTratamento"
 				process="@this, :lume:tabViewPaciente:evolucaoView"
-				oncomplete="handleDialogRequest(xhr, status, args);" />
+				oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter()" />
 		</p:panelGrid>
 	</p:dialog>
 
