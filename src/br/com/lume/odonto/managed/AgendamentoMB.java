@@ -169,6 +169,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Date dataAgendamentoInicial;
     private Date dataAgendamentoFinal;
     private List<Afastamento> afastamentos = new ArrayList<>();
+    private boolean agendamentoRapido = false;
     
     private String statusColorBlack[] = {"P","D","O","H","F"};
 
@@ -337,6 +338,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void agendamentoRapido(Agendamento a) {
+        setAgendamentoRapido(true);
         setEntity(a);
         profissional = a.getProfissional();
         profissionalDentroAgenda = profissional;
@@ -2309,6 +2311,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void setInitialDateConsult(Date initialDateConsult) {
         this.initialDateConsult = initialDateConsult;
         setInitialDate(Utils.convertToLocalDateViaInstant(initialDateConsult));
+    }
+
+    public boolean isAgendamentoRapido() {
+        return agendamentoRapido;
+    }
+
+    public void setAgendamentoRapido(boolean agendamentoRapido) {
+        this.agendamentoRapido = agendamentoRapido;
     }
 
 //    public PushContext getSomeChannel() {
