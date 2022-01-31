@@ -9,15 +9,15 @@
 	<f:facet name="first">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE"/>
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
 		<meta name="viewport"
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<link rel="shortcut icon" type="image/x-icon"
 			href="#{request.contextPath}/images/favicon.ico" />
 		<meta name="theme-color"
-			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />			
-			
+			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
+
 	</f:facet>
 	<title>INTELIDENTE</title>
 
@@ -70,17 +70,16 @@
 }
 </style>
 	<script>
-	
-	function exitListener(code) {	
-	    if (code == 1008) {
-	        PF('dlgMensagemSessaoExpirada').show();
-	      
-	       setTimeout(function(){
-	            window.location.href = '/intelidente/pages/login.jsf';
-	         }, 7000);
-	    }
-	}
-	
+		function exitListener(code) {
+			if (code == 1008) {
+				PF('dlgMensagemSessaoExpirada').show();
+
+				setTimeout(function() {
+					window.location.href = '/intelidente/pages/login.jsf';
+				}, 7000);
+			}
+		}
+
 		function mostraDialogo(titulo, mensagem, tipo, tempo) {
 			mostraDialogo(titulo, mensagem, tipo, null);
 		}
@@ -148,7 +147,35 @@
 		gtag('config', 'UA-156031439-1');
 	</script>
 	 -->
-
+	 
+	 <!-- 
+	 	Código adicionado para alterar o comportamento do componente selectonemenu 
+	  -->
+	<f:facet name="last">
+	<script>
+		PrimeFaces.widget.SelectOneMenu.prototype.bindConstantEvents = function() {
+	        var a = this;
+	        PrimeFaces.utils.registerHideOverlayHandler(this, "mousedown." + this.id + "_hide", a.panel, function() {
+	            return a.label.add(a.menuIcon)
+	        }, 
+	        function(c, b) {
+	            if (!(a.panel.is(b) || a.panel.has(b).length > 0)) {
+	                a.hide();
+	                setTimeout(function() {
+	                    a.revert();
+	                    a.changeAriaValue(a.getActiveItem())
+	                }, 2)
+	            }
+	        });
+	        // PrimeFaces.utils.registerResizeHandler(this, "resize." + this.id + "_hide", a.panel, function() {
+	        //     a.hide()
+	        // });
+// 	        PrimeFaces.utils.registerScrollHandler(this, "scroll." + this.id + "_hide", function() {
+// 	            a.hide()
+// 	        });
+    	}
+		</script>
+	</f:facet>
 </h:head>
 
 <h:body
@@ -156,7 +183,7 @@
 	<!-- LAYOUT CONTAINER -->
 
 
-<f:websocket channel="exit" scope="session"  onclose="exitListener" />
+	<f:websocket channel="exit" scope="session" onclose="exitListener" />
 
 
 	<div class="alert-container"></div>
@@ -213,33 +240,32 @@
 			ga('create', 'UA-100802286-3', 'auto');
 			ga('send', 'pageview');
 
-			
-			function startTimer() {				
-				
+			function startTimer() {
+
 				//para customizar o loading das telas
-				if(window.location.href.includes("emissaoDocumento")){
-					
-				}else{
-					PF('loading').show();	
+				if (window.location.href.includes("emissaoDocumento")) {
+
+				} else {
+					PF('loading').show();
 				}
-				
-				
+
 				//  ajaxInProgress = setTimeout(function () {
-		        //        PF('loading').show();
-		        //    }, 500);
+				//        PF('loading').show();
+				//    }, 500);
 			}
-			
-			function stopTimer() {			
+
+			function stopTimer() {
 				PF('loading').hide();
 				//  clearTimeout(ajaxInProgress);
 
-		       //     PF('loading').hide();
-		       //     ajaxInProgress = null;			
+				//     PF('loading').hide();
+				//     ajaxInProgress = null;			
 
-		         //   PF('loading').hide();
-		        //    ajaxInProgress = null;			
+				//   PF('loading').hide();
+				//    ajaxInProgress = null;			
 
 			}
+
 			//]]>
 		</script>
 
@@ -306,61 +332,63 @@
 		</div>
 
 	</div>
-	
-		
-	
-	
-	
-	
+
+
+
+
+
+
 	<p:dialog widgetVar="dlgVideo" responsive="true" modal="true"
 		appendTo=":lume" resizable="false">
-		   <p:ajax event="close" update="painelVideo" />
+		<p:ajax event="close" update="painelVideo" />
 		<f:facet name="header">
-			<h:outputText id="headerVideoTutorial"
-				value="Video Tutorial" />				
+			<h:outputText id="headerVideoTutorial" value="Video Tutorial" />
 		</f:facet>
 		<p:panel id="painelVideo">
-			<object 
-		  		style="width: 600px; height: 461.25px; float: none; clear: both; margin: 2px auto;"
-		  		data="#{filaAtendimentoMB.videoLink}">
-			</object>
-		</p:panel>		
+			<object
+				style="width: 600px; height: 461.25px; float: none; clear: both; margin: 2px auto;"
+				data="#{filaAtendimentoMB.videoLink}"> </object>
+		</p:panel>
 	</p:dialog>
-	
-	<p:dialog widgetVar="dlgMensagemSessaoExpirada" id="dlgMensagemSessaoExpirada" responsive="true" modal="true"
+
+	<p:dialog widgetVar="dlgMensagemSessaoExpirada"
+		id="dlgMensagemSessaoExpirada" responsive="true" modal="true"
 		appendTo=":lume" resizable="false">
-		  
+
 		<f:facet name="header">
-			<h:outputText 
-				value="Sessão Expirada" />				
+			<h:outputText value="Sessão Expirada" />
 		</f:facet>
 		<p:panel id="painelSessaoExpirada">
 			Sessão Expirada! você será redirecionado para a tela de login em alguns segundos.
-		</p:panel>		
+		</p:panel>
 	</p:dialog>
-	
-	
-		<p:dialog widgetVar="dlgListaVideos" responsive="true" modal="true"
+
+
+	<p:dialog widgetVar="dlgListaVideos" responsive="true" modal="true"
 		appendTo=":lume" resizable="false">
-		   <p:ajax event="close" update="painelVideoList" />
+		<p:ajax event="close" update="painelVideoList" />
 		<f:facet name="header">
-			<h:outputText id="headerVideoTutorialList"
-				value="Videos Tutoriais" />				
+			<h:outputText id="headerVideoTutorialList" value="Videos Tutoriais" />
 		</f:facet>
-		<p:outputPanel id="painelVideoList">		
-			<p:panel rendered="#{filaAtendimentoMB.listaVideosTutorial != null and filaAtendimentoMB.listaVideosTutorial.size() > 0}">
-			<p:outputLabel style="font-weight:bold;font-size:16px">Abaixo a lista de videos tutoriais!</p:outputLabel>
-				<br /><br />
-				<ui:repeat value="#{filaAtendimentoMB.listaVideosTutorial.entrySet().toArray()}" var="entry">					
+		<p:outputPanel id="painelVideoList">
+			<p:panel
+				rendered="#{filaAtendimentoMB.listaVideosTutorial != null and filaAtendimentoMB.listaVideosTutorial.size() > 0}">
+				<p:outputLabel style="font-weight:bold;font-size:16px">Abaixo a lista de videos tutoriais!</p:outputLabel>
+				<br />
+				<br />
+				<ui:repeat
+					value="#{filaAtendimentoMB.listaVideosTutorial.entrySet().toArray()}"
+					var="entry">
 					<p:commandButton value="#{entry.key}"
-											icon="White fa fa-youtube-play White"
-											oncomplete="PF('dlgVideo').show()"
-											actionListener="#{filaAtendimentoMB.setVideoLink(entry.value)}"
-											process="@this,painelVideo" update="painelVideo" style="width:400px"/>
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgVideo').show()"
+						actionListener="#{filaAtendimentoMB.setVideoLink(entry.value)}"
+						process="@this,painelVideo" update="painelVideo"
+						style="width:400px" />
 					<br />
 					<br />
 				</ui:repeat>
-			</p:panel>		
+			</p:panel>
 		</p:outputPanel>
 	</p:dialog>
 	<p:confirmDialog global="true">
