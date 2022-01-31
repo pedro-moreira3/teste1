@@ -101,7 +101,7 @@
 		onHide="PF('dlgDisponibilidade').toggleMaximize();"
 		onShow="PF('dlgDisponibilidade').toggleMaximize();" appendTo=":lume"
 		header="Disponibilidade do profissional" responsive="true"
-		modal="true"
+		modal="true" rendered="#{!agendamentoMB.agendamentoRapido}"
 		width="calc(100% - 2px)" height="100%" position="0,0"
 		>
 
@@ -401,7 +401,8 @@
 					<p:message styleClass="msg" for="profissionalAgend" />
 					
 					<p:outputPanel id="btnVisualizarDisponibilidade"
-							style="display:inline-flex;">
+						rendered="#{!agendamentoMB.agendamentoRapido}"
+						style="display:inline-flex;">
 							<p:commandButton id="visualizarDisponibilidade" process="@this,:lume:pnDisponibilidade"
 								disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
 								actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromDlgAgendamento(agendamentoMB.entity,agendamentoMB.pacienteSelecionado,agendamentoMB.profissionalDentroAgenda,agendamentoMB.inicio,

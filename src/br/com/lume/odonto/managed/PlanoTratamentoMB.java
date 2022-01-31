@@ -841,7 +841,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             if(planoTratamentoProcedimentoSelecionado.getId() != 0) {
                 populaPtp();
-                ptpsPersist.add(planoTratamentoProcedimentoSelecionado);
             }else if (planoTratamentoProcedimentoSelecionado.getId() == 0) {
                 persist = true;
                 int sequencial = 1;
@@ -866,8 +865,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             } else {
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimentoSelecionado);
             }
-            
-            //this.planoTratamentoProcedimentos.stream().sorted(Comparator.comparing(PlanoTratamentoProcedimento::isFinalizado));
             
             if (getEntity().getPlanoTratamentoProcedimentos() == null)
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
