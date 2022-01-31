@@ -66,6 +66,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaList();
+            this.setEntity(new Convenio());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
