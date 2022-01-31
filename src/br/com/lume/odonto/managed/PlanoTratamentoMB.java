@@ -457,7 +457,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
-                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
+                //planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listPlanosByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
                 ptLazyModel = new PlanoTratamentoLazyModel(planosTratamento);
             }
         } catch (Exception e) {
