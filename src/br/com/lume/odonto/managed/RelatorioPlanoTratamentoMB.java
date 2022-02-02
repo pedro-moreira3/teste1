@@ -75,19 +75,20 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     public RelatorioPlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamento.class);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            try {
+                justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        try {
-            justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (this.listaConvenios == null)
+                this.listaConvenios = new ArrayList<>();
+
+            this.sugestoesConvenios("todos");
+            status = new ArrayList<String>();
+            status.add("N");
         }
-
-        if (this.listaConvenios == null)
-            this.listaConvenios = new ArrayList<>();
-
-        this.sugestoesConvenios("todos");
-        status = new ArrayList<String>();
-        status.add("N");
     }
 
     public String possuiOrcamento(PlanoTratamento pt) {
@@ -99,15 +100,12 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         }
 
     }
-    
+
     public String dataUltimaAprovacao(PlanoTratamento pt) {
         List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
         try {
             if (orcamentos != null && !orcamentos.isEmpty()) {
-                return Utils.dateToStringSomenteDataBrasil(orcamentos.stream()
-                        .filter(orcamento -> orcamento.isAprovado())
-                        .map(orcamento -> orcamento.getDataAprovacao())
-                        .max(Date::compareTo).get());
+                return Utils.dateToStringSomenteDataBrasil(orcamentos.stream().filter(orcamento -> orcamento.isAprovado()).map(orcamento -> orcamento.getDataAprovacao()).max(Date::compareTo).get());
             }
         } catch (Exception e) {
             // TODO: handle exception

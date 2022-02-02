@@ -305,7 +305,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()); 
+        }
     }
 
     public void abreTrocaItemProfissional(FaturaItem item) {

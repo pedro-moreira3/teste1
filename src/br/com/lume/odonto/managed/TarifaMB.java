@@ -40,20 +40,21 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaTarifa;
-    
+
     private String filtroStatus = "A";
 
     public TarifaMB() {
         super(TarifaSingleton.getInstance().getBo());
-        this.geraLista();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraLista();
+        }
         this.setClazz(Tarifa.class);
-       
-     
+
     }
 
     public void geraLista() {
         try {
-            this.tarifas = TarifaSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroStatus,FormaPagamento.AMBOS);
+            this.tarifas = TarifaSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus, FormaPagamento.AMBOS);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -61,70 +62,64 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
         if (this.tarifas != null)
             Collections.sort(this.tarifas);
     }
-    
+
     public void mudaPrazo() {
-        if(getEntity().getTipo().equals("CC")) {
+        if (getEntity().getTipo().equals("CC")) {
             getEntity().setPrazo(30);
-        }else if(getEntity().getTipo().equals("CD")) {
+        } else if (getEntity().getTipo().equals("CD")) {
             getEntity().setPrazo(2);
-        }else{
+        } else {
             getEntity().setPrazo(0);
         }
-        
-        
-     
+
     }
-    
-   
 
     @Override
     public void actionPersist(ActionEvent event) {
-        try {   
-            if(getEntity().getParcelaMinima() > getEntity().getParcelaMaxima()) {
-                this.addError("Quantidade de parcela mínima não pode ser maior que parcela máxima.", "",true);
-            }else if(getEntity().getParcelaMinima() < 1 || getEntity().getParcelaMaxima() < 1 ) {
-                this.addError("Quantidade de parcela mínima e máxima não podem ser 0, deve ser no mínimo 1", "",true);
-            }else{
+        try {
+            if (getEntity().getParcelaMinima() > getEntity().getParcelaMaxima()) {
+                this.addError("Quantidade de parcela mínima não pode ser maior que parcela máxima.", "", true);
+            } else if (getEntity().getParcelaMinima() < 1 || getEntity().getParcelaMaxima() < 1) {
+                this.addError("Quantidade de parcela mínima e máxima não podem ser 0, deve ser no mínimo 1", "", true);
+            } else {
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 super.actionPersist(event);
-                this.geraLista();            
+                this.geraLista();
                 PrimeFaces.current().executeScript("PF('dlg').hide()");
                 PrimeFaces.current().executeScript("PF('dtTarifa').filter();");
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
         }
     }
-    
-  
 
     public void actionInativar(Tarifa tarifa) {
         tarifa.setStatus("I");
         try {
             TarifaSingleton.getInstance().getBo().persist(tarifa);
             this.geraLista();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Forma de pagamento inativada com sucesso");            
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Forma de pagamento inativada com sucesso");
         } catch (Exception e) {
             log.error("Erro no actionInativar", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }        
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
+        }
     }
-    
+
     public void actionAtivar(Tarifa tarifa) {
         tarifa.setStatus("A");
         try {
             TarifaSingleton.getInstance().getBo().persist(tarifa);
             this.geraLista();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Forma de pagamento ativada com sucesso");            
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Forma de pagamento ativada com sucesso");
         } catch (Exception e) {
             log.error("Erro no actionInativar", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }        
-    }    
-    
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
+        }
+    }
+
     public void actionEditar(Tarifa tarifa) {
-      setEntity(tarifa);
+        setEntity(tarifa);
     }
 
     public void actionAtivar(ActionEvent event) {
@@ -160,12 +155,10 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
         this.tabelaTarifa = tabelaTarifa;
     }
 
-    
     public String getFiltroStatus() {
         return filtroStatus;
     }
 
-    
     public void setFiltroStatus(String filtroStatus) {
         this.filtroStatus = filtroStatus;
     }

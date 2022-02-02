@@ -107,14 +107,14 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     public PagamentoRecebimentoMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
-
-        geraListaSugestoesPagamento();
-        geraListaSugestoesRecebimento();
-        carregarTiposCategoria();
-        carregarCategorias();
-        carregarMotivos();
-        carregarProfissionais();
-
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            geraListaSugestoesPagamento();
+            geraListaSugestoesRecebimento();
+            carregarTiposCategoria();
+            carregarCategorias();
+            carregarMotivos();
+            carregarProfissionais();
+        }
     }
 
     public void actionPersistNovoRecebimento() {
@@ -123,8 +123,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
         try {
 
-            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber, new BigDecimal(0),
-                    motivoRecebimento);
+            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), SALDO.ENTRADA, valorReceber, new BigDecimal(0), motivoRecebimento);
 
             if (this.faturaRecebimento != null) {
 
@@ -279,7 +278,7 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     public void pesquisar() {
 
         Fornecedor fornecedorFiltro = null;
-       // Fornecedor fornecedorOrigemFiltro = null;
+        // Fornecedor fornecedorOrigemFiltro = null;
         Profissional profissionalFiltro = null;
 
         try {
@@ -300,8 +299,8 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
                 }
             }
 
-            this.faturas = FaturaItemSingleton.getInstance().getBo().faturasItensFromDataAndFornecedor(dataInicio, dataFim, fornecedorFiltro, null, profissionalFiltro,
-                    this.getProfissionalCriacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.faturas = FaturaItemSingleton.getInstance().getBo().faturasItensFromDataAndFornecedor(dataInicio, dataFim, fornecedorFiltro, null, profissionalFiltro, this.getProfissionalCriacao(),
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
         } catch (Exception e) {
             this.log.error("Erro ao pesquisar", e);

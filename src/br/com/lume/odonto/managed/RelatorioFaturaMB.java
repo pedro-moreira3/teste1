@@ -82,13 +82,15 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     public RelatorioFaturaMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
-        geraListaSugestoes();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            geraListaSugestoes();
 
-        this.statussFatura = Fatura.getStatusFaturaLista();
+            this.statussFatura = Fatura.getStatusFaturaLista();
 
-        //origens = new ArrayList<SelectItem>();
-        tipoFatura = "RP";
-        atualizaTipoFatura();
+            //origens = new ArrayList<SelectItem>();
+            tipoFatura = "RP";
+            atualizaTipoFatura();
+        }
     }
 
     public void updateSomatorio() {

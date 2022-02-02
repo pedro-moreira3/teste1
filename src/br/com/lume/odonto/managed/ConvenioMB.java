@@ -15,9 +15,9 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dominio.DominioSingleton;
-//import br.com.lume.odonto.bo.ConvenioBO;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.ConvenioBO;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.util.UF;
@@ -34,17 +34,17 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
 
     public List<Dominio> dominios;
 
-  //  private DominioBO dominioBO;
+    //  private DominioBO dominioBO;
 
-  //  private ConvenioBO convenioBO;
-    
+    //  private ConvenioBO convenioBO;
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaConvenio;
 
     public ConvenioMB() {
         super(ConvenioSingleton.getInstance().getBo());
         //dominioBO = new DominioBO();
-      //  convenioBO = new ConvenioBO();
+        //  convenioBO = new ConvenioBO();
         this.setClazz(Convenio.class);
         this.carregaList();
     }
@@ -53,7 +53,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
         try {
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("convenio", "tipo");
             dominios.removeIf(dom -> dom.getNome().equals("Promoção"));
-                
+
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,10 +63,12 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            super.actionPersist(event);
-            this.carregaList();
-            this.setEntity(new Convenio());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                super.actionPersist(event);
+                this.carregaList();
+                this.setEntity(new Convenio());
+            }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -78,26 +80,26 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
             Endereco endereco = Endereco.getEndereco(cep);
-            if(endereco != null) {
+            if (endereco != null) {
                 this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
                 this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
                 this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
                 this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
-            }else {
+            } else {
                 this.getEntity().getDadosBasico().setBairro(null);
                 this.getEntity().getDadosBasico().setCidade(null);
                 this.getEntity().getDadosBasico().setEndereco(null);
                 this.getEntity().getDadosBasico().setUf(null);
                 addError("Endereço não encontrado!", "");
             }
-        }else {
+        } else {
             this.getEntity().getDadosBasico().setBairro(null);
             this.getEntity().getDadosBasico().setCidade(null);
             this.getEntity().getDadosBasico().setEndereco(null);
             this.getEntity().getDadosBasico().setUf(null);
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Convênios", tabelaConvenio, type);
     }

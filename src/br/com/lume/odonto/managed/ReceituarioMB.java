@@ -50,26 +50,27 @@ public class ReceituarioMB extends LumeManagedBean<Receituario> {
     private Paciente paciente;
 
     private Profissional profissionalLogado;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaReceituario;
 
     public ReceituarioMB() {
-        super(ReceituarioSingleton.getInstance().getBo());     
-        try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "R");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
-        } catch (Exception e) {
-            this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
-            e.printStackTrace();
+        super(ReceituarioSingleton.getInstance().getBo());
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            try {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "R");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
+            } catch (Exception e) {
+                this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
+                e.printStackTrace();
+            }
+            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
+                    OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
+                liberaBotao = true;
+            }
         }
-        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-        if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
-            liberaBotao = true;
-        }
-
         this.setClazz(Receituario.class);
     }
 
@@ -123,7 +124,7 @@ public class ReceituarioMB extends LumeManagedBean<Receituario> {
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Receituários", tabelaReceituario, type);
     }

@@ -26,7 +26,9 @@ public class RetornoHojeMB extends LumeManagedBean<Retorno> {
 
     public RetornoHojeMB() {
         super(RetornoSingleton.getInstance().getBo());
-        this.geraLista();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraLista();
+        }
         this.setClazz(Retorno.class);
     }
 

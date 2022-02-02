@@ -40,7 +40,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
     public NoticiaRssMB() {
         super(NoticiaRssSingleton.getInstance().getBo());
-      
+
         this.setClazz(NoticiaRss.class);
         this.geraLista();
     }
@@ -93,14 +93,16 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
             NoticiaRssSingleton.getInstance().getBo().persist(this.getEntity());
             fileout.close();
             this.arquivo = null;
-            
+
             inputstream.close();
         }
     }
 
     private void geraLista() {
         try {
-            this.noticiasRss = NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.noticiasRss = NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

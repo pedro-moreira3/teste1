@@ -88,9 +88,11 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         super(RelatorioRecebimentoSingleton.getInstance().getBo());
 
         this.setClazz(RelatorioRecebimento.class);
-        this.geraListaTarifa();
-        this.geraListaOrigens();
-        alteraStatusLancamento();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraListaTarifa();
+            this.geraListaOrigens();
+            alteraStatusLancamento();
+        }
     }
 
     public void geraListaOrigens() {

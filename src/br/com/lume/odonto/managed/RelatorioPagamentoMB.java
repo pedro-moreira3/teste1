@@ -89,8 +89,10 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
         super(RelatorioPagamentoSingleton.getInstance().getBo());
 
         this.setClazz(RelatorioPagamento.class);
-        this.geraListaTarifa();
-        this.geraListaOrigens();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraListaTarifa();
+            this.geraListaOrigens();
+        }
     }
 
     public void geraListaOrigens() {
@@ -144,24 +146,24 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public String tipoPessoa(Lancamento lancamento) throws Exception {
-        
-        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);        
-       
-        if(lc != null) {
-            TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());   
-            if(tipo != null) {
+
+        LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByLancamento(lancamento);
+
+        if (lc != null) {
+            TipoPessoa tipo = DadosBasicoSingleton.getTipoPessoa(lc.getDadosBasico());
+            if (tipo != null) {
                 if (tipo.equals(TipoPessoa.PROFISSIONAL)) {
-                  return "Profissional";
+                    return "Profissional";
                 } else if (tipo.equals(TipoPessoa.PACIENTE)) {
-                  return "Paciente";
+                    return "Paciente";
                 } else if (tipo.equals(TipoPessoa.FORNECEDOR)) {
                     return "Fornecedor";
                 }
             }
         }
-        
+
         return "Fornecedor";
     }
 
@@ -174,7 +176,7 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else if (this.inicioPagamento != null && this.fimPagamento != null && this.inicioPagamento.getTime() > this.fimPagamento.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            }else {
+            } else {
                 this.lancamentos = new ArrayList<>();
 
                 this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
@@ -182,7 +184,7 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
 
                 List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicosPagamento(this.inicio, this.fim, origemFiltro, formaPagamento,
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.inicioPagamento, this.fimPagamento);
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.inicioPagamento, this.fimPagamento);
 
                 for (Lancamento l : lancamentosFiltrados) {
                     boolean addLancamento = false;

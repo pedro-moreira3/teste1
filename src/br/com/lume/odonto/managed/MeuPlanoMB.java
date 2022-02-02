@@ -38,8 +38,6 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
 
     private String dataVencimentoPlano;
 
-  
-
     private List<InvoiceResponse> recentInvoices;
 
     public MeuPlanoMB() {
@@ -50,23 +48,24 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarQuantidadeAgendamentosMes() {
         try {
-            
-            Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
-            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado(UtilsFrontEnd.getEmpresaLogada().getPlano().getId());
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresaLogada.getEmpIntCod());
-            
-            if (planoUsuLogado != null) {
-                
-                agendamentosPlano = planoUsuLogado.getConsultas();
-                porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
-                
-                if (empresaLogada.getEmpDtmExpiracao() != null) {
-                    dataVencimentoPlano = Utils.dateToString(empresaLogada.getEmpDtmExpiracao(), "dd/MM/yyyy");
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
+                Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado(UtilsFrontEnd.getEmpresaLogada().getPlano().getId());
+                agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresaLogada.getEmpIntCod());
+
+                if (planoUsuLogado != null) {
+
+                    agendamentosPlano = planoUsuLogado.getConsultas();
+                    porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
+
+                    if (empresaLogada.getEmpDtmExpiracao() != null) {
+                        dataVencimentoPlano = Utils.dateToString(empresaLogada.getEmpDtmExpiracao(), "dd/MM/yyyy");
+                    }
                 }
-            }
-            if (empresaLogada.getEmpStrAssinaturaIuguID() != null && !empresaLogada.getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
-                recentInvoices = Iugu.getInstance().atualizaFaturas(empresaLogada.getEmpStrAssinaturaIuguID());
+                if (empresaLogada.getEmpStrAssinaturaIuguID() != null && !empresaLogada.getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
+                    recentInvoices = Iugu.getInstance().atualizaFaturas(empresaLogada.getEmpStrAssinaturaIuguID());
+                }
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

@@ -95,15 +95,17 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
 
-        if (filtroAtendimento == null) {
-            this.filtroAtendimento = new ArrayList<String>();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            if (filtroAtendimento == null) {
+                this.filtroAtendimento = new ArrayList<String>();
+            }
+
+            if (this.listaConvenios == null)
+                this.listaConvenios = new LinkedList<String>();
+
+            sugestoesConvenios("todos");
+            marcarFiltros();
         }
-
-        if (this.listaConvenios == null)
-            this.listaConvenios = new LinkedList<String>();
-
-        sugestoesConvenios("todos");
-        marcarFiltros();
     }
 
     public void popularLista() {
@@ -506,10 +508,9 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             outputData.close();
             workbook.close();
 
-            this.setArquivoDownload(DefaultStreamedContent.builder()
-                    .name("Relatorio Agendamento.xls")
-                    .contentType("application/vnd.ms-excel")
-                    .stream(() -> {return inputData;}).build());
+            this.setArquivoDownload(DefaultStreamedContent.builder().name("Relatorio Agendamento.xls").contentType("application/vnd.ms-excel").stream(() -> {
+                return inputData;
+            }).build());
             inputData.close();
         } catch (Exception e) {
             e.printStackTrace();

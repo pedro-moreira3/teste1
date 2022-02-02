@@ -54,11 +54,9 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
 
     private Random random;
 
-
-
     public PacienteTotemMB() {
         super(PacienteSingleton.getInstance().getBo());
-    
+
         try {
             List<Dominio> dominios = DominioSingleton.getInstance().getBo().listByObjeto("noticia");
             for (Dominio dominio : dominios) {
@@ -79,8 +77,10 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
 
     public void loadNoticias() {
         try {
-            this.setNoticias(NoticiaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            // throw new Exception();
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.setNoticias(NoticiaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                // throw new Exception();
+            }
         } catch (Exception e) {
             log.debug(e.getMessage());
             this.setNoticias(new ArrayList<Noticia>());

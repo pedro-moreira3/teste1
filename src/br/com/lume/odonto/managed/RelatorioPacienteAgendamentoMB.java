@@ -98,20 +98,21 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     private boolean mostraMensagemEmExecucao;
 
     private RelatorioRelacionamentoColunasLazyModel pacientesLazy;
-    
+
     public RelatorioPacienteAgendamentoMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            if (this.listaConvenios == null)
+                this.listaConvenios = new ArrayList<>();
+            this.sugestoesConvenios("todos");
 
-        if (this.listaConvenios == null)
-            this.listaConvenios = new ArrayList<>();
-        this.sugestoesConvenios("todos");
-        
-        this.filtroAniversariantes = "A";
-        this.setDataInicio(new Date());
-        this.setDataFim(new Date());
-        actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
-        this.carregarAniversariantes();
+            this.filtroAniversariantes = "A";
+            this.setDataInicio(new Date());
+            this.setDataFim(new Date());
+            actionTrocaDatasCriacaoAniversariantes(this.filtroAniversariantes);
+            this.carregarAniversariantes();
+        }
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -157,7 +158,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public List<Profissional> sugestoesProfissionalAgendamento(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
     }
-    
+
     public void limparDlgAniversariantes() {
         this.aniversariantes = null;
         this.filtroAniversariantes = "";
@@ -190,20 +191,20 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         }
         try {
             if (this.inicio != null && this.fim != null) {
-                if(this.inicio.getTime() > this.fim.getTime()) {
+                if (this.inicio.getTime() > this.fim.getTime()) {
                     this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
                     return;
-                }else if(this.fim.after(currentDate)) {
+                } else if (this.fim.after(currentDate)) {
                     this.addError("O filtro por período do útilmo agendamento não suporta datas superiores à data atual.", "");
                     return;
                 }
-            } else if(inicio != null) {
-                if(this.inicio.after(currentDate)) {
+            } else if (inicio != null) {
+                if (this.inicio.after(currentDate)) {
                     this.addError("O filtro por período do útilmo agendamento não suporta datas superiores à data atual.", "");
                     return;
                 }
-            } else if(this.fim != null) {
-                if(this.fim.after(currentDate)) {
+            } else if (this.fim != null) {
+                if (this.fim.after(currentDate)) {
                     this.addError("O filtro por período do útilmo agendamento não suporta datas superiores à data atual.", "");
                     return;
                 }
@@ -226,24 +227,21 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                     List<Paciente> pacientes = new ArrayList<Paciente>();
 
                     if (tags.isTagSemAgendamento()) {
-                        pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteSemAgendamento(tags.getEmpresa().getEmpIntCod(), tags.getPaciente(),
-                                tags.getConvenio(), "" + tags.getStatusPaciente());
+                        pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteSemAgendamento(tags.getEmpresa().getEmpIntCod(), tags.getPaciente(), tags.getConvenio(),
+                                "" + tags.getStatusPaciente());
                     }
 
                     if (tags.isTagSemAgendamentoFuturo()) {
                         if (pacientes.isEmpty() && !tags.isTagSemAgendamento()) {
                             pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamentoFuturo(tags.getDataDe(), tags.getDataAte(), tags.getEmpresa().getEmpIntCod(),
                                     tags.getPaciente(), tags.getConvenio(), "" + tags.getStatusPaciente(), tags.getProfissionalAgendamento());
-                    
-                        
-                        //    PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamentoFuturo
-                          //  (inicio,fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),filtroStatusPaciente
-                         //           ,filtroPorProfissional);   
-                        
+
+                            //    PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamentoFuturo
+                            //  (inicio,fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),filtroStatusPaciente
+                            //           ,filtroPorProfissional);   
+
                         }
                     }
-                    
-                    
 
                     if (tags.isTagSemRetornoFuturo()) {
                         if (pacientes.isEmpty() && !tags.isTagSemAgendamento() && !tags.isTagSemAgendamentoFuturo()) {
@@ -257,10 +255,9 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                         pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento(tags.getDataDe(), tags.getDataAte(), tags.getEmpresa().getEmpIntCod(),
                                 tags.getPaciente(), tags.getConvenio(), "" + tags.getStatusPaciente(), tags.getProfissionalAgendamento());
                         String listaStatus = "" + tags.getListaStatus();
-                        pacientes.removeIf(p -> p.getUltimoAgendamento() != null && p.getUltimoAgendamento().getStatusNovo() != null && p.getUltimoAgendamento().getInicio() != null &&
-                                tags.getDataAte() != null &&
-                                (!listaStatus.contains(p.getUltimoAgendamento().getStatusNovo()) || p.getUltimoAgendamento().getInicio().after(
-                                tags.getDataAte())));
+                        pacientes.removeIf(
+                                p -> p.getUltimoAgendamento() != null && p.getUltimoAgendamento().getStatusNovo() != null && p.getUltimoAgendamento().getInicio() != null && tags.getDataAte() != null && (!listaStatus.contains(
+                                        p.getUltimoAgendamento().getStatusNovo()) || p.getUltimoAgendamento().getInicio().after(tags.getDataAte())));
 
 //                      
 
@@ -281,10 +278,10 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                         if (paciente.getUltimoAgendamento() != null) {
                             nomeProfissionalUltimoAgendamento = paciente.getUltimoAgendamento().getProfissional().getDadosBasico().getNome();
                             dataUltimoAgendamento = paciente.getUltimoAgendamento().getInicio();
-                            if(paciente.getUltimoAgendamento().getProfissional() != null) {
-                                profissionalUltimoAgendamento = paciente.getUltimoAgendamento().getProfissional();    
+                            if (paciente.getUltimoAgendamento().getProfissional() != null) {
+                                profissionalUltimoAgendamento = paciente.getUltimoAgendamento().getProfissional();
                             }
-                            
+
                         }
                         Date dataProximoAgendamento = null;
                         if (paciente.getProximoAgendamento() != null) {
@@ -300,7 +297,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                 nomeProfissionalUltimoAgendamento, dataUltimoAgendamento, statusUltimoAgendamento, dataProximoAgendamento, statusProximoAgendamento, dataRetorno, tags.getEmpresa(),
                                 paciente, profissionalUltimoAgendamento, tags);
                         colunas.add(coluna);
-                        
+
                     }
                     RelatorioRelacionamentoColunasSingleton.getInstance().getBo().persistBatch(colunas);
                     tags.setEmExecucao(false);
@@ -317,38 +314,36 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         th.start();
 
     }
-    
+
     public void listarPacientesAgendamento() {
         if (getInicio() != null && getFim() != null) {
             Calendar c = Calendar.getInstance();
             int today = c.get(Calendar.DAY_OF_MONTH);
-            
+
             c.setTime(getInicio());
             c.set(Calendar.HOUR_OF_DAY, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
             inicio = c.getTime();
-            
+
             c = Calendar.getInstance();
             c.setTime(getFim());
-            if(c.get(Calendar.DAY_OF_MONTH) < today) {
+            if (c.get(Calendar.DAY_OF_MONTH) < today) {
                 c.set(Calendar.HOUR_OF_DAY, 23);
                 c.set(Calendar.MINUTE, 59);
                 c.set(Calendar.SECOND, 59);
             }
             fim = c.getTime();
         }
-        
-        pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento(
-                inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
-                getConvenio(filtroPorConvenio), filtroPorProfissional, getFiltroPorAgendador(),
-                filtroStatusPaciente, paciente, filtroStatusAgendamento);
-        
+
+        pacientes = RelatorioRelacionamentoColunasSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
+                getConvenio(filtroPorConvenio), filtroPorProfissional, getFiltroPorAgendador(), filtroStatusPaciente, paciente, filtroStatusAgendamento);
+
         //Filtra pacientes por agendamento.
-        if(filtroAtendimento != null && !filtroAtendimento.isEmpty()) {
+        if (filtroAtendimento != null && !filtroAtendimento.isEmpty()) {
             pacientes.removeIf((p) -> !filtroAtendimento.contains(p.getStatusNovoUltimoAgendamento()));
         }
-        
+
         pacientes.forEach((p) -> p.atualizarStatus());
     }
 
@@ -358,11 +353,11 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
             this.retorno = new Retorno();
             Paciente paciente = PacienteSingleton.getInstance().getBo().find(idPaciente);
             this.retorno.setPaciente(paciente);
-        }catch (Exception e) {
+        } catch (Exception e) {
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar parâmetros do retorno");
         }
     }
-    
+
     public String descricaoStatusPaciente(String status) {
 
         if (status.equals("T"))

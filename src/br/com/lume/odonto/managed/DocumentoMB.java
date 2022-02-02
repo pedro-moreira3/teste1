@@ -64,7 +64,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private List<Dominio> dominios;
     private List<Tag> classificacaoTag;
     private String documento;
-    private CKEditor ckEditor;    
+    private CKEditor ckEditor;
     private MenuModel menuModel;
 
     private String novaTag;
@@ -80,7 +80,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private Documento modeloSelecionado;
 
     private DataTable tabelaDocumentos;
-    
+
     private boolean mostrarCabecalho = false;
 
     public DocumentoMB() {
@@ -92,29 +92,31 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
-        
+
         Calendar c = Calendar.getInstance();
-        if(dataFim != null) {
+        if (dataFim != null) {
             c.setTime(this.dataFim);
             c.set(Calendar.HOUR_OF_DAY, 23);
             dataFinal = c.getTime();
         }
-        if(dataInicio != null) {
+        if (dataInicio != null) {
             c.setTime(this.dataInicio);
             c.set(Calendar.HOUR_OF_DAY, 0);
             dataInicial = c.getTime();
         }
-        
-        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroTipoDocumento, modeloSelecionado,
-                this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+        this.documentos = DocumentoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroTipoDocumento, modeloSelecionado, this.status,
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+
     }
 
     public void consertaDocsEmitidos() {
         List<DocumentoEmitido> docsEmitidos = new ArrayList<DocumentoEmitido>();
         try {
             List<DocumentoEmitido> docs = DocumentoEmitidoSingleton.getInstance().getBo().listAll();
-            for(DocumentoEmitido d : docs) {
-                if(d.getDocumentoModelo() != null && d.getTipoDoc() == null) {
+            for (DocumentoEmitido d : docs) {
+                if (d.getDocumentoModelo() != null && d.getTipoDoc() == null) {
                     d.setTipoDoc(d.getDocumentoModelo().getTipo());
                     docsEmitidos.add(d);
                 }
@@ -123,45 +125,45 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void replaceDocsAntigo() {
         try {
             DocumentoBO docBO = DocumentoSingleton.getInstance().getBo();
             List<Documento> docs = docBO.listAll();
             List<Documento> docsSalvar = new ArrayList<Documento>();
-            for(Documento d : docs) {
+            for (Documento d : docs) {
                 d.setModelo(docBO.replaceDocumentoAntigo(d.getModelo()));
                 docsSalvar.add(d);
             }
             docBO.persistBatch(docsSalvar);
             this.gerarDocsEmitidos();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public void gerarDocsEmitidos() {
         try {
             List<DocumentoEmitido> docsEmitidos = new ArrayList<DocumentoEmitido>();
-            
+
             List<Receituario> receituarios = ReceituarioSingleton.getInstance().getBo().listAll();
             List<Atestado> atestados = AtestadoSingleton.getInstance().getBo().listAll();
             List<TermoConsentimento> termos = TermoConsentimentoSingleton.getInstance().getBo().listAll();
             List<PedidoExame> exames = PedidoExameSingleton.getInstance().getBo().listAll();
             List<Recibo> recibos = ReciboSingleton.getInstance().getBo().listAll();
             List<DocumentoGenerico> contratos = DocumentoGenericoSingleton.getInstance().getBo().listAll();
-            
+
             Dominio domReceita = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Receituario");
             Dominio domAtestado = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Atestado");
             Dominio domTermos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Termo consentimento");
             Dominio domExames = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Pedido de Exames");
             Dominio domRecibos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Recibo");
             Dominio domContratos = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("documento", "tipo", "Contrato Paciente");
-            
-            for(Receituario r : receituarios) {
+
+            for (Receituario r : receituarios) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getReceituarioGerado());
@@ -171,8 +173,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setDataEmissao(r.getDataHora());
                 docsEmitidos.add(doc);
             }
-            
-            for(Atestado r : atestados) {
+
+            for (Atestado r : atestados) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getAtestadoGerado());
@@ -182,8 +184,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setTipoDoc(domAtestado);
                 docsEmitidos.add(doc);
             }
-            
-            for(TermoConsentimento r : termos) {
+
+            for (TermoConsentimento r : termos) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getTermoGerado());
@@ -193,19 +195,19 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setTipoDoc(domTermos);
                 docsEmitidos.add(doc);
             }
-            
-            for(PedidoExame r : exames) {
+
+            for (PedidoExame r : exames) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getDocumentoGerado());
                 doc.setEmitidoPara(r.getPaciente());
                 doc.setEmitidoPor(r.getProfissional());
                 doc.setDataEmissao(r.getDataHora());
-               doc.setTipoDoc(domExames);
+                doc.setTipoDoc(domExames);
                 docsEmitidos.add(doc);
             }
-            
-            for(Recibo r : recibos) {
+
+            for (Recibo r : recibos) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getDocumentoGerado());
@@ -215,8 +217,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setTipoDoc(domRecibos);
                 docsEmitidos.add(doc);
             }
-            
-            for(DocumentoGenerico r : contratos) {
+
+            for (DocumentoGenerico r : contratos) {
                 DocumentoEmitido doc = new DocumentoEmitido();
                 doc.setId(0l);
                 doc.setModelo(r.getDocumentoGerado());
@@ -226,14 +228,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 doc.setTipoDoc(domContratos);
                 docsEmitidos.add(doc);
             }
-            
+
             DocumentoEmitidoSingleton.getInstance().getBo().persistBatch(docsEmitidos);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public void carregarTiposDocumento() {
         try {
             this.listaTiposDocumentos = DominioSingleton.getInstance().getBo().listByObjeto("documento");
@@ -243,7 +245,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             e.printStackTrace();
         }
     }
-    
+
     public void carregarDocumentos() {
         try {
             if (this.filtroTipoDocumento != null) {
@@ -274,12 +276,12 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             DocumentoSingleton.getInstance().getBo().persist(doc);
             this.pesquisar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro ativado.");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             this.addError("Erro", "Erro ao ativar registro");
         }
     }
-    
+
     public void actionInativar(Documento doc) {
         try {
             doc.setAtivo(false);
@@ -288,11 +290,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             DocumentoSingleton.getInstance().getBo().persist(doc);
             this.pesquisar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro inativado.");
-        }catch (Exception e) {
+        } catch (Exception e) {
             this.addError("Erro", "Erro ao inativar registro");
         }
     }
-    
+
     public void carregarPaleta() {
 
         this.carregarTags();
@@ -313,10 +315,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                     menuItem.setId(tag.getAtributo());
                     menuItem.setTitle(tag.getDescricaoCampo());
                     menuItem.setValue(tag.getDescricaoCampo());
-                    if(!tag.getDescricaoCampo().equals("Logo empresa")) {
+                    if (!tag.getDescricaoCampo().equals("Logo empresa")) {
                         menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertText('" + "#" + tag.getAtributo() + "" + "');");
-                    }else {
-                        menuItem.setOnclick("PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
+                    } else {
+                        menuItem.setOnclick(
+                                "PrimeFaces.widgets.editor.instance.insertHtml('<img src=\"/app/odonto/imagens/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo() + "\"/>" + tag.getAtributo() + "');");
                     }
 
                     submenu.getElements().add(menuItem);
@@ -361,29 +364,29 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 //    }
 //    
     private void pageBreak() {
-        if(this.getEntity().getModelo().contains("page-break-after")) {
+        if (this.getEntity().getModelo().contains("page-break-after")) {
             this.getEntity().setModelo(this.getEntity().getModelo().replaceAll("<div style=\"page-break-after: always\"><span style=\"display:none\">&nbsp;</span></div>",
                     "<hr style=\\\"border-color:#aaa;box-sizing:border-box;width:100%;\\\">|new-page|</hr>"));
         }
     }
-    
+
     @Override
     public void actionPersist(ActionEvent event) {
         try {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if(this.getEntity().getDescricao() != null && !this.getEntity().getDescricao().isEmpty()) {
+            if (this.getEntity().getDescricao() != null && !this.getEntity().getDescricao().isEmpty()) {
                 this.getEntity().setCriadoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataCriacao(new Date());
-                
+
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                
+
                 //parserDocumento();
 
                 DocumentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao criar documento.");
                 pesquisar();
-            }else {
+            } else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "é necessário informar a descrição do documento.");
             }
         } catch (Exception e) {
@@ -405,14 +408,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             retorno = comparator.group();
 
             if (retorno != null && !retorno.isEmpty()) {
-                retorno = retorno.replaceAll("\\{","");
-                retorno = retorno.replaceAll("\\}","");
+                retorno = retorno.replaceAll("\\{", "");
+                retorno = retorno.replaceAll("\\}", "");
                 String str[] = retorno.trim().split("-");
 
                 if (str != null && str.length > 0) {
                     try {
                         TagEntidade tag = TagEntidadeSingleton.getInstance().getBo().findByAttributeAndEntidade(str[1], str[0]);
-                        
+
                         if (tag != null) {
                             TagDocumentoModelo tagDoc = new TagDocumentoModelo();
                             tagDoc.setDocumentoModelo(this.getEntity());
@@ -434,35 +437,34 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     }
 
     public void controiModeloDocsAntigos(Documento doc) {
-        if(doc.getModelo() == null || doc.getModelo().isEmpty()) {
+        if (doc.getModelo() == null || doc.getModelo().isEmpty()) {
             this.setEntity(doc);
             //parserDocumento();
             carregarDocumento(doc);
         }
     }
-    
+
     public void carregarDocumento(Documento doc) {
         setEntity(doc);
-        
-        if(doc.getModelo() != null && !doc.getModelo().isEmpty()) {
-            if(doc.getMostrarLogo() != null)
+
+        if (doc.getModelo() != null && !doc.getModelo().isEmpty()) {
+            if (doc.getMostrarLogo() != null)
                 this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
 
             this.documento = doc.getModelo();
             carregarPaleta();
-            
-            
-        }else {
+
+        } else {
             this.controiModeloDocsAntigos(doc);
         }
     }
-    
+
     public void inserirCabecalho() {
-        if(this.mostrarCabecalho) {
+        if (this.mostrarCabecalho) {
             this.getEntity().setMostrarLogo("S");
         }
     }
-    
+
     public void actionTrocaDatasCriacao() {
         try {
 
@@ -536,19 +538,19 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         }
         return true;
     }
-    
+
     @Override
     public void actionNew(ActionEvent event) {
         //super.actionNew(event);
-       this.documento = ""; 
-       menuModel = new DefaultMenuModel();
+        this.documento = "";
+        menuModel = new DefaultMenuModel();
         this.setEntity(new Documento());
-        if(this.getFiltroTipoDocumento() != null) {
+        if (this.getFiltroTipoDocumento() != null) {
             this.getEntity().setTipo(getFiltroTipoDocumento());
             carregarPaleta();
         }
     }
-    
+
     public void limpaCampoTag() {
         novaTag = "";
     }
@@ -739,6 +741,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setModeloSelecionado(Documento modeloSelecionado) {
         this.modeloSelecionado = modeloSelecionado;
-    }    
-  
+    }
+
 }

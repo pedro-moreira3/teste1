@@ -82,8 +82,8 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     private Date dateHoje;
 
-   // private List<Material> materiais = new ArrayList<>();
-    
+    // private List<Material> materiais = new ArrayList<>();
+
     private List<Estoque> estoques = new ArrayList<>();
 
     private boolean caixa, novaMarca, novoFornecedor;
@@ -92,41 +92,42 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     private List<Dominio> dominios;
 
-  //  private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
-    
+    //  private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
+
     private BigDecimal quantidadeMovimentada;
 
     private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     private String tipoMovimentacao;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaMaterial;
     private DataTable tabelaMovimentacao;
 
     public MovimentacaoMB() {
         super(EstoqueSingleton.getInstance().getBo());
-      
-        this.setCaixa(true);
-        this.setClazz(Estoque.class);
-        this.geraLista();
-        try {
-            this.setProcedencias(this.getPrecedencias());
-            this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setRoot(new DefaultTreeNode("", null));
-            Item firstLevel = new Item();
-            firstLevel.setDescricao("RAIZ");
-            this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
-            this.setRootLocal(new DefaultTreeNode("", null));
-            Local firstLevelLocal = new Local();
-            firstLevelLocal.setDescricao("RAIZ");
-            this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
-            dateHoje = new Date();
-        } catch (Exception e) {
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "",true);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.setCaixa(true);
+            this.setClazz(Estoque.class);
+            this.geraLista();
+            try {
+                this.setProcedencias(this.getPrecedencias());
+                this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                this.setRoot(new DefaultTreeNode("", null));
+                Item firstLevel = new Item();
+                firstLevel.setDescricao("RAIZ");
+                this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
+                this.setRootLocal(new DefaultTreeNode("", null));
+                Local firstLevelLocal = new Local();
+                firstLevelLocal.setDescricao("RAIZ");
+                this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
+                dateHoje = new Date();
+            } catch (Exception e) {
+                log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+                this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "", true);
+            }
         }
-        
+
     }
 
     private void geraLista() {
@@ -134,11 +135,10 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             Collections.sort(estoques);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-
 
     public void chargeTree(TreeNode root) {
         List<TreeNode> nodes = new ArrayList<>();
@@ -164,7 +164,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     public void carregaTela() {
         try {
-           // this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
+            // this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
             this.setLocal(this.getEntity().getLocal());
             this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getMaterial().getProcedencia()));
             this.setItem(this.getEntity().getMaterial().getItem());
@@ -172,7 +172,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             this.setSelectedItem();
             this.setSelectedLocal();
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -213,13 +213,12 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     public void carregarMaterialLog(Material material) {
         try {
-            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);               
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-        
 
     public void chargeTreeLocal(TreeNode root) {
         List<TreeNode> nodes = new ArrayList<>();
@@ -280,52 +279,53 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         }
         return locaisRestantesAux;
     }
-    
-    public void actionPersistFechar(ActionEvent event){
+
+    public void actionPersistFechar(ActionEvent event) {
         this.actionPersist(event);
         PrimeFaces.current().executeScript("PF('dlgEntrada').hide();");
     }
 
     public void movimentar(ActionEvent event) {
         if (quantidadeMovimentada.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "", true);
         } else if (this.getEntity().getQuantidade().doubleValue() < quantidadeMovimentada.doubleValue()) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "",true);
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "", true);
         } else if ((this.getLocal() == null)) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "", true);
         } else if (this.getEntity().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "",true);
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "", true);
         } else {
-            try {                  
-                if(this.getLocal().equals(this.getEntity().getLocal())) {
-                    this.addError("Local de origem nao pode ser o mesmo do local de destino", "",true);  
-                }else {
+            try {
+                if (this.getLocal().equals(this.getEntity().getLocal())) {
+                    this.addError("Local de origem nao pode ser o mesmo do local de destino", "", true);
+                } else {
                     //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
-                    setEntity(EstoqueSingleton.getInstance().getBo().find(getEntity().getId())); 
+                    setEntity(EstoqueSingleton.getInstance().getBo().find(getEntity().getId()));
                     this.getEntity().getMaterial().setDataMovimentacao(new Date());
-                    EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),  this.getEntity().getLocal(), this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
-                    this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(), this.getEntity().getLocal(), this.getLocal(), quantidadeMovimentada,
+                            EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado());
+                    this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "", true);
                     this.actionNew(event);
                     this.geraLista();
                 }
-               
+
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
             }
         }
     }
-    
+
     public String getUnidadeString(Item item) {
-        if(item != null)
+        if (item != null)
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Entrada de Materiais", tabelaMaterial, type);
     }
-    
+
     public void exportarTabelaMovimentacao(String type) {
         exportarTabela("Movimentação de materiais", tabelaMovimentacao, type);
     }
@@ -409,9 +409,9 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
     }
 
     public List<String> filtraItem(String digitacao) {
-        this.setDigitacao(digitacao);        
-        this.filtraItens();     
-        return this.convert(this.getItens());                 
+        this.setDigitacao(digitacao);
+        this.filtraItens();
+        return this.convert(this.getItens());
     }
 
     public List<String> filtraLocal(String digitacao) {
@@ -424,13 +424,13 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getDigitacaoLocal() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -445,7 +445,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             }
             Collections.sort(itens);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -515,10 +515,10 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
                 node.setSelected(false);
                 if (((local instanceof String) && (local.equals(localSelecionado.getDescricao()))) || // RAIZ?
                         ((local instanceof Local) && (((Local) local).getDescricao().equals(localSelecionado.getDescricao()))
-                                // && // Encontrou
-                                  // o Node?
-                                  // ((((Local)local).getIdLocal()==null && (localSelecionado.getIdLocal()==null))|| // Mesmo Pai Raiz
-                                // ((((Local)local).getIdLocal().getDescricao().equals(localSelecionado.getIdLocal().getDescricao()))))
+                        // && // Encontrou
+                        // o Node?
+                        // ((((Local)local).getIdLocal()==null && (localSelecionado.getIdLocal()==null))|| // Mesmo Pai Raiz
+                        // ((((Local)local).getIdLocal().getDescricao().equals(localSelecionado.getIdLocal().getDescricao()))))
                         )) { // Mesmo Pai
                     node.setSelected(true);
                     this.setLocal(((Local) local));
@@ -558,12 +558,12 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         this.getSelectedItem().setSelected(false);
         this.setSelectedItem(null);
     }
-    
-     public void handleSelectLocal() {
-      this.filtraLocal(this.getDigitacaoLocal());
-     this.setLocal(null);
-      this.setSelectedLocal();
-      }
+
+    public void handleSelectLocal() {
+        this.filtraLocal(this.getDigitacaoLocal());
+        this.setLocal(null);
+        this.setSelectedLocal();
+    }
 
     public void onNodeSelectLocal(NodeSelectEvent event) {
         this.setLocal((Local) (event.getTreeNode().getData()));
@@ -597,8 +597,6 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         }
         return sugestoes;
     }
-    
-    
 
     public List<Dominio> getJustificativas() {
         List<Dominio> justificativas = new ArrayList<>();
@@ -617,15 +615,14 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
     public void cancelaNovo(ActionEvent event) {
         this.setNovaMarca(false);
     }
-    
+
     public void novoFornecedor() {
         this.setNovoFornecedor(true);
     }
 
     public void cancelaNovoFornecedor(ActionEvent event) {
         this.setNovoFornecedor(false);
-    }    
-
+    }
 
     public Dominio getProcedencia() {
         return procedencia;
@@ -668,7 +665,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     public static final String DEVOLVIDO = "D";
 
-   // public static final String DESCARTE = "DE";
+    // public static final String DESCARTE = "DE";
 
     public Date getDateHoje() {
         return dateHoje;
@@ -733,32 +730,27 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
     public void setTipoMovimentacao(String tipoMovimentacao) {
         this.tipoMovimentacao = tipoMovimentacao;
     }
- 
+
     public boolean isNovoFornecedor() {
         return novoFornecedor;
     }
 
-    
     public void setNovoFornecedor(boolean novoFornecedor) {
         this.novoFornecedor = novoFornecedor;
     }
 
-    
     public String getNomeFornecedor() {
         return nomeFornecedor;
     }
 
-    
     public void setNomeFornecedor(String nomeFornecedor) {
         this.nomeFornecedor = nomeFornecedor;
     }
 
-    
     public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
         return listaTransferenciasEstoque;
     }
 
-    
     public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
         this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
@@ -780,4 +772,3 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
     }
 
 }
-

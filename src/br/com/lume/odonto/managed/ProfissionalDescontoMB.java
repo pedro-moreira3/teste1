@@ -38,7 +38,9 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
     public ProfissionalDescontoMB() {
         super(DescontoOrcamentoSingleton.getInstance().getBo());
         this.setClazz(DescontoOrcamento.class);
-        carregarDescontos();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            carregarDescontos();
+        }
     }
 
     public void carregarDescontos() {
@@ -54,34 +56,33 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            if(this.validarDesconto()) {
-                if(this.getEntity().getId() != null && this.getEntity().getId() > 0) {
+            if (this.validarDesconto()) {
+                if (this.getEntity().getId() != null && this.getEntity().getId() > 0) {
                     DescontoOrcamentoSingleton.getInstance().getBo().persist(this.getEntity());
                     this.addInfo("Sucesso ao editar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-                }else {
-                    DescontoOrcamentoSingleton.getInstance().novoDescontoProfissional(this.getEntity().getDesconto(), this.getEntity().getQuantidadeParcelas(),
-                            UtilsFrontEnd.getProfissionalLogado(), profissionalMB.getEntity());
-                    
+                } else {
+                    DescontoOrcamentoSingleton.getInstance().novoDescontoProfissional(this.getEntity().getDesconto(), this.getEntity().getQuantidadeParcelas(), UtilsFrontEnd.getProfissionalLogado(),
+                            profissionalMB.getEntity());
+
                     this.addInfo("Sucesso ao cadastrar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
                 }
             }
 
             this.carregarDescontos();
             this.setEntity(null);
-            
+
         } catch (Exception e) {
             this.addError("Erro ao cadastrar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             log.error("Erro ao cadastrar desconto", e);
             e.printStackTrace();
         }
     }
-    
+
     public void profissionalFazOrcamento() {
         try {
             ProfissionalSingleton.getInstance().getBo().persist(this.profissionalMB.getEntity());
             profissionalMB.setEntity(ProfissionalSingleton.getInstance().getBo().find(this.profissionalMB.getEntity()));
-            if(UtilsFrontEnd.getProfissionalLogado() != null && profissionalMB.getEntity().getId().longValue() ==
-                    UtilsFrontEnd.getProfissionalLogado().getId().longValue())
+            if (UtilsFrontEnd.getProfissionalLogado() != null && profissionalMB.getEntity().getId().longValue() == UtilsFrontEnd.getProfissionalLogado().getId().longValue())
                 UtilsFrontEnd.setProfissionalLogado(profissionalMB.getEntity());
             this.addInfo("Sucesso ao registrar a alteração", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
@@ -89,7 +90,7 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
             e.printStackTrace();
         }
     }
-    
+
     public void salvarFlagOrc() {
         try {
             ProfissionalSingleton.getInstance().getBo().persist(profissionalMB.getEntity());
@@ -106,16 +107,14 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
             e.printStackTrace();
         }
     }
-    
+
     public boolean validarDesconto() {
-        for(DescontoOrcamento desconto : this.getEntityList()) {
-            if(desconto.getId() != this.getEntity().getId()) {
-                if(desconto.getQuantidadeParcelas() == this.getEntity().getQuantidadeParcelas()) {
-                    this.addError("Não pode ser cadastrado um desconto, com a mesma quantidade de parcelas de outro já existente.",
-                            Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+        for (DescontoOrcamento desconto : this.getEntityList()) {
+            if (desconto.getId() != this.getEntity().getId()) {
+                if (desconto.getQuantidadeParcelas() == this.getEntity().getQuantidadeParcelas()) {
+                    this.addError("Não pode ser cadastrado um desconto, com a mesma quantidade de parcelas de outro já existente.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
                     return false;
-                } else if(desconto.getQuantidadeParcelas().compareTo(this.getEntity().getQuantidadeParcelas()) == -1 &&
-                        desconto.getDesconto().compareTo(this.getEntity().getDesconto()) == -1) {
+                } else if (desconto.getQuantidadeParcelas().compareTo(this.getEntity().getQuantidadeParcelas()) == -1 && desconto.getDesconto().compareTo(this.getEntity().getDesconto()) == -1) {
                     this.addError("Não pode ser cadastrado um desconto, com quantidade de parcelas menor que outro já existente e desconto maior.",
                             Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
                     return false;
@@ -153,9 +152,9 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
 
     public String formatarDesconto(DescontoOrcamento desconto) {
         int i = (int) desconto.getDesconto().doubleValue();
-        return String.valueOf(i)+"%";
+        return String.valueOf(i) + "%";
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Descontos do cadastrados", getTabelaDescontos(), type);
     }

@@ -37,14 +37,16 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     private Procedimento procedimentoSelecionado;
 
     private boolean procedimentoSemKit;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaProcedimento;
 
     public ProcedimentoKitMB() {
         super(ProcedimentoKitSingleton.getInstance().getBo());
-        this.setClazz(ProcedimentoKit.class);     
-        this.carregarListas();
+        this.setClazz(ProcedimentoKit.class);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.carregarListas();
+        }
     }
 
     private void carregarListas() {
@@ -123,7 +125,7 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     public void exportarTabela(String type) {
         exportarTabela("Kits/Procedimentos", tabelaProcedimento, type);
     }
-    
+
     public List<Kit> getKits() {
         return kits;
     }

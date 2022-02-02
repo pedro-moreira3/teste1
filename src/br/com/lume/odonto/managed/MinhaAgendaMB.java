@@ -23,7 +23,9 @@ public class MinhaAgendaMB extends LumeManagedBean<Agendamento> {
     public MinhaAgendaMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
-        agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosDeHojeByProfissional(UtilsFrontEnd.getProfissionalLogado());
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosDeHojeByProfissional(UtilsFrontEnd.getProfissionalLogado());
+        }
     }
 
     public List<Agendamento> getAgendamentos() {

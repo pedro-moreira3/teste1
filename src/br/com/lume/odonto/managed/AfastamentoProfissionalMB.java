@@ -59,7 +59,9 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
         this.setClazz(Afastamento.class);
         //    this.agendamentoBO = new AgendamentoBO();
 //        this.dominioBO = new DominioBO();
-        this.profissional = UtilsFrontEnd.getProfissionalLogado();
+        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.profissional = UtilsFrontEnd.getProfissionalLogado();
+        }
     }
 
     @Override

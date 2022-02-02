@@ -59,15 +59,15 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
 
     private boolean naoEncontrado = true;
 
-  
-
     public RelatorioEntradaSaidaMaterialMB() {
         super(RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo());
-   
+
         this.setClazz(RelatorioEntradaSaidaMaterial.class);
         //actionFiltra();
-        this.geraListas();
-        this.periodoFinal = null;
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraListas();
+            this.periodoFinal = null;
+        }
     }
 
     @Override
@@ -89,7 +89,8 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
             }
             cal.add(Calendar.HOUR_OF_DAY, 23);
             this.periodoFinal = cal.getTime();
-            this.materiais = RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo().listAllByFilterToReport(this.local, this.item, this.profissional, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.materiais = RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo().listAllByFilterToReport(this.local, this.item, this.profissional,
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.naoEncontrado = true;
             if (this.materiais != null && !this.materiais.isEmpty()) {
                 for (RelatorioEntradaSaidaMaterial resm : this.materiais) {
@@ -188,12 +189,12 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
 
     public void geraListas() {
         try {
-            
+
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            
+
             this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
             this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada,false));
+            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada, false));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }

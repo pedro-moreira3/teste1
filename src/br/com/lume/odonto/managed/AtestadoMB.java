@@ -87,7 +87,10 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     //    pacienteBO = new PacienteBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "A");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if(UtilsFrontEnd.getProfissionalLogado() != null) {
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
+            
           //  cidBO = new CIDBO();
             cids = CidSingleton.getInstance().getBo().listAll();
             this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());

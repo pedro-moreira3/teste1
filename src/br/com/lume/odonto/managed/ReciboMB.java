@@ -55,21 +55,22 @@ public class ReciboMB extends LumeManagedBean<Recibo> {
 
     public ReciboMB() {
         super(ReciboSingleton.getInstance().getBo());
-      
-        try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "RC");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
-        } catch (Exception e) {
-            this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
-            e.printStackTrace();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            try {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "RC");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
+            } catch (Exception e) {
+                this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
+                e.printStackTrace();
+            }
+            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
+                    OdontoPerfil.RESPONSAVEL_TECNICO)) {
+                liberaBotao = true;
+            }
+            this.setClazz(Recibo.class);
         }
-        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-        if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.RESPONSAVEL_TECNICO)) {
-            liberaBotao = true;
-        }
-        this.setClazz(Recibo.class);
     }
 
     @Override

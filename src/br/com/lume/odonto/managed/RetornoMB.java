@@ -42,7 +42,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     private StatusRetorno retornar;
 
     private Paciente paciente;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRetorno;
 
@@ -52,7 +52,9 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         dataIni = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, 7);
         dataFim = cal.getTime();
-        this.geraLista();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geraLista();
+        }
         this.setClazz(Retorno.class);
     }
 
@@ -63,11 +65,11 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
             Retorno retorno = new Retorno();
             retorno.setPaciente(paciente);
             this.setEntity(retorno);
-        }catch (Exception e) {
+        } catch (Exception e) {
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar parâmetros do retorno");
         }
     }
-    
+
     public void geraLista() {
         try {
             if ((dataIni != null && dataFim != null) && dataFim.before(dataIni)) {
