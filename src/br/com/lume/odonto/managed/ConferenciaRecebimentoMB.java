@@ -89,19 +89,13 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             c.setTime(this.dataCreditoInicial);
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
-
-            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltrosDadosBasicos(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
+            
+            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
+            
             if (getEntityList() != null) {
 
-//                getEntityList().removeIf((lancamento) -> lancamento.getLancamentoExtornado().equals("S") ||
-//                        (lancamento.getLancamentosContabeis() != null && lancamento.getLancamentosContabeis().size() > 0 &&
-//                                lancamento.getLancamentosContabeis().get(0).getMotivo() != null &&   
-//                                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla() != null &&
-//                        lancamento.getLancamentosContabeis().get(0).getMotivo().getSigla().equals(Motivo.EXTORNO_PACIENTE)));
-
                 getEntityList().forEach(lancamento -> {
-                    lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
                     lancamento.calculaStatusESubStatus();
                 });
 
