@@ -1316,9 +1316,11 @@ body .height31 input {
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
 									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
 									readonly="true" escape="false">
+									<ui:remove>
 									<p:tooltip escape="false" for="@parent" position="bottom"
 										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
 										hideDelay="500" />
+									</ui:remove>
 								</p:outputLabel>
 
 							</p:panelGrid>
