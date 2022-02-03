@@ -53,27 +53,28 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
     private Paciente paciente;
 
     private Profissional profissionalLogado;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaExame;
 
     public PedidoExameMB() {
         super(PedidoExameSingleton.getInstance().getBo());
-   
-        try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "PE");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
-        } catch (Exception e) {
-            this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
-            e.printStackTrace();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            try {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "PE");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
+            } catch (Exception e) {
+                this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
+                e.printStackTrace();
+            }
+            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
+                    OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
+                liberaBotao = true;
+            }
+            this.setClazz(PedidoExame.class);
         }
-        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-        if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
-            liberaBotao = true;
-        }
-        this.setClazz(PedidoExame.class);
     }
 
     @Override
@@ -131,7 +132,7 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
     public void exportarTabela(String type) {
         exportarTabela("Pedidos de Exames", tabelaExame, type);
     }
-    
+
     public String getDocumento() {
         return documento;
     }

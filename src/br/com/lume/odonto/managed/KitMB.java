@@ -27,11 +27,11 @@ import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
 import br.com.lume.kitItem.KitItemSingleton;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ItemBO;
-//import br.com.lume.odonto.bo.KitBO;
-//import br.com.lume.odonto.bo.KitItemBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ItemBO;
+// import br.com.lume.odonto.bo.KitBO;
+// import br.com.lume.odonto.bo.KitItemBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Kit;
@@ -63,37 +63,39 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     private boolean incluindo, admin;
 
-   // private KitBO kitBO;
+    // private KitBO kitBO;
 
-  //  private KitItemBO kitItemBO;
+    //  private KitItemBO kitItemBO;
 
-  //  private ItemBO itemBO;
+    //  private ItemBO itemBO;
 
-  //  private DominioBO dominioBO;
+    //  private DominioBO dominioBO;
 
     private List<KitItem> kitItens = new ArrayList<>();
 
     private Profissional profissionalLogado;
 
-  //  private ProfissionalBO profissionalBO;
+    //  private ProfissionalBO profissionalBO;
 
     private boolean visivel = true;
 
     public KitMB() {
         super(KitSingleton.getInstance().getBo());
-       // this.kitBO = new KitBO();
-       // this.kitItemBO = new KitItemBO();
-      //  this.itemBO = new ItemBO();
-      // this.dominioBO = new DominioBO();
-      //  this.profissionalBO = new ProfissionalBO();
+        // this.kitBO = new KitBO();
+        // this.kitItemBO = new KitItemBO();
+        //  this.itemBO = new ItemBO();
+        // this.dominioBO = new DominioBO();
+        //  this.profissionalBO = new ProfissionalBO();
         this.setClazz(Kit.class);
         this.setIncluindo(true);
         this.carregaTree();
         this.geralista();
         try {
-            this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA)) {
-                this.visivel = false;
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+                if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA)) {
+                    this.visivel = false;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,7 +174,7 @@ public class KitMB extends LumeManagedBean<Kit> {
     //TODO - Solução para contornar a falha de itens nao sendo removidos dos kits.]
     // Construir forma mais simples com entityList direto sem passar por listas cópias.
     public void remover() throws Exception {
-        if(this.getEntity().getKitItens() != null)
+        if (this.getEntity().getKitItens() != null)
             this.getEntity().getKitItens().remove(this.getKitItem());
         try {
             KitItemSingleton.getInstance().getBo().remove(this.getKitItem());
@@ -355,7 +357,8 @@ public class KitMB extends LumeManagedBean<Kit> {
                 this.setItens(new ArrayList<Item>());
             } else {
                 if (this.getDigitacao() != null) {
-                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + "",
+                            UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 } else {
                     this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndTipo(this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 }
@@ -366,9 +369,9 @@ public class KitMB extends LumeManagedBean<Kit> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public String getUnidadeString(Item item) {
-        if(item != null)
+        if (item != null)
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
     }

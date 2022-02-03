@@ -64,10 +64,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
     private List<Item> itens;
 
     private List<Local> locais;
-    
+
     private List<Local> locaisSelecionadosDevolucao;
-    
-    private Local localSelecionadoDevolucao;    
+
+    private Local localSelecionadoDevolucao;
 
     private String digitacao, digitacaoLocal, nomeMarca, nomeFornecedor;
 
@@ -96,27 +96,27 @@ public class MaterialMB extends LumeManagedBean<Material> {
     private DataTable tabelaMovimentacao;
 
     public MaterialMB() {
-        
-        super(MaterialSingleton.getInstance().getBo());
 
-        this.setCaixa(true);
-        this.setClazz(Material.class);
-        this.geraLista();
-        try {
-            this.setProcedencias(this.getPrecedencias());
-            this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setRoot(new DefaultTreeNode("", null));
-            Item firstLevel = new Item();
-            firstLevel.setDescricao("RAIZ");
-            this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
-            this.setRootLocal(new DefaultTreeNode("", null));
-            Local firstLevelLocal = new Local();
-            firstLevelLocal.setDescricao("RAIZ");
-            this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
-            dateHoje = new Date();
+        super(MaterialSingleton.getInstance().getBo());
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.setCaixa(true);
+            this.setClazz(Material.class);
+            this.geraLista();
+            try {
+                this.setProcedencias(this.getPrecedencias());
+                this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                this.setRoot(new DefaultTreeNode("", null));
+                Item firstLevel = new Item();
+                firstLevel.setDescricao("RAIZ");
+                this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
+                this.setRootLocal(new DefaultTreeNode("", null));
+                Local firstLevelLocal = new Local();
+                firstLevelLocal.setDescricao("RAIZ");
+                this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
+                dateHoje = new Date();
 
 //            //para inserir estoque inicial            
-           
+
 //            int count = 0;
 //            for (Material material : MaterialSingleton.getInstance().getBo().listAll()) {
 //                count++;
@@ -181,9 +181,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //            }
 //
 //
-        } catch (Exception e) {
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "", true);
+            } catch (Exception e) {
+                log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+                this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "", true);
+            }
         }
     }
 
@@ -219,14 +220,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
         List<TreeNode> nodes = new ArrayList<>();
         List<TreeNode> nodesAux;
-     
+
         this.filtraItens();
-     
+
         List<Item> itensRestantes = this.getItens();
         root.setExpanded(true);
         nodes.add(root);
         itensRestantes = this.setLevel(itensRestantes, nodes);
-      
+
         List<TreeNode> subNodes;
         while (itensRestantes.size() > 0) {
             subNodes = new ArrayList<>();
@@ -237,8 +238,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             itensRestantes = this.setLevel(itensRestantes, subNodes);
             nodes = new ArrayList<>();
-            nodes.addAll(subNodes);            
-        }      
+            nodes.addAll(subNodes);
+        }
     }
 
     public void carregaTela() {
@@ -292,23 +293,23 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregarMaterialLog(Material material) {
         try {
-            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);          
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
 
-    public void carregarEntity(Material material) { 
+    public void carregarEntity(Material material) {
         locaisSelecionadosDevolucao = new ArrayList<Local>();
         localSelecionadoDevolucao = material.getEstoque().get(0).getLocal();
         for (Estoque estoque : material.getEstoque()) {
-            if(estoque.getLocal().getDesconsideraDoEstoque().equals("N")) {
-                locaisSelecionadosDevolucao.add(estoque.getLocal());    
+            if (estoque.getLocal().getDesconsideraDoEstoque().equals("N")) {
+                locaisSelecionadosDevolucao.add(estoque.getLocal());
                 localSelecionadoDevolucao = estoque.getLocal();
             }
-            
-        }       
+
+        }
         setEntity(material);
     }
 
@@ -356,14 +357,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
         for (Item item : itensRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData())) || item.getExcluido().equals("S") ) {
+                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData())) || item.getExcluido().equals("S")) {
                     (new DefaultTreeNode(item, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
                 }
             }
             if (anotherLevel) {
-                locaisRestantesAux.add(item);               
+                locaisRestantesAux.add(item);
             }
 
         }
@@ -384,15 +385,15 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             if (anotherLevel) {
                 locaisRestantesAux.add(local);
-            }           
+            }
         }
         return locaisRestantesAux;
     }
 
     public void actionDevolver(ActionEvent event) {
         try {
-            Estoque estoqueParaDevolver  = EstoqueSingleton.getInstance().getBo().findByMaterialLocal(this.getEntity(), localSelecionadoDevolucao);
-            
+            Estoque estoqueParaDevolver = EstoqueSingleton.getInstance().getBo().findByMaterialLocal(this.getEntity(), localSelecionadoDevolucao);
+
             if (estoqueParaDevolver.getQuantidade().intValue() >= quantidadePacotes.intValue()) {
 
                 if (justificativa != null) {
@@ -401,7 +402,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 MaterialSingleton.getInstance().getBo().persist(this.getEntity());
 
                 Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "Material Devolvido");
-                
+
                 EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(this.getEntity(), localSelecionadoDevolucao, localDestino, quantidadePacotes,
                         EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + ": " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
 
@@ -599,8 +600,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 //this.getbO().persist(this.getEntity());
                 // this.getbO().persist(material);
 
-                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(this.getEntity(), localOrigem, this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR,
-                        UtilsFrontEnd.getProfissionalLogado());
+                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(this.getEntity(), localOrigem, this.getLocal(), quantidadeMovimentada,
+                        EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado());
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "", true);
                 this.actionNew(event);
@@ -720,9 +721,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getDigitacaoLocal() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
@@ -1048,7 +1049,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public static final String DEVOLVIDO = "D";
 
-   // public static final String DESCARTE = "DE";
+    // public static final String DESCARTE = "DE";
 
     public Date getDateHoje() {
         return dateHoje;
@@ -1188,22 +1189,18 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.tabelaMovimentacao = tabelaMovimentacao;
     }
 
-    
     public List<Local> getLocaisSelecionadosDevolucao() {
         return locaisSelecionadosDevolucao;
     }
 
-    
     public void setLocaisSelecionadosDevolucao(List<Local> locaisSelecionadosDevolucao) {
         this.locaisSelecionadosDevolucao = locaisSelecionadosDevolucao;
     }
 
-    
     public Local getLocalSelecionadoDevolucao() {
         return localSelecionadoDevolucao;
     }
 
-    
     public void setLocalSelecionadoDevolucao(Local localSelecionadoDevolucao) {
         this.localSelecionadoDevolucao = localSelecionadoDevolucao;
     }

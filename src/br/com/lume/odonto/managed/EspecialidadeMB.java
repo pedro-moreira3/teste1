@@ -13,8 +13,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.especialidade.EspecialidadeSingleton;
-//import br.com.lume.odonto.bo.EspecialidadeBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.EspecialidadeBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Especialidade;
 
 @ManagedBean
@@ -27,20 +27,22 @@ public class EspecialidadeMB extends LumeManagedBean<Especialidade> {
 
     private List<Especialidade> especialidades;
 
-   // private EspecialidadeBO especialidadeBO;
+    // private EspecialidadeBO especialidadeBO;
 
     public EspecialidadeMB() {
         super(EspecialidadeSingleton.getInstance().getBo());
-       // this.especialidadeBO = new EspecialidadeBO();
+        // this.especialidadeBO = new EspecialidadeBO();
         this.setClazz(Especialidade.class);
         this.carregaLista();
     }
 
     public void carregaLista() {
         try {
-            this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (this.especialidades != null) {
-                Collections.sort(this.especialidades);
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                if (this.especialidades != null) {
+                    Collections.sort(this.especialidades);
+                }
             }
         } catch (Exception e) {
             this.log.error("Erro ao buscar especialidades", e);

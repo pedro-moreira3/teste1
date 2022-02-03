@@ -77,7 +77,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private StringBuilder cabecalhoHtml = new StringBuilder("");
     private StringBuilder modeloHtmlSemCabecalho = new StringBuilder("");
     private StringBuilder rodapeHtml = new StringBuilder("");
-    
+
     private BigDecimal somatorioValorTotal = new BigDecimal(0);
 
     private Tag tag;
@@ -123,20 +123,20 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 //            c.add(Calendar.DAY_OF_MONTH, +1);
 //            dataFinal = c.getTime();
 //        }
-
-        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-        if(getEntityList().size() > 0) {
-            for(DocumentoEmitido doc : getEntityList()) {
-                if(doc.getValor() != 0) {
-                    somatorioValorTotal.add(new BigDecimal(doc.getValor())).setScale(2, BigDecimal.ROUND_HALF_UP);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            if (getEntityList().size() > 0) {
+                for (DocumentoEmitido doc : getEntityList()) {
+                    if (doc.getValor() != 0) {
+                        somatorioValorTotal.add(new BigDecimal(doc.getValor())).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    }
                 }
+            } else {
+                somatorioValorTotal = new BigDecimal(0);
             }
-        }else {
-            somatorioValorTotal = new BigDecimal(0);
-        }
-        
 
+        }
     }
 
     public List<Documento> sugestoesModelos(String query) {
@@ -260,10 +260,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             try {
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
                 FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");
-                arquivo = DefaultStreamedContent.builder()
-                        .name(doc.getDocumentoModelo().getDescricao() + ".pdf")
-                        .contentType("application/pdf")
-                        .stream(() -> { return in; }).build();
+                arquivo = DefaultStreamedContent.builder().name(doc.getDocumentoModelo().getDescricao() + ".pdf").contentType("application/pdf").stream(() -> {
+                    return in;
+                }).build();
             } catch (Exception e) {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar o documento.");
                 e.printStackTrace();
@@ -549,8 +548,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                             if (!Utils.getIdadePaciente(this.pacienteSelecionado).equals("")) {
                                 modelo = modelo.replaceAll("\\#idadePaciente", Utils.getIdadePaciente(this.pacienteSelecionado) + " anos");
                             }
-                            if (this.pacienteSelecionado.getConvenio() != null &&
-                                    this.pacienteSelecionado.getConvenio().getDadosBasico().getNome() != null && !this.pacienteSelecionado.getDadosBasico().getNome().equals("")) {
+                            if (this.pacienteSelecionado.getConvenio() != null && this.pacienteSelecionado.getConvenio().getDadosBasico().getNome() != null && !this.pacienteSelecionado.getDadosBasico().getNome().equals(
+                                    "")) {
                                 modelo = modelo.replaceAll("\\#convenioPaciente", this.pacienteSelecionado.getConvenio().getDadosBasico().getNome());
                             }
                         } else {
@@ -1073,12 +1072,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         this.mostraLogoCentral = mostraLogoCentral;
     }
 
-    
     public BigDecimal getSomatorioValorTotal() {
         return somatorioValorTotal;
     }
 
-    
     public void setSomatorioValorTotal(BigDecimal somatorioValorTotal) {
         this.somatorioValorTotal = somatorioValorTotal;
     }

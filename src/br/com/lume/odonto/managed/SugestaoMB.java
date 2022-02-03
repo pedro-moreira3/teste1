@@ -74,27 +74,29 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     private Profissional profissionalLogado;
 
-    private boolean visivel = false, tipo = true; 
+    private boolean visivel = false, tipo = true;
 
     public SugestaoMB() {
         super(SugestaoSingleton.getInstance().getBo());
-     
+
         this.setClazz(Sugestao.class);
-        this.setIncluindo(true);
-        this.geraList();
-        try {
-            this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO) || this.profissionalLogado.getPerfil().equals(
-                    OdontoPerfil.ADMINISTRADOR) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADORES)) {
-                this.visivel = true;
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.setIncluindo(true);
+            this.geraList();
+            try {
+                this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+                if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO) || this.profissionalLogado.getPerfil().equals(
+                        OdontoPerfil.ADMINISTRADOR) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADORES)) {
+                    this.visivel = true;
+                }
+                this.dataAtual = new Date();
+                this.setRoot(new DefaultTreeNode("", null));
+                Item firstLevel = new Item();
+                firstLevel.setDescricao("RAIZ");
+                this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
+            } catch (Exception e) {
+                this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             }
-            this.dataAtual = new Date();
-            this.setRoot(new DefaultTreeNode("", null));
-            Item firstLevel = new Item();
-            firstLevel.setDescricao("RAIZ");
-            this.chargeTree(new DefaultTreeNode(firstLevel, this.getRoot()));
-        } catch (Exception e) {
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
 
@@ -267,8 +269,8 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().get(0).getLocal()).getQuantidade();
-                
+                BigDecimal quantidade = EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material, material.getEstoque().get(0).getLocal()).getQuantidade();
+
                 quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(quantidade.multiply(material.getTamanhoUnidade())));
             }
         } catch (Exception e) {

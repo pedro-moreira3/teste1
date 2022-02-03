@@ -106,9 +106,11 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
 
     public void carregaLista() {
         try {
-            fornecedores = FornecedorSingleton.getInstance().getBo().listAtivosInativosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (fornecedores != null) {
-                Collections.sort(fornecedores);
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                fornecedores = FornecedorSingleton.getInstance().getBo().listAtivosInativosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                if (fornecedores != null) {
+                    Collections.sort(fornecedores);
+                }
             }
         } catch (Exception e) {
             log.error("Erro no setEntity", e);

@@ -66,7 +66,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaDocumento;
-    
+
     public DocumentoGenericoMB() {
         super(DocumentoGenericoSingleton.getInstance().getBo());
 //        dominioBO = new DominioBO();
@@ -74,14 +74,16 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 //        pacienteBO = new PacienteBO();
 //        documentoGenericoBO = new DocumentoGenericoBO();
         try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "D");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "D");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.setPaciente(UtilsFrontEnd.getPacienteLogado());
+                profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            }
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
         }
-        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
@@ -140,7 +142,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Contratos pacientes", tabelaDocumento, type);
     }
@@ -205,7 +207,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
-        paciente = (Paciente) object;     
+        paciente = (Paciente) object;
         UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 

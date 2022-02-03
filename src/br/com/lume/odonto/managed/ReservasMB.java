@@ -23,7 +23,9 @@ public class ReservasMB extends LumeManagedBean<ReservaKit> {
     public ReservasMB() {
         super(ReservaKitSingleton.getInstance().getBo());
         this.setClazz(ReservaKit.class);
-        this.reservas = ReservaKitSingleton.getInstance().getBo().listReservasDia(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.reservas = ReservaKitSingleton.getInstance().getBo().listReservasDia(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        }
     }
 
     public List<ReservaKit> getReservas() {

@@ -34,8 +34,10 @@ public class RelatorioAvaliacaoMB extends LumeManagedBean<RelatorioAvaliacao> {
         super(RelatorioAvaliacaoSingleton.getInstance().getBo());
         this.setClazz(RelatorioAvaliacao.class);
         try {
-            this.avaliacoes = RelatorioAvaliacaoSingleton.getInstance().getBo().listAgrupadoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.graficoGeral();
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.avaliacoes = RelatorioAvaliacaoSingleton.getInstance().getBo().listAgrupadoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.graficoGeral();
+            }
         } catch (Exception e) {
             this.log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

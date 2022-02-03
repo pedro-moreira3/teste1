@@ -35,11 +35,13 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaResposta;
-    
+
     public RespostaMB() {
-        super(RespostaSingleton.getInstance().getBo());      
+        super(RespostaSingleton.getInstance().getBo());
         this.setClazz(Resposta.class);
-        this.carregaLista();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.carregaLista();
+        }
     }
 
     @Override
@@ -57,7 +59,7 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
     public void carregaLista() {
         try {
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            
+
             this.perguntas = PerguntaSingleton.getInstance().getBo().listComTipoRespComplexa(idEmpresaLogada);
             this.respostas = RespostaSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
         } catch (Exception e) {
@@ -67,7 +69,7 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
         Collections.sort(this.perguntas);
 
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Respostas Anamnese", tabelaResposta, type);
     }

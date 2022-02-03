@@ -56,11 +56,11 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     private String filtroPorConvenio;
 
     private String filtroStatusPaciente;
-    
+
     private MotivoInativacaoPaciente filtroPorMotivoInativacao;
-    
+
     private Dominio filtroPorComoChegouNaClinica;
-    
+
     // Listas para escolha no filtro
     List<Dominio> indicacoes;
     List<MotivoInativacaoPaciente> motivosInativacao;
@@ -71,28 +71,29 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     private DataTable tabelaRelatorio;
     private DataTable tabelaAniversariantes;
 
-    private List<String> filtroAtendimento = new ArrayList<String>();  
-  
+    private List<String> filtroAtendimento = new ArrayList<String>();
+
     public RelatorioPacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            if (this.listaConvenios == null)
+                this.listaConvenios = new ArrayList<>();
+            this.sugestoesConvenios("todos");
 
-        if (this.listaConvenios == null)
-            this.listaConvenios = new ArrayList<>();
-        this.sugestoesConvenios("todos");
-        
-        try {
-            indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        
-        try {
-            motivosInativacao = MotivoInativacaoPacienteSingleton.getInstance().getBo().listMotivosAtivos();
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+            try {
+                indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
 
+            try {
+                motivosInativacao = MotivoInativacaoPacienteSingleton.getInstance().getBo().listMotivosAtivos();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+
+        }
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -112,7 +113,7 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
 
         }
         return "";
-    } 
+    }
 
     public void exportarTabelaAniversariantes(String type) {
         this.exportarTabela("Aniversariantes", tabelaAniversariantes, type);
@@ -121,8 +122,6 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     public List<StatusRetorno> getStatusPossiveis() {
         return Arrays.asList(StatusRetorno.values());
     }
-    
-    
 
     public void actionFiltrar(ActionEvent event) {
 
@@ -131,34 +130,31 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
                 this.pacientes = new ArrayList<Paciente>();
-           
+
                 this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPaciente(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),
                         getConvenio(getFiltroPorConvenio()), this.filtroStatusPaciente, this.filtroPorMotivoInativacao, this.filtroPorComoChegouNaClinica,
-                        (filtroIndicacaoPaciente() ? this.filtroPorComoChegouNaClinicaPaciente : null), 
-                        (filtroIndicacaoProfissional() ? this.filtroPorComoChegouNaClinicaProfissional : null));             
+                        (filtroIndicacaoPaciente() ? this.filtroPorComoChegouNaClinicaPaciente : null), (filtroIndicacaoProfissional() ? this.filtroPorComoChegouNaClinicaProfissional : null));
 
             }
             this.sugestoesConvenios("todos");
-        } catch (Exception e) {          
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-    
+
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false);
     }
-    
+
     public boolean filtroIndicacaoProfissional() {
-        if (this.filtroPorComoChegouNaClinica != null &&
-                "Indicado por Profissional".equals(this.filtroPorComoChegouNaClinica.getNome()))
+        if (this.filtroPorComoChegouNaClinica != null && "Indicado por Profissional".equals(this.filtroPorComoChegouNaClinica.getNome()))
             return true;
         return false;
     }
-    
+
     public boolean filtroIndicacaoPaciente() {
-        if (this.filtroPorComoChegouNaClinica != null &&
-                "Indicado por Paciente".equals(this.filtroPorComoChegouNaClinica.getNome()))
+        if (this.filtroPorComoChegouNaClinica != null && "Indicado por Paciente".equals(this.filtroPorComoChegouNaClinica.getNome()))
             return true;
         return false;
     }
@@ -383,7 +379,7 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     public void setTabelaAniversariantes(DataTable tabelaAniversariantes) {
         this.tabelaAniversariantes = tabelaAniversariantes;
     }
-    
+
     public MotivoInativacaoPaciente getFiltroPorMotivoInativacao() {
         return filtroPorMotivoInativacao;
     }
@@ -391,15 +387,15 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     public void setFiltroPorMotivoInativacao(MotivoInativacaoPaciente filtroPorMotivoInativacao) {
         this.filtroPorMotivoInativacao = filtroPorMotivoInativacao;
     }
-    
+
     public List<Dominio> getIndicacoes() {
         return indicacoes;
     }
-    
+
     public void setIndicacoes(List<Dominio> indicacoes) {
         this.indicacoes = indicacoes;
     }
-    
+
     public List<MotivoInativacaoPaciente> getMotivosInativacao() {
         return motivosInativacao;
     }
@@ -407,7 +403,7 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     public void setMotivosInativacao(List<MotivoInativacaoPaciente> motivosInativacao) {
         this.motivosInativacao = motivosInativacao;
     }
-    
+
     public Dominio getFiltroPorComoChegouNaClinica() {
         return filtroPorComoChegouNaClinica;
     }
@@ -415,15 +411,15 @@ public class RelatorioPacienteMB extends LumeManagedBean<Paciente> {
     public void setFiltroPorComoChegouNaClinica(Dominio filtroPorComoChegouNaClinica) {
         this.filtroPorComoChegouNaClinica = filtroPorComoChegouNaClinica;
     }
-    
+
     public Paciente getFiltroPorComoChegouNaClinicaPaciente() {
         return filtroPorComoChegouNaClinicaPaciente;
     }
-    
+
     public void setFiltroPorComoChegouNaClinicaPaciente(Paciente filtroPorComoChegouNaClinicaPaciente) {
         this.filtroPorComoChegouNaClinicaPaciente = filtroPorComoChegouNaClinicaPaciente;
     }
-    
+
     public Profissional getFiltroPorComoChegouNaClinicaProfissional() {
         return filtroPorComoChegouNaClinicaProfissional;
     }

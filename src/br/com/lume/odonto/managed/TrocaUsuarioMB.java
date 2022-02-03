@@ -38,7 +38,9 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
         super(ProfissionalSingleton.getInstance().getBo());
 
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
         } catch (Exception e) {
             log.error("Erro no TrocaUsuarioMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -50,8 +52,9 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
         try {
             UtilsFrontEnd.setProfissionalLogado(profissionalTrocar);
             UtilsFrontEnd.setPerfilLogado(profissionalTrocar.getPerfil());
-            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissionalTrocar.getIdEmpresa()));         
-            List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()), profissionalTrocar.getPerfil(), profissionalTrocar);
+            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissionalTrocar.getIdEmpresa()));
+            List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()),
+                    profissionalTrocar.getPerfil(), profissionalTrocar);
             this.getLumeSecurity().setUsuario(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()));
             this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
             menuMB.carregarMenu();

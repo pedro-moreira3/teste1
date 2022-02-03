@@ -52,19 +52,21 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
     private String usuRepetirSenha;
 
     private boolean mostrarSomenteErro = true;
-    
+
     private String erro;
-    
+
     private String mensagemTrocaSenha;
-    
+
     private String confirmacaoEmail;
 
     public ValidaremailMB() {
         super(UsuarioSingleton.getInstance().getBo());
-        validarEmail();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            validarEmail();
+        }
         setClazz(Usuario.class);
-      //  setUsuarioLogado(null);
-     //   setBo(new UsuarioBO());
+        //  setUsuarioLogado(null);
+        //   setBo(new UsuarioBO());
     }
 
     private void validarEmail() {
@@ -78,36 +80,33 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
             //UsuarioBO usuarioBo = new UsuarioBO();
             usuarioLogando = UsuarioSingleton.getInstance().getBo().buscarPorTokenEdata(token);
             if (usuarioLogando == null) {
-                erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que "
-                        + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha."; 
+                erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha.";
                 mostrarSomenteErro = false;
             }
         } catch (Exception e) {
-            erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que "
-                    + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha"; 
-            mostrarSomenteErro = false;         
+            erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha";
+            mostrarSomenteErro = false;
         }
-       
+
     }
- 
+
     public String getLogo() {
         return "/images/logo_idente.png";
     }
-    
-    
+
     //TODO isso esta dplicado aqui e no login mb, verificar para deixar em um lugar so
     public void actionResetSenha() {
         mensagemTrocaSenha = "";
         try {
             if (getConfirmacaoEmail() == null || getConfirmacaoEmail().equals("")) {
-                mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");              
+                mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");
             } else {
                 Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmail());
                 if (usuarioTrocaSenha != null) {
                     EnviaEmail.envioResetSenha(usuarioTrocaSenha);
                     mensagemTrocaSenha = "E-mail enviado com sucesso!";
                 } else {
-                    mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");                  
+                    mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");
                 }
 
             }
@@ -120,11 +119,11 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         }
     }
 
-   // public String actionLogin() {
-   //     return actionLogin("vdd");
-  //  }
+    // public String actionLogin() {
+    //     return actionLogin("vdd");
+    //  }
 
-  //TODO copiado do login, colocar no mesmo lugar para evitar copia de codigo e melhorar manutenção
+    //TODO copiado do login, colocar no mesmo lugar para evitar copia de codigo e melhorar manutenção
     public String actionLogin() {
         if (usuarioLogando == null) {
             addError("Usuário não encontrado!", "Usuário não encontrado!");
@@ -140,78 +139,76 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
             addError("Campo senha diferente do campo repetir senha!", "Campo senha diferente do campo repetir senha!");
             return "";
         }
-             
+
         try {
             usuarioLogando.setTokenAcesso(null);
             usuarioLogando.setDataToken(null);
-            UsuarioSingleton.getInstance().getBo().doCrypt(usuarioLogando, usuSenha);          
+            UsuarioSingleton.getInstance().getBo().doCrypt(usuarioLogando, usuSenha);
             UsuarioSingleton.getInstance().getBo().persist(usuarioLogando);
             usuarioLogando.setUsuStrSenha(usuSenha);
-        JSFHelper.getSession().invalidate();
-        Usuario userLogin = LoginSingleton.getInstance().getBo().doLogin(usuarioLogando, SistemaSingleton.getInstance().getBo().getSistemaBySigla(JSFHelper.getSistemaAtual()));
-        Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
-        List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
-        List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByUsuario(usuario);
-        // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
-        if ((profissionais != null && profissionais.size() > 1) || (pacientes != null && pacientes.size() > 1) || (profissionais != null && profissionais.size() == 1 && pacientes != null && pacientes.size() == 1)) {
-            List<Login> logins = this.carregarLogins(pacientes, profissionais);    
-            
-            UtilsFrontEnd.setLogins(logins);
-            UtilsFrontEnd.setUsuarioNome(usuario.getUsuStrNme());
-                            
-            JSFHelper.redirect("loginmulti.jsf");
-            return "";
-        } else {
-            String perfilLogado = "";
-            Profissional profissional = ProfissionalSingleton.getInstance().getBo().findByUsuario(userLogin);
-            if(perfilLogado.equals(OdontoPerfil.PARCEIRO)) {               
-                perfilLogado = OdontoPerfil.PARCEIRO;  
-                UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PARCEIRO);    
-                //nesse caso so tem uma afiliacao
-               UtilsFrontEnd.setAfiliacaoLogada(UsuarioAfiliacaoSingleton.getInstance().getBo().listByUsuario(usuario).get(0).getAfiliacao());
-               UtilsFrontEnd.setUsuarioLogado(userLogin);
-            }else if (profissional == null) {
-                perfilLogado = OdontoPerfil.PACIENTE;
-                Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
-                UtilsFrontEnd.setPacienteLogado(paciente);
-                UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PACIENTE);
-                UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
+            JSFHelper.getSession().invalidate();
+            Usuario userLogin = LoginSingleton.getInstance().getBo().doLogin(usuarioLogando, SistemaSingleton.getInstance().getBo().getSistemaBySigla(JSFHelper.getSistemaAtual()));
+            Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByUsuario(usuario);
+            // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
+            if ((profissionais != null && profissionais.size() > 1) || (pacientes != null && pacientes.size() > 1) || (profissionais != null && profissionais.size() == 1 && pacientes != null && pacientes.size() == 1)) {
+                List<Login> logins = this.carregarLogins(pacientes, profissionais);
+
+                UtilsFrontEnd.setLogins(logins);
+                UtilsFrontEnd.setUsuarioNome(usuario.getUsuStrNme());
+
+                JSFHelper.redirect("loginmulti.jsf");
+                return "";
             } else {
-                if (!Profissional.INATIVO.equals(profissional.getStatus())) {
-                    perfilLogado = profissional.getPerfil();
-                    UtilsFrontEnd.setProfissionalLogado(profissional);
-                    UtilsFrontEnd.setPerfilLogado(perfilLogado);
-                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                      
+                String perfilLogado = "";
+                Profissional profissional = ProfissionalSingleton.getInstance().getBo().findByUsuario(userLogin);
+                if (perfilLogado.equals(OdontoPerfil.PARCEIRO)) {
+                    perfilLogado = OdontoPerfil.PARCEIRO;
+                    UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PARCEIRO);
+                    //nesse caso so tem uma afiliacao
+                    UtilsFrontEnd.setAfiliacaoLogada(UsuarioAfiliacaoSingleton.getInstance().getBo().listByUsuario(usuario).get(0).getAfiliacao());
+                    UtilsFrontEnd.setUsuarioLogado(userLogin);
+                } else if (profissional == null) {
+                    perfilLogado = OdontoPerfil.PACIENTE;
+                    Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
+                    UtilsFrontEnd.setPacienteLogado(paciente);
+                    UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PACIENTE);
+                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));
                 } else {
-                    PrimeFaces.current().executeScript("PF('loading').hide();");
-                    this.addError("Profissional Inativo.", "");
-                    return "";
+                    if (!Profissional.INATIVO.equals(profissional.getStatus())) {
+                        perfilLogado = profissional.getPerfil();
+                        UtilsFrontEnd.setProfissionalLogado(profissional);
+                        UtilsFrontEnd.setPerfilLogado(perfilLogado);
+                        UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));
+                    } else {
+                        PrimeFaces.current().executeScript("PF('loading').hide();");
+                        this.addError("Profissional Inativo.", "");
+                        return "";
+                    }
                 }
-            }            
-            if(!OdontoPerfil.PARCEIRO.equals(perfilLogado)) {
-                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());    
+                if (!OdontoPerfil.PARCEIRO.equals(perfilLogado)) {
+                    LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());
+                }
+                //((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
+                // ObjetoBO objetoBO = new ObjetoBO();
+                this.getLumeSecurity().setUsuario(userLogin);
+                List<Objeto> objetosPermitidos = ObjetoSingleton.getInstance().getBo().carregaObjetosPermitidos(perfilLogado, profissional);
+                Objeto objeto = new Objeto();
+                objeto.setObjStrDes("home");
+                objeto.setCaminho("home");
+                objetosPermitidos.add(objeto);
+                this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
+
             }
-            //((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
-           // ObjetoBO objetoBO = new ObjetoBO();
-            this.getLumeSecurity().setUsuario(userLogin);
-            List<Objeto> objetosPermitidos = ObjetoSingleton.getInstance().getBo().carregaObjetosPermitidos(perfilLogado, profissional);
-            Objeto objeto = new Objeto();
-            objeto.setObjStrDes("home");
-            objeto.setCaminho("home");
-            objetosPermitidos.add(objeto);
-            this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
-            
-            
-            
+        } catch (Exception e) {
+            PrimeFaces.current().executeScript("PF('loading').hide();");
+            this.addError(e.getMessage(), "");
+            log.error("Erro ao efetuar login.", e);
+            return "";
         }
-    } catch (Exception e) {
-        PrimeFaces.current().executeScript("PF('loading').hide();");
-        this.addError(e.getMessage(), "");
-        log.error("Erro ao efetuar login.", e);
-        return "";
-    }
-    return this.verificaPaginaInicial();
-        
+        return this.verificaPaginaInicial();
+
 //        try {
 //            //  usuarioLogando = ((TcadusuarioBO) getBo()).login(usuLogin, getEntity().getUsusenha());
 //            setUsuarioLogado(usuarioLogando);
@@ -243,7 +240,7 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
 //        }
 //        return "";
     }
-    
+
     //TODO copiado do login, colocar no mesmo lugar para evitar copia de codigo e melhorar manutenção
     private List<Login> carregarLogins(List<Paciente> pacientes, List<Profissional> profissionais) {
         List<Login> logins = new ArrayList<>();
@@ -310,6 +307,7 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         }
         return "";
     }
+
     public Usuario getUsuarioLogando() {
         return usuarioLogando;
     }
@@ -350,32 +348,26 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         this.mostrarSomenteErro = mostrarSomenteErro;
     }
 
-    
     public String getErro() {
         return erro;
     }
 
-    
     public void setErro(String erro) {
         this.erro = erro;
     }
 
-    
     public String getConfirmacaoEmail() {
         return confirmacaoEmail;
     }
 
-    
     public void setConfirmacaoEmail(String confirmacaoEmail) {
         this.confirmacaoEmail = confirmacaoEmail;
     }
 
-    
     public String getMensagemTrocaSenha() {
         return mensagemTrocaSenha;
     }
 
-    
     public void setMensagemTrocaSenha(String mensagemTrocaSenha) {
         this.mensagemTrocaSenha = mensagemTrocaSenha;
     }

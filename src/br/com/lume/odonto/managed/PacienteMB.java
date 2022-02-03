@@ -23,10 +23,11 @@ import java.util.Map;
 
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.view.ViewScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Named;
@@ -92,7 +93,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Usuario;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class PacienteMB extends LumeManagedBean<Paciente> {
 
@@ -104,7 +105,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Anamnese pacienteAnamnese;
 
     private boolean readonly, applet = false, responsavel = false, planoRender = false, abrirComoImpressao;
-    
+
     private Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
     private List<Convenio> convenios;
@@ -216,8 +217,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 perfis.add(OdontoPerfil.DENTISTA);
                 perfis.add(OdontoPerfil.ADMINISTRADOR);
                 perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-                if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
-                    profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                    if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    }
                 }
                 this.sortAnamneses();
                 this.geraLista();
@@ -269,10 +272,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             try {
                 File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
                 FileInputStream in = new FileInputStream(file + "/" + doc.getDocumentoModelo().getDescricao() + "-" + doc.getEmitidoPara().getId() + ".pdf");
-                arquivo = DefaultStreamedContent.builder()
-                        .name(doc.getDocumentoModelo().getDescricao())
-                        .contentType("application/pdf")
-                        .stream(() -> { return in; }).build();
+                arquivo = DefaultStreamedContent.builder().name(doc.getDocumentoModelo().getDescricao()).contentType("application/pdf").stream(() -> {
+                    return in;
+                }).build();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -295,17 +297,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
-    
-
     public StreamedContent getImagemUsuario() {
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + getEntity().getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
-                        .name(getEntity().getNomeImagem())
-                        .contentType("image/" + getEntity().getNomeImagem().split("\\.")[1])
-                        .stream(() -> {return byteArrayInputStream;}).build();
+                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder().name(getEntity().getNomeImagem()).contentType(
+                        "image/" + getEntity().getNomeImagem().split("\\.")[1]).stream(() -> {
+                            return byteArrayInputStream;
+                        }).build();
                 return defaultStreamedContent;
             }
         } catch (Exception e) {
@@ -329,7 +329,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void closeDlg() {
         this.setIndicacao(null);
     }
-    
+
     public boolean showOutros() {
         if (indicacao != null) {
             if (indicacao.getNome().equals("Outros")) {
@@ -338,9 +338,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return false;
     }
-    
+
     public boolean showPerfilInstagram() {
-        if(getEntity().getDominioaux() == null) {
+        if (getEntity().getDominioaux() == null) {
             //getEntity().setDominioaux(new DominioAux());
         }
         if (indicacao != null) {
@@ -425,8 +425,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
-        scFoto = DefaultStreamedContent.builder()
-                .stream(() -> {return new ByteArrayInputStream(data);}).build();
+        scFoto = DefaultStreamedContent.builder().stream(() -> {
+            return new ByteArrayInputStream(data);
+        }).build();
     }
 
     public void uploadPhotoImg(FileUploadEvent event) {
@@ -434,8 +435,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             uploadedFile = event.getFile();
             if (uploadedFile != null) {
                 data = event.getFile().getContent();
-                scFoto = DefaultStreamedContent.builder()
-                        .stream(() -> {return new ByteArrayInputStream(data);}).build();
+                scFoto = DefaultStreamedContent.builder().stream(() -> {
+                    return new ByteArrayInputStream(data);
+                }).build();
                 addInfo("Sucesso", "Arquivo recebido com sucesso!");
             } else {
                 throw new Exception("Arquivo corrompido, tente novamente!");
@@ -469,8 +471,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
                 data = baos.toByteArray();
-                scFoto = DefaultStreamedContent.builder()
-                        .stream(() -> {return new ByteArrayInputStream(data);}).build();
+                scFoto = DefaultStreamedContent.builder().stream(() -> {
+                    return new ByteArrayInputStream(data);
+                }).build();
                 System.out.println(scFoto);
                 ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
             } catch (IOException e) {
@@ -646,8 +649,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             perfis.add(OdontoPerfil.DENTISTA);
             perfis.add(OdontoPerfil.ADMINISTRADOR);
             perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-            if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
-                profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                    profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                }
             }
 
             if (entity != null) {
@@ -663,7 +668,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.actionAnamneseNew(null);
         super.setEntity(entity);
     }
-    
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -1478,9 +1482,5 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void setAbrirComoImpressao(boolean abrirComoImpressao) {
         this.abrirComoImpressao = abrirComoImpressao;
     }
-
-    
-
-    
 
 }

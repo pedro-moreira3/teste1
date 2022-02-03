@@ -21,10 +21,10 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
-//import br.com.lume.odonto.bo.ConvenioBO;
-//import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-//import br.com.lume.odonto.bo.ProcedimentoBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.ConvenioBO;
+// import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
+// import br.com.lume.odonto.bo.ProcedimentoBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
@@ -46,9 +46,9 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public Convenio convenio;
 
-  //  private ConvenioProcedimentoBO convenioProcedimentoBO;
+    //  private ConvenioProcedimentoBO convenioProcedimentoBO;
 
-  //  private ProcedimentoBO procedimentoBO;
+    //  private ProcedimentoBO procedimentoBO;
 
 //   private ConvenioBO convenioBO;
 
@@ -59,24 +59,25 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     private List<ConvenioProcedimento> relatorioConvenioProcedimentos;
 
     private Integer mes, ano;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorioConvenio;
 
     public ConvenioProcedimentoMB() {
         super(ConvenioProcedimentoSingleton.getInstance().getBo());
-     //   convenioProcedimentoBO = new ConvenioProcedimentoBO();
-     //   convenioBO = new ConvenioBO();
-     //   procedimentoBO = new ProcedimentoBO();
+        //   convenioProcedimentoBO = new ConvenioProcedimentoBO();
+        //   convenioBO = new ConvenioBO();
+        //   procedimentoBO = new ProcedimentoBO();
         try {
-            Long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
-            ano = Calendar.getInstance().get(Calendar.YEAR);
-          //  carregarRelatorio();
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                Long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
 
+                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+                procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+                mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
+                ano = Calendar.getInstance().get(Calendar.YEAR);
+                //  carregarRelatorio();
+            }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -100,24 +101,22 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     public void actionPersist(ActionEvent event) {
         try {
             if (this.getEntity().getProcedimento() != null && this.getEntity().getValor() != null && this.getEntity().getProcedimento().getCodigoCfo() != null) {
-              
-                
-                 
-               if ( this.getEntity().isZeraId() || this.getEntity().getConvenio() != null ) {     
-                   ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());            
-                   if(cp != null) {
-                       cp.setStatus(Status.INATIVO);
-                       ConvenioProcedimentoSingleton.getInstance().getBo().persist(cp);
-                       
-                       this.getEntity().setId(0);
-                   }
-               
+
+                if (this.getEntity().isZeraId() || this.getEntity().getConvenio() != null) {
+                    ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());
+                    if (cp != null) {
+                        cp.setStatus(Status.INATIVO);
+                        ConvenioProcedimentoSingleton.getInstance().getBo().persist(cp);
+
+                        this.getEntity().setId(0);
+                    }
+
                 }
-                
+
                 this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                
+
                 if (tipoValor.equals("P")) {
                     if ((this.getEntity().getPorcentagem() != null && this.getEntity().getPorcentagem().longValue() >= 0)) {
                         this.getEntity().setValor(this.getEntity().getProcedimento().getValor().multiply(this.getEntity().getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
@@ -147,7 +146,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
+
     public void onTabChange(TabChangeEvent event) {
         if (event.getTab().getTitle().equals("Relatório")) {
             carregarRelatorio();
@@ -241,7 +240,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             convenioProcedimentos = convenioProcedimentosAux;
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Relatório procedimentos por convênio", tabelaRelatorioConvenio, type);
     }

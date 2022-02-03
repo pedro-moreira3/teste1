@@ -35,9 +35,11 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
     private String status;
 
     public RelatorioBilhetagemMB() {
-        super(RelatorioBilhetagemSingleton.getInstance().getBo());  
+        super(RelatorioBilhetagemSingleton.getInstance().getBo());
         this.setClazz(RelatorioBilhetagem.class);
-        this.filtra();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.filtra();
+        }
     }
 
     public void filtra() {
@@ -48,7 +50,7 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 this.relatorioBilhetagens = RelatorioBilhetagemSingleton.getInstance().getBo().listAllByVigenciaAndStatus(this.inicio, c.getTime(), this.status,
                         UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                
+
                 this.somaQuantidade = 0;
                 for (RelatorioBilhetagem r : this.relatorioBilhetagens) {
                     this.somaQuantidade += r.getQuantidade();

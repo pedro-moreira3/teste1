@@ -124,24 +124,26 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         super(ProfissionalSingleton.getInstance().getBo());
 
         this.setClazz(Profissional.class);
-        carregarObjetosPerfis();
-        try {
-            filiais = FilialSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            carregarObjetosPerfis();
+            try {
+                filiais = FilialSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-            if (filiais == null || filiais.size() == 0) {
-                this.setPossuiFiliais(false);
-            } else {
-                this.setPossuiFiliais(true);
+                if (filiais == null || filiais.size() == 0) {
+                    this.setPossuiFiliais(false);
+                } else {
+                    this.setPossuiFiliais(true);
+                }
+                especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                //profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                carregarProfissionais();
+                this.carregaPerfis();
+                if (this.isProfissionalIndividual()) {
+                    this.setEntity(UtilsFrontEnd.getProfissionalLogado());
+                }
+            } catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             }
-            especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            //profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            carregarProfissionais();
-            this.carregaPerfis();
-            if (this.isProfissionalIndividual()) {
-                this.setEntity(UtilsFrontEnd.getProfissionalLogado());
-            }
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
 
@@ -457,8 +459,9 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
-        scFoto = DefaultStreamedContent.builder()
-                .stream(() -> {return new ByteArrayInputStream(data);}).build();
+        scFoto = DefaultStreamedContent.builder().stream(() -> {
+            return new ByteArrayInputStream(data);
+        }).build();
     }
 
     public StreamedContent getImagemUsuario() {
@@ -469,10 +472,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             if (profissional != null && profissional.getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                         FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
-                        .name(profissional.getNomeImagem())
-                        .contentType("image/" + profissional.getNomeImagem().split("\\.")[1])
-                        .stream(() -> {return byteArrayInputStream;}).build();
+                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder().name(profissional.getNomeImagem()).contentType(
+                        "image/" + profissional.getNomeImagem().split("\\.")[1]).stream(() -> {
+                            return byteArrayInputStream;
+                        }).build();
                 return defaultStreamedContent;
             }
         } catch (Exception e) {

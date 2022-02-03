@@ -71,9 +71,9 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
     public AvisosMB() {
         super(AvisosSingleton.getInstance().getBo());
         this.setClazz(Avisos.class);
-
-        idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+        }
         carregarAvisos();
         //scriptRepasse();
     }
@@ -191,7 +191,7 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
             BigDecimal totalRepassar = BigDecimal.ZERO;
             BigDecimal totalFaturaRepasse = BigDecimal.ZERO;
             BigDecimal disparidadeAjuste = BigDecimal.ZERO;
-            
+
             Lancamento lanRepasse = null;
 
             System.out.println("--- INICIANDO ANALISES REPASSE ---");
@@ -206,13 +206,13 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
                     procedimentos.removeIf((ptp) -> !ptp.getStatuss());
 
                     for (PlanoTratamentoProcedimento ptp : procedimentos) {
-                        if(FaturaSingleton.getInstance().getBo().getFaturasOrigemFromPTP(ptp, empresa.getEmpIntCod()).size() == 1) {
-                            
+                        if (FaturaSingleton.getInstance().getBo().getFaturasOrigemFromPTP(ptp, empresa.getEmpIntCod()).size() == 1) {
+
                             List<RepasseFaturas> repasses = RepasseFaturasSingleton.getInstance().getBo().getFaturaRepasseFromOrigem(origem, true);
 
                             if (repasses != null && !repasses.isEmpty())
                                 repasses.removeIf((rf) -> !rf.getFaturaRepasse().isAtivo());
-                            
+
                             // SE NÃO TEM REPASSE RECALCULA
                             if (repasses == null || repasses.isEmpty()) {
                                 try {
@@ -224,14 +224,13 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
                                 }
                             } else {
                                 //totalRepassado = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(Arrays.asList(repasses.get(0).getFaturaRepasse()), true, ValidacaoLancamento.VALIDADO);
-                                totalRepassado = LancamentoSingleton.getInstance().getBo().listLancamentosFromFaturaValor(
-                                        Arrays.asList(repasses.get(0).getFaturaRepasse()), null, null, true);
+                                totalRepassado = LancamentoSingleton.getInstance().getBo().listLancamentosFromFaturaValor(Arrays.asList(repasses.get(0).getFaturaRepasse()), null, null, true);
                                 totalRepassar = valorRepasse(repasses.get(0), repasses.get(0).getItens().get(0).getFaturaItemOrigem(),
                                         repasses.get(0).getPlanoTratamentoProcedimento().getDentistaExecutor());
 
                                 totalRepassado = totalRepassado.setScale(2, BigDecimal.ROUND_HALF_UP);
                                 totalRepassar = totalRepassar.setScale(2, BigDecimal.ROUND_HALF_UP);
-                                
+
                                 // SE FALTA REPASSAR E NÃO TEM MAIS O QUE RECEBER, PRECISA SER CORRIGIDO
                                 if ((totalRepassado.compareTo(totalRepassar) < 0) && (totalRecebido.compareTo(totalReceber) == 0)) {
                                     RepasseFaturas rf = repasses.get(0);
@@ -254,11 +253,11 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
                                         ReciboRepasseProfissionalLancamento l2 = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboValidoForLancamento(l);
                                         recibos.add(l2);
                                     });
-                                    
+
                                     try {
                                         RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), adminLume, null, empresa);
                                         System.out.println("PTP ID: " + ptp.getId() + " DATA EXEC: " + ptp.getDataFinalizadoStr());
-                                        
+
                                         // PARA OS RECIBOS EXISTENTES, ASSOCIA-OS AO REPASSE RECALCULADO
                                         if (reciboAprovado) {
                                             List<RepasseFaturas> repasseNovo = RepasseFaturasSingleton.getInstance().getBo().getRepasseFaturasFromPTP(ptp);
@@ -274,31 +273,31 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
                                         System.out.println("ERRO AO RECALCULAR REPASSE. PTP: " + ptp.getId());
                                         e.printStackTrace();
                                     }
-                                } else if(totalRepassado.compareTo(FaturaSingleton.getInstance().getTotal(repasses.get(0).getFaturaRepasse())) > 0 ) {
+                                } else if (totalRepassado.compareTo(FaturaSingleton.getInstance().getTotal(repasses.get(0).getFaturaRepasse())) > 0) {
                                     totalFaturaRepasse = FaturaSingleton.getInstance().getTotal(repasses.get(0).getFaturaRepasse());
                                     disparidadeAjuste = totalRepassado.subtract(totalFaturaRepasse);
-                                    
+
                                     totalFaturaRepasse = totalFaturaRepasse.setScale(2, BigDecimal.ROUND_HALF_UP);
                                     disparidadeAjuste = disparidadeAjuste.setScale(2, BigDecimal.ROUND_HALF_UP);
-                                    
+
                                     repasses.get(0).getFaturaRepasse().getLancamentos().removeIf((l) -> !l.isAtivo());
-                                    
+
                                     repasses.get(0).getFaturaRepasse().getLancamentos().sort((lan1, lan2) -> {
                                         BigDecimal i = lan1.getValor();
                                         return i.compareTo(lan2.getValor());
                                     });
-                                    
-                                    if(repasses.get(0).getFaturaRepasse().getLancamentos() != null && !repasses.get(0).getFaturaRepasse().getLancamentos().isEmpty()) {
+
+                                    if (repasses.get(0).getFaturaRepasse().getLancamentos() != null && !repasses.get(0).getFaturaRepasse().getLancamentos().isEmpty()) {
                                         lanRepasse = repasses.get(0).getFaturaRepasse().getLancamentos().get(0);
                                         lanRepasse.setValor(lanRepasse.getValor().subtract(disparidadeAjuste));
-                                        
+
                                         LancamentoSingleton.getInstance().getBo().merge(lanRepasse);
                                         System.out.println("REAJUSTE DISPARIDADE PTP ID: " + ptp.getId() + " DATA EXEC: " + ptp.getDataFinalizadoStr() + " LANC ID: " + lanRepasse.getId());
                                     }
-                                    
+
                                 }
                             }
-                            
+
                         }
                     }
                 }

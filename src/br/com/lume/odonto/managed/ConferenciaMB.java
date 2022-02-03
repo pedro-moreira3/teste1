@@ -27,12 +27,12 @@ import br.com.lume.local.LocalSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialEmprestado.MaterialEmprestadoSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
-//import br.com.lume.odonto.bo.ConferenciaBO;
-//import br.com.lume.odonto.bo.ConferenciaMaterialBO;
-//import br.com.lume.odonto.bo.MaterialBO;
-//import br.com.lume.odonto.bo.MaterialEmprestadoBO;
-//import br.com.lume.odonto.bo.MaterialLogBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.ConferenciaBO;
+// import br.com.lume.odonto.bo.ConferenciaMaterialBO;
+// import br.com.lume.odonto.bo.MaterialBO;
+// import br.com.lume.odonto.bo.MaterialEmprestadoBO;
+// import br.com.lume.odonto.bo.MaterialLogBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Conferencia;
 import br.com.lume.odonto.entity.ConferenciaMaterial;
 import br.com.lume.odonto.entity.Estoque;
@@ -53,10 +53,10 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 //    private List<Material> materiais = new ArrayList<>();    
 
 //    private Material material = new Material();
-    
-    private List<Estoque> estoques = new ArrayList<>();    
 
-    private Estoque estoque = new Estoque();    
+    private List<Estoque> estoques = new ArrayList<>();
+
+    private Estoque estoque = new Estoque();
 
     private ConferenciaMaterial conferenciaMaterial = new ConferenciaMaterial();
 
@@ -79,16 +79,16 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     //private MaterialEmprestadoBO materialEmprestadoBO = new MaterialEmprestadoBO();
 
     private List<MaterialEmprestado> materiaisEmprestado;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaConferencia;
     private DataTable tabela;
 
     public ConferenciaMB() {
         super(ConferenciaSingleton.getInstance().getBo());
-       // conferenciaBO = new ConferenciaBO();
-      //  conferenciaMaterialBO = new ConferenciaMaterialBO();
-      //  materialBO = new MaterialBO();
+        // conferenciaBO = new ConferenciaBO();
+        //  conferenciaMaterialBO = new ConferenciaMaterialBO();
+        //  materialBO = new MaterialBO();
         this.geraLista();
         this.setClazz(Conferencia.class);
         if (conferencias != null && !conferencias.isEmpty()) {
@@ -120,25 +120,25 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void actionPersist(ActionEvent event) {
         try {
             if (conferencias != null && !conferencias.isEmpty()) {
-                
-                
+
                 //MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material, UtilsFrontEnd.getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
-                    //    conferenciaMaterial.getValorAlterado(), MaterialLog.AJUSTE_MATERIAL));
+                //    conferenciaMaterial.getValorAlterado(), MaterialLog.AJUSTE_MATERIAL));
                 //TODO FIX-ME POR ENQUANTO EMPRESTIMOS UNITARIOS E KIT AINDA NÃO SAO SOMENTE UM ESTOQUE, PORTANTO SERÁ
                 //SOMENTE ADICIONADO, DEPOIS SERA TUDO TRANSFERENCIA E NAO ADICIONAR
-                
-                Local ajuste = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"AJUSTE");         
+
+                Local ajuste = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "AJUSTE");
                 BigDecimal quantidadeAnterior = estoque.getQuantidade();
-                EstoqueSingleton.getInstance().transferencia(estoque.getMaterial(), estoque.getLocal(), ajuste, conferenciaMaterial.getValorAlterado(), descricao, UtilsFrontEnd.getProfissionalLogado());
-                
+                EstoqueSingleton.getInstance().transferencia(estoque.getMaterial(), estoque.getLocal(), ajuste, conferenciaMaterial.getValorAlterado(), descricao,
+                        UtilsFrontEnd.getProfissionalLogado());
+
                 conferenciaMaterial.setConferencia(conferencias.get(0));
                 conferenciaMaterial.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 conferenciaMaterial.setMaterial(estoque.getMaterial());
                 conferenciaMaterial.setValorOriginal(quantidadeAnterior);
                 conferenciaMaterial.setDataCadastro(Calendar.getInstance().getTime());
                 ConferenciaMaterialSingleton.getInstance().getBo().persist(conferenciaMaterial);
-               // material.setQuantidadeAtual(conferenciaMaterial.getValorAlterado());
-               // material.setQuantidadeTotal(conferenciaMaterial.getValorAlterado());
+                // material.setQuantidadeAtual(conferenciaMaterial.getValorAlterado());
+                // material.setQuantidadeTotal(conferenciaMaterial.getValorAlterado());
                 MaterialSingleton.getInstance().getBo().persist(estoque.getMaterial());
                 String motivo = conferenciaMaterial.getMotivo();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -167,7 +167,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     public void pesquisa() {
         try {
-            conferenciasMaterial = ConferenciaMaterialSingleton.getInstance().getBo().listByConferencia(this.getEntity(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            conferenciasMaterial = ConferenciaMaterialSingleton.getInstance().getBo().listByConferencia(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -176,51 +176,53 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     private void geraLista() {
         try {
-            conferencias = ConferenciaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            //materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            //materialBO.carregarQuantidadeEmprestada(materiais);
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                conferencias = ConferenciaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                //materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                //materialBO.carregarQuantidadeEmprestada(materiais);
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         //Collections.sort(materiais);
-       // Collections.sort(estoques);
+        // Collections.sort(estoques);
     }
-    
+
     public String quantidadeEmprestada() {
         return "";
     }
-    
+
     public void exportarTabelaConferencia(String type) {
         exportarTabela("Ajuste de materiais", tabelaConferencia, type);
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Consulta de ajustes", tabela, type);
     }
-    
+
     public String getUnidadeString(Item item) {
-        if(item != null)
+        if (item != null)
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
     }
 
-   // public List<Material> getMateriais() {
-   //     return materiais;
-   // }
+    // public List<Material> getMateriais() {
+    //     return materiais;
+    // }
 
-   // public void setMateriais(List<Material> materiais) {
-   //     this.materiais = materiais;
-  //  }
+    // public void setMateriais(List<Material> materiais) {
+    //     this.materiais = materiais;
+    //  }
 
-  //  public Material getMaterial() {
-   //     return material;
-  //  }
+    //  public Material getMaterial() {
+    //     return material;
+    //  }
 
-  //  public void setMaterial(Material material) {
-  //      this.material = material;
-  //  }
+    //  public void setMaterial(Material material) {
+    //      this.material = material;
+    //  }
 
     public ConferenciaMaterial getConferenciaMaterial() {
         return conferenciaMaterial;
@@ -270,22 +272,18 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
         this.materiaisEmprestado = materiaisEmprestado;
     }
 
-    
     public List<Estoque> getEstoques() {
         return estoques;
     }
 
-    
     public void setEstoques(List<Estoque> estoques) {
         this.estoques = estoques;
     }
 
-    
     public Estoque getEstoque() {
         return estoque;
     }
 
-    
     public void setEstoque(Estoque estoque) {
         this.estoque = estoque;
     }

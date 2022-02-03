@@ -22,10 +22,10 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.fornecedorItem.FornecedorItemSingleton;
 import br.com.lume.item.ItemSingleton;
-//import br.com.lume.odonto.bo.FornecedorBO;
-//import br.com.lume.odonto.bo.FornecedorItemBO;
-//import br.com.lume.odonto.bo.ItemBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.FornecedorBO;
+// import br.com.lume.odonto.bo.FornecedorItemBO;
+// import br.com.lume.odonto.bo.ItemBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.FornecedorItem;
 import br.com.lume.odonto.entity.Item;
@@ -51,17 +51,17 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     private List<FornecedorItem> fornecedoresItens;
 
-  //  private FornecedorBO fornecedorBO;
+    //  private FornecedorBO fornecedorBO;
 
-   // private FornecedorItemBO fornecedorItemBO;
+    // private FornecedorItemBO fornecedorItemBO;
 
- //   private ItemBO itemBO;
+    //   private ItemBO itemBO;
 
     public FornecedorItemMB() {
         super(FornecedorItemSingleton.getInstance().getBo());
-      //  this.fornecedorBO = new FornecedorBO();
-      //  this.fornecedorItemBO = new FornecedorItemBO();
-     //   this.itemBO = new ItemBO();
+        //  this.fornecedorBO = new FornecedorBO();
+        //  this.fornecedorItemBO = new FornecedorItemBO();
+        //   this.itemBO = new ItemBO();
         this.setClazz(FornecedorItem.class);
         this.geralist();
         try {
@@ -73,7 +73,9 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         try {
-            this.fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
         } catch (Exception e) {
             this.log.error("Erro no setEntity", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

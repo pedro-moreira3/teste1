@@ -98,10 +98,12 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 //        pacienteBO = new PacienteBO();
 //        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                descontos = DescontoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.setPaciente(UtilsFrontEnd.getPacienteLogado());
+            }
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -173,7 +175,8 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
         documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         String orcamento = "<table border=0 class=\"ui-widget\" width=\"100%\"><tr><td width=\"80%\"><b>Procedimento</b></td><td width=\"20%\"><b>Valor</b></td></tr><tr><td>&nbsp;</td></tr>";
-        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(),
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         boolean PS = false;
         for (PlanoTratamentoProcedimento ptp : planoDeTratamentoProcedimentos) {
             PS = false;
@@ -303,7 +306,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
         Object object = event.getObject();
         paciente = (Paciente) object;
         UtilsFrontEnd.setPacienteSelecionado(paciente);
-        
+
     }
 
     public List<Paciente> geraSugestoes(String query) {

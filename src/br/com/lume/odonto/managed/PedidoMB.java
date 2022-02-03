@@ -87,9 +87,11 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
 
     private void geraLista() {
         try {
-            this.setPedidos(PedidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            if (this.pedidos != null) {
-                Collections.sort(this.pedidos);
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                this.setPedidos(PedidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                if (this.pedidos != null) {
+                    Collections.sort(this.pedidos);
+                }
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -248,7 +250,7 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().get(0).getLocal()).getQuantidade();
+                BigDecimal quantidade = EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material, material.getEstoque().get(0).getLocal()).getQuantidade();
                 quantidadeTotal = quantidadeTotal.add(quantidade);
             }
         } catch (Exception e) {

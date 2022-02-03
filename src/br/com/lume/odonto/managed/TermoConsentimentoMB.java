@@ -56,21 +56,23 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     private Paciente paciente;
 
     private Profissional profissionalLogado = new Profissional();
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaTermo;
-  
+
     public TermoConsentimentoMB() {
-        super(TermoConsentimentoSingleton.getInstance().getBo());      
+        super(TermoConsentimentoSingleton.getInstance().getBo());
         try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "T");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                    OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
-                liberaBotao = true;
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "T");
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+                if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
+                        OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
+                    liberaBotao = true;
+                }
+                this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
             }
-            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -153,7 +155,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     public void exportarTabela(String type) {
         exportarTabela("Termos de consentimento", tabelaTermo, type);
     }
-    
+
     public String getDocumento() {
         return documento;
     }

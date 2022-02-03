@@ -25,20 +25,22 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(RelatorioMaterialMB.class);
-  
+
     private BigDecimal somaValorTotal = new BigDecimal(0);
 
     private List<Estoque> estoques = new ArrayList<>();
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaMaterial;
-    
+
     public RelatorioMaterialMB() {
         super(RelatorioMaterialSingleton.getInstance().getBo());
         this.setClazz(RelatorioMaterial.class);
         try {
-            estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        } catch (Exception e) {         
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
+        } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no RelatorioMaterialMB", e);
         }
     }
@@ -46,7 +48,7 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
     public void exportarTabela(String type) {
         exportarTabela("Relatório de estoque", tabelaMaterial, type);
     }
-    
+
     public BigDecimal getSomaValorTotal() {
         return somaValorTotal;
     }
@@ -55,12 +57,10 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
         this.somaValorTotal = somaValorTotal;
     }
 
-    
     public List<Estoque> getEstoques() {
         return estoques;
     }
 
-    
     public void setEstoques(List<Estoque> estoques) {
         this.estoques = estoques;
     }

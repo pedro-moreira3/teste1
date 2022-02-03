@@ -51,10 +51,10 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     private HashSet<String> profissionaisAgendamento;
 
     private List<Integer> cadeiras;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaAtendimento;
-    
+
     public FilaAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         this.dateFilter = new Date();
@@ -104,8 +104,11 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void carregaLista() {
         try {
             filtro = "'" + this.dateFilterFormat.format((dateFilter == null ? new Date() : dateFilter)) + "'";
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            carregarCadeiras();
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                carregarCadeiras();
+            }
+
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -171,7 +174,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
         return "[]";
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Atendimentos", tabelaAtendimento, type);
     }
@@ -237,12 +240,12 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     public StatusAgendamentoUtil[] getStatusAgendamentoUtil() {
         List<StatusAgendamentoUtil> status = Arrays.asList(StatusAgendamentoUtil.values());
         List<StatusAgendamentoUtil> result = new ArrayList<>();
-        for(StatusAgendamentoUtil statusUtil: status)
-            if(!"F".equals(statusUtil.getSigla()))
+        for (StatusAgendamentoUtil statusUtil : status)
+            if (!"F".equals(statusUtil.getSigla()))
                 result.add(statusUtil);
-        return  result.toArray(new StatusAgendamentoUtil[result.size()]);
+        return result.toArray(new StatusAgendamentoUtil[result.size()]);
     }
-    
+
     public boolean isDisableFieldsAg(Agendamento agendamento) {
         return !"Agendado".equals(agendamento.getStatusAgendamento().getDescricao());
     }
@@ -253,6 +256,6 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setTabelaAtendimento(DataTable tabelaAtendimento) {
         this.tabelaAtendimento = tabelaAtendimento;
-    } 
+    }
 
 }

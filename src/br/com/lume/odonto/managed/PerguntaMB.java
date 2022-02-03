@@ -39,17 +39,19 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPergunta;
-    
+
     public PerguntaMB() {
         super(PerguntaSingleton.getInstance().getBo());
 
         this.setClazz(Pergunta.class);
-        try {
-            this.configuracoes = ConfiguracaoAnamneseSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            try {
+                this.configuracoes = ConfiguracaoAnamneseSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            } catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            }
+            this.carregaEntityList();
         }
-        this.carregaEntityList();
     }
 
     @Override
@@ -75,7 +77,7 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
         this.setPerguntas(listByEspecialidade);
         Collections.sort(this.perguntas);
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Perguntas Anamnese", tabelaPergunta, type);
     }
@@ -97,9 +99,9 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
 //        return this.especialidades;
 //    }
 
- //   public void setEspecialidades(List<Especialidade> especialidades) {
-  //      this.especialidades = especialidades;
- //   }
+    //   public void setEspecialidades(List<Especialidade> especialidades) {
+    //      this.especialidades = especialidades;
+    //   }
 
     public List<Pergunta> getPerguntas() {
         return this.perguntas;
@@ -117,22 +119,18 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
         this.tabelaPergunta = tabelaPergunta;
     }
 
-    
     public List<ConfiguracaoAnamnese> getConfiguracoes() {
         return configuracoes;
     }
 
-    
     public void setConfiguracoes(List<ConfiguracaoAnamnese> configuracoes) {
         this.configuracoes = configuracoes;
     }
 
-    
     public ConfiguracaoAnamnese getConfiguracaoAnamnese() {
         return configuracaoAnamnese;
     }
 
-    
     public void setConfiguracaoAnamnese(ConfiguracaoAnamnese configuracaoAnamnese) {
         this.configuracaoAnamnese = configuracaoAnamnese;
     }

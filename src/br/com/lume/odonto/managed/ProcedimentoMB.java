@@ -44,7 +44,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
     private TreeNode root;
 
     private TreeNode selectedNode;
-    
+
     private TreeTable tabelaTree;
 
     private String filtroTable;
@@ -53,8 +53,10 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
         super(ProcedimentoSingleton.getInstance().getBo());
 
         this.setClazz(Procedimento.class);
-        this.geralist();
-        this.carregaTreeProcedimentos(null);
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            this.geralist();
+            this.carregaTreeProcedimentos(null);
+        }
     }
 
     private void geralist() {
@@ -111,7 +113,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
     public void exportarTreeTable(String type) {
         this.exportarTreeTable("Tabela de procedimentos", tabelaTree, type);
     }
-    
+
     public void setEspecialidades(List<Especialidade> especialidades) {
         this.especialidades = especialidades;
     }
