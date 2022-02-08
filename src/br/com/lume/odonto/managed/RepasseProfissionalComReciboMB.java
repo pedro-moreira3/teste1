@@ -20,8 +20,6 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
-import br.com.lume.common.exception.business.ConvenioProcedimentoSemValorRepasse;
-import br.com.lume.common.exception.business.ProcedimentoVinculoConvenioException;
 import br.com.lume.common.exception.business.RepasseNaoPossuiRecebimentoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -719,22 +717,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             //se a fatura ainda nao tem lancamentos, mas o profissional recebe por procedimento, ja sabemos o valor de repasse base.
             if (fatura == null || fatura.getLancamentos() == null || fatura.getLancamentos().size() == 0) {
                 if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                    BigDecimal valorRepasse = null;
-                    
-                    try {
-                        valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
-                    } catch (ProcedimentoVinculoConvenioException e) {
-                        this.addWarn("Atenção", e.getMessage());
-                    } catch (ConvenioProcedimentoSemValorRepasse e) {
-                        this.addWarn("Atenção", "O procedimento não possui valor de repasse");
-                    } catch (Exception e) {
-                        this.addError("Erro", "Falha ao carregar valor do procedimento");
-                    }
-                    
-                    if(valorRepasse == null)
-                        valorRepasse = (ptp.getProcedimento().getValorRepasse() != null ? ptp.getProcedimento().getValorRepasse() : BigDecimal.ZERO);
-                    
-                    setValorBaseRepasse(valorRepasse);
+                    setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
                 }
             }
 
