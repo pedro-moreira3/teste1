@@ -27,6 +27,9 @@ import org.primefaces.model.StreamedContent;
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.IEnumController;
+import br.com.lume.common.exception.business.CancelarItemProcedimentoAtivo;
+import br.com.lume.common.exception.business.CancelarItemProcedimentoExecutado;
+import br.com.lume.common.exception.business.FaturaIrregular;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
@@ -107,6 +110,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<PlanoTratamento> listaPt;
     private boolean showLancamentosCancelados = false;
     private boolean showLancamentosEstorno = false;
+    private boolean showItensCancelados = false;
 
     private StatusFatura status;
     private List<StatusFatura> listaStatus;
@@ -337,19 +341,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void cancelarItem(FaturaItem item) {
-        if (item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isFinalizado()) {
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não é possível cancelar um item de procedimento já executado.");
-        } else if (!item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().isCancelado()) {
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário cancelar o procedimento no plano de tratamento.");
-        } else {
-            try {
-                FaturaItemSingleton.getInstance().inativaFaturaItem(item, UtilsFrontEnd.getProfissionalLogado());
-                addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                updateValues(this.getEntity());
-            } catch (Exception e) {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao inativar item da fatura.");
-                e.printStackTrace();
-            }
+        try {
+            FaturaItemSingleton.getInstance().cancelarItem(Arrays.asList(item), UtilsFrontEnd.getProfissionalLogado());
+            addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            updateValues(this.getEntity());
+        } catch (CancelarItemProcedimentoExecutado e) {
+            System.out.println(e.getMessage());
+            this.addError("Falha ao cancelar item de fatura", "Não é possível cancelar um item referente a um procedimento executado.");
+        } catch (CancelarItemProcedimentoAtivo e) {
+            System.out.println(e.getMessage());
+            this.addError("Falha ao cancelar item de fatura", "Não é possível cancelar um item referente a um procedimento ativo, deve estar cancelado.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Falha ao inativar item da fatura.");
         }
     }
 
@@ -2072,6 +2076,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         return lancamentosSearch;
     }
+    
+    public List<FaturaItem> getItens(){
+        if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
+            return null;
+        
+        if(showItensCancelados)
+            return getEntity().getItens();
+        else
+            return getEntity().getItensFiltered();
+    }
 
     public List<Paciente> sugestoesPacientes(String query) {
         try {
@@ -2949,6 +2963,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setHtmlReciboContent(String htmlReciboContent) {
         this.htmlReciboContent = htmlReciboContent;
+    }
+
+    public boolean isShowItensCancelados() {
+        return showItensCancelados;
+    }
+
+    public void setShowItensCancelados(boolean showItensCancelados) {
+        this.showItensCancelados = showItensCancelados;
     }
 
     //--------------------------------- IMPRIMIR RECIBO ---------------------------------
