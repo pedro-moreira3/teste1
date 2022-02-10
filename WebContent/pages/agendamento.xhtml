@@ -133,45 +133,61 @@ div.ui-selectoneradio label {
 	margin: 0px !important;
 }
 
-.fc-direction-ltr .fc-button-group>.fc-button:not(:last-child){
+.fc-direction-ltr .fc-button-group>.fc-button:not(:last-child) {
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
 }
 
-.fc .fc-button-primary{
+.fc .fc-button-primary {
 	background-color: #607D8B;
 	border-color: #ffffff;
 }
 
-.fc .fc-button-primary:disabled{
+.fc .fc-button-primary:disabled {
 	background-color: #607D8B;
 	border-color: #ffffff;
 }
 
-.fc .fc-button-primary:not(:disabled):active, .fc .fc-button-primary:not(:disabled).fc-button-active{
+.fc .fc-button-primary:not(:disabled):active, .fc .fc-button-primary:not(:disabled).fc-button-active
+	{
 	background-color: #607D8B;
 	border-color: #ffffff;
 }
 
-.fc th{
+.fc th {
 	text-align: center;
 	background-color: #607D8B;
 	color: #ffffff;
 }
 
-.fc-media-screen .fc-timegrid-event{
+.fc-media-screen .fc-timegrid-event {
 	position: relative;
 	top: 0;
-    bottom: 1px;
-    left: 0;
-    right: 0;
+	bottom: 1px;
+	left: 0;
+	right: 0;
 }
 
-.agendamentoErroAgendamento, .agendamentoConsultaInicial, .agendamentoEncaixeAtendido, .agendamentoRemarcado, .agendamentoPrecadastro, .agendamentoAfastamento,
-	.agendamentoNaoConfirmado, .agendamentoFalta, .agendamentoEncaixe, .emAtendimento, .agendamentoConfirmado, .clienteNaClinica, .agendamentoCancelado, .agendamentoAtendido{
-	height:100% !important;
+.agendamentoErroAgendamento, .agendamentoConsultaInicial,
+	.agendamentoEncaixeAtendido, .agendamentoRemarcado,
+	.agendamentoPrecadastro, .agendamentoAfastamento,
+	.agendamentoNaoConfirmado, .agendamentoFalta, .agendamentoEncaixe,
+	.emAtendimento, .agendamentoConfirmado, .clienteNaClinica,
+	.agendamentoCancelado, .agendamentoAtendido {
+	height: 100% !important;
 }
 
+.fc .fc-view-harness-active>.fc-view {
+	position: static !important;
+}
+
+.fc .fc-scroller-liquid-absolute {
+	position: static !important;
+}
+
+.fc-view-harness.fc-view-harness-active {
+	height: auto !important;
+}
 
 </style>
 		<script type="text/javascript"
@@ -233,8 +249,8 @@ div.ui-selectoneradio label {
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
 								id="botoesAgenda">
 								<p:commandButton id="persist" icon="White fa fa-save"
-									process="@this,:lume:descricao, :lume:inicio, :lume:fim" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}"
+									process="@this,:lume:descricao, :lume:inicio, :lume:fim"
+									value="Salvar" rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
@@ -242,50 +258,48 @@ div.ui-selectoneradio label {
 								<p:commandButton id="whats" icon="White fa fa-whatsapp"
 									actionListener="#{agendamentoMB.carregarMensagemPadrao()}"
 									oncomplete="PF('dlgMensagemWhats').show();"
-									value="Enviar Whatsapp" 
-									styleClass="GreenButton"
-									update=":lume:pnMensagem"
-									process="@this,:lume:pnMensagem"
+									value="Enviar Whatsapp" styleClass="GreenButton"
+									update=":lume:pnMensagem" process="@this,:lume:pnMensagem"
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
 
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"
 									actionListener="#{agendamentoMB.handleClose}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" />
-									
-									<p:commandButton id="confirmarPreCadastro" icon="White fa fa-save"
-									process="@this" value="Confirmar Pré Agendamento"
+
+								<p:commandButton id="confirmarPreCadastro"
+									icon="White fa fa-save" process="@this"
+									value="Confirmar Pré Agendamento"
 									rendered="#{agendamentoMB.entity.statusNovo == 'P'}"
 									actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
-									 />
-									
-									
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);" />
+
+
 							</p:panelGrid>
 						</p:outputPanel>
 					</div>
 				</div>
 			</div>
 		</p:dialog>
-		
-			<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
-		
+
+		<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}"
+			id="idEmpresaParaSocket" />
+
 		<f:websocket channel="someChannel"
 			onmessage="function(idEmpresa){						
 						 if(idEmpresa == document.getElementById('lume:idEmpresaParaSocket').value){						   
 							PF('myschedule').update();
 						 }
 			          }
-			" />			
-	
+			" />
 
- 
+
+
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"
-			header="Mensagem para contato" resizable="false"
-			modal="true">
+			header="Mensagem para contato" resizable="false" modal="true">
 
 			<p:fieldset id="pnMensagem" toggleable="false">
 				<p:panelGrid columns="1" layout="grid"
@@ -305,8 +319,8 @@ div.ui-selectoneradio label {
 					<p:commandButton icon="White fa fa-whatsapp"
 						actionListener="#{agendamentoMB.enviarMensagem()}"
 						value="Enviar mensagem" styleClass="GreenButton"
-						process="@this, txtMensagem"/>
-						
+						process="@this, txtMensagem" />
+
 					<p:commandButton icon="White fa fa-close" value="Fechar"
 						process="@this" update="pnMensagem"
 						actionListener="#{agendamentoMB.limparDlgMensagem}"
@@ -365,9 +379,7 @@ div.ui-selectoneradio label {
 								converter="paciente" forceSelection="true"
 								disabled="#{agendamentoMB.entity.id != 0}"
 								required="#{!agendamentoMB.visivel}"
-								styleClass="paciente tallerAutoComplete" 
-								autocomplete="false"
-								>
+								styleClass="paciente tallerAutoComplete" autocomplete="false">
 
 								<p:column headerText="Código" style="text-align: center;">
 									<h:outputText value="#{p.codigo}" />
@@ -590,21 +602,23 @@ div.ui-selectoneradio label {
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">					
-					
-					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2" styleClass="ui-panelgrid-blank ui-fluid form-group">
-					<h:panelGroup>				
-						<h1>Agendamento</h1>
-					</h:panelGroup>	
-					<h:panelGroup>					
-						<p:commandButton value="Videos tutoriais"
-						icon="White fa fa-youtube-play White"
-						oncomplete="PF('dlgListaVideos').show()"	
-						actionListener="#{agendamentoMB.setVideos()}"									
-						process="@this" update="painelVideoList"/>						
-					</h:panelGroup>
-				</p:panelGrid>
-					
+				<div class="card card-w-title">
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-10,ui-grid-col-2"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<h:panelGroup>
+							<h1>Agendamento</h1>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:commandButton value="Videos tutoriais"
+								icon="White fa fa-youtube-play White"
+								oncomplete="PF('dlgListaVideos').show()"
+								actionListener="#{agendamentoMB.setVideos()}" process="@this"
+								update="painelVideoList" />
+						</h:panelGroup>
+					</p:panelGrid>
+
 					<br />
 
 					<p:panel id="pnAgnd" styleClass="NoChildPadding"
@@ -650,7 +664,7 @@ div.ui-selectoneradio label {
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
 													</p:column>
-													
+
 													<p:ajax event="itemSelect"
 														update="btnVisualizarDisponibilidadeAgenda" />
 
@@ -666,11 +680,10 @@ div.ui-selectoneradio label {
 											<h:panelGroup styleClass="md-inputfield">
 												<p:calendar id="initialDate"
 													value="#{agendamentoMB.initialDateConsult}"
-													pattern="dd/MM/yyyy"
-													mask="true" showWeeksBar="false"
+													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
-													timeZone="#{lumeSecurity.timeZone}" 
-													navigator="true" yearRange="-100:+10"
+													timeZone="#{lumeSecurity.timeZone}" navigator="true"
+													yearRange="-100:+10"
 													style="margin-top:10px;margin-bottom:10px;display: inline-block;">
 
 													<p:ajax event="dateSelect" process="@this" />
@@ -794,7 +807,7 @@ div.ui-selectoneradio label {
 												itemValue="F" itemEscaped="false" />
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
-												itemValue="A" itemEscaped="false" />											
+												itemValue="A" itemEscaped="false" />
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 												itemValue="C" itemEscaped="false" />
@@ -914,8 +927,8 @@ div.ui-selectoneradio label {
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
 								slotMinutes="15" widgetVar="myschedule" locale="pt"
 								view="agendaDay" slotLabelInterval="00:30" timeFormat="HH:mm"
-								slotDuration="00:15" timeZone="America/Halifax"
-								minTime="07:00" maxTime="21:00" allDaySlot="false" tooltip="true"
+								slotDuration="00:15" timeZone="America/Halifax" minTime="07:00"
+								maxTime="21:00" allDaySlot="false" tooltip="true"
 								initialDate="#{agendamentoMB.initialDate}"
 								slotLabelFormat="'HH:mm'">
 
@@ -951,6 +964,7 @@ div.ui-selectoneradio label {
 					<p:remoteCommand name="loadCadeirasChart"
 						actionListener="#{agendamentoMB.loadChartCadeiras()}"
 						immediate="true" />
+
 
 				</div>
 			</div>
@@ -1144,8 +1158,8 @@ div.ui-selectoneradio label {
 			//		};
 			//		this._oldInit.apply(this, arguments);
 			//	};
-			//}
-
+			//}			
+			
 			function printSchedule() {
 				var elm = document.getElementById("lume:schedule");
 				var toPrint = elm.cloneNode(true);
@@ -1163,78 +1177,20 @@ div.ui-selectoneradio label {
 				header2[1].remove();
 				header2[0].style.margin = ".5em";
 
-				var monthButton = document
-						.getElementsByClassName("fc-dayGridMonth-button")[0];
-				if (!monthButton.classList.contains("fc-button-active")) {
-					var horasColumn = toPrint
-							.getElementsByClassName("fc-timegrid-cols")[0]
-							.getElementsByTagName("tr");
-					for (var i = 0; i < horasColumn.length; i++) {
-						var nowStr = "" + new Date().getTime();
-						horasColumn[i].setAttribute("id", nowStr + i);
-					}
-
-					var events = toPrint.getElementsByClassName('fc-timegrid-event-harness');
-					for(var i = 0; i < events.lenght; i++){
-						events[i].setAttribute('position','relative');
-					}
-					//configurações para escala 100% e folha A4
-				}
-
 				var newWin = window.open("");
-				newWin.document
-						.write("<link href=\"https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.css\" rel=\"stylesheet\" type=\"text/css\" \/>");
+				//newWin.document
+				//		.write("<link href=\"https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.css\" rel=\"stylesheet\" type=\"text/css\" \/>");
 				//newWin.document.write("<link href=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" \/>");
+
+				//newWin.document.write("<link href=\"http://localhost/intelidente/resources/cssagenda/agenda.css\" type=\"text/css\" \/>");
+				newWin.document.write("<link type=\"text/css\" rel=\"stylesheet\" href=\"/intelidente/javax.faces.resource/agenda.css.jsf?ln=cssagenda\"/>");
+
 				//newWin.document.write("<script src=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.min.js\"><\/script>");
 				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js\"><\/script>");
 				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js\"><\/script>");
 				newWin.document.write(toPrint.outerHTML);
 				newWin.document.close();
 				newWin.focus();
-
-				var monthButton = document
-						.getElementsByClassName("fc-dayGridMonth-button")[0];
-				if (!monthButton.classList.contains("fc-button-active")) {
-					var divsAg = newWin.document
-							.getElementsByClassName("fc-content-skeleton")[0]
-							.getElementsByClassName("fc-time-grid-event");
-					var horasColumn = newWin.document
-							.getElementsByClassName("fc-slats")[0]
-							.getElementsByTagName("tr");
-					var horaHeight = 24; //horasColumn[0].children[0].offsetHeight;
-					var horaInit = parseInt(horasColumn[0].children[0].innerText
-							.split(":")[0]);
-					for (var i = 0; i < divsAg.length; i++) {
-						var divAg = divsAg[i];
-						var title = divAg.getElementsByClassName("fc-title")[0];
-						title.style.color = "#000";
-						var time = divAg.getElementsByClassName("fc-time")[0];
-						time.style.color = "#000";
-
-						console
-								.log("====================================================================");
-						var horaElm = time.children[0];
-						// 1 hora dividido em 4 quadros de 15 minutos cada com 24 de altura = (24 * 4) / 60
-						var stepMinute = (horaHeight * 4) / 60;
-						var horaFull = horaElm.innerText;
-						horaFull = horaFull.split(" ")[0];
-
-						var hora = horaFull.split(":")[0];
-						var minuto = horaFull.split(":")[1];
-
-						var topFuturo = ((hora - horaInit) * horaHeight) * 4;
-						topFuturo += minuto * stepMinute;
-
-						var topAtual = Math.abs(divAg.style.top.replaceAll(
-								"px", ""));
-						var bottomAtual = Math.abs(divAg.style.bottom
-								.replaceAll("px", ""));
-
-						var diff = Math.abs(bottomAtual / topAtual);
-						divAg.style.top = topFuturo + "px";
-						divAg.style.bottom = ((topFuturo * diff) * (-1)) + "px";
-					}
-				}
 
 				setTimeout(function() {
 					newWin.print();
