@@ -150,11 +150,12 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
             if (this.getEntity().getIdadeMinima() != null && this.getEntity().getIdadeMaxima() != null && this.getEntity().getIdadeMinima() > this.getEntity().getIdadeMaxima()) {
                 this.addError(OdontoMensagens.getMensagem("procedimento.idademinima.maior"), "");
             } else {
-                try {
-                    this.atualizaConvenioProcedimento();
-                } catch (Exception e) {
-                    log.error(e);
-                }
+                //TODO - Essa atualização deve depender do modo de alteração de valores no cadastro do convenio-procedimento, porcentagem ou valor.
+//                try {
+//                    this.atualizaConvenioProcedimento();
+//                } catch (Exception e) {
+//                    log.error(e);
+//                }
                 if (this.getEntity().getCodigoCfo() == null) {
                     this.getEntity().setCodigoCfo(0);
                 }
