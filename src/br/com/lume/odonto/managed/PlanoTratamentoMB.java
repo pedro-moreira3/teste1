@@ -530,6 +530,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     }
 
+    public void actionSuspender(ActionEvent event) {
+        boolean retorno = false;
+        retorno = PlanoTratamentoSingleton.getInstance().suspenderPlanoTratamento(getEntity(), profissionalFinalizarNovamente);
+        
+        if(retorno)
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        else
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+            
+    }
+    
     public void actionFinalizar(ActionEvent event) {
         try {
             List<Fatura> faturas = null;

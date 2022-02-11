@@ -230,7 +230,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								action="#{planoTratamentoMB.carregaTelaOrcamento(planoTratamento)}"
 								update=":lume:tabViewPaciente:orcamentoViewTable"
 								styleClass="NavyButton" process="@this" />
-						</h:panelGroup>						
+						</h:panelGroup>
+						<h:panelGroup rendered="#{planoTratamentoMB.admin and planoTramento.status != 'S' and planoTratamento.status != 'E' and planoTratamento.status != 'F'}">
+							<p:commandButton id="suspenderPlano" icon="White fa fa-pause"
+								title="Suspender plano de Tratamento" process="@this"
+								actionListener="#{planoTratamentoMB.setEntity(planoTratamento)}"
+								oncomplete="PF('dlgSuspensaoJustificativa').show()"/>
+						</h:panelGroup>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
 								update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:botoesFinalizaPT"
@@ -243,8 +249,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									icon="fa fa-warning" />
 							</p:commandButton>
 							
-							
-							<h:panelGroup rendered="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
+							<h:panelGroup rendered="#{planoTratamento.status == 'F'}">
 									<p:commandButton id="persistAtivar"
 										icon="White fa fa-chain White" title="Reativar"
 										actionListener="#{planoTratamentoMB.actionReativar(planoTratamento)}"
@@ -373,9 +378,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 	
-	
-	
-	
 	<p:dialog id="reativar" widgetVar="reativar"
 		header="Reativar Plano de Tratamento" responsive="true" modal="true"
 		appendTo=":lume" closable="false">
@@ -413,7 +415,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 	
-
 	<p:dialog widgetVar="dlg" header="Orçamento" id="dlgOrcamento"
 		resizable="true" modal="true" width="800" appendTo=":lume">
 		<p:outputPanel id="pnOrcamento" styleClass="BordNone">
@@ -1016,7 +1017,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-
 	<p:dialog id="dlgFinalizarNovamente" widgetVar="dlgFinalizarNovamente"
 		responsive="true" modal="true" appendTo=":lume" resizable="false"
 		header="Alteração de profissional executor" width="600">
@@ -1264,8 +1264,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:outputPanel>
 	</p:dialog>
 	
-	
-	
 	<p:dialog id="editarProcedimento" widgetVar="dlgEditarProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
 		resizable="false" header="#{planoTratamentoMB.headerProcedimentoEdit}"
@@ -1353,14 +1351,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	</p:dialog>
 	
 	
-	
-	
-
-				
-	
-	
-	
-		<p:dialog id="dlgSomenteFaces" widgetVar="dlgSomenteFaces"
+	<p:dialog id="dlgSomenteFaces" widgetVar="dlgSomenteFaces"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
 		resizable="false" header="Faces"
 		width="300px;" height="300px;">
@@ -2489,6 +2480,38 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgOdontogramaPT').hide()" />
 		</p:panelGrid>
+	</p:dialog>
+
+	<p:dialog id="dlgSuspensaoJustificativa" widgetVar="dlgSuspensaoJustificativa"
+		responsive="true" modal="true" appendTo=":lume" resizable="false"
+		header="Suspender plano de tratamento" width="600">
+
+		<p:panel id="pnSuspenderPlano" styleClass="BordNone">
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+				<p:outputLabel value="Informe a justificativa da suspensão do plano"/>
+				<p:inputTextarea id="textSuspensao" value="#{planoTratamentoMB.entity.justificativaSuspensao}">
+				</p:inputTextarea>
+				
+			</p:panelGrid>
+			<br />
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid">
+				<p:commandButton id="persistSuspensao"
+					icon="White fa fa-save" value="Salvar"
+					actionListener="#{planoTratamentoMB.actionSuspender}"
+					update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:viewPlanoTratamento, :lume:tabViewPaciente:pnViewPlanoTratamento"
+					process="@this, textSuspensao"
+					oncomplete="handleDialogRequest(xhr, status, args), PF('dlgSuspensaoJustificativa').hide();"
+					styleClass="GreenButton" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					oncomplete="PF('dlgSuspensaoJustificativa').hide()" process="@this"
+					styleClass="NavyButton" />
+			</p:panelGrid>
+			<div class="EmptyBox20"></div>
+		</p:panel>
 	</p:dialog>
 
 	<p:dialog id="dlgPersonalizar" widgetVar="dlgPersonalizar"
