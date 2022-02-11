@@ -132,9 +132,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						actionListener="#{planoTratamentoMB.setVideos()}"									
 						process="@this" update="painelVideoList"/>
 					</div>
-					
-											
-				
+
 			
 				<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
 					<p:panelGrid columns="2" layout="grid"
@@ -204,8 +202,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</h:panelGroup>
 
 				</p:panelGrid>
-
-			
 					
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPlanoTratamento"
@@ -236,7 +232,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Suspender plano de Tratamento" process="@this"
 								actionListener="#{planoTratamentoMB.setEntity(planoTratamento)}"
 								oncomplete="PF('dlgSuspensaoJustificativa').show()"
-								disabled="#{!planoTratamento.isAtivo() or planoTramento.status != null or planoTramento.status != ''}"/>
+								disabled="#{!planoTratamento.isAtivo() or planoTratamento.status == 'S' or planoTratamento.status == 'E' or planoTratamento.status == 'F'}"/>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -323,8 +319,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			</p:outputPanel>
 		</div>
 	</div>
-
-
 
 
 	<p:dialog id="devolver" widgetVar="devolver"
