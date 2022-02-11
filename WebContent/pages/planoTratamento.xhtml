@@ -231,11 +231,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								update=":lume:tabViewPaciente:orcamentoViewTable"
 								styleClass="NavyButton" process="@this" />
 						</h:panelGroup>
-						<h:panelGroup rendered="#{planoTratamentoMB.admin and planoTramento.status != 'S' and planoTratamento.status != 'E' and planoTratamento.status != 'F'}">
+						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="suspenderPlano" icon="White fa fa-pause"
 								title="Suspender plano de Tratamento" process="@this"
 								actionListener="#{planoTratamentoMB.setEntity(planoTratamento)}"
-								oncomplete="PF('dlgSuspensaoJustificativa').show()"/>
+								oncomplete="PF('dlgSuspensaoJustificativa').show()"
+								disabled="#{!planoTratamento.isAtivo() or planoTramento.status != null or planoTramento.status != ''}"/>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -243,7 +244,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								rendered="#{planoTratamento.status != 'S' and planoTratamento.status != 'E'}">
+								rendered="#{planoTratamento.status != 'F'}"
+								disabled="#{!planoTratamento.isAtivo() or planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
