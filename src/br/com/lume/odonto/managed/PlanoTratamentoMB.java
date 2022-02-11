@@ -532,11 +532,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionFinalizar(ActionEvent event) {
         try {
-            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(getEntity());
+            List<Fatura> faturas = null;
             
-            if(faturas != null && !faturas.isEmpty()) {
-                for(Fatura f : faturas)
-                    FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
+            //TODO - Se não tem justificativa, o status é executado. Melhorar essa validação.
+            if(this.justificativa != null) {
+                faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(getEntity());
+                
+                if(faturas != null && !faturas.isEmpty()) {
+                    for(Fatura f : faturas)
+                        FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
+                }
             }
             
             if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
