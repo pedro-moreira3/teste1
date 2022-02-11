@@ -60,7 +60,7 @@ public class AnotacoesMB extends LumeManagedBean<PacienteAnotacao> {
             pacienteMB.getEntity().getPacienteAnotacoes().add(getEntity());
             pacienteMB.actionPersist(null);
             PrimeFaces.current().executeScript("PF('dlgNovaAnotacao').hide();");
-            atualizaAnotacoes();
+            carregarAnotacoes(this.getEntity().getPaciente());
         } else {
             addWarn("Atenção!", "A descrição não pode estar vazia.");
         }
@@ -71,9 +71,6 @@ public class AnotacoesMB extends LumeManagedBean<PacienteAnotacao> {
         setEntity(new PacienteAnotacao());
     }
 
-    private void atualizaAnotacoes() {
-        this.setEntityList(PacienteAnotacaoSingleton.getInstance().getBo().listByPaciente(this.pacienteMB.getEntity()));
-    }
 
     public void visualizaAnotacao(PacienteAnotacao anotacao) {
         this.anotacaoSelecionada = anotacao;
