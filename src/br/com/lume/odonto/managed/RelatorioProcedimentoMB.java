@@ -81,9 +81,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             if (filtroProcedimento == null) {
                 this.filtroProcedimento = new ArrayList<String>();
             }
-            filtroPeriodo = "S";
-            this.dataInicio = getDataInicio(filtroPeriodo);
-            this.dataFim = getDataFim(filtroPeriodo);
+            filtroPeriodo = "";
 
             if (this.listaConvenios == null)
                 this.listaConvenios = new ArrayList<String>();
