@@ -165,6 +165,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean omitirDadosEmpresa = false;
 
     private boolean omitirLogo = false;
+    
+    private boolean encerrarPlano;
 
     private String filtroStatus = "T";
 
@@ -496,7 +498,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             setEntity(planoTratamento);
             //carregarPlanoTratamentoProcedimentos();
         }
-
+        
         actionFinalizar((ActionEvent) null);
     }
 
@@ -508,11 +510,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void setEntityFromRelatorio(PlanoTratamento planoTratamento) {
-        setEntity(planoTratamento);
-        if (this.pacienteMB == null) {
-            this.pacienteMB = new PacienteMB();
+        try {
+            if (this.pacienteMB == null) {
+                this.pacienteMB = new PacienteMB();
+            }
+            this.pacienteMB.setEntity(planoTratamento.getPaciente());
+            
+            this.actionFinalizar(planoTratamento);
+        } catch (Exception e) {
+            this.addError("Erro", "Erro ao encerrar.");
+            e.printStackTrace();
         }
-        this.pacienteMB.setEntity(planoTratamento.getPaciente());
     }
 
     public void actionReativar(ActionEvent event) {
@@ -541,18 +549,31 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             
     }
     
+    public void actionExecutarPlanoTratamento(PlanoTratamento planoTratamento) {
+        try {
+            boolean error = false;
+            if(!temProcedimentosAbertos())
+                error = PlanoTratamentoSingleton.getInstance().executarPlanoTratamento(planoTratamento, UtilsFrontEnd.getProfissionalLogado());
+            
+            if(!error)
+                this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+            else
+                this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            
+            atualizaTela();
+        }catch (Exception e) {
+            e.printStackTrace();
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+        }
+    }
+    
     public void actionFinalizar(ActionEvent event) {
         try {
-            List<Fatura> faturas = null;
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(getEntity());
             
-            //TODO - Se não tem justificativa, o status é executado. Melhorar essa validação.
-            if(this.justificativa != null) {
-                faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(getEntity());
-                
-                if(faturas != null && !faturas.isEmpty()) {
-                    for(Fatura f : faturas)
-                        FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
-                }
+            if(faturas != null && !faturas.isEmpty()) {
+                for(Fatura f : faturas)
+                    FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
             }
             
             if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
@@ -565,7 +586,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
-            this.justificativa = null;
             
             if(faturas != null && !faturas.isEmpty())
                 FaturaSingleton.getInstance().regularizarFatura(faturas, UtilsFrontEnd.getProfissionalLogado());
@@ -585,6 +605,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             e.printStackTrace();
             log.error("Erro no actionFinalizar", e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+        }finally {
+            this.encerrarPlano = false;
+            this.justificativa = null;
         }
     }
 
@@ -1272,9 +1295,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             //carregarPlanoTratamentoProcedimentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().ajax().addCallbackParam("descEvolucao", true);
-            if (!temProcedimentosAbertos()) {
-                actionFinalizar((ActionEvent) null);
-            }
+            actionExecutarPlanoTratamento(getEntity());
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Erro no actionPersistEvolucao", e);
@@ -3607,5 +3628,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setRegiaSomenteFaces(RegiaoDente regiaSomenteFaces) {
         this.regiaSomenteFaces = regiaSomenteFaces;
+    }
+
+    public boolean isEncerrarPlano() {
+        return encerrarPlano;
+    }
+
+    public void setEncerrarPlano(boolean encerrarPlano) {
+        this.encerrarPlano = encerrarPlano;
     }
 }

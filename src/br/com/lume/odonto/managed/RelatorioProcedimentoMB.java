@@ -330,7 +330,12 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     }
 
     public String statusProcedimento(String status) {
-        return (status.equals("F") ? "Executado" : "Não executado");
+        if(status.equals("F"))
+            return "Executado";
+        else if(status.equals("C"))
+            return "Cancelado";
+        else
+            return "Não executado";
     }
 
     public Profissional getFiltroPorProfissional() {
