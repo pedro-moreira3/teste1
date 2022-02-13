@@ -252,11 +252,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
                     
                     for (Lancamento l : f.getLancamentos()) {
                         if (l.isAtivo()) {
-                            if (l.getStatus().equals(Lancamento.StatusLancamento.A_RECEBER) || l.getStatus().equals(Lancamento.StatusLancamento.NAO_RECEBIDO)) {
+                            if (l.getSubStatus().equals(Lancamento.StatusLancamento.A_RECEBER) || l.getSubStatus().equals(Lancamento.StatusLancamento.NAO_RECEBIDO)) {
                                 this.lancamentosPendentes.add(l);
                                 valorAReceber = valorAReceber.add( (l.getValorComDesconto() != null ?
                                         l.getValorComDesconto() : l.getValor()) );
-                            } else if (l.getStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_CONFERIR) &&
+                            } else if (l.getSubStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_CONFERIR) &&
                                     !l.getLancamentoExtornado().equals("S")
                                     ) {
                                 this.lancamentosAConferir.add(l);

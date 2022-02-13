@@ -96,7 +96,7 @@
 					<p:commandButton icon="White fa fa-save" value="Salvar Anotação"
 						styleClass="GreenButton" oncomplete="PF('dlgNovaAnotacao').hide()"
 						actionListener="#{anotacoesMB.actionPersist}" process="@this, novaAnotacao"
-						update="pnlNovaAnotacao" />
+						update="viewAnotacoes,dtAnotacoes" />
 
 					<p:commandButton id="fechar" icon="White fa fa-close"
 						oncomplete="PF('dlgNovaAnotacao').hide()" process="@this"

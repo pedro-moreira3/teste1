@@ -216,13 +216,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:commandButton>
 									</ui:remove>
 
+									<ui:remove>
 									<h:panelGroup>
 										<p:commandButton id="limpar" icon="White fa fa-file-o"
-											value="Limpar" update="inicio, fim, dtPrincipal"
+											value="Limpar" update="dtPrincipal, filtroRelatorio"
 											process="@this"
 											actionListener="#{relatorioOrcamentoMB.actionLimpar}" />
 									</h:panelGroup>
-
+									</ui:remove>
 									<h:panelGroup>
 										<p:splitButton icon="White fa fa fa-file-excel-o"
 											value="Exportar tabela para Excel"

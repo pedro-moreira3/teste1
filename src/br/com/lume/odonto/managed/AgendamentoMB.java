@@ -336,6 +336,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             pacienteSelecionado = null;
         }
         atualizaPickList();
+        this.cadeiraDentroAgenda = null;
     }
 
     public void agendamentoRapido(Agendamento a) {

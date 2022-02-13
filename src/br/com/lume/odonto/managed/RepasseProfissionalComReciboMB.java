@@ -793,7 +793,22 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                         setValorBaseRepasse(repasse.getRepasseFaturas().getValorCalculo());
                     } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                        setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
+
+                        BigDecimal valorRepasse = null;
+                        try {
+                            valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
+                        } catch (ProcedimentoVinculoConvenioException e) {
+                            this.addWarn("Atenção", e.getMessage());
+                        } catch (ConvenioProcedimentoSemValorRepasse e) {
+                            this.addWarn("Atenção", "O procedimento não possui valor de repasse");
+                        } catch (Exception e) {
+                            this.addError("Erro", "Falha ao carregar valor do procedimento");
+                        }
+                        
+                        if(valorRepasse == null)
+                            valorRepasse = (ptp.getProcedimento().getValorRepasse() != null ? ptp.getProcedimento().getValorRepasse() : BigDecimal.ZERO);
+                        
+                        setValorBaseRepasse(valorRepasse);
                     }
 
                     if (lancamentosDeOrigem != null)
@@ -1016,7 +1031,24 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorRepasse(String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
                             lancamentoCalculado.setDadosTabelaMetodoRepasse("POR");
                         } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                            BigDecimal valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(lancamentoCalculado.getPtp());
+                            
+                            BigDecimal valorRepasse = null;
+                            
+                            try {
+                                valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(lancamentoCalculado.getPtp());
+                            } catch (ProcedimentoVinculoConvenioException e) {
+                                this.addWarn("Atenção", e.getMessage());
+                            } catch (ConvenioProcedimentoSemValorRepasse e) {
+                                this.addWarn("Atenção", "O procedimento não possui valor de repasse");
+                            } catch (Exception e) {
+                                this.addError("Erro", "Falha ao carregar valor do procedimento");
+                            }
+                            
+                            if(valorRepasse == null)
+                                valorRepasse = (lancamentoCalculado.getPtp().getProcedimento().getValorRepasse() != null ? 
+                                        lancamentoCalculado.getPtp().getProcedimento().getValorRepasse() : BigDecimal.ZERO);
+                            
+                            
                             lancamentoCalculado.setDadosTabelaValorRepasse(String.format("R$ %.2f", valorRepasse.doubleValue()));
                             lancamentoCalculado.setDadosTabelaMetodoRepasse("PRO");
                         }

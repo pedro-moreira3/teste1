@@ -58,6 +58,10 @@ body .lancamentoFalhaOperacao {
 	color: white;
 }
 
+body .itensCancelados {
+	color: red;
+}
+
 .listaLancamentoColunaDataPagamento input {
 	text-align: center;
 	height: 31px;
@@ -1406,9 +1410,18 @@ body .height31 input {
 									</h:outputText>
 								</p:panel>
 							</p:panelGrid>
+							
+							<p:panel>
+								<p:selectBooleanCheckbox styleClass="sideChkBox"
+									itemLabel="Mostrar itens cancelados."
+									value="#{faturaPagtoMB.showItensCancelados}">
+									<p:ajax process="@this" update="dtItensFatura" />
+								</p:selectBooleanCheckbox>
+							</p:panel>
+							<br />
 
 							<p:dataTable id="dtItensFatura" filterDelay="1500" reflow="true"
-								emptyMessage="" value="#{faturaPagtoMB.entity.itensFiltered}"
+								emptyMessage="" value="#{faturaPagtoMB.itens}"
 								var="fi" rows="20" paginator="true" rowKey="#{fi}"
 								paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
@@ -1418,6 +1431,7 @@ body .height31 input {
 									<p:commandButton icon="fa fa-times-circle White"
 										actionListener="#{faturaPagtoMB.cancelarItem(fi)}"
 										styleClass="RedButton" title="Cancelar item" process="@this"
+										disabled="#{fi.ativo == 'N'}"
 										update="dtItensFatura,@parent:@parent:@parent:@parent:@parent:pnlfaturaView">
 										<p:confirm header="Confirmar"
 											message="Deseja realmente cancelar esse item da fatura ?" />
@@ -1430,18 +1444,21 @@ body .height31 input {
 								</p:column>
 
 								<p:column sortBy="#{fi.descricaoItem}"
+									styleClass="#{(fi.ativo == 'N' ? 'itensCancelados' : '')}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
 									headerText="Descrição">
 									<h:outputText value="#{fi.descricaoItem}" style="float:left" />
 								</p:column>
 
 								<p:column sortBy="#{fi.tipoSaldoStr}" filterMatchMode="contains"
+									styleClass="#{(fi.ativo == 'N' ? 'itensCancelados' : '')}"
 									filterBy="#{fi.tipoSaldoStr}" headerText="Tipo do Saldo"
 									width="150">
 									<h:outputText value="#{fi.tipoSaldoStr}" />
 								</p:column>
 
 								<p:column sortBy="#{fi.valorItem}" filterMatchMode="contains"
+									styleClass="#{(fi.ativo == 'N' ? 'itensCancelados' : '')}"
 									filterBy="#{fi.valorItem}" headerText="Valor" width="100">
 									<h:outputText value="#{fi.valorItem}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -1449,19 +1466,20 @@ body .height31 input {
 								</p:column>
 
 								<p:column sortBy="#{fi.valorComDesconto}"
+									styleClass="#{(fi.ativo == 'N' ? 'itensCancelados' : '')}"
 									filterMatchMode="contains" filterBy="#{fi.valorComDesconto}"
 									headerText="Valor com desconto" width="100">
 
 									<p:inputNumber id="valortroca" value="#{fi.valorComDesconto}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 										symbol="R$ " thousandSeparator="."
-										rendered="#{faturaPagtoMB.isAdmin()}">
+										rendered="#{faturaPagtoMB.isAdmin() and !fi.ativo == 'S'}">
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.persistAlteracaoValorItem(fi)}" />
 									</p:inputNumber>
 
 									<h:outputText value="#{fi.valorComDesconto}"
-										rendered="#{!faturaPagtoMB.isAdmin()}">
+										rendered="#{!faturaPagtoMB.isAdmin() or fi.ativo == 'N'}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>

@@ -133,8 +133,16 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     }
 
     public void actionLimpar() {
+        this.filtroPeriodo = "";
         this.inicio = null;
         this.fim = null;
+        this.filtroPeriodoAprovacao = "";
+        this.aprovacaoInicio = null; 
+        this.aprovacaoFim = null;
+        this.pacienteSelecionado = null; 
+        this.filtroPorProfissional = null;
+        this.filtroStatusPagamento = "";
+        this.filtrandoAprovacao = false;  
     }
     
     public void actionTrocaDatasCriacao() {
