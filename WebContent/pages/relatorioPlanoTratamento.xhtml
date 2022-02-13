@@ -165,18 +165,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 	margin-top: -12px !important;
 }
 </style>
-
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-
 					
 					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
-
-
-
 
 						<p:panelGrid columns="2" layout="grid"
 							columnClasses="ui-grid-col-10,ui-grid-col-2"
@@ -193,7 +188,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 						</p:panelGrid>
-
 
 						<p:separator styleClass="SeparatorFull" />
 
@@ -448,10 +442,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<p:column exportable="false" headerText="Ações">
 								<p:commandButton icon="White fa fa-times-circle"
-									onclick="PF('devolver').show();" title="Encerrar"
-									process="@this" styleClass="OrangeButton"
-									action="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
-									rendered="#{m.status ne 'S' and m.status ne 'E' and planoTratamentoMB.admin}" />
+									title="Encerrar" process="@this" styleClass="OrangeButton"
+									actionListener="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
+									rendered="#{relatorioPlanoTratamentoMB.admin and m.status != 'F'}"
+									disabled="#{!m.isAtivo() or m.status == 'S' or m.status == 'E'}">
+								
+									<p:confirm header="Confirmação"
+										message="Deseja realmente encerrar este Plano de Tratamento?"
+										icon="fa fa-warning" />	
+								</p:commandButton>
 
 								<ui:remove>
 									<p:button icon="White fa fa-eye" title="Visualizar"
@@ -560,7 +559,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:dataTable>
 					</p:outputPanel>
 
-					<p:dialog id="devolver" widgetVar="devolver"
+	<p:dialog id="devolver" widgetVar="devolver"
 		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
 		appendTo=":lume" closable="false">
 		<p:outputPanel id="pgFinalizar">
