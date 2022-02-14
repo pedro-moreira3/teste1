@@ -948,6 +948,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setPlanoTratamentoProcedimentoFaces(null);
         ptp.setStatus(null);
         ptp.setStatusNovo(null);
+        ptp.setDataCriado(new Date());
         if (planoTratamento.isBconvenio() && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO))
             ptp.setConvenio(paciente.getConvenio());
 
