@@ -526,8 +526,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     //TODO mover para o singleton
     private void criarFaturaGenerica(LancamentoContabil lc) {
         String descricaoItem = Utils.descricaoItemFaturaGenerica(lc);
-        dataRecorrente = new Date();
-
+        if(this.dataRecorrente == null)
+            this.dataRecorrente = new Date();
+        
         try {
             TipoFatura tipoFatura;
             SALDO tipoSaldo;

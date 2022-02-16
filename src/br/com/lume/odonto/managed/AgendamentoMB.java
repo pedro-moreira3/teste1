@@ -1496,6 +1496,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 paciente.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
                 paciente.setIdUsuario(usuario.getUsuIntCod());
             }
+            if (paciente.getId() == null || paciente.getId() == 0) {
+                paciente.setDataCriacao(Calendar.getInstance().getTime());
+            }
             boolean novoPaciente = paciente.getId() == null || paciente.getId().longValue() == 0;
 
             PacienteSingleton.getInstance().persist(paciente);

@@ -737,6 +737,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getEntity().setAlteradoPor(this.getProfissionalLogado().getId());
             this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
             if (getEntity().getId() == null || getEntity().getId() == 0) {
+                getEntity().setCriadoPor(this.getProfissionalLogado().getId());
                 getEntity().setDataCriacao(Calendar.getInstance().getTime());
             }
 
