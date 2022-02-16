@@ -1165,8 +1165,40 @@ div.ui-selectoneradio label {
 				var toPrint = elm.cloneNode(true);
 				toPrint.style.fontFamily = "sans-serif";
 
+				var monthButton = toPrint.getElementsByClassName('fc-button-group')[1].children[0];
+				if(monthButton.classList.contains('fc-button-active')){
+					var e1 = toPrint.getElementsByClassName('fc-scrollgrid-sync-table')[0];
+					e1.style.width = '100%';
+					e1.style.height = '100%';
+
+					var e2 = toPrint.getElementsByClassName('fc-daygrid-body fc-daygrid-body-unbalanced')[0];
+					e2.style.width = '100%';
+					e2.style.height = '100%';
+				}
+
+				var e3 = toPrint.getElementsByClassName('fc-scroller-harness fc-scroller-harness-liquid')[0];
+				e3.style.width = '100%';
+				e3.style.height = '100%';
+
+				var weekButton = toPrint.getElementsByClassName('fc-button-group')[1].children[1];
+				if(!monthButton.classList.contains('fc-button-active')){
+					var e4 = toPrint.getElementsByClassName('fc-timegrid-body')[0];
+					e4.style.width = '100%';
+					e4.style.height = '100%';
+
+					var e5 = toPrint.getElementsByClassName('fc-timegrid-slots')[0].children[0];
+					e5.style.width = '100%';
+					e5.style.height = '100%';
+
+					var e6 = toPrint.getElementsByClassName('fc-timegrid-cols')[0].children[0];
+					e6.style.width = '100%';
+					e6.style.height = '100%';
+				}
+
+				toPrint.getElementsByClassName('fc-col-header')[0].style.width = '100%';
+
 				var header = toPrint
-						.getElementsByClassName("fc-header-toolbar")[0];
+					.getElementsByClassName("fc-header-toolbar")[0];
 				header.style.fontSize = ".7em";
 				header.style.borderLeft = "solid 1px black";
 				header.style.borderTop = "solid 1px black";
@@ -1176,25 +1208,16 @@ div.ui-selectoneradio label {
 				header2[0].remove();
 				header2[1].remove();
 				header2[0].style.margin = ".5em";
-
+				
 				var newWin = window.open("");
-				//newWin.document
-				//		.write("<link href=\"https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.css\" rel=\"stylesheet\" type=\"text/css\" \/>");
-				//newWin.document.write("<link href=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" \/>");
-
-				//newWin.document.write("<link href=\"http://localhost/intelidente/resources/cssagenda/agenda.css\" type=\"text/css\" \/>");
 				newWin.document.write("<link type=\"text/css\" rel=\"stylesheet\" href=\"/intelidente/javax.faces.resource/agenda.css.jsf?ln=cssagenda\"/>");
-
-				//newWin.document.write("<script src=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.min.js\"><\/script>");
-				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js\"><\/script>");
-				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js\"><\/script>");
 				newWin.document.write(toPrint.outerHTML);
 				newWin.document.close();
 				newWin.focus();
 
 				setTimeout(function() {
 					newWin.print();
-// 					newWin.close();
+ 					newWin.close();
 				}, 200);
 			}
 

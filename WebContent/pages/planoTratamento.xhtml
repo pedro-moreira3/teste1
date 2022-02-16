@@ -214,7 +214,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:column headerText="Ações" style="width:140px">
 						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
-							oncomplete="PF('procedimentosTableInPT').filter();PF('dlgViewPlanoTratamento').show()"
+							oncomplete="PF('dlgViewPlanoTratamento').show();"
 							update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:viewPlanoTratamento, :lume:tabViewPaciente:pnViewPlanoTratamento"
 							process="@this"
 							actionListener="#{planoTratamentoMB.carregaDlgProcedimentos(planoTratamento)}"
@@ -747,6 +747,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		onHide="PF('dlgViewPlanoTratamento').toggleMaximize();"
 		onShow="PF('dlgViewPlanoTratamento').toggleMaximize();" modal="true"
 		appendTo=":lume">
+		
 		<f:facet name="header">
 			<p:outputPanel id="viewPlanoTratamento">
 				<h:outputText
@@ -845,7 +846,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:commandButton icon="ui-icon-add" value="Adicionar Procedimento no Plano de Tratamento"
-								oncomplete="PF('dlgNovoProcedimento').show()"
+								oncomplete="PF('dlgNovoProcedimento').show();"
 								actionListener="#{planoTratamentoMB.actionNewProcedimento}"
 								update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes,
 									:lume:tabViewPaciente:dtProcedimentosSelecionadospt"
@@ -958,7 +959,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									style="width: 35px;display: inline-block;">
 									
 									<p:ajax process="@this" update="@this"
-										listener="#{planoTratamentoMB.fazNada()}" />
+										listener="#{planoTratamentoMB.fazNada()}"/>
 									
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
@@ -996,7 +997,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									:lume:tabViewPaciente:dtPlanoTratamento, :lume:tabViewPaciente:evolucaoView, :lume:tabViewPaciente:botoesFinalizaPT"
 								process="@this"
 								styleClass="GreenButton"
-								oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter();"
+								oncomplete="handleDialogRequest(xhr, status, args);"
 								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:panelGrid>
 					</div>
@@ -1008,7 +1009,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:column />
 			<p:column />
 			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+			<p:commandButton icon="fa fa-close"
+				value="Fechar" process="@this"
+				actionListener="#{planoTratamentoMB.removeFilters}"
 				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
 		</p:panelGrid>
 	</p:dialog>
@@ -1245,14 +1248,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Continuar"
 					actionListener="#{planoTratamentoMB.salvarContinuar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt"
-					oncomplete="PF('procedimentosTableInPT').filter()" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt"
-					oncomplete="PF('procedimentosTableInPT').filter()" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgNovoProcedimento').hide();"
 					styleClass="NavyButton" />
@@ -1337,8 +1338,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimentoEditar"
 					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtProcedimentosSelecionadospt"
-					oncomplete="PF('procedimentosTableInPT').filter()" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgEditarProcedimento').hide();"
 					styleClass="NavyButton" />
@@ -2281,7 +2281,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update=":lume:tabViewPaciente:evolucaoView, :lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:dtProcedimentosSelecionadospt,
 					:lume:tabViewPaciente:pgFinalizar, :lume:tabViewPaciente:botoesFinalizaPT, :lume:tabViewPaciente:pnViewPlanoTratamento"
 				process="@this, :lume:tabViewPaciente:evolucaoView"
-				oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter()" />
+				oncomplete="handleDialogRequest(xhr, status, args);" />
 		</p:panelGrid>
 	</p:dialog>
 

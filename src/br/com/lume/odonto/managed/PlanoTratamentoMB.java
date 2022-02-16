@@ -551,16 +551,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void actionExecutarPlanoTratamento(PlanoTratamento planoTratamento) {
         try {
-            boolean error = false;
-            if(!temProcedimentosAbertos())
-                error = PlanoTratamentoSingleton.getInstance().executarPlanoTratamento(planoTratamento, UtilsFrontEnd.getProfissionalLogado());
-            
-            if(!error)
-                this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
-            else
+            if(!temProcedimentosAbertos()) {
+                PlanoTratamentoSingleton.getInstance().executarPlanoTratamento(planoTratamento, UtilsFrontEnd.getProfissionalLogado());
                 this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-            
-            atualizaTela();
+                atualizaTela();
+            }
         }catch (Exception e) {
             e.printStackTrace();
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
@@ -707,7 +702,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().executeScript("PF('evolucao').show()");
             FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("lume:tabViewPaciente:evolucaoView");
             return false;
-        }
+        }        
         return true;
     }
 
@@ -1297,6 +1292,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().ajax().addCallbackParam("descEvolucao", true);
             actionExecutarPlanoTratamento(getEntity());
+            carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Erro no actionPersistEvolucao", e);
@@ -2694,18 +2690,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
-
+    
     public void carregarPlanoTratamentoProcedimentos() throws Exception {
         if (getEntity() != null && getEntity().getId() != null) {
             this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
-
+            
             PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
-            PrimeFaces.current().executeScript("PF('procedimentosTableInPT').filter()");
         }
     }
 
+    public void removeFilters() {
+        DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
+        table.reset();
+    }
+    
     public void enableRegioes(boolean enable) {
         try {
             enableRegioes = enable;
