@@ -116,10 +116,10 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
         for(ItemResponse item : this.invoices) {
             if(item.getPaidAt() != null && item.getTotalPaid() != null) {
                 String value[] = item.getTotalPaid().split(" ");
-                this.receiveCurrentMonth = this.receiveCurrentMonth.add(new BigDecimal(value[1].replaceAll(",", ".")));
+                this.receiveCurrentMonth = this.receiveCurrentMonth.add(new BigDecimal(value[0].replaceAll(",", ".")));
             } else if((item.getPaidAt() == null && item.getStatus() != null) && item.getStatus().toLowerCase().equals(StatusFaturaIugu.PENDENTE.getDescricao()) && item.getTotal() != null) {
                 String value[] = item.getTotal().split(" ");
-                this.pendingReceive = this.pendingReceive.add(new BigDecimal(value[1].replaceAll(",", ".")));
+                this.pendingReceive = this.pendingReceive.add(new BigDecimal(value[0].replaceAll(",", ".")));
             }
         }
         
