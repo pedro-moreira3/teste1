@@ -85,6 +85,7 @@ import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.entity.Tarifa;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoRegiao.TipoRegiao;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
@@ -1771,7 +1772,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             if (faturas != null && !faturas.isEmpty()) {
                 for (Fatura f : faturas)
-                    FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
+                    if (f.getSubStatusFatura().contains(SubStatusFatura.VALIDADO))
+                        throw new FaturaIrregular();
             }
 
             OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
