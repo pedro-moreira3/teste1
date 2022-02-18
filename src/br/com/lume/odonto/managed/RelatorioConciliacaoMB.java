@@ -61,6 +61,9 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
 
     public void filter() {
         try {
+            this.totalInvoices = BigDecimal.ZERO;
+            this.totalPaidInvoices = BigDecimal.ZERO;
+            
             SimpleDateFormat sm = new SimpleDateFormat("yyyy/MM/dd'T'hh:mm:ssZ");
             InvoiceService service = new InvoiceService();
             int startRegister = 0;
@@ -106,24 +109,35 @@ public class RelatorioConciliacaoMB extends LumeManagedBean<Empresa> {
     }
     
     public void initializeView() {
-        setTimeCourse("M");
-        
-        this.initialDate = changeInitialDate(timeCourse);
-        this.finalDate = changeFinalDate(timeCourse);
-        
-        filter();
-        
-        for(ItemResponse item : this.invoices) {
-            if(item.getPaidAt() != null && item.getTotalPaid() != null) {
-                String value[] = item.getTotalPaid().split(" ");
-                this.receiveCurrentMonth = this.receiveCurrentMonth.add(new BigDecimal(value[0].replaceAll(",", ".")));
-            } else if((item.getPaidAt() == null && item.getStatus() != null) && item.getStatus().toLowerCase().equals(StatusFaturaIugu.PENDENTE.getDescricao()) && item.getTotal() != null) {
-                String value[] = item.getTotal().split(" ");
-                this.pendingReceive = this.pendingReceive.add(new BigDecimal(value[0].replaceAll(",", ".")));
+        try {
+            setTimeCourse("M");
+            
+            this.initialDate = changeInitialDate(timeCourse);
+            this.finalDate = changeFinalDate(timeCourse);
+            
+            filter();
+            
+            for(ItemResponse item : this.invoices) {
+                if(item.getPaidAt() != null && item.getTotalPaid() != null) {
+                    
+                    String value = item.getTotalPaid().replaceAll("[a-zA-Z$]+","");
+                    value = value.replaceAll("\\s", "");
+                    this.receiveCurrentMonth = this.receiveCurrentMonth.add(new BigDecimal(value.replaceAll(",", ".")));
+                    
+                } else if((item.getPaidAt() == null && item.getStatus() != null) 
+                        && item.getStatus().toLowerCase().equals(StatusFaturaIugu.PENDENTE.getDescricao()) 
+                        && item.getTotal() != null) {
+                    
+                    String value = item.getTotal().replaceAll("[a-zA-Z$]+","");
+                    value = value.replaceAll("\\s", "");
+                    this.pendingReceive = this.pendingReceive.add(new BigDecimal(value.replaceAll(",", ".")));
+                }
             }
+            
+            this.subscribers = new BigDecimal(this.invoices.size());
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        this.subscribers = new BigDecimal(this.invoices.size());
     }
     
     public List<ItemResponse> filterInvoicesBySignature() {

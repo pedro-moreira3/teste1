@@ -79,7 +79,8 @@
 					<div class="card" style="width: 100%">
 	    				<p:outputPanel class="ui-g-12 ui-lg-12 clinicaSelect">
 	    					<h:panelGroup styleClass="md-inputfield">
-	    						<p:selectOneMenu id="login" value="#{odontoLoginMB.login}" required="true" styleClass="SelecaoMenu" autoWidth="false">
+	    						<p:selectOneMenu id="login" value="#{odontoLoginMB.login}" required="true" styleClass="SelecaoMenu" autoWidth="false" 
+	    							filter="true" filterMatchMode="contains">
 									<f:selectItem itemValue="#{null}" itemLabel="Escolha a Clínica"/>
 									<f:selectItems value="#{odontoLoginMB.logins}" var="l" itemValue="#{l.id}_#{l.perfil}_#{l.empresa}" itemLabel="#{l.descricao}" />
 								</p:selectOneMenu>
