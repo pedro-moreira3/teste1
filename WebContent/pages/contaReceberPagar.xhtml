@@ -67,8 +67,7 @@ body.layout-compact .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-ic
 	margin-top: -12px !important;
 }
 
-body .ui-confirm-dialog 
-	{
+body .ui-confirm-dialog {
 	width: 50% !important;
 }
 </style>
@@ -244,34 +243,25 @@ body .ui-confirm-dialog
 
 
 										<h:panelGroup>
-											<p:splitButton icon="White fa fa fa-file-excel-o"
-												value="Exportar tabela para Excel"
-												styleClass="GreenSplitButton"
-												actionListener="#{lancamentoContabilMB.exportarTabela('xls')}"
-												ajax="false" process="dtLancamentoContabil,@this"
-												update="@this" immediate="true"
-												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-												<p:fileDownload
-													value="#{lancamentoContabilMB.arquivoDownload}" />
+
+											<p:splitButton id="exportar"
+												icon="White fa fa fa-file-excel-o"
+												value="Exportar tabela para Excel"
+												styleClass="GreenSplitButton" process="@this" update="@this">
+
+												<p:dataExporter type="xls" target="dtLancamentoContabil"
+													fileName="Contas a Pagar/Receber" encoding="ISO-8859-1" />
 
 												<p:menuitem value="Exportar tabela para PDF"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}"
-													ajax="false" process="dtLancamentoContabil,@this"
-													immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload
-														value="#{lancamentoContabilMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this">
+													<p:dataExporter type="pdf" target="dtLancamentoContabil"
+														fileName="Contas a Pagar/Receber" encoding="ISO-8859-1" />
 												</p:menuitem>
 												<p:menuitem value="Exportar tabela para CSV"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{lancamentoContabilMB.exportarTabela('csv')}"
-													ajax="false" process="dtLancamentoContabil,@this"
-													immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload
-														value="#{lancamentoContabilMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this">
+													<p:dataExporter type="csv" target="dtLancamentoContabil"
+														fileName="Contas a Pagar/Receber" encoding="ISO-8859-1" />
 												</p:menuitem>
 											</p:splitButton>
 										</h:panelGroup>
@@ -370,6 +360,7 @@ body .ui-confirm-dialog
 										</p:column>
 
 										<p:column
+											exportFooterValue="R$ #{lancamentoContabilMB.somatorioValorLancamento}"
 											filterBy="#{lancamentoContabilMB.valorLancamentoDouble(lc)}"
 											filterMatchMode="contains" headerText="Valor(R$)"
 											sortBy="#{lancamentoContabilMB.valorLancamentoDouble(lc)}">
@@ -551,32 +542,20 @@ body .ui-confirm-dialog
 										<h:panelGroup>
 											<p:splitButton icon="White fa fa fa-file-excel-o"
 												value="Exportar tabela para Excel"
-												styleClass="GreenSplitButton"
-												actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('xls')}"
-												ajax="false" process="dtLancamentoValidar,@this"
-												update="@this" immediate="true"
-												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												styleClass="GreenSplitButton" process="@this" update="@this">
 
-												<p:fileDownload
-													value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+												<p:dataExporter type="xls" target="dtLancamentoValidar"
+													fileName="Lançamentos" encoding="ISO-8859-1" />
 
 												<p:menuitem value="Exportar tabela para PDF"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('pdf')}"
-													ajax="false" process="dtLancamentoValidar,@this"
-													immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload
-														value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this">
+													<p:dataExporter type="pdf" target="dtLancamentoValidar"
+														fileName="Lançamentos" encoding="ISO-8859-1" />
 												</p:menuitem>
 												<p:menuitem value="Exportar tabela para CSV"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('csv')}"
-													ajax="false" process="dtLancamentoValidar,@this"
-													immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload
-														value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this">
+													<p:dataExporter type="csv" target="dtLancamentoValidar"
+														fileName="Lançamentos" encoding="ISO-8859-1" />
 												</p:menuitem>
 											</p:splitButton>
 										</h:panelGroup>
@@ -685,7 +664,9 @@ body .ui-confirm-dialog
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
 											</p:calendar>
 										</p:column>
-										<p:column headerText="Valor à conferir" id="valorAConferir"
+										<p:column
+											exportFooterValue="R$ #{conferenciaRecebimentoMB.somatorioValorConferirConferencia}"
+											headerText="Valor à conferir" id="valorAConferir"
 											filterBy="#{conferenciaRecebimentoMB.valorConferir(lc)}"
 											sortBy="#{conferenciaRecebimentoMB.valorConferir(lc)}"
 											filterMatchMode="contains">
@@ -703,7 +684,9 @@ body .ui-confirm-dialog
 												</h:outputText>
 											</f:facet>
 										</p:column>
-										<p:column headerText="Valor conferido"
+										<p:column
+											exportFooterValue="R$ #{conferenciaRecebimentoMB.somatorioValorConferidoConferencia}"
+											headerText="Valor conferido"
 											filterBy="#{conferenciaRecebimentoMB.valorConferido(lc)}"
 											sortBy="#{conferenciaRecebimentoMB.valorConferido(lc)}"
 											filterMatchMode="contains">
@@ -721,7 +704,9 @@ body .ui-confirm-dialog
 
 											</f:facet>
 										</p:column>
-										<p:column headerText="Valor total"
+										<p:column
+											exportFooterValue="R$ #{conferenciaRecebimentoMB.somatorioValorTotalConferencia}"
+											headerText="Valor total"
 											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterMatchMode="contains">
@@ -939,27 +924,20 @@ body .ui-confirm-dialog
 										<h:panelGroup>
 											<p:splitButton icon="White fa fa fa-file-excel-o"
 												value="Exportar tabela para Excel"
-												styleClass="GreenSplitButton"
-												actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('xls')}"
-												ajax="false" process="dtPlanos,@this" update="@this"
-												immediate="true"
-												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												styleClass="GreenSplitButton" process="@this" update="@this">
 
-												<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+												<p:dataExporter type="xls" target="dtPlanos"
+													fileName="Planos de tratamento" encoding="ISO-8859-1" />
 
 												<p:menuitem value="Exportar tabela para PDF"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('pdf')}"
-													ajax="false" process="dtPlanos" immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this" update="@this">
+													<p:dataExporter type="pdf" target="dtPlanos"
+														fileName="Planos de tratamento" encoding="ISO-8859-1" />
 												</p:menuitem>
 												<p:menuitem value="Exportar tabela para CSV"
-													icon="fa fa fa-file-pdf-o"
-													actionListener="#{ajusteIGPMMB.exportarTabelaIGPM('csv')}"
-													ajax="false" process="dtPlanos,@this" immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-													<p:fileDownload value="#{ajusteIGPMMB.arquivoDownload}" />
+													icon="fa fa fa-file-pdf-o" process="@this" update="@this">
+													<p:dataExporter type="csv" target="dtPlanos"
+														fileName="Planos de tratamento" encoding="ISO-8859-1" />
 												</p:menuitem>
 											</p:splitButton>
 										</h:panelGroup>
@@ -1223,7 +1201,7 @@ body .ui-confirm-dialog
 						</p:fieldset>
 						<br />
 
-						<p:panel id="painelDrc" >
+						<p:panel id="painelDrc">
 							<h:outputLabel id="drc"
 								value="#{relatorioContabilDetalhadoMB.drc}" escape="false" />
 						</p:panel>
@@ -1500,7 +1478,7 @@ body .ui-confirm-dialog
 								<p:panelGrid columns="2" layout="grid" id="pnRecorrente"
 									styleClass="ui-panelgrid-blank form-group ui-fluid"
 									columnClasses="ui-g-6,ui-g-6">
- 
+
 
 									<p:outputLabel for="diasRecorrente"
 										value="De quanto em quanto tempo? "
@@ -1809,7 +1787,20 @@ body .ui-confirm-dialog
 				</div>
 			</div>
 		</div>
-
+		<script>
+			function exportarTabelaXLS() {
+				comandoExportarXLS();
+				PF.ajax().update(":lume:tv:exportar")
+			}
+			function exportarTabelaPDF() {
+				comandoExportarPDF();
+				PF.ajax().update(":lume:tv:exportar")
+			}
+			function exportarTabelaCSV() {
+				comandoExportarCSV();
+				PF.ajax().update(":lume:tv:exportar")
+			}
+		</script>
 
 	</ui:define>
 </ui:composition>
