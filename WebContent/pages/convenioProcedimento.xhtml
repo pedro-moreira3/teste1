@@ -18,26 +18,32 @@
                                 <h1>Convênio-Procedimento</h1>
                                 <div class="SeparatorFull"></div>
 
-                                <p:panelGrid id="pnDados" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                    style="border:0px none; background-color:transparent;">
+                                <p:panelGrid id="pnDados" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                                	layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
-                                    <p:outputLabel for="convenio" value="Convênio : " />
-                                    <p:selectOneMenu id="convenio" value="#{convenioProcedimentoMB.entity.convenio}" converter="convenio"
-                                    	style="min-width: auto;">
-                                        <p:ajax listener="#{convenioProcedimentoMB.carregarListaConveioProcedimento}" process="@this" update="dtConvenioProcedimento,dtConvenioProcedimentoFora" />
+                                    <p:outputLabel for="convenio" value="Convênio: " />
+                                    <p:selectOneMenu id="convenio" value="#{convenioProcedimentoMB.entity.convenio}"
+                                    	converter="convenio" style="min-width: auto;">
+                                        
+                                        <p:ajax listener="#{convenioProcedimentoMB.carregarListaConveioProcedimento}" 
+                                        	process="@this" update="dtConvenioProcedimento,dtConvenioProcedimentoFora" />
+                                        
                                         <f:selectItem itemValue="#{null}" itemLabel="Escolha um Convênio " />
-                                        <f:selectItems value="#{convenioProcedimentoMB.convenios}" var="convenio" itemValue="#{convenio}" itemLabel="#{convenio.dadosBasico.nome}" />
+                                        <f:selectItems value="#{convenioProcedimentoMB.convenios}" 
+                                        	var="convenio" itemValue="#{convenio}" itemLabel="#{convenio.dadosBasico.nome}" />
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel for="procedimento" value="Procedimento : " />
-                                    <p:inputText id="procedimento" disabled="true" value="#{convenioProcedimentoMB.entity.procedimento.descricao}" />
+                                    <p:outputLabel for="procedimento" value="Procedimento: " />
+                                    <p:inputText id="procedimento" disabled="true"
+                                    	value="#{convenioProcedimentoMB.entity.procedimento.descricao}" />
 
-                                    <p:outputLabel for="valorOriginal" value="Valor Original : " />
-                                    <p:inputText id="valorOriginal" disabled="true" value="#{convenioProcedimentoMB.entity.procedimento.valor}">
+                                    <p:outputLabel for="valorOriginal" value="Valor Original: " />
+                                    <p:inputText id="valorOriginal" disabled="true"
+                                    	value="#{convenioProcedimentoMB.entity.procedimento.valor}">
                                         <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
                                     </p:inputText>
 
-                                    <p:outputLabel for="tipoValor" value="Remarcar por : " />
+                                    <p:outputLabel for="tipoValor" value="Remarcar por: " />
                                     <p:column>
                                         <p:selectOneRadio id="tipoValor" value="#{convenioProcedimentoMB.tipoValor}">
                                             <p:ajax process="@this" update="pnConvenio" />
@@ -46,17 +52,21 @@
                                         </p:selectOneRadio>
                                     </p:column>
 
-                                    <p:outputLabel id="lbporcentagem" for="porcentagem" value="Porcentagem (%) : " rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
-                                    <p:inputNumber id="porcentagem" value="#{convenioProcedimentoMB.entity.porcentagem}" maxlength="6" maxValue="999.99" decimalSeparator="," thousandSeparator="."
-                                        symbol="" rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
+                                    <p:outputLabel id="lbporcentagem" for="porcentagem" value="Porcentagem (%): " 
+                                    	rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
+                                    <p:inputNumber id="porcentagem" value="#{convenioProcedimentoMB.entity.porcentagem}" 
+                                    	maxValue="999.99" decimalSeparator="," thousandSeparator="."
+                                        symbol="%" rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
 
-                                    <p:outputLabel id="lbvalorNovo" for="valorNovo" value="Valor : " rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" />
-                                    <p:inputNumber id="valorNovo" value="#{convenioProcedimentoMB.entity.valor}" maxlength="8" maxValue="99999.99" decimalSeparator="," thousandSeparator="." symbol=""
+                                    <p:outputLabel id="lbvalorNovo" for="valorNovo" value="Valor: " rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" />
+                                    <p:inputNumber id="valorNovo" value="#{convenioProcedimentoMB.entity.valor}"
+                                    	maxValue="99999.99" decimalSeparator="," thousandSeparator="." symbol="R$ "
                                         rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" />
 
-                                    <p:outputLabel for="valorRepasse" value="Valor Repasse : " />
-                                    <p:inputNumber id="valorRepasse" value="#{convenioProcedimentoMB.entity.valorRepasse}" maxlength="8" maxValue="99999.99" decimalSeparator="," thousandSeparator="."
-                                        symbol="" />
+                                    <p:outputLabel for="valorRepasse" value="Valor Repasse: " />
+                                    <p:inputNumber id="valorRepasse" value="#{convenioProcedimentoMB.entity.valorRepasse}" 
+                                    	maxValue="99999.99" decimalSeparator="," thousandSeparator="."
+                                        symbol="R$ " />
 
 
                                 </p:panelGrid>
@@ -64,39 +74,63 @@
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Convênio-Procedimento" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
-                                        immediate="true" />                                
-                                    <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio" actionListener="#{convenioProcedimentoMB.actionPersist}"
-                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />                                    
-                                    <p:commandButton value="Exportar Não Vinculados" ajax="false" process="dtConvenioProcedimentoFora" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                        immediate="true" />
+                                    <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio"
+                                    	actionListener="#{convenioProcedimentoMB.actionPersist}"
+                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this"
+                                        styleClass="GreenButton"/>
+                                        
+                                    <p:commandButton value="Exportar Não Vinculados" ajax="false"
+                                    	process="dtConvenioProcedimentoFora"
+                                    	icon="White fa fa-file-excel-o"
+                                    	styleClass="GreenButton">
+                                        
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimentoFora" fileName="convenioProcedimentoFora" />
                                     </p:commandButton>
-                                    <p:commandButton value="Exportar Vinculados" ajax="false" process="dtConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                    
+                                    <p:commandButton value="Exportar Vinculados" ajax="false"
+                                    	process="dtConvenioProcedimento" icon="White fa fa-file-excel-o"
+                                    	styleClass="GreenButton">
+                                        
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimento" fileName="convenioProcedimento" />
                                     </p:commandButton>
-									<p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
-                                        update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
-                                        styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />                                    
+                                    
+									<p:commandButton id="delete" icon="White fa fa-trash-o"
+										value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
+                                        update=":lume:tabView:pnConvenio, @this" styleClass="RedButton"
+                                        process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"/>                                    
                                 </p:panelGrid>
 
                                 <div class="EmptyBox20"></div>
 
-
-                                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtConvenioProcedimentoFora" value="#{convenioProcedimentoMB.convenioProcedimentosFora}" var="cp"
-                                    rowKey="#{cp}" paginatorPosition="bottom" selection="#{convenioProcedimentoMB.entity}" selectionMode="single" rows="7" paginator="true"
-                                    widgetVar="dtConvenioProcedimentoFora">
+                                <p:dataTable filterDelay="1500" reflow="true" 
+                                	emptyMessage="" id="dtConvenioProcedimentoFora"
+                                	value="#{convenioProcedimentoMB.convenioProcedimentosFora}" 
+                                	var="cp" rowKey="#{cp}" paginatorPosition="bottom" 
+                                	selection="#{convenioProcedimentoMB.entity}"
+                                	selectionMode="single" rows="7" paginator="true"
+                                    widgetVar="dtConvenioProcedimentoFora"
+                                    binding="#{convenioProcedimentoMB.tabelaProcedimentos}">
+                                    
                                     <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    
                                     <f:facet name="header">Procedimentos ainda não vinculados ao Convênio</f:facet>
+                                    
                                     <p:column filterBy="#{cp.procedimento.especialidade.descricao}" sortBy="#{cp.procedimento.especialidade.descricao}" filterMatchMode="contains"
-                                        headerText="Especialidade">
+                                        headerText="Especialidade"
+                                        filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.especialidade.descricao}" title="#{cp.id}" />
                                     </p:column>
-                                    <p:column filterBy="#{cp.procedimento.codigoCfo}" sortBy="#{cp.procedimento.codigoCfo}" filterMatchMode="contains" headerText="Código do procedimento">
+                                    <p:column filterBy="#{cp.procedimento.codigoCfo}" sortBy="#{cp.procedimento.codigoCfo}" filterMatchMode="contains" headerText="Código do procedimento"
+                                    	filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.codigoCfo}" />
                                     </p:column>
-                                    <p:column filterBy="#{cp.procedimento.descricaoLimpa}" sortBy="#{cp.procedimento.descricao}" filterMatchMode="contains" headerText="Procedimento">
+                                    <p:column filterBy="#{cp.procedimento.descricaoLimpa}" sortBy="#{cp.procedimento.descricao}" filterMatchMode="contains" headerText="Procedimento"
+                                    	filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.descricao}" />
                                     </p:column>
-                                    <p:column filterBy="#{cp.procedimento.valor}" sortBy="#{cp.procedimento.valor}" filterMatchMode="contains" headerText="Valor Original">
+                                    <p:column filterBy="#{cp.procedimento.valor}" sortBy="#{cp.procedimento.valor}" filterMatchMode="contains" headerText="Valor Original"
+                                    	filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.valor}">
                                             <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                         </h:outputText>
@@ -115,11 +149,18 @@
 
                                 <br />
 
-                                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtConvenioProcedimento" value="#{convenioProcedimentoMB.convenioProcedimentos}" var="cp"
-                                    rowKey="#{cp}" paginatorPosition="bottom" selection="#{convenioProcedimentoMB.entity}" selectionMode="single" rows="7" paginator="true"
+                                <p:dataTable filterDelay="1500" reflow="true"
+                                	emptyMessage="" id="dtConvenioProcedimento"
+                                	value="#{convenioProcedimentoMB.convenioProcedimentos}" var="cp"
+                                    rowKey="#{cp}" paginatorPosition="bottom"
+                                    selection="#{convenioProcedimentoMB.entity}"
+                                    selectionMode="single" rows="7" paginator="true"
                                     widgetVar="dtConvenioProcedimento">
+                                    
                                     <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    
                                     <f:facet name="header">Procedimentos já vinculados ao Convênio</f:facet>
+                                    
                                     <p:column filterBy="#{cp.procedimento.especialidade.descricao}" sortBy="#{cp.procedimento.especialidade.descricao}" filterMatchMode="contains"
                                         headerText="Especialidade">
                                         <h:outputText value="#{cp.procedimento.especialidade.descricao}" title="#{cp.id}" />
@@ -128,10 +169,12 @@
                                         <h:outputText value="#{cp.procedimento.codigoCfo}" />
                                     </p:column>
 
-                                    <p:column filterBy="#{cp.procedimento.descricaoLimpa}" sortBy="#{cp.procedimento.descricao}" filterMatchMode="contains" headerText="Procedimento">
+                                    <p:column filterBy="#{cp.procedimento.descricaoLimpa}" sortBy="#{cp.procedimento.descricao}" filterMatchMode="contains" headerText="Procedimento"
+                                    	filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.descricao}" />
                                     </p:column>
-                                    <p:column filterBy="#{cp.procedimento.valor}" sortBy="#{cp.procedimento.valor}" filterMatchMode="contains" headerText="Valor Original">
+                                    <p:column filterBy="#{cp.procedimento.valor}" sortBy="#{cp.procedimento.valor}" filterMatchMode="contains" headerText="Valor Original"
+                                    	filterFunction="#{convenioProcedimentoMB.filtroSemAcento}">
                                         <h:outputText value="#{cp.procedimento.valor}">
                                             <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                         </h:outputText>

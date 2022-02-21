@@ -21,14 +21,9 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
-// import br.com.lume.odonto.bo.ConvenioBO;
-// import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-// import br.com.lume.odonto.bo.ProcedimentoBO;
-// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
-import br.com.lume.odonto.entity.RelatorioConvenioProcedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.procedimento.ProcedimentoSingleton;
 
@@ -46,12 +41,6 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public Convenio convenio;
 
-    //  private ConvenioProcedimentoBO convenioProcedimentoBO;
-
-    //  private ProcedimentoBO procedimentoBO;
-
-//   private ConvenioBO convenioBO;
-
     private String tipoValor = "V";
 
     private List<Procedimento> procedimentos;
@@ -60,6 +49,8 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     private Integer mes, ano;
 
+    private DataTable tabelaProcedimentos;
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorioConvenio;
 
@@ -79,7 +70,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
                 //  carregarRelatorio();
             }
         } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
+            log.error("Erro ao carregar procedimentos", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
         this.setClazz(ConvenioProcedimento.class);
@@ -92,7 +83,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             this.limpar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
         } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
+            log.error("Erro no actionRemove", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
     }
@@ -168,6 +159,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         this.getEntity().setConvenio(convenio);
         this.getEntity().setZeraId(true);
         this.carregarListaConveioProcedimento();
+        this.tabelaProcedimentos.setSelection(null);
     }
 
     public boolean verificaCp() {
@@ -315,6 +307,14 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void setTabelaRelatorioConvenio(DataTable tabelaRelatorioConvenio) {
         this.tabelaRelatorioConvenio = tabelaRelatorioConvenio;
+    }
+
+    public DataTable getTabelaProcedimentos() {
+        return tabelaProcedimentos;
+    }
+
+    public void setTabelaProcedimentos(DataTable tabelaProcedimentos) {
+        this.tabelaProcedimentos = tabelaProcedimentos;
     }
 
 }

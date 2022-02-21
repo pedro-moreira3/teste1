@@ -85,6 +85,7 @@ import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.entity.Tarifa;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoRegiao.TipoRegiao;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
@@ -165,7 +166,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean omitirDadosEmpresa = false;
 
     private boolean omitirLogo = false;
-    
+
     private boolean encerrarPlano;
 
     private String filtroStatus = "T";
@@ -498,7 +499,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             setEntity(planoTratamento);
             //carregarPlanoTratamentoProcedimentos();
         }
-        
+
         actionFinalizar((ActionEvent) null);
     }
 
@@ -515,7 +516,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.pacienteMB = new PacienteMB();
             }
             this.pacienteMB.setEntity(planoTratamento.getPaciente());
-            
+
             this.actionFinalizar(planoTratamento);
         } catch (Exception e) {
             this.addError("Erro", "Erro ao encerrar.");
@@ -541,36 +542,36 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionSuspender(ActionEvent event) {
         boolean retorno = false;
         retorno = PlanoTratamentoSingleton.getInstance().suspenderPlanoTratamento(getEntity(), profissionalFinalizarNovamente);
-        
-        if(retorno)
+
+        if (retorno)
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         else
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
-            
+
     }
-    
+
     public void actionExecutarPlanoTratamento(PlanoTratamento planoTratamento) {
         try {
-            if(!temProcedimentosAbertos()) {
+            if (!temProcedimentosAbertos()) {
                 PlanoTratamentoSingleton.getInstance().executarPlanoTratamento(planoTratamento, UtilsFrontEnd.getProfissionalLogado());
                 this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
                 atualizaTela();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
         }
     }
-    
+
     public void actionFinalizar(ActionEvent event) {
         try {
             List<Fatura> faturas = FaturaSingleton.getInstance().getBo().getFaturasFromPT(getEntity());
-            
-            if(faturas != null && !faturas.isEmpty()) {
-                for(Fatura f : faturas)
+
+            if (faturas != null && !faturas.isEmpty()) {
+                for (Fatura f : faturas)
                     FaturaSingleton.getInstance().permiteRegularizacaoFatura(f);
             }
-            
+
             if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
                 if (this.justificativa == null) {
                     PrimeFaces.current().executeScript("PF('devolver').show()");
@@ -581,26 +582,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
-            
-            if(faturas != null && !faturas.isEmpty())
+
+            if (faturas != null && !faturas.isEmpty())
                 FaturaSingleton.getInstance().regularizarFatura(faturas, UtilsFrontEnd.getProfissionalLogado());
 
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             atualizaTela();
-        }catch (CancelarItemProcedimentoExecutado e) {
+        } catch (CancelarItemProcedimentoExecutado e) {
             System.out.println(e.getMessage());
             this.addError("Falha ao cancelar item de fatura", "Não é possível cancelar um item referente a um procedimento executado.");
-        }catch (CancelarItemProcedimentoAtivo e) {
+        } catch (CancelarItemProcedimentoAtivo e) {
             System.out.println(e.getMessage());
             this.addError("Falha ao cancelar item de fatura", "Não é possível cancelar um item referente a um procedimento ativo, deve estar cancelado.");
-        }catch (FaturaIrregular e) {
+        } catch (FaturaIrregular e) {
             System.out.println(e.getMessage());
             this.addError("Pendência financeira", "É necessário regularizar as faturas originadas por esse plano de tratamento.");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("Erro no actionFinalizar", e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
-        }finally {
+        } finally {
             this.encerrarPlano = false;
             this.justificativa = null;
         }
@@ -702,7 +703,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().executeScript("PF('evolucao').show()");
             FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("lume:tabViewPaciente:evolucaoView");
             return false;
-        }        
+        }
         return true;
     }
 
@@ -1767,6 +1768,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionRemoveOrcamento(Orcamento orcamento) {
         try {
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().findFaturaByOrcamento(orcamento);
+
+            if (faturas != null && !faturas.isEmpty()) {
+                for (Fatura f : faturas)
+                    if (f.getSubStatusFatura().contains(SubStatusFatura.VALIDADO))
+                        throw new FaturaIrregular();
+            }
+
             OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
             carregaOrcamentos();
 
@@ -1779,6 +1788,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        }catch (FaturaIrregular e) {
+            System.out.println(e.getMessage());
+            this.addError("Orçamento possui faturas validadas", "É necessário regularizar as faturas originadas por esse orçamento.");
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -2690,13 +2702,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
-    
+
     public void carregarPlanoTratamentoProcedimentos() throws Exception {
         if (getEntity() != null && getEntity().getId() != null) {
             this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
-            
+
             PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
         }
     }
@@ -2705,7 +2717,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
         table.reset();
     }
-    
+
     public void enableRegioes(boolean enable) {
         try {
             enableRegioes = enable;
