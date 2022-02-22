@@ -1269,11 +1269,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Continuar"
+					oncomplete="PF('procedimentosTableInPT').clearFilters();"
 					actionListener="#{planoTratamentoMB.salvarContinuar}"
 					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Fechar"
+					oncomplete="PF('procedimentosTableInPT').clearFilters();"
 					actionListener="#{planoTratamentoMB.salvar}"
 					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
 				<p:commandButton icon="White fa fa-close" value="Fechar"
