@@ -184,28 +184,6 @@ body .ui-messages ul {
                 }
             });
         
-            function mostraDialogo(titulo, mensagem, tipo, tempo) {
-    			mostraDialogo(titulo, mensagem, tipo, null);
-    		}
-
-    		function mostraDialogo(titulo, mensagem, tipo, tempo) {
-    			if (!tempo)
-    				tempo = 3000;
-
-    			var iconName = null;
-    			if (!tipo) {
-    				var tipo = "info";
-    			} else if (tipo == 'success') {
-    				iconName = 'check_circle';
-    			} else if (tipo == 'error') {
-    				iconName = 'error';
-    			} else if (tipo == 'warning') {
-    				iconName = 'warning';
-    			} else if (tipo == 'info') {
-    				iconName = 'info';
-    			}
-    			addAlert(titulo, mensagem, tipo, tempo, iconName);
-    		}
             
             function limpaMenu() {
                 $.removeCookie('ultima_expandeditems', {
