@@ -576,7 +576,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             if(this.getEntity().getPaciente() != null) {
                 if(this.getEntity().getPaciente().getId() != fatura.getPaciente().getId()) {
-                    String log = "FALHA AO CARREGAR FATURA DO PACIENTE \nEntity MB: " + this.getPaciente().getId() + "\nEntity Fatura: " + fatura.getPaciente().getId();
+                    String log = "FALHA AO CARREGAR FATURA DO PACIENTE \nEntity MB: " + this.getEntity().getPaciente().getId() + "\nEntity Fatura: " + fatura.getPaciente().getId();
                     Usuario user = new UsuarioBO().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario());
                     LogEmpresaSingleton.getInstance().criaLog(new Date(), user, UtilsFrontEnd.getEmpresaLogada(), log);
                 }
