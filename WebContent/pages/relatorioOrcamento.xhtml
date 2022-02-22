@@ -286,6 +286,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="Total" />
 							</f:facet>
 						</p:column>
+						
+						<p:column filterBy="#{m.paciente.convenio.dadosBasico.nome}"
+							filterMatchMode="contains"
+							sortBy="#{m.paciente.convenio.dadosBasico.nome}"
+							filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
+							headerText="Convenio">
+							<h:outputText value="#{m.paciente.convenio.dadosBasico.nome}" />
+						</p:column>
 
 						<p:column filterBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
 							filterMatchMode="contains"
