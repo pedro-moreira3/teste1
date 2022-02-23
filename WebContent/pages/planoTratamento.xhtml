@@ -124,17 +124,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 			<p:outputPanel id="mainViewPT">
-
-				<div style="width: 100%; text-align: right;">
-					<p:commandButton value="Videos tutoriais"
-						style="width:200px;margin-top:0px !important;margin-bottom:0px !important;padding:0px 0px !important;"
+			
+					<div style="width:100%;text-align: right;">
+						<p:commandButton value="Videos tutoriais" style="width:200px;margin-top:0px !important;margin-bottom:0px !important;padding:0px 0px !important;"
 						icon="White fa fa-youtube-play White"
-						oncomplete="PF('dlgListaVideos').show()"
-						actionListener="#{planoTratamentoMB.setVideos()}" process="@this"
-						update="painelVideoList" />
-				</div>
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{planoTratamentoMB.setVideos()}"									
+						process="@this" update="painelVideoList"/>
+					</div>
 
-
+			
 				<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-6, ui-g-6"
@@ -204,14 +203,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</h:panelGroup>
 
 				</p:panelGrid>
-
+					
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-					id="dtPlanoTratamento"
-					value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento"
-					rows="20" paginator="true" rowKey="#{planoTratamento}"
-					paginatorPosition="bottom"
-					binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
-
+							id="dtPlanoTratamento"
+							value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento"
+							rows="20" paginator="true" rowKey="#{planoTratamento}"
+							paginatorPosition="bottom"
+							binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
+					
 					<f:facet name="header">Planos de Tratamento</f:facet>
 
 					<p:column headerText="Ações" style="width:140px">
@@ -234,7 +233,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Suspender plano de Tratamento" process="@this"
 								actionListener="#{planoTratamentoMB.setEntity(planoTratamento)}"
 								oncomplete="PF('dlgSuspensaoJustificativa').show()"
-								disabled="#{!planoTratamento.isAtivo() or planoTratamento.status == 'S' or planoTratamento.status == 'E' or planoTratamento.status == 'F'}" />
+								disabled="#{!planoTratamento.isAtivo() or planoTratamento.status == 'S' or planoTratamento.status == 'E' or planoTratamento.status == 'F'}"/>
 						</h:panelGroup>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -248,19 +247,19 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
 							</p:commandButton>
-
+							
 							<h:panelGroup rendered="#{planoTratamento.status == 'F'}">
-								<p:commandButton id="persistAtivar"
-									icon="White fa fa-chain White" title="Reativar"
-									actionListener="#{planoTratamentoMB.actionReativar(planoTratamento)}"
-									update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:botoesFinalizaPT"
-									process="@this" styleClass="NavyButton">
-									<p:confirm header="Confirmação"
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Reativar"
+										actionListener="#{planoTratamentoMB.actionReativar(planoTratamento)}"
+										update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:botoesFinalizaPT"
+										 process="@this" styleClass="NavyButton" >
+										 <p:confirm header="Confirmação"
 										message="Deseja realmente reativar este Plano de Tratamento?"
 										icon="fa fa-warning" />
-								</p:commandButton>
-							</h:panelGroup>
-
+									</p:commandButton>
+								</h:panelGroup>
+							
 						</h:panelGroup>
 					</p:column>
 					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
@@ -295,24 +294,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column sortBy="#{planoTratamento.valorReceber}"
-						headerText="Valor à Receber">
-						<h:outputText value="#{planoTratamento.valorReceber}">
-							<f:convertNumber currencySymbol="R$" type="currency"
-								locale="#{lumeSecurity.locale}" />
-						</h:outputText>
+					<p:column sortBy="#{planoTratamento.valorReceber}" headerText="Valor à Receber">
+								<h:outputText value="#{planoTratamento.valorReceber}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
 					</p:column>
-
-					<p:column sortBy="#{planoTratamento.valorConferir}"
-						headerText="Valor à Conferir">
+							
+					<p:column sortBy="#{planoTratamento.valorConferir}"	headerText="Valor à Conferir">
 						<h:outputText value="#{planoTratamento.valorConferir}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
-					</p:column>
-
+					</p:column>	
+					
 					<p:column sortBy="#{planoTratamento.valor}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
+						rendered="#{planoTratamentoMB.temPermissaoExtra}"					
 						headerText="Valor Total dos Procedimentos">
 						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
@@ -340,11 +337,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:selectOneMenu id="justificativa"
 							value="#{planoTratamentoMB.justificativa}" converter="dominio"
 							required="true">
-							<f:selectItem itemValue="#{null}" itemLabel="Selecione um motivo" />
+							<f:selectItem itemValue="#{null}"
+								itemLabel="Selecione um motivo" />
 							<f:selectItems value="#{planoTratamentoMB.justificativas}"
 								var="justificativa" itemLabel="#{justificativa.nome}"
 								itemValue="#{justificativa}" />
-						</p:selectOneMenu>
+						</p:selectOneMenu>						
 						<p:message for="justificativa" styleClass="msg" />
 						<p:outputLabel for="retorno" value="Data retorno : " />
 						<p:calendar id="retorno" value="#{planoTratamentoMB.retorno}"
@@ -376,7 +374,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this" styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
-
+	
 	<p:dialog id="reativar" widgetVar="reativar"
 		header="Reativar Plano de Tratamento" responsive="true" modal="true"
 		appendTo=":lume" closable="false">
@@ -388,7 +386,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
 						style="border:0px none; background-color:transparent;">
 
-
+					
 
 						<p:outputLabel for="motivoReativacao"
 							value="Motivo da Reativacao : " />
@@ -413,7 +411,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this" styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
-
+	
 	<p:dialog widgetVar="dlg" header="Orçamento" id="dlgOrcamento"
 		resizable="true" modal="true" width="800" appendTo=":lume">
 		<p:outputPanel id="pnOrcamento" styleClass="BordNone">
@@ -595,16 +593,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
 							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
-
+							
 							<p:outputLabel value="Tipo do Plano:" />
 							<h:panelGroup>
-								<p:selectOneRadio id="tipoDoNovoPlano"
-									value="#{planoTratamentoMB.entity.ortodontico}">
-									<f:selectItem itemLabel="Clínica Geral" itemValue="#{false}" />
-									<f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
-								</p:selectOneRadio>
+								<p:selectOneRadio id="tipoDoNovoPlano" value="#{planoTratamentoMB.entity.ortodontico}">
+						            <f:selectItem itemLabel="Clínica Geral" itemValue="#{false}" />
+						            <f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
+						        </p:selectOneRadio>
 							</h:panelGroup>
-
+							
 							<p:outputLabel value="Descrição:" />
 							<h:panelGroup>
 								<p:inputText id="planoTratamentoDescricao"
@@ -751,7 +748,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		onHide="PF('dlgViewPlanoTratamento').toggleMaximize();"
 		onShow="PF('dlgViewPlanoTratamento').toggleMaximize();" modal="true"
 		appendTo=":lume">
-
+		
 		<f:facet name="header">
 			<p:outputPanel id="viewPlanoTratamento">
 				<h:outputText
@@ -774,11 +771,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 								<p:outputLabel value="Tipo do Plano:" />
 								<h:panelGroup>
-									<p:selectOneRadio id="tipoDoPlano"
-										value="#{planoTratamentoMB.entity.ortodontico}">
-										<f:selectItem itemLabel="Clínica Geral" itemValue="#{false}" />
-										<f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
-									</p:selectOneRadio>
+									<p:selectOneRadio id="tipoDoPlano" value="#{planoTratamentoMB.entity.ortodontico}">
+							            <f:selectItem itemLabel="Clínica Geral" itemValue="#{false}" />
+							            <f:selectItem itemLabel="Ortodôntico" itemValue="#{true}" />
+							        </p:selectOneRadio>
 								</h:panelGroup>
 								<p:column />
 
@@ -789,12 +785,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:column />
 
 								<p:outputLabel for="convenioPTView" value="Convênio: " />
-								<p:selectOneMenu converter="convenio" id="convenioPTView"
+								<p:selectOneMenu converter="convenio" id="convenioPTView" 
 									value="#{planoTratamentoMB.entity.convenio}">
-									<f:selectItem itemLabel="Nenhum Selecionado"
-										itemValue="#{null}" />
-									<f:selectItems
-										value="#{planoTratamentoMB.conveniosDisponiveis}"
+									<f:selectItem itemLabel="Nenhum Selecionado" itemValue="#{null}" />
+									<f:selectItems value="#{planoTratamentoMB.conveniosDisponiveis}"
 										var="convenio" itemLabel="#{convenio.dadosBasico.nome}"
 										itemValue="#{convenio}" />
 								</p:selectOneMenu>
@@ -802,8 +796,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:panelGrid>
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removePaddingUp removeSideGridPadding">
-								<p:commandButton
-									process="@this, :lume:tabViewPaciente:alteracaoPlanoPnl"
+								<p:commandButton process="@this, :lume:tabViewPaciente:alteracaoPlanoPnl" 
 									value="Salvar" styleClass="NavyButton" icon="fa fa-save"
 									update=":lume:tabViewPaciente:alteracaoPlanoPnl, :lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtPlanoTratamento, :lume:tabViewPaciente:evolucaoView"
 									actionListener="#{planoTratamentoMB.actionPersist}"
@@ -853,8 +846,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<p:commandButton icon="ui-icon-add"
-								value="Adicionar Procedimento no Plano de Tratamento"
+							<p:commandButton icon="ui-icon-add" value="Adicionar Procedimento no Plano de Tratamento"
 								oncomplete="PF('dlgNovoProcedimento').show();"
 								actionListener="#{planoTratamentoMB.actionNewProcedimento}"
 								update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes,
@@ -896,21 +888,17 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 							<p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}"
 								headerText="Nr." width="45">
-								<h:outputText value="#{plano.sequencial}"
-									filterMatchMode="contains" filterBy="#{plano.sequencial}" />
+								<h:outputText value="#{plano.sequencial}" filterMatchMode="contains" filterBy="#{plano.sequencial}"/>
 							</p:column>
-							<p:column headerText="Prioridade" width="45"
-								filterMatchMode="contains" filterBy="#{plano.prioridade}">
+							<p:column headerText="Prioridade" width="45" filterMatchMode="contains" filterBy="#{plano.prioridade}">
 								<h:outputText value="#{plano.prioridade}" />
 							</p:column>
-							<p:column headerText="Status" width="60"
-								filterMatchMode="contains" filterBy="#{plano.statusDescricao}">
+							<p:column headerText="Status" width="60" filterMatchMode="contains" filterBy="#{plano.statusDescricao}">
 								<h:outputText value="#{plano.statusDescricao}" />
 							</p:column>
 
-							<p:column sortBy="#{plano.procedimento.descricao}"
-								filterMatchMode="contains"
-								filterBy="#{plano.procedimento.descricao}"
+							<p:column sortBy="#{plano.procedimento.descricao}" 
+								filterMatchMode="contains" filterBy="#{plano.procedimento.descricao}"
 								headerText="Procedimento" width="350">
 								<p:outputPanel style="position: relative">
 									<h:outputText value="#{plano.procedimento.descricao}" />
@@ -923,9 +911,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									</p:outputPanel>
 								</p:outputPanel>
 							</p:column>
-							<p:column sortBy="#{plano.denteRegiao}"
-								headerText="Dente/Região e Diagnóstico" width="100"
-								filterMatchMode="contains" filterBy="#{plano.denteRegiaoStr}">
+							<p:column sortBy="#{plano.denteRegiao}" headerText="Dente/Região e Diagnóstico"
+								width="100" filterMatchMode="contains" filterBy="#{plano.denteRegiaoStr}">
 								<h:outputText value="#{plano.denteRegiaoStr}"
 									id="denteRegiaoProc" />
 								<p:tooltip for="denteRegiaoProc"
@@ -934,9 +921,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
 									process="@this" style="margin-left: 15px;"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
-									oncomplete="PF('dlgDetalhesProcedimento').show();PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()"
-									title="Detalhes"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
+									oncomplete="PF('dlgDetalhesProcedimento').show();PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" 
+									title="Detalhes" disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
 									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgDetalheProcedimento, @this,:lume:tabViewPaciente:detalhesProcedimento" />
 							</p:column>
 
@@ -945,14 +931,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								id="clValor" width="80px;">
 
 								<ui:remove>
-									<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
-										required="true" maxlength="13" maxValue="9999999999.99"
-										decimalSeparator="," symbol="R$ " thousandSeparator="."
-										rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
-										disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
-									</p:inputNumber>
+								<p:inputNumber id="valortroca" value="#{plano.valorDesconto}"
+									required="true" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="R$ " thousandSeparator="."
+									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
+									disabled="#{plano.planoTratamento.status == 'S' or plano.planoTratamento.status == 'E' or plano.excluido eq 'S'}">
+								</p:inputNumber>
 								</ui:remove>
-
+								
 								<h:outputText value="#{plano.valorDesconto}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
@@ -972,10 +958,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									disabled="#{(plano.finalizado and plano.dataFinalizado != null) or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}"
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
-
+									
 									<p:ajax process="@this" update="@this"
-										listener="#{planoTratamentoMB.fazNada()}" />
-
+										listener="#{planoTratamentoMB.fazNada()}"/>
+									
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
 									title="Executar Novamente"
@@ -995,8 +981,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<h:outputText value="#{plano.dataFinalizadoStr}" />
 							</p:column>
 							<p:column headerText="Executado Por" styleClass="hideOnEdit"
-								filterMatchMode="contains"
-								filterBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
+								filterMatchMode="contains" filterBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
 								sortBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
 								width="70px;">
 								<h:outputText
@@ -1011,7 +996,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.actionPersist}"
 								update=":lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:dtProcedimentosSelecionadospt,
 									:lume:tabViewPaciente:dtPlanoTratamento, :lume:tabViewPaciente:evolucaoView, :lume:tabViewPaciente:botoesFinalizaPT"
-								process="@this" styleClass="GreenButton"
+								process="@this"
+								styleClass="GreenButton"
 								oncomplete="handleDialogRequest(xhr, status, args);"
 								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:panelGrid>
@@ -1024,7 +1010,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:column />
 			<p:column />
 			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+			<p:commandButton icon="fa fa-close"
+				value="Fechar" process="@this"
 				actionListener="#{planoTratamentoMB.removeFilters}"
 				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
 		</p:panelGrid>
@@ -1085,37 +1072,37 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pnlJustificativaRemove">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-					<p:panelGrid columns="2" layout="grid"
-						id="pnljustificativaExclusao" columnClasses="ui-g-2,ui-g-10"
+					<p:panelGrid columns="2" layout="grid" id="pnljustificativaExclusao"
+						columnClasses="ui-g-2,ui-g-10"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
-
-						<p:outputLabel value="Justificativa:" for="justificativaExclusao" />
+						
+							<p:outputLabel value="Justificativa:" for="justificativaExclusao"/>
 						<p:selectOneMenu
 							rendered="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado != null}"
-							converter="dominio" id="justificativaExclusao" required="true"
+							converter="dominio" id="justificativaExclusao"
+							required="true"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.justificativaExclusaoDominio}">
 							<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
 							<f:selectItems
 								value="#{planoTratamentoMB.justificativasCancelamento}"
 								var="cancelamento" itemLabel="#{cancelamento.nome}"
 								itemValue="#{cancelamento}" />
-						</p:selectOneMenu>
-
-
-
+						</p:selectOneMenu>	
+						
+						
+											
 					</p:panelGrid>
-
-
-					<p:panelGrid columns="1" layout="grid"
-						id="pnljustificativaExclusaoMessage" columnClasses="ui-g-12"
+					
+					
+					<p:panelGrid columns="1" layout="grid" id="pnljustificativaExclusaoMessage"
+						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
-
-						<p:outputLabel style="color:red;font-weight:bold"
-							value="#{planoTratamentoMB.mensagemErroExclusaoProcedimento}" />
-
+						
+						<p:outputLabel style="color:red;font-weight:bold" value="#{planoTratamentoMB.mensagemErroExclusaoProcedimento}" />
+						
 						<p:message for="justificativaExclusao" styleClass="msg" />
 					</p:panelGrid>
-
+					
 				</div>
 			</div>
 		</p:outputPanel>
@@ -1123,11 +1110,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<div class="SeparatorFull"></div>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="fa fa-persist" value="Salvar"
-				update="pnljustificativaExclusao,pnljustificativaExclusaoMessage"
+			<p:commandButton icon="fa fa-persist" value="Salvar" update="pnljustificativaExclusao,pnljustificativaExclusaoMessage"
 				process="@this, :lume:tabViewPaciente:pnlJustificativaRemove"
-				actionListener="#{planoTratamentoMB.salvaJustificativaRemove}"
-				oncomplete="PF('procedimentosTableInPT').filter()" />
+				actionListener="#{planoTratamentoMB.salvaJustificativaRemove}" 				
+					oncomplete="PF('procedimentosTableInPT').filter()"
+				/>
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgJustificativaRemove').hide();"
 				styleClass="NavyButton" />
@@ -1175,10 +1162,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pgProcedimento">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-					<p:outputLabel
-						value="#{planoTratamentoMB.observacoesAdicionarProcedimento}"
-						style="font-weight:bold;color:red"
-						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}" />
+					<p:outputLabel value="#{planoTratamentoMB.observacoesAdicionarProcedimento}" style="font-weight:bold;color:red" 
+						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}"/>
 					<p:panelGrid columns="4" layout="grid"
 						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -1187,30 +1172,28 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.sequencial}" />
 						<h:outputText value="Prioridade: " />
 						<p:inputNumber maxValue="99" decimalPlaces="0" id="nrPrioridade"
-							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />
-
-
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />	
+					
+							
 					</p:panelGrid>
 
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-3, ui-g-9"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Procedimento:" />
-						<p:autoComplete dropdown="true" queryDelay="1000"
-							id="procedimentoSelecionado"
+						<p:autoComplete dropdown="true" queryDelay="1000" id="procedimentoSelecionado"
 							value="#{planoTratamentoMB.procedimentoSelecionado}"
 							completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
 							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 							converter="procedimento" forceSelection="true" scrollHeight="400"
 							minQueryLength="3">
-							<p:ajax event="itemSelect" process="@this"
-								listener="#{planoTratamentoMB.populaValorProc()}"
+							<p:ajax event="itemSelect" process="@this" listener="#{planoTratamentoMB.populaValorProc()}"
 								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
-						</p:autoComplete>
+						</p:autoComplete>						
 					</p:panelGrid>
 
 					<p:panelGrid columns="1" layout="grid" id="convenioInativo"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">						
 						<p:outputPanel
 							rendered="#{planoTratamentoMB.mostraMensagemConvenioNaoVigente}">
 							<div class="ConvenioInativo">
@@ -1223,33 +1206,29 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:panelGrid columns="1" layout="grid" id="painelValor"
 						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:outputLabel value="Valor do procedimento:"
-							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}" />
-
-						<p:inputNumber id="valorNovoPtp"
-							value="#{planoTratamentoMB.valorProc}" required="true"
-							maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-							symbol="R$ " thousandSeparator="."
+						<p:outputLabel value="Valor do procedimento:" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
+						
+						<p:inputNumber id="valorNovoPtp" value="#{planoTratamentoMB.valorProc}"
+							required="true" maxlength="13" maxValue="9999999999.99"
+							decimalSeparator="," symbol="R$ " thousandSeparator="."
 							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
 						</p:inputNumber>
 					</p:panelGrid>
 
-					<p:panelGrid columns="1" layout="grid" columnClasses="ui-g-12"
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:outputLabel
-							value="Inserir mais de uma vez esse procedimento nesse plano?" />
-						<p:selectOneRadio id="inserirMultiplasVezes"
-							value="#{planoTratamentoMB.ptpInserirMuitasVezes}">
+						<p:outputLabel value="Inserir mais de uma vez esse procedimento nesse plano?" />
+						<p:selectOneRadio id="inserirMultiplasVezes" value="#{planoTratamentoMB.ptpInserirMuitasVezes}">
 							<p:ajax event="change" update="ptpQuantasVezes" />
 							<f:selectItem itemLabel="Não" itemValue="#{false}" />
 							<f:selectItem itemLabel="Sim" itemValue="#{true}" />
 						</p:selectOneRadio>
 					</p:panelGrid>
-
+					
 					<p:outputPanel id="ptpQuantasVezes">
 						<p:panelGrid columns="2" layout="grid"
-							columnClasses="ui-g-3,ui-g-3"
-							rendered="#{planoTratamentoMB.ptpInserirMuitasVezes}"
+							columnClasses="ui-g-3,ui-g-3" rendered="#{planoTratamentoMB.ptpInserirMuitasVezes}"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:outputLabel value="Quantas vezes?" />
 							<p:inputNumber
@@ -1261,7 +1240,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			</div>
 		</p:outputPanel>
 		<br />
-
+	
 		<div class="SeparatorFull"></div>
 		<p:outputPanel id="pgProcedimentoBotoes">
 			<p:panelGrid columns="3" layout="grid"
@@ -1271,20 +1250,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					value="Salvar e Continuar"
 					oncomplete="PF('procedimentosTableInPT').clearFilters();"
 					actionListener="#{planoTratamentoMB.salvarContinuar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,procedimentoSelecionado,ptpQuantasVezes,ptpQuantasVezes,inserirMultiplasVezes,valorNovoPtp, lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="Salvar e Fechar"
 					oncomplete="PF('procedimentosTableInPT').clearFilters();"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgNovoProcedimento').hide();"
 					styleClass="NavyButton" />
 			</p:panelGrid>
 		</p:outputPanel>
 	</p:dialog>
-
+	
 	<p:dialog id="editarProcedimento" widgetVar="dlgEditarProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
 		resizable="false" header="#{planoTratamentoMB.headerProcedimentoEdit}"
@@ -1292,10 +1271,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pgProcedimentoEditar">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-					<p:outputLabel
-						value="#{planoTratamentoMB.observacoesAdicionarProcedimento}"
-						style="font-weight:bold;color:red"
-						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}" />
+					<p:outputLabel value="#{planoTratamentoMB.observacoesAdicionarProcedimento}" style="font-weight:bold;color:red" 
+						rendered="#{planoTratamentoMB.observacoesAdicionarProcedimento ne ''}"/>
 					<p:panelGrid columns="4" layout="grid"
 						columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -1305,28 +1282,26 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<h:outputText value="Prioridade: " />
 						<p:inputNumber maxValue="99" decimalPlaces="0"
 							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.prioridade}" />
-
+							
 					</p:panelGrid>
 
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-3, ui-g-9"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Procedimento:" />
-						<p:autoComplete dropdown="true" queryDelay="1000"
-							id="procedimentoSelecionadoEditar"
+						<p:autoComplete dropdown="true" queryDelay="1000" id="procedimentoSelecionadoEditar"
 							value="#{planoTratamentoMB.procedimentoSelecionado}"
 							completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
 							var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 							converter="procedimento" forceSelection="true" scrollHeight="400"
 							minQueryLength="3">
-							<p:ajax event="itemSelect" process="@this,painelValor"
-								listener="#{planoTratamentoMB.populaValorProc()}"
+							<p:ajax event="itemSelect" process="@this,painelValor" listener="#{planoTratamentoMB.populaValorProc()}"
 								update=":lume:tabViewPaciente:convenioInativo,painelValor" />
-						</p:autoComplete>
+						</p:autoComplete>						
 					</p:panelGrid>
 
 					<p:panelGrid columns="1" layout="grid" id="convenioInativoEditar"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">						
 						<p:outputPanel
 							rendered="#{planoTratamentoMB.mostraMensagemConvenioNaoVigente}">
 							<div class="ConvenioInativo">
@@ -1339,210 +1314,194 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:panelGrid columns="1" layout="grid" id="painelValorEditar"
 						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:outputLabel value="Valor do procedimento:"
-							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}" />
-						<p:inputNumber id="valorNovoPtpEditar"
-							value="#{planoTratamentoMB.valorProc}" required="true"
-							maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-							symbol="R$ " thousandSeparator="."
-							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
-						</p:inputNumber>
-
-
+							<p:outputLabel value="Valor do procedimento:" rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"/>
+						<p:inputNumber id="valorNovoPtpEditar" value="#{planoTratamentoMB.valorProc}"
+									required="true" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="R$ " thousandSeparator="."
+									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
+								</p:inputNumber>
+						
+						
 					</p:panelGrid>
 
-
-
-
+					
+					
+					
 				</div>
 			</div>
 		</p:outputPanel>
 		<br />
-
+	
 		<div class="SeparatorFull"></div>
 		<p:outputPanel id="pgProcedimentoBotoesEditar">
 			<p:panelGrid columns="3" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-
+				
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabViewPaciente:pgProcedimentoEditar"
 					value="Salvar e Fechar"
 					actionListener="#{planoTratamentoMB.salvar}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtProcedimentosSelecionadospt" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:dtProcedimentosSelecionadospt"/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgEditarProcedimento').hide();"
 					styleClass="NavyButton" />
 			</p:panelGrid>
 		</p:outputPanel>
 	</p:dialog>
-
-
+	
+	
 	<p:dialog id="dlgSomenteFaces" widgetVar="dlgSomenteFaces"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
-		resizable="false" header="Faces" width="300px;" height="300px;">
-
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<p:outputPanel id="pgSomenteFaces"
-					style="position: relative; width: 300px;height: 200px;">
+		resizable="false" header="Faces"
+		width="300px;" height="300px;">
+		
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:outputPanel id="pgSomenteFaces" style="position: relative; width: 300px;height: 200px;">
 					Selecione abaixo as faces:
-					<br />
-					<p:selectCheckboxMenu
-						value="#{planoTratamentoMB.regiaSomenteFaces.facesArray}"
-						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
-						label="#{regiao.facesArrayLabel}" style="width: 200px;"
-						multiple="true">
-						<p:ajax process="@this"
-							update="@this,:lume:tabViewPaciente:pgSomenteFaces" />
-						<f:selectItems
-							value="#{planoTratamentoMB.regiaSomenteFaces.facesStr}"
-							var="face" itemValue="#{face}" itemLabel="#{face}" />
-					</p:selectCheckboxMenu>
-				</p:outputPanel>
+					<br />								
+					<p:selectCheckboxMenu value="#{planoTratamentoMB.regiaSomenteFaces.facesArray}"
+							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
+							label="#{regiao.facesArrayLabel}" style="width: 200px;" multiple="true"	>	
+								<p:ajax process="@this"								
+								update="@this,:lume:tabViewPaciente:pgSomenteFaces" />					
+							<f:selectItems value="#{planoTratamentoMB.regiaSomenteFaces.facesStr}" var="face"
+								itemValue="#{face}" itemLabel="#{face}" />
+						</p:selectCheckboxMenu>	
+					</p:outputPanel>		
+				</div>
 			</div>
-		</div>
-		<br />
-		<div class="SeparatorFull"></div>
-		<p:panelGrid columns="3" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
-				process="@this, :lume:tabViewPaciente:pgSomenteFaces" value="Salvar"
-				actionListener="#{planoTratamentoMB.actionPersistFacesStatusDente}"
-				update=":lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:pgProcedimentoDiagnostico,lume:tabViewPaciente:dtProcedimentosSelecionadospt"
-				oncomplete="PF('procedimentosTableInPT').filter();PF('dlgSomenteFaces').hide();" />
-			<p:commandButton icon="White fa fa-close" value="Fechar"
-				process="@this" onclick="PF('dlgSomenteFaces').hide();"
-				styleClass="NavyButton" />
-
-		</p:panelGrid>
-	</p:dialog>
-
-
+			<br />
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="3" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
+					process="@this, :lume:tabViewPaciente:pgSomenteFaces"
+					value="Salvar"
+					actionListener="#{planoTratamentoMB.actionPersistFacesStatusDente}"
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento,:lume:tabViewPaciente:pgProcedimentoDiagnostico,lume:tabViewPaciente:dtProcedimentosSelecionadospt"
+					oncomplete="PF('procedimentosTableInPT').filter();PF('dlgSomenteFaces').hide();" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					process="@this" onclick="PF('dlgSomenteFaces').hide();"
+					styleClass="NavyButton" />
+				
+			</p:panelGrid>	
+		</p:dialog>	
+	
+	
 	<p:dialog id="detalhesProcedimento" widgetVar="dlgDetalhesProcedimento"
 		closable="false" responsive="true" modal="true" appendTo=":lume"
-		resizable="false"
-		header="Detalhes e Diagnóstico do Procedimento #{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.procedimento.descricao}"
+		resizable="false" header="Detalhes e Diagnóstico do Procedimento #{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.procedimento.descricao}"
 		width="50%">
-
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<p:outputPanel id="pgDetalheProcedimento"
-					style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
-
-					<p:scrollPanel mode="native"
+		
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+			<p:outputPanel id="pgDetalheProcedimento" style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+			
+				<p:scrollPanel mode="native"
 						style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
-
-						<p:remoteCommand name="onDentesRegiaoBlur"
-							process="@this, :lume:tabViewPaciente:dentesOuRegioes"
+			
+					<p:remoteCommand name="onDentesRegiaoBlur" process="@this, :lume:tabViewPaciente:dentesOuRegioes"
 							actionListener="#{planoTratamentoMB.handleDentesRegioesSelects}"
 							update=":lume:tabViewPaciente:pgDetalheProcedimento" />
+							
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-3, ui-g-9"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						
+						<h:outputText value="Selecione os Dentes/Regiões" />
+						<p:selectCheckboxMenu value="#{planoTratamentoMB.dentesRegioesEscolhidas}" id="dentesOuRegioes"
+							filterMatchMode="contains" filter="true" multiple="true" onHide="onDentesRegiaoBlur()" 
+							emptyLabel="Selecione o Dente/Região">
+							<f:selectItems value="#{planoTratamentoMB.dentes}" />
+						</p:selectCheckboxMenu>
 
-						<p:panelGrid columns="2" layout="grid"
-							columnClasses="ui-g-3, ui-g-9"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-
-							<h:outputText value="Selecione os Dentes/Regiões" />
-							<p:selectCheckboxMenu
-								value="#{planoTratamentoMB.dentesRegioesEscolhidas}"
-								id="dentesOuRegioes" filterMatchMode="contains" filter="true"
-								multiple="true" onHide="onDentesRegiaoBlur()"
-								emptyLabel="Selecione o Dente/Região">
-								<f:selectItems value="#{planoTratamentoMB.dentes}" />
-							</p:selectCheckboxMenu>
-
-							<ui:remove>
-								<!-- Adicionar :lume:tabViewPaciente:facesProcedimento no
+						<ui:remove>
+							<!-- Adicionar :lume:tabViewPaciente:facesProcedimento no
 								p:remoteCommand 'name="onDentesRegiaoBlur"' -->
-								<h:outputText value="Selecione as Faces" />
-								<p:selectCheckboxMenu id="facesProcedimento"
-									filterMatchMode="contains" filter="true"
-									value="#{planoTratamentoMB.facesEscolhidas}"
-									disabled="#{planoTratamentoMB.disableFacesMulti}"
-									emptyLabel="Selecione as faces"
-									style="width: 100%;text-align: left" multiple="true">
-									<f:selectItems
-										value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
-										itemValue="#{face}" itemLabel="#{face}" />
-								</p:selectCheckboxMenu>
-							</ui:remove>
-
-							<h:outputText value="Selecione os Diagnósticos" />
-							<p:selectCheckboxMenu
-								value="#{planoTratamentoMB.diagnosticosSelecionados}"
-								converter="statusDente" multiple="true" autoWidth="false"
-								filter="true" filterMatchMode="custom" filterFunction="contains"
-								emptyLabel="Selecione um diagnóstico">
-								<f:selectItems value="#{planoTratamentoMB.statusDente}"
-									var="statusDente" itemLabel="#{statusDente.descricao}"
-									itemValue="#{statusDente}" />
+							<h:outputText value="Selecione as Faces" />
+							<p:selectCheckboxMenu id="facesProcedimento"
+								filterMatchMode="contains" filter="true"
+								value="#{planoTratamentoMB.facesEscolhidas}"
+								disabled="#{planoTratamentoMB.disableFacesMulti}"
+								emptyLabel="Selecione as faces"
+								style="width: 100%;text-align: left" multiple="true">
+								<f:selectItems
+									value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
+									itemValue="#{face}" itemLabel="#{face}" />
 							</p:selectCheckboxMenu>
-
-							<p:commandButton styleClass="GreenButton"
-								process="@this, :lume:tabViewPaciente:pgDetalheProcedimento"
-								value="Adicionar"
-								actionListener="#{planoTratamentoMB.actionAdicionaDiagnosticoDetalhesProcedimento}"
-								update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
-								oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
-
-						</p:panelGrid>
-
-						<p:outputPanel
-							id="statusDenteRegiaoSelecionadosDetalhesProcedimento">
-							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-								var="regiao" editable="true"
-								widgetVar="dtStatusDenteRegiaoSelecionadosDetalhesProcedimento"
-								value="#{planoTratamentoMB.diagnosticosLimpo}" rows="10"
-								paginator="true" paginatorPosition="bottom">
-
+						</ui:remove>
+						
+						<h:outputText value="Selecione os Diagnósticos" />
+						<p:selectCheckboxMenu
+							value="#{planoTratamentoMB.diagnosticosSelecionados}"
+							converter="statusDente"  multiple="true"
+							 autoWidth="false" filter="true" filterMatchMode="custom" filterFunction="contains"
+							emptyLabel="Selecione um diagnóstico">
+							<f:selectItems value="#{planoTratamentoMB.statusDente}"
+								var="statusDente" itemLabel="#{statusDente.descricao}"
+								itemValue="#{statusDente}" />
+						</p:selectCheckboxMenu>
+						
+						<p:commandButton styleClass="GreenButton"
+							process="@this, :lume:tabViewPaciente:pgDetalheProcedimento"
+							value="Adicionar"
+							actionListener="#{planoTratamentoMB.actionAdicionaDiagnosticoDetalhesProcedimento}"
+							update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
+							oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
+				
+					</p:panelGrid>
+					
+					<p:outputPanel id="statusDenteRegiaoSelecionadosDetalhesProcedimento">
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							var="regiao"
+							editable="true" widgetVar="dtStatusDenteRegiaoSelecionadosDetalhesProcedimento"
+							value="#{planoTratamentoMB.diagnosticosLimpo}" rows="10"
+							paginator="true" paginatorPosition="bottom">
+							
 								<p:column>
-									<p:commandButton styleClass="NavyButton" process="@this"
-										icon="fa fa-trash"
+									<p:commandButton styleClass="NavyButton"
+										process="@this" icon="fa fa-trash"
 										actionListener="#{planoTratamentoMB.removeDiagnostico(regiao)}"
 										update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
 										oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
 								</p:column>
-
+							
 								<p:column sortBy="#{regiao.get().descricao}"
 									headerText="Dente/Região">
 									<h:outputText value="#{regiao.get().descricao}" />
 								</p:column>
-
+								
 								<p:column sortBy="#{regiao.get().statusDente.descricao}"
 									headerText="Diagnóstico">
-									<p:selectOneMenu value="#{regiao.get().statusDente}"
-										converter="statusDente" filter="true"
-										filterMatchMode="containse" autoWidth="false">
-										<f:selectItem itemLabel="Selecione um Diagnóstico"
-											itemValue="#{null}" />
-										<f:selectItems value="#{planoTratamentoMB.statusDente}"
-											var="diagnostico" itemLabel="#{diagnostico.descricao}"
-											itemValue="#{diagnostico}" />
+									<p:selectOneMenu value="#{regiao.get().statusDente}" converter="statusDente"
+										filter="true" filterMatchMode="containse" autoWidth="false">
+										<f:selectItem itemLabel="Selecione um Diagnóstico" itemValue="#{null}" />
+										<f:selectItems value="#{planoTratamentoMB.statusDente}" var="diagnostico"
+											itemLabel="#{diagnostico.descricao}" itemValue="#{diagnostico}" />
 									</p:selectOneMenu>
 								</p:column>
-
+								
 								<p:column sortBy="#{regiao.get().facesArrayStr}"
 									headerText="Faces">
 									<h:outputText value="#{regiao.get().facesArrayStr}" />
-									<p:commandButton styleClass="NavyButton"
-										rendered="#{!planoTratamentoMB.escondeEditFaces(regiao)}"
+									<p:commandButton styleClass="NavyButton" rendered="#{!planoTratamentoMB.escondeEditFaces(regiao)}"
 										process="@this" icon="ui-icon-add"
 										actionListener="#{planoTratamentoMB.editaFacesDiagnostico(regiao)}"
 										update=":lume:tabViewPaciente:pgHeaderFaceDetalheProcedimento, :lume:tabViewPaciente:pgFaceDetalheProcedimento"
 										oncomplete="PF('dlgFacesDetalhesProcedimento').show()"
 										style="margin-left: 15px;" />
 								</p:column>
-
-							</p:dataTable>
-							<br />
-							<h:outputText id="observacoesDetalhes"
-								value="#{planoTratamentoMB.observacoesDetalhes}"
-								style="font-weight:bold" />
-						</p:outputPanel>
+								
+						</p:dataTable>
+						<br/>
+						<h:outputText id="observacoesDetalhes" value="#{planoTratamentoMB.observacoesDetalhes}" style="font-weight:bold"/>
+					</p:outputPanel>
 					</p:scrollPanel>
-				</p:outputPanel>
+				</p:outputPanel>		
+				</div>
 			</div>
-		</div>
-
+	
 		<br />
 		<div class="SeparatorFull"></div>
 		<p:panelGrid columns="3" layout="grid"
@@ -1558,36 +1517,32 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
-
-	<p:dialog id="facesDetalhesProcedimento"
-		widgetVar="dlgFacesDetalhesProcedimento" closable="false"
-		responsive="true" modal="true" appendTo=":lume" resizable="false"
+	
+	<p:dialog id="facesDetalhesProcedimento" widgetVar="dlgFacesDetalhesProcedimento"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false"
 		width="700px">
-		<p:ajax event="close"
-			listener="#{planoTratamentoMB.fechaTelaFacesDiagnostico()}" />
+		<p:ajax event="close" listener="#{planoTratamentoMB.fechaTelaFacesDiagnostico()}" />
 		<f:facet name="header">
 			<p:outputPanel id="pgHeaderFaceDetalheProcedimento">
-				<p:outputLabel
-					value="Faces do #{planoTratamentoMB.ptprSelecionado.get().descricao}" />
+				<p:outputLabel value="Faces do #{planoTratamentoMB.ptprSelecionado.get().descricao}" />
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="pgFaceDetalheProcedimento">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
-
+				
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-3, ui-g-9"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding firstCellFullWidth">
-
-						<p:selectManyCheckbox
-							value="#{planoTratamentoMB.ptprSelecionado.get().facesArray}">
-							<f:selectItems
-								value="#{planoTratamentoMB.ptprSelecionado.get().facesPossiveis}"
-								var="face" itemLabel="#{face}" itemValue="#{face}" />
-						</p:selectManyCheckbox>
-
+						
+						<p:selectManyCheckbox value="#{planoTratamentoMB.ptprSelecionado.get().facesArray}">
+					        <f:selectItems value="#{planoTratamentoMB.ptprSelecionado.get().facesPossiveis}" var="face" 
+					        	itemLabel="#{face}" itemValue="#{face}" />
+					    </p:selectManyCheckbox>
+				
 					</p:panelGrid>
-
+				
 				</div>
 			</div>
 		</p:outputPanel>
@@ -1597,8 +1552,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 				actionListener="#{planoTratamentoMB.actionPersistFacesDiagnostico()}"
-				process="@this, :lume:tabViewPaciente:pgFaceDetalheProcedimento"
-				value="Salvar"
+				process="@this, :lume:tabViewPaciente:pgFaceDetalheProcedimento" value="Salvar"
 				update=":lume:tabViewPaciente:statusDenteRegiaoSelecionadosDetalhesProcedimento"
 				oncomplete="PF('dtStatusDenteRegiaoSelecionadosDetalhesProcedimento').filter()" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -1606,11 +1560,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
-
-	<p:dialog id="alterarDataAprovacao" widgetVar="alterarDataAprovacao"
-		focus="btnSalvarEdicaoDataAprovacao"
-		header="Alterar Data de Aprovação de Orçamento" responsive="true"
-		modal="true" appendTo=":lume" closable="false">
+	
+	<p:dialog id="alterarDataAprovacao" widgetVar="alterarDataAprovacao" focus="btnSalvarEdicaoDataAprovacao"
+		header="Alterar Data de Aprovação de Orçamento" responsive="true" modal="true"
+		appendTo=":lume" closable="false">
 		<p:outputPanel id="pgAlterarDataAprovacao">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
@@ -1618,11 +1571,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
 						style="border:0px none; background-color:transparent;">
-
-						<p:outputLabel for="novaDataAprovacao"
-							value="Selecione a nova data de Aprovação: " />
-						<p:calendar id="novaDataAprovacao"
-							value="#{planoTratamentoMB.novaDataAprovacao}"
+						
+						<p:outputLabel for="novaDataAprovacao" value="Selecione a nova data de Aprovação: " />
+						<p:calendar id="novaDataAprovacao" value="#{planoTratamentoMB.novaDataAprovacao}"
 							pattern="dd/MM/yyyy" showWeeksBar="false"
 							locale="#{lumeSecurity.locale}" navigator="true"
 							yearRange="-0:+0" mask="true">
@@ -1636,24 +1587,23 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<div class="SeparatorFull"></div>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="White fa fa-save"
-				id="btnSalvarEdicaoDataAprovacao" value="Salvar"
-				actionListener="#{planoTratamentoMB.actionSalvarDataAprovacaoOrcamento}"
+			<p:commandButton icon="White fa fa-save" id="btnSalvarEdicaoDataAprovacao"
+				value="Salvar" actionListener="#{planoTratamentoMB.actionSalvarDataAprovacaoOrcamento}"
 				update=":lume:tabViewPaciente:orcamentoViewTable, pgAlterarDataAprovacao"
 				process="@this, :lume:tabViewPaciente:pgAlterarDataAprovacao"
 				styleClass="GreenButton">
 				<p:confirm header="Confirmação"
-					message="Deseja realmente alterar a data de aprovação do orçamento?"
-					icon="ui-icon-alert" />
+					message="Deseja realmente alterar a data de aprovação do orçamento?" icon="ui-icon-alert" />
 			</p:commandButton>
 			<p:commandButton icon="White fa fa-close" value="Fechar"
-				oncomplete="PF('alterarDataAprovacao').hide()" process="@this"
-				styleClass="NavyButton" />
+				oncomplete="PF('alterarDataAprovacao').hide()"
+				process="@this" styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
 
 	<p:dialog id="orcamentos" widgetVar="dlgOrcamentos" responsive="true"
-		modal="true" appendTo=":lume" resizable="false" header="Orçamentos"
+		modal="true" appendTo=":lume" resizable="false"
+		header="Orçamentos"
 		width="70%">
 
 		<p:outputPanel style="max-height: 80vh">
@@ -1667,18 +1617,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							update=":lume:tabViewPaciente:painelNegociacao,:lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
 							value="Novo Orçamento" process="@this" styleClass="NavyButton"
 							disabled="#{planoTratamentoMB.entity.status == 'S'}" />
-
-						<h:panelGroup></h:panelGroup>
-						<h:panelGroup>
-							<p:commandButton value="Videos tutoriais"
-								icon="White fa fa-youtube-play White"
-								oncomplete="PF('dlgListaVideos').show()"
-								actionListener="#{planoTratamentoMB.setVideosOrcamento()}"
-								process="@this" update="painelVideoList" />
-						</h:panelGroup>
+					
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup>					
+						<p:commandButton value="Videos tutoriais"
+						icon="White fa fa-youtube-play White"
+						oncomplete="PF('dlgListaVideos').show()"	
+						actionListener="#{planoTratamentoMB.setVideosOrcamento()}"									
+						process="@this" update="painelVideoList"/>						
+					</h:panelGroup>
 					</p:panelGrid>
-
-
 
 					<p:dataTable filterDelay="1500" reflow="true" style="height: 100%"
 						emptyMessage="Nenhum orçamento cadastrado" id="tbViewOrcamento"
@@ -1697,34 +1645,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:orcamentoViewTable, :lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView"
 								oncomplete="PF('dlgViewOrcamento').show();"
 								styleClass="NavyButton" icon="fa fa-eye" />
-							<p:commandButton icon="White fa fa-print" process="@this"
-								title="Imprimir"
+							<p:commandButton icon="White fa fa-print" process="@this" title="Imprimir"
 								update=":lume:tabViewPaciente:orcamentoViewPrint, :lume:tabViewPaciente:orcamentoViewPrintHeader"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								oncomplete="PF('dlgPrintOrcamento').show()"
 								styleClass="NavyButton" />
 							<p:commandButton icon="fa fa-trash" process="@this"
+								actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:tbViewOrcamento"
 								styleClass="NavyButton" title="Cancelar Orçamento"
-								oncomplete="PF('confirmation').show()">
-								<p:confirmDialog id="confirmation"
-									message="O que deseja fazer com esse orçamento?"
-									header="Escolha uma opção" severity="alert" global="true"
-									widgetVar="confirmation" appendToBody="true">
-									<p:commandButton id="confirm" value="Sim"
-										update=":lume:tabViewPaciente:tbViewOrcamento,confirmation"
-										onclick="PF('confirmation').hide();"
-										actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
-										process="@this">
-										<p:confirm header="Confirmação"
-											message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
-									</p:commandButton>
-									<p:commandButton id="decline" value="Não"
-										onclick="PF('confirmation').hide()" type="button" />
-								</p:confirmDialog>
+								rendered="#{orcamento.isAprovado()}">
+								<p:confirm header="Confirmação"
+									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 							</p:commandButton>
-							<p:commandButton process="@this"
-								title="Alterar Data de Aprovação"
+							<p:commandButton process="@this" title="Alterar Data de Aprovação"
 								actionListener="#{planoTratamentoMB.actionEditaDataAprovacaoOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:pgAlterarDataAprovacao"
 								oncomplete="PF('alterarDataAprovacao').show();"
@@ -1742,12 +1676,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						<p:column headerText="Criador"
-							filterBy="#{orcamento.profissionalCriacao.dadosBasico.nome}"
-							filterMatchMode="contains"
-							sortBy="#{orcamento.profissionalCriacao.dadosBasico.nome}">
-							<h:outputText
-								value="#{orcamento.profissionalCriacao.dadosBasico.nome}" />
+						<p:column headerText="Criador" filterBy="#{orcamento.profissionalCriacao.dadosBasico.nome}"
+							filterMatchMode="contains" sortBy="#{orcamento.profissionalCriacao.dadosBasico.nome}">
+							<h:outputText value="#{orcamento.profissionalCriacao.dadosBasico.nome}" />
 						</p:column>
 						<p:column headerText="Valor do Desconto"
 							filterBy="#{orcamento.descontoValor}" filterMatchMode="contains"
@@ -1766,9 +1697,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</h:outputText>
 						</p:column>
 						<p:column headerText="Data de Aprovação"
-							filterBy="#{orcamento.dataAprovacaoStr}"
-							filterMatchMode="contains" sortBy="#{orcamento.dataAprovacaoStr}">
-							<h:outputText value="#{orcamento.dataAprovacaoStr}" />
+							filterBy="#{orcamento.dataAprovacaoStr}" filterMatchMode="contains"
+							sortBy="#{orcamento.dataAprovacaoStr}">
+							<h:outputText value="#{orcamento.dataAprovacaoStr}" />						
 						</p:column>
 						<p:column headerText="Observações"
 							filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
@@ -2080,7 +2011,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:panelGrid>
 						<p:outputLabel style="font-weight:bold;font-size:18px"
 							value="#{planoTratamentoMB.mensagemCalculoOrcamento}"></p:outputLabel>
-
+					
 					</p:fieldset>
 					<br />
 				</p:outputPanel>
@@ -2108,46 +2039,43 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
 				styleClass="OrangeButton"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
-					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
+					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />			
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
 				styleClass="NavyButton" />
 			<ui:remove>
-				<p:commandButton icon="White fa fa-gear"
-					value="Não aprovar Orçamento"
-					process="@this, :lume:tabViewPaciente:pnViewOrcamento"
-					update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
-					styleClass="RedButton"
-					oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').show()"
-					disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
+			<p:commandButton icon="White fa fa-gear" value="Não aprovar Orçamento"
+				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
+				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
+				styleClass="RedButton"
+				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').show()"
+				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			</ui:remove>
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgJustificativaNaoAprovarOrcamento"
-		id="dlgJustificativaNaoAprovarOrcamento" appendTo=":lume" modal="true"
-		closable="false" width="50%">
+	<p:dialog widgetVar="dlgJustificativaNaoAprovarOrcamento" id="dlgJustificativaNaoAprovarOrcamento"
+		appendTo=":lume" modal="true" closable="false" width="50%">
 		<p:panelGrid columns="1" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<h:panelGroup>
-				<p:outputLabel value="Informe a justificativa:" />
-				<p:inputText
-					value="#{planoTratamentoMB.orcamentoSelecionado.justificativaNaoAprovacao}">
-					<p:ajax process="@this" />
+				<p:outputLabel value="Informe a justificativa:"/>
+				<p:inputText value="#{planoTratamentoMB.orcamentoSelecionado.justificativaNaoAprovacao}" >
+					<p:ajax process="@this"/>
 				</p:inputText>
 			</h:panelGroup>
 		</p:panelGrid>
-
+		
 		<p:panelGrid columns="3" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton value="Salvar" icon="fa fa-save"
+			<p:commandButton value="Salvar" icon="fa fa-save" 
 				actionListener="#{planoTratamentoMB.actionNaoAprovaOrcamento()}"
 				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').hide();"
 				styleClass="GreenButton" process="@this">
 			</p:commandButton>
 			<h:panelGroup></h:panelGroup>
-			<p:commandButton value="Cancelar" icon="fa fa-close"
+			<p:commandButton value="Cancelar" icon="fa fa-close" 
 				oncomplete="PF('dlgJustificativaNaoAprovarOrcamento').hide();"
 				styleClass="RedButton" process="@this">
 			</p:commandButton>
@@ -2512,7 +2440,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								update=":lume:tabViewPaciente:pgProcedimentoDiagnostico">
 								<f:param name="dente" value="#{procedimento.denteObj.descricao}" />
 							</p:commandLink>
-						</p:column>
+						</p:column>						
 						<p:column headerText="Diagnósticos">
 							<h:outputText escape="false"
 								value="#{planoTratamentoMB.diagnosticosDente(procedimento,'position: inherit;')}" />
@@ -2553,27 +2481,25 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="dlgSuspensaoJustificativa"
-		widgetVar="dlgSuspensaoJustificativa" responsive="true" modal="true"
-		appendTo=":lume" resizable="false"
+	<p:dialog id="dlgSuspensaoJustificativa" widgetVar="dlgSuspensaoJustificativa"
+		responsive="true" modal="true" appendTo=":lume" resizable="false"
 		header="Suspender plano de tratamento" width="600">
 
 		<p:panel id="pnSuspenderPlano" styleClass="BordNone">
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-				<p:outputLabel value="Informe a justificativa da suspensão do plano" />
-				<p:inputTextarea id="textSuspensao"
-					value="#{planoTratamentoMB.entity.justificativaSuspensao}">
+				<p:outputLabel value="Informe a justificativa da suspensão do plano"/>
+				<p:inputTextarea id="textSuspensao" value="#{planoTratamentoMB.entity.justificativaSuspensao}">
 				</p:inputTextarea>
-
+				
 			</p:panelGrid>
 			<br />
 			<div class="SeparatorFull"></div>
 			<p:panelGrid columns="2" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid">
-				<p:commandButton id="persistSuspensao" icon="White fa fa-save"
-					value="Salvar"
+				<p:commandButton id="persistSuspensao"
+					icon="White fa fa-save" value="Salvar"
 					actionListener="#{planoTratamentoMB.actionSuspender}"
 					update=":lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:viewPlanoTratamento, :lume:tabViewPaciente:pnViewPlanoTratamento"
 					process="@this, textSuspensao"
@@ -2660,24 +2586,21 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		responsive="true" width="800" modal="true" appendTo=":lume"
 		onHide="resize('#lume\\:tabViewPaciente\\:dlgProcedimento');">
 		<h:panelGroup id="pgProcedimentoDiagnostico">
-			<p:remoteCommand name="onBlurRegioesOdontograma"
+			<p:remoteCommand name="onBlurRegioesOdontograma" 
 				process="@this, :lume:tabViewPaciente:regioes"
 				update=":lume:tabViewPaciente:dtStatusDenteRegiaoSelecionados" />
-			<p:remoteCommand name="onBlurDentesOdontograma"
+			<p:remoteCommand name="onBlurDentesOdontograma" 
 				process="@this, :lume:tabViewPaciente:dentesOdontograma"
 				update=":lume:tabViewPaciente:dtStatusDenteSelecionados" />
-
+		
 			<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
 				<p:outputLabel for="dentesOdontograma" value="Dentes: " />
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid NoPaddingSides">
-					<p:selectCheckboxMenu id="dentesOdontograma" multiple="true"
-						onHide="onBlurDentesOdontograma()"
-						value="#{planoTratamentoMB.dentesEscolhidasOdontograma}"
-						filter="true" filterMatchMode="contains" autoWidth="false"
-						emptyLabel="Selecione um Dente">
-						<f:selectItems
-							value="#{planoTratamentoMB.dentesPossiveisOdontograma}"
+					<p:selectCheckboxMenu id="dentesOdontograma" multiple="true" onHide="onBlurDentesOdontograma()"
+						value="#{planoTratamentoMB.dentesEscolhidasOdontograma}" filter="true"
+						filterMatchMode="contains" autoWidth="false" emptyLabel="Selecione um Dente">
+						<f:selectItems value="#{planoTratamentoMB.dentesPossiveisOdontograma}"
 							var="dente" itemLabel="#{dente}" itemValue="#{dente}" />
 					</p:selectCheckboxMenu>
 				</p:panelGrid>
@@ -2688,13 +2611,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:outputLabel for="regioes" value="Regiões: " />
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid NoPaddingSides">
-					<p:selectCheckboxMenu id="regioes" multiple="true"
-						onHide="onBlurRegioesOdontograma()"
-						value="#{planoTratamentoMB.regioesEscolhidasOdontograma}"
-						filter="true" filterMatchMode="contains" autoWidth="false"
-						emptyLabel="Selecione uma região">
-						<f:selectItems
-							value="#{planoTratamentoMB.regioesPossiveisOdontograma}"
+					<p:selectCheckboxMenu id="regioes" multiple="true" onHide="onBlurRegioesOdontograma()"
+						value="#{planoTratamentoMB.regioesEscolhidasOdontograma}" filter="true"
+						filterMatchMode="contains" autoWidth="false" emptyLabel="Selecione uma região">
+						<f:selectItems value="#{planoTratamentoMB.regioesPossiveisOdontograma}" 
 							var="#{regiao}" itemLabel="#{regiao}" itemValue="#{regiao}" />
 					</p:selectCheckboxMenu>
 				</p:panelGrid>
@@ -2732,8 +2652,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 					id="dtStatusDenteSelecionados" var="regiao" editable="true"
-					value="#{planoTratamentoMB.getDiagnosticosDentes()}" rows="10"
-					paginator="true" paginatorPosition="bottom">
+					value="#{planoTratamentoMB.getDiagnosticosDentes()}"
+					rows="10" paginator="true" paginatorPosition="bottom">
 					<p:column sortBy="#{regiao.dente.descricaoCompleta}"
 						headerText="Dente">
 						<h:outputText value="#{regiao.dente.descricaoCompleta}" />
@@ -2743,20 +2663,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<h:outputText value="#{regiao.statusDente.descricao}" />
 					</p:column>
 					<p:column headerText="Face">
-
-						<p:outputLabel value="#{regiao.facesArray}"></p:outputLabel>
-
-						<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
-							process="@this" style="margin-left: 15px;"
-							actionListener="#{planoTratamentoMB.abreSomenteFaces(regiao)}"
-							oncomplete="PF('dlgSomenteFaces').show()" title="Detalhes"
-							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
-							update="@this,:lume:tabViewPaciente:pnDenteOdontograma,:lume:tabViewPaciente:procedimentosOdontograma,lume:tabViewPaciente:pgSomenteFaces" />
-
-
-
-
-
+					
+					<p:outputLabel value="#{regiao.facesArray}"></p:outputLabel>
+					
+					<p:commandButton styleClass="NavyButton" icon="ui-icon-add"
+									process="@this" style="margin-left: 15px;"
+									actionListener="#{planoTratamentoMB.abreSomenteFaces(regiao)}"
+									oncomplete="PF('dlgSomenteFaces').show()" 
+									title="Detalhes" disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
+									update="@this,:lume:tabViewPaciente:pnDenteOdontograma,:lume:tabViewPaciente:procedimentosOdontograma,lume:tabViewPaciente:pgSomenteFaces" />
+						
+					
+					
+					
+					
 					</p:column>
 					<p:column width="10%">
 						<p:commandButton icon="White fa fa-minus White"
@@ -2772,7 +2692,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					id="dtStatusDenteRegiaoSelecionados" var="regiao" editable="true"
 					value="#{planoTratamentoMB.getDiagnosticosRegioes()}" rows="10"
 					paginator="true" paginatorPosition="bottom">
-					<p:column sortBy="#{regiao.regiao}" headerText="Região">
+					<p:column sortBy="#{regiao.regiao}"
+						headerText="Região">
 						<h:outputText value="#{regiao.regiao}" />
 					</p:column>
 					<p:column sortBy="#{regiao.statusDente.descricao}"
@@ -2828,7 +2749,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<h:outputText id="descricao"
 						value="#{procedimento.procedimento.descricao}" />
 				</p:column>
-
+				
 				<p:column headerText="Região"
 					rendered="#{planoTratamentoMB.enableRegioes}">
 					<p:selectOneMenu id="regioes" value="#{procedimento.regiao}"
@@ -2893,18 +2814,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				PF('evolucao').hide();
 			}
 		}
-
+		
 		//essas duas funcoes abaixo server para que a busca no selectCheckboxMenu fucione com ou sem acento
 		//TODO necessario colocar global para usar em todas as paginas.
 		function contains(itemLabel, filterValue) {
-			return itemLabel.includes(filterValue)
-					|| specialCharacters(itemLabel).includes(filterValue);
+		    return itemLabel.includes(filterValue) || specialCharacters(itemLabel).includes(filterValue);
 		}
 
-		function specialCharacters(input) {
-			var c = input.toLowerCase();
-			return c.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+		function specialCharacters(input){
+		           var c=input.toLowerCase();
+		           return c.normalize("NFD").replace(/[\u0300-\u036f]/g, "");		        
 		}
+		
 	</script>
 
 </ui:composition>
