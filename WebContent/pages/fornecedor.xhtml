@@ -149,9 +149,14 @@
 
 					<p:outputLabel id="tbDtPrincipal" styleClass="BordNone">
 
-						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{fornecedorMB.fornecedores}" var="fornecedor" rows="7" paginator="true"
-							selection="#{fornecedorMB.entity}" selectionMode="single" rowKey="#{fornecedor}" paginatorPosition="bottom" paginatorAlwaysVisible="false" binding="#{fornecedorMB.tabelaFornecedor}">
-							<p:ajax event="rowSelect" update=":lume:pnPrincipal" />
+						<p:dataTable filterDelay="1500"  reflow="true"
+							emptyMessage="" id="dtPrincipal"
+							value="#{fornecedorMB.fornecedores}"
+							var="fornecedor" rows="7" paginator="true"
+							rowKey="#{fornecedor}" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false"
+							binding="#{fornecedorMB.tabelaFornecedor}">
+
 							<f:facet name="header">Fornecedores</f:facet>
 							 <p:column headerText="Ações" width="20%">
 							 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
