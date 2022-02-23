@@ -572,20 +572,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          * List<FaturaItem> itens = new ArrayList<>(fatura.getItens()); if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) { itens.forEach(item -> { try { String pt =
          * PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaItemOrigem(item).getDescricao(); item.setDescricaoItem(item.getDescricaoItem() + " [" + pt + "]"); } catch (Exception e) {
          * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
-         */
-        try {
-            if(this.getEntity().getPaciente() != null) {
-                if(this.getEntity().getPaciente().getId() != fatura.getPaciente().getId()) {
-                    String log = "FALHA AO CARREGAR FATURA DO PACIENTE \nEntity MB: " + this.getEntity().getPaciente().getId() + "\nEntity Fatura: " + fatura.getPaciente().getId();
-                    Usuario user = new UsuarioBO().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario());
-                    LogEmpresaSingleton.getInstance().criaLog(new Date(), user, UtilsFrontEnd.getEmpresaLogada(), log);
-                }
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Erro no visualizaFatura log");
-        }
-        
+         */        
         setEntity(fatura);
         fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));
         setShowLancamentosCancelados(false);
