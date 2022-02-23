@@ -343,4 +343,54 @@ function topPage() {
 		    }
 			return v;
 		}
-	/* ]]> */	
+	/* ]]> */
+
+	PrimeFaces.widget.SelectOneMenu.prototype.bindConstantEvents = function() {
+	        var a = this;
+	        PrimeFaces.utils.registerHideOverlayHandler(this, "mousedown." + this.id + "_hide", a.panel, function() {
+	            return a.label.add(a.menuIcon)
+	        }, 
+	        function(c, b) {
+	            if (!(a.panel.is(b) || a.panel.has(b).length > 0)) {
+	                a.hide();
+	                setTimeout(function() {
+	                    a.revert();
+	                    a.changeAriaValue(a.getActiveItem())
+	                }, 2)
+	            }
+	        });
+			
+			//REMOÇÃO DOS EVENTOS DE RESIZE E SCROLL DO SELECTONEMENU
+	        // PrimeFaces.utils.registerResizeHandler(this, "resize." + this.id + "_hide", a.panel, function() {
+	        //     a.hide()
+	        // });
+			//PrimeFaces.utils.registerScrollHandler(this, "scroll." + this.id + "_hide", function() {
+			//	a.hide()
+			//});
+    	}
+		
+		PrimeFaces.widget.AutoComplete.prototype.bindStaticEvents =function() {
+		    var a = this;
+		    this.bindKeyEvents();
+		    this.bindDropdownEvents();
+		    if (PrimeFaces.env.browser.mobile) {
+		        this.dropdown.on("touchstart", function() {
+		            a.touchToDropdownButton = true
+		        })
+		    }
+		    PrimeFaces.utils.registerHideOverlayHandler(this, "mousedown." + this.id + "_hide", a.panel, function() {
+		        return a.itemtip
+		    }, function(c, b) {
+		        if (!(a.panel.is(b) || a.panel.has(b).length > 0)) {
+		            a.hide()
+		        }
+		    });
+			
+			//REMOÇÃO DOS EVENTOS DE RESIZE E SCROLL DO AUTOCOMPLETE
+			//PrimeFaces.utils.registerResizeHandler(this, "resize." + this.id + "_hide", a.panel, function() {
+			//	a.hide()
+			//});
+			//PrimeFaces.utils.registerScrollHandler(this, "scroll." + this.id + "_hide", function() {
+			//	a.hide()
+			//})
+		}
