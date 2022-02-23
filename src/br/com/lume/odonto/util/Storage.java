@@ -29,7 +29,9 @@ public class Storage {
 
     private static CloudBlobClient blobClient;
 
-    public static final String AZURE_PATH_ANEXO_EXAME = "/anexo-exame";
+    public static final String AZURE_PATH_RAIZ = "/clinica";
+    
+    public static final String AZURE_PATH_EXAME = "/exames";
 
     private Storage() {
         init();
