@@ -2887,11 +2887,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton icon="fa fa-trash" process="@this"
+					<p:commandButton icon="fa fa-save" process="@this"
 						actionListener="#{planoTratamentoMB.actionRemoverOrcamento()}"
 						update=":lume:tabViewPaciente:tbViewOrcamento"
 						oncomplete="PF('justificativaCancelamento').hide();"
-						value="Cancelar Orçamento" styleClass="NavyButton">
+						value="Salvar" styleClass="GreenButton">
 					</p:commandButton>
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" styleClass="NavyButton"
