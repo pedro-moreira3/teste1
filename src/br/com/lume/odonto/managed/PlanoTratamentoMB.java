@@ -1774,6 +1774,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 orcamento.setStatus("Não Aprovado");
                 OrcamentoSingleton.getInstance().getBo().persist(orcamento);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                carregaOrcamentos();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1873,7 +1874,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
 
             //atualizar os status para "Não Aprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
-            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().ListAllByPlanoTratamento(this.getEntity());
+            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
 
             for (Orcamento o : orcamentosParaAtualizar) {
                 boolean atualizarStatusOrcamento = false;
