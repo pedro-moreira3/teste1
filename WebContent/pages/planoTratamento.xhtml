@@ -2874,7 +2874,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<h:panelGroup styleClass="">
+				<h:panelGroup id="pnlJustificativa" styleClass="">
 					<p:outputLabel for="justificar" value="Justificativa" />
 					<p:inputTextarea id="justificar" rows="7"
 						value="#{planoTratamentoMB.justificativaCancelamento}"
@@ -2887,11 +2887,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton icon="fa fa-save" process="@this"
+					<p:commandButton icon="fa fa-save" process="@this,pnlJustificativa, justificar"
 						actionListener="#{planoTratamentoMB.actionRemoverOrcamento()}"
-						update=":lume:tabViewPaciente:tbViewOrcamento"
-						oncomplete="PF('justificativaCancelamento').hide();"
-						value="Salvar" styleClass="GreenButton">
+						update=":lume:tabViewPaciente:tbViewOrcamento,pnlJustificativa, justificar"
+						value="Salvar" styleClass="NavyButton">
 					</p:commandButton>
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" styleClass="NavyButton"

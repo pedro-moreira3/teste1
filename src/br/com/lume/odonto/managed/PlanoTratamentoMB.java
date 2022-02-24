@@ -1809,6 +1809,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            PrimeFaces.current().executeScript("PF('justificativaCancelamento').hide();");
         } catch (FaturaIrregular e) {
             System.out.println(e.getMessage());
             this.addError("Orçamento possui faturas validadas", "É necessário regularizar as faturas originadas por esse orçamento.");
@@ -1872,17 +1873,34 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
 
             //atualizar os status para "Não Aprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
-            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().ListAllByPlanoTratamento(orcamentoSelecionado.getPlanoTratamento());
-            
-            for(Orcamento o : orcamentosParaAtualizar) {
-                if(o.getItens().size() == orcamentosParaAtualizar.size()) {
-                    if(orcamentoSelecionado.getItens().containsAll(o.getItens()) && o.getItens().containsAll(orcamentoSelecionado.getItens())) {
+            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().ListAllByPlanoTratamento(this.getEntity());
+
+            for (Orcamento o : orcamentosParaAtualizar) {
+                boolean atualizarStatusOrcamento = false;
+                if (o.getItens().size() == orcamentoSelecionado.getItens().size()) {
+
+                    for (OrcamentoItem oi : o.getItens()) {
+                        boolean key = false;
+                        for (OrcamentoItem oi2 : orcamentoSelecionado.getItens()) {
+                            if (oi.getDescricao().equals(oi2.getDescricao())) {
+                                key = true;
+                            }
+                        }
+                        if (key) {
+                            atualizarStatusOrcamento = true;
+                        }else {
+                            break;
+                        }
+
+                    }
+
+                    if (atualizarStatusOrcamento) {
                         o.setStatus("Não Aprovado");
                         OrcamentoSingleton.getInstance().getBo().persist(o);
-                    } 
+                    }
                 }
             }
-            
+
             carregaOrcamentos();
 
             orcamentoSelecionado.setQuantidadeParcelas(1);
@@ -2018,6 +2036,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
                 orcamentoSelecionado.setDataCriacao(new Date());
             }
+            orcamentoSelecionado.setPlanoTratamento(getEntity());
             orcamentoSelecionado.setStatus("Pendente Aprovação");
             atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
