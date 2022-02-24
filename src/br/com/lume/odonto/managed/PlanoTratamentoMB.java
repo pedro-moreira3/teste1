@@ -119,6 +119,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private Dominio justificativa;
     private List<Dominio> justificativasCancelamento;
+    private String justificativaCancelamento;
 
     private List<Profissional> profissionais;
 
@@ -135,6 +136,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Orcamento orcamentoSelecionado;
     private OrcamentoPlanejamento planejamentoAtual;
     private boolean showProcedimentosCancelados;
+    private Orcamento orcamentoCancelamento;
 
     // Alteracao Data Aprovacao
     private Orcamento orcamentoDataAprovacao;
@@ -1766,29 +1768,48 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return new BigDecimal(0);
     }
 
-    public void actionRemoveOrcamento(Orcamento orcamento) {
+    public void naoAprovarOrcamento(Orcamento orcamento) {
+        if (!orcamento.getStatus().equals("Cancelado") && !orcamento.getStatus().equals("Aprovado")) {
+            try {
+                orcamento.setStatus("Não Aprovado");
+                OrcamentoSingleton.getInstance().getBo().persist(orcamento);
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.addError("Erro ao atualizar status", "Orçamento já foi Aprovado/Cancelado");
+        }
+
+    }
+
+    public void actionRemoverOrcamento() {
         try {
-            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().findFaturaByOrcamento(orcamento);
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().findFaturaByOrcamento(orcamentoCancelamento);
 
             if (faturas != null && !faturas.isEmpty()) {
                 for (Fatura f : faturas)
                     if (f.getSubStatusFatura().contains(SubStatusFatura.VALIDADO))
                         throw new FaturaIrregular();
             }
+            orcamentoCancelamento.setStatus("Cancelado");
+            orcamentoCancelamento.setJustificativaCancelamento(justificativaCancelamento);
 
-            OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+            OrcamentoSingleton.getInstance().inativaOrcamento(orcamentoCancelamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
             carregaOrcamentos();
 
-            if (orcamento.getItens() != null && orcamento.getItens().size() > 0 && orcamento.getItens().get(
-                    0).getOrigemProcedimento() != null && orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento() != null && orcamento.getItens().get(
-                            0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getValorReceber() != null) {
-                orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().setValorReceber(
-                        orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getValorReceber().subtract(orcamento.getValorTotal()));
-                PlanoTratamentoSingleton.getInstance().getBo().persist(orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
+            if (orcamentoCancelamento.getItens() != null && orcamentoCancelamento.getItens().size() > 0 && orcamentoCancelamento.getItens().get(
+                    0).getOrigemProcedimento() != null && orcamentoCancelamento.getItens().get(
+                            0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento() != null && orcamentoCancelamento.getItens().get(
+                                    0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getValorReceber() != null) {
+                orcamentoCancelamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().setValorReceber(
+                        orcamentoCancelamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getValorReceber().subtract(
+                                orcamentoCancelamento.getValorTotal()));
+                PlanoTratamentoSingleton.getInstance().getBo().persist(orcamentoCancelamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
             }
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-        }catch (FaturaIrregular e) {
+        } catch (FaturaIrregular e) {
             System.out.println(e.getMessage());
             this.addError("Orçamento possui faturas validadas", "É necessário regularizar as faturas originadas por esse orçamento.");
         } catch (Exception e) {
@@ -1846,8 +1867,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
+            orcamentoSelecionado.setStatus("Aprovado");
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
+
+            //atualizar os status para "Não Aprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
+            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().ListAllByPlanoTratamento(orcamentoSelecionado.getPlanoTratamento());
+            
+            for(Orcamento o : orcamentosParaAtualizar) {
+                if(o.getItens().size() == orcamentosParaAtualizar.size()) {
+                    if(orcamentoSelecionado.getItens().containsAll(o.getItens()) && o.getItens().containsAll(orcamentoSelecionado.getItens())) {
+                        o.setStatus("Não Aprovado");
+                        OrcamentoSingleton.getInstance().getBo().persist(o);
+                    } 
+                }
+            }
+            
             carregaOrcamentos();
 
             orcamentoSelecionado.setQuantidadeParcelas(1);
@@ -1983,6 +2018,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
                 orcamentoSelecionado.setDataCriacao(new Date());
             }
+            orcamentoSelecionado.setStatus("Pendente Aprovação");
             atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
 
@@ -2872,6 +2908,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public List<StatusDente> sugestoesStatusDente(String query) {
         return StatusDenteSingleton.getInstance().getBo().listSugestoesStatusDente(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
+
+    public void setOrcamentoExclusao(Orcamento orcamento) {
+        this.setOrcamentoCancelamento(orcamento);
+    }
     // ================================================= TELA ================================================ //
 
     public void exportarTabela(String type) {
@@ -3649,5 +3689,21 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setEncerrarPlano(boolean encerrarPlano) {
         this.encerrarPlano = encerrarPlano;
+    }
+
+    public Orcamento getOrcamentoCancelamento() {
+        return orcamentoCancelamento;
+    }
+
+    public void setOrcamentoCancelamento(Orcamento orcamentoCancelamento) {
+        this.orcamentoCancelamento = orcamentoCancelamento;
+    }
+
+    public String getJustificativaCancelamento() {
+        return justificativaCancelamento;
+    }
+
+    public void setJustificativaCancelamento(String justificativaCancelamento) {
+        this.justificativaCancelamento = justificativaCancelamento;
     }
 }

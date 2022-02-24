@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
@@ -36,36 +37,48 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     private Date inicio, fim, aprovacaoInicio, aprovacaoFim;
 
-   // private List<RelatorioOrcamento> relatorioOrcamentos = new ArrayList<>();
+    // private List<RelatorioOrcamento> relatorioOrcamentos = new ArrayList<>();
     private List<Orcamento> relatorioOrcamentos = new ArrayList<>();
 
     private BigDecimal somaValorTotal = new BigDecimal(0), somaValorTotalDesconto = new BigDecimal(0), somaValorTotalPago = new BigDecimal(0);
-    
+
     private String filtroPeriodo;
     private String filtroPeriodoAprovacao;
     private String filtroStatusPagamento;
-    
+
     private List<String> filtroOrcamento = new ArrayList<String>();
-    
+
     private Profissional filtroPorProfissional;
-    
+
     private Paciente pacienteSelecionado;
-    
+
     private boolean filtrandoAprovacao = false;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
+
+    @ManagedProperty(value = "#{planoTratamentoMB}")
+    private PlanoTratamentoMB planoTratamentoMB;
 
     public RelatorioOrcamentoMB() {
         super(OrcamentoSingleton.getInstance().getBo());
         this.setClazz(Orcamento.class);
-      //  Calendar c = Calendar.getInstance();
-       // this.fim = c.getTime();
-      //  c.add(Calendar.MONTH, -1);
-      //  this.inicio = c.getTime();
-       // c = Calendar.getInstance();
-       // this.fim = c.getTime(); 
-      //  this.filtra();
+        //  Calendar c = Calendar.getInstance();
+        // this.fim = c.getTime();
+        //  c.add(Calendar.MONTH, -1);
+        //  this.inicio = c.getTime();
+        // c = Calendar.getInstance();
+        // this.fim = c.getTime(); 
+        //  this.filtra();
+    }
+
+    public void atualizaStatusOrcamento(Orcamento orcamento) {
+        if (!orcamento.getStatus().equals("Cancelado") && !orcamento.getStatus().equals("Aprovado")) {
+            this.planoTratamentoMB.naoAprovarOrcamento(orcamento);
+            filtra();
+        } else {
+            this.addError("Erro ao atualizar status", "Orçamento já foi Aprovado/Cancelado");
+        }
     }
 
     public void filtra() {
@@ -73,41 +86,40 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
             //this.fim = Utils.getLastHourOfDate(this.fim);
-            if(validarIntervaloDatas()) {
-                
-                if(inicio != null && fim != null) {
+            if (validarIntervaloDatas()) {
+
+                if (inicio != null && fim != null) {
                     this.inicio = Utils.setFirstHourDate(this.inicio);
                     this.fim = Utils.setLastHourDate(this.fim);
                 }
-                
+
                 this.somaValorTotal = new BigDecimal(0);
                 this.somaValorTotalDesconto = new BigDecimal(0);
                 this.somaValorTotalPago = new BigDecimal(0);
-                
+
                 this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
                         this.getPacienteSelecionado(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                
-                if(this.relatorioOrcamentos != null)
+
+                if (this.relatorioOrcamentos != null)
                     validarFiltro(relatorioOrcamentos);
-                
+
                 if (this.relatorioOrcamentos != null && !this.relatorioOrcamentos.isEmpty()) {
-                    for (Orcamento relatorioOrcamento : this.relatorioOrcamentos) {                        
+                    for (Orcamento relatorioOrcamento : this.relatorioOrcamentos) {
                         this.somaValorTotal = this.somaValorTotal.add(relatorioOrcamento.getValorTotalSemDesconto());
                         this.somaValorTotalDesconto = this.somaValorTotalDesconto.add(relatorioOrcamento.getValorTotalComDesconto());
                         this.somaValorTotalPago = this.somaValorTotalPago.add((relatorioOrcamento.getValorPago() == null ? new BigDecimal(0) : relatorioOrcamento.getValorPago()));
                     }
                 }
             }
-            
+
         }
     }
 
-    
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
     }
-    
-    public List<Paciente> sugestoesPacientes(String query){
+
+    public List<Paciente> sugestoesPacientes(String query) {
         try {
             return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
@@ -116,15 +128,15 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         }
         return null;
     }
-    
+
     public String origemOrcamento(Orcamento orcamento) {
-        
-        if(!orcamento.getItens().isEmpty())
+
+        if (!orcamento.getItens().isEmpty())
             return orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
-        
+
         return "";
     }
-    
+
     @Override
     public void actionNew(ActionEvent arg0) {
         this.inicio = null;
@@ -137,14 +149,14 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         this.inicio = null;
         this.fim = null;
         this.filtroPeriodoAprovacao = "";
-        this.aprovacaoInicio = null; 
+        this.aprovacaoInicio = null;
         this.aprovacaoFim = null;
-        this.pacienteSelecionado = null; 
+        this.pacienteSelecionado = null;
         this.filtroPorProfissional = null;
         this.filtroStatusPagamento = "";
-        this.filtrandoAprovacao = false;  
+        this.filtrandoAprovacao = false;
     }
-    
+
     public void actionTrocaDatasCriacao() {
         try {
 
@@ -216,11 +228,11 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     public void actionTrocaDatasAprovacao() {
         try {
 
-            if(filtroPeriodoAprovacao == null || filtroPeriodoAprovacao.equals("")) {
-                filtrandoAprovacao = false;              
+            if (filtroPeriodoAprovacao == null || filtroPeriodoAprovacao.equals("")) {
+                filtrandoAprovacao = false;
                 this.aprovacaoInicio = null;
-                this.aprovacaoFim = null;                
-            }else {
+                this.aprovacaoFim = null;
+            } else {
                 filtrandoAprovacao = true;
                 this.aprovacaoInicio = getDataInicio(getFiltroPeriodoAprovacao());
                 this.aprovacaoFim = getDataFim(getFiltroPeriodoAprovacao());
@@ -230,69 +242,65 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             PrimeFaces.current().ajax().update(":lume:aprovacaoInicio");
             PrimeFaces.current().ajax().update(":lume:aprovacaoFim");
             PrimeFaces.current().ajax().update(":lume:checkbox");
-    
+
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasAprovacao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     private boolean validarIntervaloDatas() {
 
         if ((inicio != null && fim != null) && inicio.getTime() > fim.getTime()) {
             this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
             return false;
         }
-        
+
         if ((aprovacaoInicio != null && aprovacaoFim != null) && aprovacaoInicio.getTime() > aprovacaoFim.getTime()) {
             this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
             return false;
         }
         return true;
     }
-    
-    public String statusPagamento(Orcamento orcamento) {    
-        if(orcamento.isAtivo()) {
-            if( (orcamento.isAprovado() && orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
+
+    public String statusPagamento(Orcamento orcamento) {
+        if (orcamento.isAtivo()) {
+            if ((orcamento.isAprovado() && orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue())) {
                 return "A Receber";
-            }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
+            } else if ((orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue())) {
                 return "Recebidos";
             }
         }
-        
+
         return "";
     }
-    
+
     private void validarFiltro(List<Orcamento> orc) {
-        
+
         List<Orcamento> orcamentos = new ArrayList(orc);
-        
-        for(Orcamento orcamento : orcamentos) {
+
+        for (Orcamento orcamento : orcamentos) {
             OrcamentoSingleton.getInstance().recalculaValores(orcamento);
-            
-            if(this.filtroStatusPagamento != null) {
-                if( (this.filtroStatusPagamento.equals("P") && (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue())) ) 
+
+            if (this.filtroStatusPagamento != null) {
+                if ((this.filtroStatusPagamento.equals("P") && (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue())))
                     this.relatorioOrcamentos.remove(orcamento);
-                else if( (this.filtroStatusPagamento.equals("N") && (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue())) )
+                else if ((this.filtroStatusPagamento.equals("N") && (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue())))
                     this.relatorioOrcamentos.remove(orcamento);
             }
-            
-            if(this.filtroOrcamento != null && !this.filtroOrcamento.isEmpty()) {
-                if( this.filtroOrcamento.contains("A") && !this.filtroOrcamento.contains("I")) {
-                    if( !orcamento.isAprovado() || !orcamento.isAtivo())
-                        this.relatorioOrcamentos.remove(orcamento);
+
+            if (this.filtroOrcamento != null && !this.filtroOrcamento.isEmpty()) {
+
+                if (!filtroOrcamento.contains(orcamento.getStatus())) {
+                    this.relatorioOrcamentos.remove(orcamento);
                 }
-                
-                if( this.filtroOrcamento.contains("I") & !this.filtroOrcamento.contains("A") ) {
-                    if( orcamento.isAprovado() || !orcamento.isAtivo())
-                        this.relatorioOrcamentos.remove(orcamento);
-                }
+
             }
-            
+
         }
-        
+
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Relatório de Orçamentos", tabelaRelatorio, type);
     }
@@ -413,12 +421,10 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         this.filtroStatusPagamento = filtroStatusPagamento;
     }
 
-    
     public boolean isFiltrandoAprovacao() {
         return filtrandoAprovacao;
     }
 
-    
     public void setFiltrandoAprovacao(boolean filtrandoAprovacao) {
         this.filtrandoAprovacao = filtrandoAprovacao;
     }
@@ -431,9 +437,18 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     }
 
     /**
-     * @param pacienteSelecionado the pacienteSelecionado to set
+     * @param pacienteSelecionado
+     *            the pacienteSelecionado to set
      */
     public void setPacienteSelecionado(Paciente pacienteSelecionado) {
         this.pacienteSelecionado = pacienteSelecionado;
+    }
+
+    public PlanoTratamentoMB getPlanoTratamentoMB() {
+        return planoTratamentoMB;
+    }
+
+    public void setPlanoTratamentoMB(PlanoTratamentoMB planoTratamentoMB) {
+        this.planoTratamentoMB = planoTratamentoMB;
     }
 }
