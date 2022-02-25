@@ -1750,7 +1750,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
         List<Orcamento> removeList = new ArrayList<>();
         for(int i = 0; i<orcamentos.size(); i++) {
-            if(orcamentos.get(i).getStatus().equals("Cancelado") || orcamentos.get(i).getStatus().equals("Não Aprovado")) {
+            if(orcamentos.get(i).getStatus().equals("Cancelado") || orcamentos.get(i).getStatus().equals("Reprovado")) {
                 removeList.add(orcamentos.get(i));
             }
         }
@@ -1780,7 +1780,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void naoAprovarOrcamento(Orcamento orcamento) {
         if (!orcamento.getStatus().equals("Cancelado") && !orcamento.getStatus().equals("Aprovado")) {
             try {
-                orcamento.setStatus("Não Aprovado");
+                orcamento.setStatus("Reprovado");
                 Date hoje = Calendar.getInstance().getTime();
                 orcamento.setDataAlteracaoStatus(hoje);
                 orcamento.setDataAprovacao(hoje);
@@ -1886,7 +1886,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
 
-            //atualizar os status para "Não Aprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
+            //atualizar os status para "Reprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
             List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
             
             for(int i =0; i < orcamentosParaAtualizar.size();i++) {
@@ -1910,7 +1910,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         }
 
                         if (orcamentoCompare.size() == orcamentoSelecionado.getItens().size()) {
-                            o.setStatus("Não Aprovado");
+                            o.setStatus("Reprovado");
                             OrcamentoSingleton.getInstance().getBo().persist(o);
                             orcamentoCompare = new ArrayList<Orcamento>();
                         }
