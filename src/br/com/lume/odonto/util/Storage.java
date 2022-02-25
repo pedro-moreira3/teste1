@@ -3,6 +3,7 @@ package br.com.lume.odonto.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +30,33 @@ public class Storage {
 
     private static CloudBlobClient blobClient;
 
-    public static final String AZURE_PATH_RAIZ = "/clinica";
+    public static final String AZURE_PATH_RAIZ = "/CLINICAS/";
     
-    public static final String AZURE_PATH_EXAME = "/exames";
+    public static final String AZURE_PATH_PACIENTE = "/PACIENTE/";
+    
+    public static final String AZURE_PATH_PROFISSIONAL = "/PROFISSIONAL/";
+    
+    public static final String AZURE_PATH_EXAME = "/EXAMES/";
+    
+    public static final String AZURE_PATH_LOGO_EMPRESA = "/LOGO_EMPRESA/";
+    
+    public static final String AZURE_PATH_MODELO_DOCUMENTO = "/MODELO_DOCUMENTO/";
+    
+    public static final String AZURE_PATH_DOCUMENTO_EMITIDO = "/DOCUMENTOEMITIDO/";
+    
+    public static final String AZURE_PATH_FOTO = "/FOTO/";
 
     private Storage() {
         init();
     }
-
+    
     public static Storage getInstance() {
         if (instance == null) {
             instance = new Storage();
         }
         return instance;
     }
-
+    
     public synchronized String gravar(InputStream in, String containerName, String fileName) throws Exception {
         CloudBlockBlob blob = getContainer(containerName).getBlockBlobReference(fileName);
         blob.upload(in, -1);
@@ -61,6 +74,15 @@ public class Storage {
         }catch (StorageException e) {
         }
         return null;
+    }
+    
+    public synchronized void download(String containerName, String fileName, OutputStream out) throws Exception {
+        try {
+            CloudBlockBlob blob = getContainer(containerName).getBlockBlobReference(fileName);
+            blob.download(out);
+        }catch (StorageException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<CloudBlob> listBlobs(String containerName) {
@@ -83,7 +105,7 @@ public class Storage {
         }
         return null;
     }
-
+    
     private void init() {
         try {
             storageAccount = CloudStorageAccount.parse(AZURE_CONNECTION_STRING);
