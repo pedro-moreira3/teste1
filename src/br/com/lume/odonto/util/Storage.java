@@ -30,21 +30,21 @@ public class Storage {
 
     private static CloudBlobClient blobClient;
 
-    public static final String AZURE_PATH_RAIZ = "/CLINICAS/";
+    public static final String AZURE_PATH_RAIZ = "/clinicas/";
     
-    public static final String AZURE_PATH_PACIENTE = "/PACIENTE/";
+    public static final String AZURE_PATH_PACIENTE = "/paciente/";
     
-    public static final String AZURE_PATH_PROFISSIONAL = "/PROFISSIONAL/";
+    public static final String AZURE_PATH_PROFISSIONAL = "/profissional/";
     
-    public static final String AZURE_PATH_EXAME = "/EXAMES/";
+    public static final String AZURE_PATH_EXAME = "/exames/";
     
-    public static final String AZURE_PATH_LOGO_EMPRESA = "/LOGO_EMPRESA/";
+    public static final String AZURE_PATH_LOGO_EMPRESA = "/logo_empresa/";
     
-    public static final String AZURE_PATH_MODELO_DOCUMENTO = "/MODELO_DOCUMENTO/";
+    public static final String AZURE_PATH_MODELO_DOCUMENTO = "/modelo_documento/";
     
-    public static final String AZURE_PATH_DOCUMENTO_EMITIDO = "/DOCUMENTOEMITIDO/";
+    public static final String AZURE_PATH_DOCUMENTO_EMITIDO = "/documento_emitido/";
     
-    public static final String AZURE_PATH_FOTO = "/FOTO/";
+    public static final String AZURE_PATH_FOTO = "/foto/";
 
     private Storage() {
         init();
