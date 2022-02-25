@@ -46,12 +46,10 @@ body .ui-messages ul {
 
 
 
+
 	<p:dialog modal="true" widgetVar="loading" draggable="false"
-		closable="false" showHeader="false" resizable="false"
-		responsive="true" styleClass="dialogLoader">
-		<div style="margin: 25% !important">
-			<div class="loader"></div>
-		</div>
+		closable="false" showHeader="false" resizable="false">
+		<p:graphicImage value="/images/loading.gif" />
 	</p:dialog>
 
 	<h:form id="lume">
@@ -77,40 +75,47 @@ body .ui-messages ul {
 				onclick="PF('confirmation').hide()" type="button" />
 		</p:confirmDialog>
 
-		<div class="email-panel card ui-fluid" style="width:50%;display: block; margin: 0px auto;">
+		<div class="email-panel card ui-fluid"
+			style="width: 50%; display: block; margin: 0px auto;">
 			<div class="ui-g">
-				
-					<div class="ui-g-12 ui-lg-12">
-    					<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" style="width:50%;display: block; margin: 0px auto;"/>
-    				</div>
-				
-				
+
 				<div class="ui-g-12 ui-lg-12">
-				
+					<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100"
+						library="images"
+						style="width:50%;display: block; margin: 0px auto;" />
+				</div>
+
+
+				<div class="ui-g-12 ui-lg-12">
+
 					<h:panelGroup styleClass="md-inputfield"
 						rendered="#{!validaremailMB.mostrarSomenteErro}">
 						<p:outputLabel id="msgErro" style="font-weight:bold"
 							value="#{validaremailMB.erro}" />
-						 <br/><br/><br/>
-						 <p:outputPanel class="ui-g-12 ui-lg-12"
-                			>
-                			<p:commandLink value="Trocar minha senha"
-                    		onclick="PF('confirmation').show()" />
-            			</p:outputPanel>
-            			<br/><br/><br/>
-            			<h:panelGroup styleClass="md-inputfield" id="painelTrocaSenha">
-						<p:outputLabel id="msgTrocaSenha" style="font-weight:bold;color:red"
-							value="#{validaremailMB.mensagemTrocaSenha}" />
-					</h:panelGroup>	
-            			
+						<br />
+						<br />
+						<br />
+						<p:outputPanel class="ui-g-12 ui-lg-12">
+							<p:commandLink value="Trocar minha senha"
+								onclick="PF('confirmation').show()" />
+						</p:outputPanel>
+						<br />
+						<br />
+						<br />
+						<h:panelGroup styleClass="md-inputfield" id="painelTrocaSenha">
+							<p:outputLabel id="msgTrocaSenha"
+								style="font-weight:bold;color:red"
+								value="#{validaremailMB.mensagemTrocaSenha}" />
+						</h:panelGroup>
+
 					</h:panelGroup>
 					<h:panelGroup styleClass="md-inputfield"
 						rendered="#{validaremailMB.mostrarSomenteErro}">
 						<p:outputLabel id="email" style="font-weight:bold"
 							value="Seu email para acesso é: #{validaremailMB.usuarioLogando.usuStrLogin.toLowerCase()}" />
 					</h:panelGroup>
-					
-					
+
+
 				</div>
 				<div class="ui-g-12 ui-lg-12">
 					<h:panelGroup styleClass="md-inputfield"
@@ -166,34 +171,33 @@ body .ui-messages ul {
 				</div>
 			</div>
 		</div>
-        
-        <div class="EmptyBox30"></div>
+
+		<div class="EmptyBox30"></div>
 
 		<script type="text/javascript">
-            $("#lume\\:login").change(function() {
-                if ($("#lume\\:login").val() != "") {
-                    $("#lume\\:login").addClass("ui-state-filled");
-                    $("#lume\\:senha").addClass("ui-state-filled");
-                }
-            });
-        
-            $("#lume\\:senha").change(function() {
-                if ($("#lume\\:senha").val() != "") {
-                    $("#lume\\:login").addClass("ui-state-filled");
-                    $("#lume\\:senha").addClass("ui-state-filled");
-                }
-            });
-        
-            
-            function limpaMenu() {
-                $.removeCookie('ultima_expandeditems', {
-                    path : '/'
-                });
-                $.removeCookie('ultima_inlineprofile_expanded', {
-                    path : '/'
-                });
-            }
-        </script>
+			$("#lume\\:login").change(function() {
+				if ($("#lume\\:login").val() != "") {
+					$("#lume\\:login").addClass("ui-state-filled");
+					$("#lume\\:senha").addClass("ui-state-filled");
+				}
+			});
+
+			$("#lume\\:senha").change(function() {
+				if ($("#lume\\:senha").val() != "") {
+					$("#lume\\:login").addClass("ui-state-filled");
+					$("#lume\\:senha").addClass("ui-state-filled");
+				}
+			});
+
+			function limpaMenu() {
+				$.removeCookie('ultima_expandeditems', {
+					path : '/'
+				});
+				$.removeCookie('ultima_inlineprofile_expanded', {
+					path : '/'
+				});
+			}
+		</script>
 	</h:form>
 </h:body>
 </html>
