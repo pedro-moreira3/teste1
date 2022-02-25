@@ -1748,6 +1748,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaOrcamentos() {
         orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
+        List<Orcamento> removeList = new ArrayList<>();
+        for(int i = 0; i<orcamentos.size(); i++) {
+            if(orcamentos.get(i).getStatus().equals("Cancelado") || orcamentos.get(i).getStatus().equals("Não Aprovado")) {
+                removeList.add(orcamentos.get(i));
+            }
+        }
+        if(removeList.size() > 0 ) {
+            orcamentos.removeAll(removeList);
+        }
         try {
             carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
@@ -1877,27 +1886,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
 
             for (Orcamento o : orcamentosParaAtualizar) {
-                boolean atualizarStatusOrcamento = false;
-                if (o.getItens().size() == orcamentoSelecionado.getItens().size()) {
+                if(o.getStatus().equals("Pendente Aprovação") ) {
+                    boolean atualizarStatusOrcamento = false;
+                    if (o.getItens().size() == orcamentoSelecionado.getItens().size()) {
 
-                    for (OrcamentoItem oi : o.getItens()) {
-                        boolean key = false;
-                        for (OrcamentoItem oi2 : orcamentoSelecionado.getItens()) {
-                            if (oi.getDescricao().equals(oi2.getDescricao())) {
-                                key = true;
+                        for (OrcamentoItem oi : o.getItens()) {
+                            boolean key = false;
+                            for (OrcamentoItem oi2 : orcamentoSelecionado.getItens()) {
+                                if (oi.getDescricao().equals(oi2.getDescricao())) {
+                                    key = true;
+                                }
+                            }
+                            if (key) {
+                                atualizarStatusOrcamento = true;
+                            }else {
+                                break;
                             }
                         }
-                        if (key) {
-                            atualizarStatusOrcamento = true;
-                        }else {
-                            break;
+
+                        if (atualizarStatusOrcamento) {
+                            o.setStatus("Não Aprovado");
+                            OrcamentoSingleton.getInstance().getBo().persist(o);
                         }
-
-                    }
-
-                    if (atualizarStatusOrcamento) {
-                        o.setStatus("Não Aprovado");
-                        OrcamentoSingleton.getInstance().getBo().persist(o);
                     }
                 }
             }

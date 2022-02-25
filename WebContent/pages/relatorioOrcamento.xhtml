@@ -284,7 +284,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:commandButton icon="White fa fa-close" process="@this"
 								actionListener="#{relatorioOrcamentoMB.atualizaStatusOrcamento(m)}"
 								styleClass="NavyButton" title="Não aprovar orçamento"
-								update=":lume:pnPrincipal, :lume:dtPrincipal, @this">
+								update=":lume:pnPrincipal, :lume:dtPrincipal, @this" rendered="#{m.status eq 'Pendente Aprovação'}">
 							</p:commandButton>
 						</p:column>
 
