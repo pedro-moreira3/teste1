@@ -1510,7 +1510,7 @@ body .height31 input {
 									<p:commandButton icon="fa fa-check" styleClass="GreenButton"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 										process="@this" disabled="#{negociacao.status.rotulo != 'AA'}"
-										update="lume:tabViewPaciente:dlgAprovaNegociacao, :lume:tabViewPaciente:negociacaoParcelasTable"
+										update="@parent:@parent:@parent:@parent:@parent:@parent:@parent:@parent:pnlAprovaNegociacao"
 										title="Confirmar Negociação"
 										oncomplete="PF('dlgAprovaNegociacao').show()"
 										actionListener="#{faturaPagtoMB.actionStartConfirmacaNegociacao(negociacao)}">
