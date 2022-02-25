@@ -1781,6 +1781,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (!orcamento.getStatus().equals("Cancelado") && !orcamento.getStatus().equals("Aprovado")) {
             try {
                 orcamento.setStatus("Não Aprovado");
+                Date hoje = Calendar.getInstance().getTime();
+                orcamento.setDataAlteracaoStatus(hoje);
+                orcamento.setDataAprovacao(hoje);
+                orcamento.setProfissionalAprovacao(UtilsFrontEnd.getProfissionalLogado());
                 OrcamentoSingleton.getInstance().getBo().persist(orcamento);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 carregaOrcamentos();
