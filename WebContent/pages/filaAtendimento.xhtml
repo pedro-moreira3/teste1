@@ -171,7 +171,9 @@ div.ui-selectoneradio label {
 								process="@this" title="#{a.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(a.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+								<f:param name="paciente_selecionado" value="#{a.paciente.id}"></f:param>
+							</p:commandLink>
 						</p:column>
 						<p:column headerText="Agendar c/ mesmo Dentista">
 							<p:commandButton icon="fa fa fa-calendar"

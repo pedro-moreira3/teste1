@@ -48,7 +48,6 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
     private String usuLogin;
 
     private String usuSenha;
-
     private String usuRepetirSenha;
 
     private boolean mostrarSomenteErro = true;
@@ -61,9 +60,7 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
 
     public ValidaremailMB() {
         super(UsuarioSingleton.getInstance().getBo());
-        if (UtilsFrontEnd.getProfissionalLogado() != null) {
             validarEmail();
-        }
         setClazz(Usuario.class);
         //  setUsuarioLogado(null);
         //   setBo(new UsuarioBO());
@@ -80,11 +77,11 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
             //UsuarioBO usuarioBo = new UsuarioBO();
             usuarioLogando = UsuarioSingleton.getInstance().getBo().buscarPorTokenEdata(token);
             if (usuarioLogando == null) {
-                erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha.";
+                erro = "Ops! Não foi possível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha.";
                 mostrarSomenteErro = false;
             }
         } catch (Exception e) {
-            erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha";
+            erro = "Ops! Não foi possível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que " + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha";
             mostrarSomenteErro = false;
         }
 

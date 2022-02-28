@@ -274,6 +274,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
         if (MessageType.TYPE_INFO.equals(type))
             type = MessageType.TYPE_SUCCESS;
+        PrimeFaces.current().executeScript("mostraDialogo('" + summary + "', '" + detail + "', '" + type + "')");
     }
 
     public BO<E> getbO() {

@@ -85,6 +85,7 @@ import br.com.lume.odonto.exception.DataNascimentoException;
 import br.com.lume.odonto.exception.SenhaCertificadoInvalidaException;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.odonto.util.Storage;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.MotivoInativacaoPacienteSingleton;
 import br.com.lume.paciente.PacienteSingleton;
@@ -298,18 +299,41 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public StreamedContent getImagemUsuario() {
+        ByteArrayOutputStream out = null;
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-                        FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + getEntity().getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder().name(getEntity().getNomeImagem()).contentType(
-                        "image/" + getEntity().getNomeImagem().split("\\.")[1]).stream(() -> {
+                out = new ByteArrayOutputStream();
+                
+                Storage.getInstance().download(Storage.AZURE_PATH_RAIZ, getEntity().getNomeImagem(), out);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray());
+                
+                String pathImage[] = getEntity().getNomeImagem().split("/");
+                String nameImage = pathImage[pathImage.length - 1];
+                
+                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
+                        .name(nameImage)
+                        .contentType("image/" + getEntity().getNomeImagem().split("\\.")[1])
+                        .stream(() -> {
                             return byteArrayInputStream;
                         }).build();
+                
+                byteArrayInputStream.close();
+                
                 return defaultStreamedContent;
             }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível buscar a foto do paciente");
+        } finally {
+            try {
+                if(out != null) {
+                    out.flush();
+                    out.close();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível buscar a foto do paciente");
+            }
         }
         return null;
     }
@@ -399,28 +423,24 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionSalvarFoto(ActionEvent event) {
         try {
-            this.getEntity().setNomeImagem(handleFoto(data, this.getEntity().getNomeImagem()));
+            String pathImage = UtilsFrontEnd.getEmpresaLogada().getEmpIntCod()
+                    + Storage.AZURE_PATH_PACIENTE
+                    + this.getEntity().getId()
+                    + Storage.AZURE_PATH_FOTO
+                    + "FOTO_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            
+            handleFoto(data, pathImage);
+            this.getEntity().setNomeImagem(pathImage);
+            
+            addInfo("Sucesso", "Arquivo salvo com sucesso!");
         } catch (Exception e) {
             log.error("Erro no actionSalvarFoto", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
 
-    public static String handleFoto(byte[] data, String nomeImagem) throws Exception {
-        File targetFile = null;
-        if (nomeImagem != null && !nomeImagem.equals("")) {
-            targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
-        }
-
-        if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = /** ultils */
-                    "FOTO_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
-            targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
-        }
-        FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
-        imageOutput.write(data, 0, data.length);
-        imageOutput.close();
-        return targetFile.getName();
+    public static void handleFoto(byte[] data, String nomeImagem) throws Exception {        
+        Storage.getInstance().gravar(data, Storage.AZURE_PATH_RAIZ, nomeImagem);
     }
 
     public void onCapture(CaptureEvent captureEvent) {

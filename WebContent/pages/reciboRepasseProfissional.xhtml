@@ -183,7 +183,9 @@
 										title="#{lancamento.ptp.planoTratamento.paciente.id}"
 										actionListener="#{tabPacienteMB.loadPaciente(lancamento.ptp.planoTratamento.paciente)}"
 										oncomplete="PF('dlgFichaPaciente').show()"
-										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+										<f:param name="paciente_selecionado" value="#{lancamento.ptp.planoTratamento.paciente.id}"></f:param>	
+									</p:commandLink>
 								</p:column>
 
 								<p:column filterMatchMode="contains" headerText="Valor Fatura"

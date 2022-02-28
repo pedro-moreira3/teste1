@@ -573,26 +573,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          * PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaItemOrigem(item).getDescricao(); item.setDescricaoItem(item.getDescricaoItem() + " [" + pt + "]"); } catch (Exception e) {
          * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
          */
+        Fatura aux = null;
         try {
-            if(this.getEntity().getPaciente() != null) {
-                if(this.getEntity().getPaciente().getId() != fatura.getPaciente().getId()) {
-                    String log = "FALHA AO CARREGAR FATURA DO PACIENTE \nEntity MB: " + this.getEntity().getPaciente().getId() + "\nEntity Fatura: " + fatura.getPaciente().getId();
-                    Usuario user = new UsuarioBO().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario());
-                    LogEmpresaSingleton.getInstance().criaLog(new Date(), user, UtilsFrontEnd.getEmpresaLogada(), log);
-                }
-            }
+            String idFatura = (String) FacesContext.getCurrentInstance()
+                    .getExternalContext().getRequestParameterMap().get("fatura_selecionada");
+            aux = FaturaSingleton.getInstance().getBo().find(Long.valueOf(idFatura));
+            
+            if(aux != null)
+                fatura = aux;
+            
+            setEntity(fatura);
+            fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));
+            setShowLancamentosCancelados(false);
+            setShowLancamentosEstorno(false);
+            updateValues(fatura, true, false);
+
+            updateWichScreenOpenForFaturaView();
         }catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Erro no visualizaFatura log");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-        
-        setEntity(fatura);
-        fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));
-        setShowLancamentosCancelados(false);
-        setShowLancamentosEstorno(false);
-        updateValues(fatura, true, false);
-
-        updateWichScreenOpenForFaturaView();
     }
 
     public void visualizaFaturaSimples(Fatura fatura) {

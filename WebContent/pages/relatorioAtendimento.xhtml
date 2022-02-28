@@ -508,7 +508,9 @@ body.body .ui-dialog .ui-dialog-buttonpane .ui-button, body .ui-dialog .ui-dialo
 									process="@this" title="#{atendimento.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(atendimento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" >
+									<f:param name="paciente_selecionado" value="#{atendimento.paciente.id}"></f:param>
+								</p:commandLink>
 
 							</p:column>
 

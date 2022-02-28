@@ -183,7 +183,9 @@
 								actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 								update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
 								oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
-								title="Visualizar Fatura" />
+								title="Visualizar Fatura">
+								<f:param name="fatura_selecionada" value="#{f.id}"></f:param>
+							</p:commandButton>
 						</p:column>
 						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
 							sortBy="#{f.paciente.dadosBasico.nome}" headerText="Paciente"
@@ -192,11 +194,13 @@
 
 							<p:commandLink value="#{f.paciente.dadosBasico.nome}"
 								process="@this,:lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples" title="#{f.paciente.id}"
-								actionListener="#{tabPacienteMB.loadPacienteSemFinanceiro(f.paciente)}"
+								actionListener="#{tabPacienteMB.loadPacienteSemFinanceiro()}"
 								oncomplete="PF('dlgFichaPaciente').show()"
 								update=":lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples,:lume:tabViewPaciente:pnDadosPaciente, 
 								:lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente, 
-								:lume:tabViewPaciente:pnlIndicacao" />
+								:lume:tabViewPaciente:pnlIndicacao">
+								<f:param name="paciente_selecionado" value="#{f.paciente.id}"></f:param>
+							</p:commandLink>
 
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"

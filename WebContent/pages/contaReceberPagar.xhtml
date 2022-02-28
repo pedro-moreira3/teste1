@@ -988,7 +988,9 @@ body .ui-confirm-dialog {
 												process="@this" title="#{pt.paciente.id}"
 												actionListener="#{tabPacienteMB.loadPaciente(pt.paciente)}"
 												oncomplete="PF('dlgFichaPaciente').show()"
-												update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+												update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" >
+												<f:param name="paciente_selecionado" value="#{pt.paciente.id}"></f:param>
+											</p:commandLink>
 
 										</p:column>
 										<p:column filterBy="#{pt.descricao}" sortBy="#{pt.descricao}"

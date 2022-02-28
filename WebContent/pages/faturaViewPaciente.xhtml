@@ -717,7 +717,7 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgAprovaNegociacao" header="Confirmar Negociação"
+	<p:dialog widgetVar="dlgAprovaNegociacao" id="dlgAprovaNegociacao" header="Confirmar Negociação"
 		responsive="true" modal="true" appendTo=":lume" width="90%">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -1075,13 +1075,13 @@ body .height31 input {
 
 							</p:panelGrid>
 
-							<p:outputPanel id="negociacaoParcelasTablePnl">
+							<h:panelGroup id="negociacaoParcelasTablePnl">
 								<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
 									id="negociacaoParcelasTable" filterDelay="1500" reflow="true"
 									value="#{faturaPagtoMB.negociacaoParcelas}" var="parcela"
 									rows="10" paginator="true" rowKey="#{parcela}"
 									paginatorPosition="bottom"
-									widgetVar="dtNegociacaoParcelasTable">
+									widgetVar="negociacaoParcelasTable">
 									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
 									<p:column
 										filterBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}"
@@ -1109,7 +1109,7 @@ body .height31 input {
 												value="#{faturaPagtoMB.negociacaoTarifasDisponiveisEEntrada}"
 												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 											<p:ajax event="change"
-												update=":lume:negociacaoParcelasTablePnl" process="@this" />
+												update=":lume:tabViewPaciente:negociacaoParcelasTablePnl" process="@this" />
 										</p:selectOneMenu>
 
 									</p:column>
@@ -1123,7 +1123,7 @@ body .height31 input {
 											timeZone="#{lumeSecurity.timeZone}" navigator="true"
 											yearRange="-10:+10">
 											<p:ajax event="dateSelect"
-												update=":lume:negociacaoParcelasTablePnl" process="@this" />
+												update=":lume:tabViewPaciente:negociacaoParcelasTablePnl" process="@this" />
 										</p:calendar>
 									</p:column>
 									<p:column filterBy="#{parcela.dataCredito}"
@@ -1134,7 +1134,7 @@ body .height31 input {
 										</h:outputText>
 									</p:column>
 								</p:dataTable>
-							</p:outputPanel>
+							</h:panelGroup>
 
 						</p:outputPanel>
 

@@ -266,7 +266,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								process="@this" title="#{atendimento.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" >
+								<f:param name="paciente_selecionado" value="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
+							</p:commandLink>
 
 						</p:column>
 
