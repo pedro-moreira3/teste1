@@ -401,7 +401,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									title="#{p.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(p)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
-									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+									<f:param name="paciente_selecionado" value="#{p.id}"></f:param>
+								</p:commandLink>
 							</p:column>
 							<p:column filterBy="#{p.dataCriacao}"
 								sortBy="#{p.dataCriacaoStr}"

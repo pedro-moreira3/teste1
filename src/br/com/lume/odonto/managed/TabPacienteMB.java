@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.tabview.TabView;
@@ -15,7 +16,6 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
@@ -219,6 +219,13 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPaciente(Paciente paciente) {
         try {
+            Paciente aux = null;
+            String idPaciente = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("paciente_selecionado");
+            aux = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
+
+            if(aux != null)
+                paciente = aux;
+            
             this.pacienteFinanceiroMB.setDisableFinanceiro(false);
             this.pacienteMB.setEntity(paciente);
             System.out.println(this.pacienteMB.getEntity().getDadosBasico().getDocumento());
@@ -232,6 +239,20 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     
     public void loadPacienteSemFinanceiro(Paciente paciente) {
         try {          
+            this.pacienteFinanceiroMB.setDisableFinanceiro(true);
+            this.pacienteMB.setEntity(paciente);
+            this.tabview.setActiveIndex(0);            
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
+        }
+    }
+    
+    public void loadPacienteSemFinanceiro() {
+        try {
+            String idPaciente = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("paciente_selecionado");
+            Paciente paciente = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
+            
             this.pacienteFinanceiroMB.setDisableFinanceiro(true);
             this.pacienteMB.setEntity(paciente);
             this.tabview.setActiveIndex(0);            
@@ -277,8 +298,4 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void setAnotacoesMB(AnotacoesMB anotacoesMB) {
         this.anotacoesMB = anotacoesMB;
     }
-
-    
-
-
 }

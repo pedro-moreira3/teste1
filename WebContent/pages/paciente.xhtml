@@ -137,7 +137,9 @@
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
 								process="@this" title="#{paciente.id}" update=":lume:tabViewPaciente:documento"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
-								oncomplete="attTabViewPaciente();" />
+								oncomplete="attTabViewPaciente();">
+								<f:param name="paciente_selecionado" value="#{paciente.id}"></f:param>
+							</p:commandLink>
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
 							filterBy="#{paciente.dadosBasico.responsavel}"

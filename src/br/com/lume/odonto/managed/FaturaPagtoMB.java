@@ -572,14 +572,27 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          * List<FaturaItem> itens = new ArrayList<>(fatura.getItens()); if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) { itens.forEach(item -> { try { String pt =
          * PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaItemOrigem(item).getDescricao(); item.setDescricaoItem(item.getDescricaoItem() + " [" + pt + "]"); } catch (Exception e) {
          * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
-         */        
-        setEntity(fatura);
-        fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));
-        setShowLancamentosCancelados(false);
-        setShowLancamentosEstorno(false);
-        updateValues(fatura, true, false);
+         */
+        Fatura aux = null;
+        try {
+            String idFatura = (String) FacesContext.getCurrentInstance()
+                    .getExternalContext().getRequestParameterMap().get("fatura_selecionada");
+            aux = FaturaSingleton.getInstance().getBo().find(Long.valueOf(idFatura));
+            
+            if(aux != null)
+                fatura = aux;
+            
+            setEntity(fatura);
+            fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));
+            setShowLancamentosCancelados(false);
+            setShowLancamentosEstorno(false);
+            updateValues(fatura, true, false);
 
-        updateWichScreenOpenForFaturaView();
+            updateWichScreenOpenForFaturaView();
+        }catch (Exception e) {
+            e.printStackTrace();
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
     }
 
     public void visualizaFaturaSimples(Fatura fatura) {

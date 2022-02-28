@@ -257,7 +257,9 @@
 								title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+								<f:param name="paciente_selecionado" value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
+							</p:commandLink>
 
 						</p:column>
 						<p:column headerText="Plano de Tratamento"
