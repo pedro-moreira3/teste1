@@ -35,6 +35,7 @@ import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.exame.ExameSingleton;
 import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.odonto.util.Storage;
 
 @ManagedBean
 @ViewScoped
@@ -61,10 +62,10 @@ public class ExameMB extends LumeManagedBean<Exame> {
         super(ExameSingleton.getInstance().getBo());
         this.setClazz(Exame.class);
     }
-    
+
     public void setVideos() {
-        getListaVideosTutorial().clear();     
-        getListaVideosTutorial().put("Como incluir exames do paciente", "https://www.youtube.com/v/KAVfeQtVuD0?autoplay=1");                
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("Como incluir exames do paciente", "https://www.youtube.com/v/KAVfeQtVuD0?autoplay=1");
     }
 
     public StreamedContent getArquivoGenerico(byte[] file, String nome) {
@@ -72,9 +73,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
         if (file != null) {
             try {
                 ByteArrayInputStream bis = new ByteArrayInputStream(file);
-                arquivo = DefaultStreamedContent.builder()
-                        .name(nome)
-                        .stream(() -> { return bis; }).build();
+                arquivo = DefaultStreamedContent.builder().name(nome).stream(() -> {
+                    return bis;
+                }).build();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -82,13 +83,13 @@ public class ExameMB extends LumeManagedBean<Exame> {
         return arquivo;
     }
 
-    public StreamedContent getArquivoEditado(Exame exame) {
-        return getArquivoGenerico(exame.getAnexoAlterado(), exame.getNomeAnexo());
-    }
-
-    public StreamedContent getArquivo(Exame exame) {
-        return getArquivoGenerico(exame.getAnexo(), exame.getNomeAnexo());
-    }
+//    public StreamedContent getArquivoEditado(Exame exame) {
+//        return getArquivoGenerico(exame.getAnexoAlterado(), exame.getNomeAnexo());
+//    }
+//
+//    public StreamedContent getArquivo(Exame exame) {
+//        return getArquivoGenerico(exame.getAnexo(), exame.getNomeAnexo());
+//    }
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -138,10 +139,10 @@ public class ExameMB extends LumeManagedBean<Exame> {
                 try {
                     BufferedImage img = ImageIO.read(event.getFile().getInputStream()); // load image
                     //BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(img, extensao, baos);
-                    this.setFile(this.arquivo.getFileName(), baos.toByteArray());
-                    size = baos.size();
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    ImageIO.write(img, extensao, baos);
+//                    this.setFile(this.arquivo.getFileName(), baos.toByteArray());
+//                    size = baos.size();
                 } catch (IOException e) {
                     this.log.error("Erro ao redimensionar imagem", e);
                     e.printStackTrace();
@@ -203,7 +204,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
 
     public void setFile(String nome, byte[] anexo) {
         this.getEntity().setNomeAnexo(nome);
-        this.getEntity().setAnexo(anexo);
+//        this.getEntity().setAnexo(anexo);
     }
 
     public void cancelaAlteracao() {
@@ -217,25 +218,28 @@ public class ExameMB extends LumeManagedBean<Exame> {
     }
 
     public void actionEditFile() {
-        if (this.validaPdf(this.getEntity())) {
-            JSFHelper.getSession().setAttribute("reportBytes", this.unzip(this.getEntity().getAnexo()).toByteArray());
-            this.habilitaPDF = true;
-            this.habilitaImage = false;
-        } else {
-            try {
+        try {
+            if (this.validaPdf(this.getEntity())) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Storage.getInstance().download(Storage.AZURE_PATH_RAIZ, getEntity().getNomeAnexo(), out);
+                JSFHelper.getSession().setAttribute("reportBytes", out.toByteArray());
+
+                this.habilitaPDF = true;
+                this.habilitaImage = false;
+            } else {
                 this.habilitaImage = true;
                 this.habilitaPDF = false;
-                this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexo()));
-            } catch (Exception e) {
-                this.addError("Erro ao editar exame", "");
-                this.log.error("Erro ao editar exame", e);
+//                this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(out.toByteArray()));
             }
+        } catch (Exception e) {
+            this.addError("Erro ao editar exame", "");
+            this.log.error("Erro ao editar exame", e);
         }
     }
 
     public void actionEditFile2() {
         try {
-            this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexoAlterado()));
+//            this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexoAlterado()));
         } catch (Exception e) {
             this.addError("Erro ao editar exame", "");
             this.log.error("Erro ao editar exame", e);
@@ -251,7 +255,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
     public void actionPersistNewFile(ActionEvent event) {
         byte fileContent[] = Base64.decodeBase64(this.getArquivoBase64().split(",")[1]);
         try {
-            this.getEntity().setAnexoAlterado(fileContent);
+//            this.getEntity().setAnexoAlterado(fileContent);
             ExameSingleton.getInstance().getBo().persist(this.getEntity());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");

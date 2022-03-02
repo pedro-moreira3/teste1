@@ -1896,7 +1896,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             for (Orcamento o : orcamentosParaAtualizar) {
-                    if (o.getItens().size() == orcamentoSelecionado.getItens().size()) {
+                int count = 0;
+                int count2 = 0;
+                for(OrcamentoItem oi : o.getItens()) {
+                    if(oi.isIncluso()) {
+                        count++;
+                    }
+                }
+                for(OrcamentoItem oi : orcamentoSelecionado.getItens()) {
+                    if(oi.isIncluso()) {
+                        count2++;
+                    }
+                }
+                    if (count == count2) {
                         List<Orcamento> orcamentoCompare = new ArrayList<Orcamento>();
                         
                         for (OrcamentoItem oi : o.getItens()) {
