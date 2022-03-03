@@ -1523,8 +1523,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 diferencaCalculoParcelas = null;
                 if (valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
                     if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
-                        diferencaCalculoParcelas = valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))).subtract(
-                                orcamentoSelecionado.getValorTotalComDesconto());
+                        diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(
+                                valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))));
                     } else {
                         diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract((valorParcela.multiply(numeroParcelaOrcamento)));
                     }
