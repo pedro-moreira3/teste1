@@ -1523,8 +1523,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 diferencaCalculoParcelas = null;
                 if (valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
                     if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
-                        diferencaCalculoParcelas = valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))).subtract(
-                                orcamentoSelecionado.getValorTotalComDesconto());
+                        diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(
+                                valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))));
                     } else {
                         diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract((valorParcela.multiply(numeroParcelaOrcamento)));
                     }
@@ -1758,7 +1758,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             orcamentos.removeAll(removeList);
         }
         try {
-            carregarPlanoTratamentoProcedimentos();
+            //carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Erro no carregaTela", e);
@@ -1896,7 +1896,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             for (Orcamento o : orcamentosParaAtualizar) {
-                    if (o.getItens().size() == orcamentoSelecionado.getItens().size()) {
+                int count = 0;
+                int count2 = 0;
+                for(OrcamentoItem oi : o.getItens()) {
+                    if(oi.isIncluso()) {
+                        count++;
+                    }
+                }
+                for(OrcamentoItem oi : orcamentoSelecionado.getItens()) {
+                    if(oi.isIncluso()) {
+                        count2++;
+                    }
+                }
+                    if (count == count2) {
                         List<Orcamento> orcamentoCompare = new ArrayList<Orcamento>();
                         
                         for (OrcamentoItem oi : o.getItens()) {

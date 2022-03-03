@@ -29,7 +29,6 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.IEnumController;
 import br.com.lume.common.exception.business.CancelarItemProcedimentoAtivo;
 import br.com.lume.common.exception.business.CancelarItemProcedimentoExecutado;
-import br.com.lume.common.exception.business.FaturaIrregular;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.FormaPagamento;
@@ -58,6 +57,7 @@ import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
+import br.com.lume.odonto.entity.Conta;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Documento;
@@ -89,9 +89,6 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
-import br.com.lume.security.LogEmpresaSingleton;
-import br.com.lume.security.bo.UsuarioBO;
-import br.com.lume.security.entity.Usuario;
 import br.com.lume.tarifa.TarifaSingleton;
 import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
@@ -716,6 +713,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 updateValues(fatura, true, true);
             });
         } catch (Exception e) {
+            e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -2162,8 +2160,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
                     UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_RECEBER, null);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
-            if (this.paciente != null)
-                ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
+            if (this.paciente != null) {
+                Conta conta = ContaSingleton.getInstance().getContaFromOrigem(this.paciente);
+                
+                if(conta != null)
+                    conta.setSaldo(vAReceber.subtract(vAPagar));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));

@@ -631,7 +631,7 @@ body .ui-confirm-dialog {
 											headerText="PlanoTratamento">
 											<h:outputText value="#{lc.pt.descricao}" title="#{lc.pt.id}" />
 										</p:column>
-										<p:column filterBy="#{lc.formaPagamentoStr}"
+										<p:column filterBy="#{lc.formaPagamentoStr}" exportValue="#{lc.formaPagamentoStr}"
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
 											headerText="Produto">
@@ -655,7 +655,7 @@ body .ui-confirm-dialog {
 											sortBy="#{lc.dataPagamento}" filterMatchMode="contains">
 											<h:outputText value="#{lc.dataPagamentoStr}" />
 										</p:column>
-										<p:column headerText="Data Crédito"
+										<p:column headerText="Data Crédito" exportValue="#{lc.dataCreditoStr}"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
 											<p:calendar value="#{lc.dataCredito}" autocomplete="false"

@@ -1711,7 +1711,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:commandButton>
 							<p:commandButton icon="White fa fa-close" process="@this"
 								actionListener="#{planoTratamentoMB.naoAprovarOrcamento(orcamento)}"
-								styleClass="NavyButton" title="Não aprovar orçamento"
+								styleClass="NavyButton" title="Reprovar Orçamento"
 								update=":lume:tabViewPaciente:tbViewOrcamento, @this"
 								rendered="#{orcamento.status eq 'Pendente Aprovação'}">
 							</p:commandButton>
