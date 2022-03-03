@@ -46,8 +46,9 @@ hr.hrSaldo {
 </style>
 
 	<br />
-	
-	<p:outputPanel id="viewFatura" rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
+
+	<p:outputPanel id="viewFatura"
+		rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
 		<ui:include src="faturaViewPaciente.xhtml">
 			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
@@ -55,14 +56,15 @@ hr.hrSaldo {
 			update="dtLancamentosConferir,dtFaturas,dtLancamentosPendentes" />
 	</p:outputPanel>
 
-	<p:outputPanel id="viewFaturaSimples" rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
-			<ui:include src="faturaViewSimples.xhtml">
-				<ui:param name="showNewLancamento" value="S" />
-			</ui:include>
-			<p:remoteCommand process="@this" name="onCloseFaturaView"/>
-	</p:outputPanel>	
+	<p:outputPanel id="viewFaturaSimples"
+		rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
+		<ui:include src="faturaViewSimples.xhtml">
+			<ui:param name="showNewLancamento" value="S" />
+		</ui:include>
+		<p:remoteCommand process="@this" name="onCloseFaturaView" />
+	</p:outputPanel>
 
-	<p:outputPanel id="resumoFinanceiro">		
+	<p:outputPanel id="resumoFinanceiro">
 		<p:panel style="display:block;text-align:center;border:none;">
 			<p:panel
 				style="border:1px solid;width:30%;height:100px;text-align:center;display:inline-block;">
@@ -100,12 +102,15 @@ hr.hrSaldo {
 						position="top" style="width:30%;margin-lef:20px;" />
 				</f:facet>
 
-				<p:column headerText="Ações" exportable="false" rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
+				<p:column headerText="Ações" exportable="false"
+					rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
 					<p:commandButton icon="fa fa-eye" process="@this"
 						actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
-						title="Visualizar Fatura" />
+						title="Visualizar Fatura">
+						<f:param name="fatura_selecionada" value="#{lc.fatura}" />
+					</p:commandButton>
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
 					sortBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
@@ -140,19 +145,18 @@ hr.hrSaldo {
 							minFractionDigits="2" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
-					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+				<p:column headerText="Valor total"
+					sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterMatchMode="contains">
 					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
 						<f:convertNumber currencySymbol="R$" type="currency"
 							minFractionDigits="2" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Status"
-					sortBy="#{lc.statusCompleto}"
-					filterBy="#{lc.statusCompleto}"
-					filterMatchMode="contains">
-					<h:outputText
-						value="#{lc.statusCompleto}" />
+				<p:column headerText="Status" sortBy="#{lc.statusCompleto}"
+					filterBy="#{lc.statusCompleto}" filterMatchMode="contains">
+					<h:outputText value="#{lc.statusCompleto}" />
 				</p:column>
 
 			</p:dataTable>
@@ -175,26 +179,27 @@ hr.hrSaldo {
 						position="top" style="width:30%;margin-lef:20px;" />
 				</f:facet>
 
-				<p:column headerText="Ações" exportable="false" rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
+				<p:column headerText="Ações" exportable="false"
+					rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
 					<p:commandButton icon="fa fa-eye" process="@this"
 						actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						rendered="#{lc.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						title="Visualizar Fatura" />
-					
-						
-							<p:commandButton icon="fa fa-eye" process="@this"
-												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
-												update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
-												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
-												title="Visualizar Fatura" rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+
+
+					<p:commandButton icon="fa fa-eye" process="@this"
+						actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
+						update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
+						oncomplete="PF('dlgFaturaViewSimples').show();"
+						styleClass="NavyButton" title="Visualizar Fatura"
+						rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
 												lc.fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
-												}"											
-												/>	
-						
-						
-						
+												}" />
+
+
+
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
 					sortBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
@@ -229,8 +234,10 @@ hr.hrSaldo {
 							minFractionDigits="2" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
-					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+				<p:column headerText="Valor total"
+					sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterMatchMode="contains">
 					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
 						<f:convertNumber currencySymbol="R$" type="currency"
 							minFractionDigits="2" />
@@ -246,14 +253,14 @@ hr.hrSaldo {
 				<p:column headerText="Conferência" width="100" exportable="false">
 					<p:commandButton icon="White fa fa-thumbs-o-up"
 						actionListener="#{pacienteFinanceiroMB.actionValidarLancamento(lc)}"
-						update=":lume:tabViewPaciente:dtLancamentosConferir" process="@this"
-						styleClass="GreenButton"
+						update=":lume:tabViewPaciente:dtLancamentosConferir"
+						process="@this" styleClass="GreenButton"
 						oncomplete="PF('dtLancamentosConferir').filter()"
 						title="Valor recebido" />
 					<p:commandButton icon="White fa fa-thumbs-o-down"
 						actionListener="#{pacienteFinanceiroMB.actionNaoValidarLancamento(lc)}"
-						update=":lume:tabViewPaciente:dtLancamentosConferir" process="@this"
-						styleClass="RedButton"
+						update=":lume:tabViewPaciente:dtLancamentosConferir"
+						process="@this" styleClass="RedButton"
 						oncomplete="PF('dtLancamentosConferir').filter()"
 						title="Falha no recebimento" />
 				</p:column>
@@ -271,23 +278,24 @@ hr.hrSaldo {
 
 				<f:facet name="header">Todas as faturas do paciente</f:facet>
 
-				<p:column headerText="Ações" exportable="false" rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
+				<p:column headerText="Ações" exportable="false"
+					rendered="#{pacienteFinanceiroMB.disableFinanceiro == false}">
 					<p:commandButton icon="fa fa-eye" process="@this"
 						actionListener="#{faturaPagtoMB.visualizaFatura(fatura)}"
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						rendered="#{fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
 						title="Visualizar Fatura" />
-						
-							<p:commandButton icon="fa fa-eye" process="@this"
-												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(fatura)}"
-												update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
-												oncomplete="PF('dlgFaturaViewSimples').show();" styleClass="NavyButton"
-												title="Visualizar Fatura" rendered="#{fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
+
+					<p:commandButton icon="fa fa-eye" process="@this"
+						actionListener="#{faturaPagtoMB.visualizaFaturaSimples(fatura)}"
+						update="@parent:@parent:@parent:pnlfaturaViewSimples, @parent:@parent:@parent:pnlfaturaViewHeaderSimples, @parent:@parent:@parent:buttonViewFaturaSimples"
+						oncomplete="PF('dlgFaturaViewSimples').show();"
+						styleClass="NavyButton" title="Visualizar Fatura"
+						rendered="#{fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
 												fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
-												}"											
-												/>
-						
+												}" />
+
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"
 					sortBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"
