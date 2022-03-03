@@ -109,7 +109,7 @@ hr.hrSaldo {
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						title="Visualizar Fatura">
-						<f:param name="fatura_selecionada" value="#{lc.fatura}" />
+						<f:param name="fatura_selecionada" value="#{lc.fatura.id}" />
 					</p:commandButton>
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
