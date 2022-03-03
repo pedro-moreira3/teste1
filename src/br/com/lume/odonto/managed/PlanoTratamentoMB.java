@@ -1758,7 +1758,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             orcamentos.removeAll(removeList);
         }
         try {
-            carregarPlanoTratamentoProcedimentos();
+            //carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Erro no carregaTela", e);
