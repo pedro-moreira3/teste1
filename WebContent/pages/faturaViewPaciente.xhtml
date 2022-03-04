@@ -1740,7 +1740,7 @@ body .height31 input {
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this"
-				update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable"
+				update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable,pnlNovoLancamento"
 				styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0)}"

@@ -234,7 +234,9 @@
 									process="@this" title="#{reserva.agendamento.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(reserva.agendamento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+									<f:param name="paciente_selecionado" value="#{reserva.agendamento.paciente.id}" />
+									</p:commandLink>
 									
                             </p:column>
                             <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}"

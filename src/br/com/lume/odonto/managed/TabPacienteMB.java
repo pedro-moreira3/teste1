@@ -221,7 +221,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         try {
             Paciente aux = null;
             String idPaciente = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("paciente_selecionado");
-            aux = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
+            
+            if(idPaciente != null && !idPaciente.isEmpty())
+                aux = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
 
             if(aux != null)
                 paciente = aux;
