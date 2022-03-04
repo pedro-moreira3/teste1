@@ -1406,7 +1406,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             novoLancamentoParcelasDisponiveis = new ArrayList<>();
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(), FormaPagamento.RECEBIMENTO);
-            System.out.println("tamanho da lista: " + listaFormasDePagamento.size());
             if (listaFormasDePagamento != null)
                 for (Tarifa formaPagamento : listaFormasDePagamento)
                     if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
@@ -1416,7 +1415,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             Collections.sort(novoLancamentoParcelasDisponiveis);
         } catch (Exception e) {
-            e.printStackTrace();
             // TODO Auto-generated catch block
         }
     }
