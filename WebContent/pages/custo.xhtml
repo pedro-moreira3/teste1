@@ -136,8 +136,8 @@
 
 							<h:panelGroup>
 								<p:outputLabel for="listaPeriodoInicial" value="Período:" />
-								<p:selectOneMenu id="listaPeriodoInicial" style="margin-top:-10px"
-									value="#{custoMB.periodo}"
+								<p:selectOneMenu id="listaPeriodoInicial"
+									style="margin-top:-10px" value="#{custoMB.periodo}"
 									update="inicioLancamento,fimLancamento">
 
 									<p:ajax process="@this" update="inicioLancamento,fimLancamento"
@@ -167,15 +167,13 @@
 									pattern="dd/MM/yyyy" mask="true" required="false" />
 							</h:panelGroup>
 						</p:panelGrid>
-						
+
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="pesquisarCustos"
-								icon="fa fa-search White" value="Pesquisar"
-								actionListener="#{custoMB.geraLista}"
+							<p:commandButton id="pesquisarCustos" icon="fa fa-search White"
+								value="Pesquisar" actionListener="#{custoMB.geraLista}"
 								update="filtroPrincipalDatas,dtCusto"
-								process="@this,filtroPrincipalDatas"
-								styleClass="OrangeButton" />
+								process="@this,filtroPrincipalDatas" styleClass="OrangeButton" />
 						</p:panelGrid>
 					</p:fieldset>
 
@@ -195,28 +193,22 @@
 								styleClass="RedButton" />
 							<p:splitButton icon="White fa fa fa-file-excel-o"
 								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-								actionListener="#{custoMB.exportarTabela('xls')}" ajax="false"
-								process="dtCusto,@this" update="@this" immediate="true"
-								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+								process="@this" update="@this">
 
-								<p:fileDownload value="#{custoMB.arquivoDownload}" />
+								<p:dataExporter type="xls" target="dtCusto"
+									fileName="Lançamentos" encoding="ISO-8859-1" />
 
 								<p:menuitem value="Exportar tabela para PDF"
-									icon="fa fa fa-file-pdf-o"
-									actionListener="#{custoMB.exportarTabela('pdf')}" ajax="false"
-									process="dtCusto,@this" immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload value="#{custoMB.arquivoDownload}" />
+									icon="fa fa fa-file-pdf-o" process="@this">
+									<p:dataExporter type="pdf" target="dtCusto"
+										fileName="Lançamentos" encoding="ISO-8859-1" />
 								</p:menuitem>
 								<p:menuitem value="Exportar tabela para CSV"
-									icon="fa fa fa-file-pdf-o"
-									actionListener="#{custoMB.exportarTabela('csv')}" ajax="false"
-									process="dtCusto,@this" immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload value="#{custoMB.arquivoDownload}" />
+									icon="fa fa fa-file-pdf-o" process="@this">
+									<p:dataExporter type="csv" target="dtCusto"
+										fileName="Lançamentos" encoding="ISO-8859-1" />
 								</p:menuitem>
 							</p:splitButton>
-
 						</p:panelGrid>
 					</p:outputPanel>
 
@@ -258,7 +250,8 @@
 								actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
 								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
-								<f:param name="paciente_selecionado" value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
+								<f:param name="paciente_selecionado"
+									value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
 							</p:commandLink>
 
 						</p:column>
