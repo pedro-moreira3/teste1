@@ -118,13 +118,13 @@
 								update=":lume:dtCusto,pnCusto" />
 
 							<p:commandButton id="persist" icon="White fa fa-save"
-								value="Salvar e Fechar"
+								process="@this,pnCusto" value="Salvar e Fechar"
 								actionListener="#{custoMB.actionPersistFechar}"
-								update=":lume:dtCusto,pnCusto" process="@this,pnCusto"
+								update=":lume:dtCusto,pnCusto" 
 								styleClass="GreenButton" />
 
 							<p:commandButton value="Fechar" icon="White fa fa-close"
-								process="@this" oncomplete="PF('dlgNovoCusto').hide()"
+								process="@this" update=":lume:dtCusto,pnCusto"  oncomplete="PF('dlgNovoCusto').hide()"
 								styleClass="NavyButton" />
 						</p:panelGrid>
 					</p:dialog>
