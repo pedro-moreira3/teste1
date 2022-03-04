@@ -1822,11 +1822,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 PlanoTratamentoSingleton.getInstance().getBo().persist(orcamentoCancelamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
             }
             
-            List<Fatura> faturasOrcamento = FaturaSingleton.getInstance().getBo().findFaturaByOrcamento(orcamentoCancelamento);
-            for(Fatura f : faturasOrcamento) {
-                FaturaSingleton.getInstance().cancelarFatura(f, UtilsFrontEnd.getProfissionalLogado());
-            }
-
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('justificativaCancelamento').hide();");
         } catch (FaturaIrregular e) {
