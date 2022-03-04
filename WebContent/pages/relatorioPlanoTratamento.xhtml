@@ -446,8 +446,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:commandButton icon="White fa fa-times-circle"
 									title="Encerrar" process="@this" styleClass="OrangeButton"
 									actionListener="#{planoTratamentoMB.setEntityFromRelatorio(m)}"
-									rendered="#{relatorioPlanoTratamentoMB.admin and m.status != 'F'}"
-									disabled="#{!m.isAtivo() or m.status == 'S' or m.status == 'E'}">
+									rendered="#{relatorioPlanoTratamentoMB.admin}"
+									disabled="#{!m.isAtivo() or m.status == 'S' or m.status == 'E' or m.status == 'F'}">
 								
 									<p:confirm header="Confirmação"
 										message="Deseja realmente encerrar este Plano de Tratamento?"
