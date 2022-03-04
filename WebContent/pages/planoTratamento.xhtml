@@ -1339,20 +1339,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:panelGrid columns="1" layout="grid" id="painelValorEditar"
 						columnClasses="ui-g-12"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:outputLabel value="Valor do procedimento:"
+						<p:outputLabel value="Valor do procedimento (R$):"
 							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}" />
 						<p:inputNumber id="valorNovoPtpEditar"
 							value="#{planoTratamentoMB.valorProc}" required="true"
 							maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-							symbol="R$ " thousandSeparator="."
+							thousandSeparator="."
 							rendered="#{planoTratamentoMB.temPermissaoTrocarValor}">
 						</p:inputNumber>
-
-
 					</p:panelGrid>
-
-
-
 
 				</div>
 			</div>
