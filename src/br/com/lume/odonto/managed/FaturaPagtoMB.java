@@ -1415,6 +1415,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             Collections.sort(novoLancamentoParcelasDisponiveis);
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO Auto-generated catch block
         }
     }
