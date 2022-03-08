@@ -44,7 +44,8 @@
 		}
 
 		var saveImage = function() {
-			var imageData = $("#lume\\:tabViewPaciente\\:paint").wPaint("image");
+			var imageData = $("#lume\\:tabViewPaciente\\:paint")
+					.wPaint("image");
 			$("#lume\\:tabViewPaciente\\:arquivoBase64").val(imageData);
 		}
 	</script>
@@ -73,17 +74,18 @@
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="pnPrincipalExame">
-			<h3>Atenção: Apenas arquivos com as seguintes extensões são permitidos: JPG, JPEG, GIF, PNG ou PDF.</h3>
+			<h3>Atenção: Apenas arquivos com as seguintes extensões são
+				permitidos: JPG, JPEG, GIF, PNG ou PDF.</h3>
 			<p:fileUpload multiple="false" mode="advanced" dragDropSupport="true"
-				rendered="true" update="nomeAnexo" 
+				rendered="true" update="nomeAnexo"
 				allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|bmp|GIF|JPEG|PNG|PDF|JPG|BMP)$/"
 				label="Clique aqui e escolha o exame"
 				invalidFileMessage="Apenas imagens e arquivos PDF podem ser utilizados."
 				invalidSizeMessage="Tamanho excedeu o limite." auto="true"
 				sizeLimit="10240000" id="exame"
-				 accept=".gif,.jpg,.jpeg,.png,.bmp,.pdf"
-				listener="#{exameMB.uploadArquivo}"
-				styleClass="NavyButton" icon="fa fa-cloud-upload"  />
+				accept=".gif,.jpg,.jpeg,.png,.bmp,.pdf"
+				listener="#{exameMB.uploadArquivo}" styleClass="NavyButton"
+				icon="fa fa-cloud-upload" />
 
 			<p:separator styleClass="SeparatorFull" />
 			<br />
@@ -130,27 +132,29 @@
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
 			<div class="Card">
-				
-				
-				<p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3" styleClass="ui-panelgrid-blank ui-fluid form-group">
-					<h:panelGroup>				
+
+
+				<p:panelGrid columns="4" layout="grid"
+					columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+					<h:panelGroup>
 						<p:commandButton id="newExame" icon="ui-icon-add" value="Novo"
-						actionListener="#{exameMB.actionNew}"
-						onsuccess="PF('dlgViewExame').show()"
-						update=":lume:tabViewPaciente:pnPrincipalExame" process="@this" />
-					</h:panelGroup>	
+							actionListener="#{exameMB.actionNew}"
+							onsuccess="PF('dlgViewExame').show()"
+							update=":lume:tabViewPaciente:pnPrincipalExame" process="@this" />
+					</h:panelGroup>
 					<h:panelGroup></h:panelGroup>
 					<h:panelGroup></h:panelGroup>
-					<h:panelGroup>					
+					<h:panelGroup>
 						<p:commandButton value="Videos tutoriais"
-						icon="White fa fa-youtube-play White"
-						oncomplete="PF('dlgListaVideos').show()"	
-						actionListener="#{exameMB.setVideos()}"									
-						process="@this" update="painelVideoList"/>						
+							icon="White fa fa-youtube-play White"
+							oncomplete="PF('dlgListaVideos').show()"
+							actionListener="#{exameMB.setVideos()}" process="@this"
+							update="painelVideoList" />
 					</h:panelGroup>
 				</p:panelGrid>
-				
-				
+
+
 				<div class="EmptyBox20"></div>
 
 				<p:outputPanel id="tbExame">
@@ -176,8 +180,9 @@
 							<h:outputText value="#{exame.descricao}" />
 						</p:column>
 						<p:column headerText="Baixar arquivo" styleClass="TexAlCenter">
-							<p:commandButton ajax="false" icon="White fa fa-download " immediate="true" process="@this"
-							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">							
+							<p:commandButton ajax="false" icon="White fa fa-download "
+								immediate="true" process="@this"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 								<p:fileDownload value="#{exameMB.getArquivo(exame)}" />
 							</p:commandButton>
 						</p:column>
@@ -213,8 +218,8 @@
 							</p:column>
 							<p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
 								<p:commandButton action="#{exameMB.actionEditFile}"
-									disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton" icon="fa fa-eye"
-									process="@this" immediate="true"
+									disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton"
+									icon="fa fa-eye" process="@this" immediate="true"
 									update=":lume:tabViewPaciente:paint,:lume:tabViewPaciente:arquivoBase64"
 									oncomplete="doPaint();PF('editDialog').show();">
 									<f:setPropertyActionListener target="#{exameMB.entity}"
@@ -233,16 +238,18 @@
 	<p:dialog widgetVar="viewDialogResponsivo" header="Visualizar imagem"
 		modal="true" responsive="true" appendTo=":lume"
 		onHide="PF('viewDialogResponsivo').toggleMaximize();">
-		<p:graphicImage value="#{exameMB.getArquivo(exameMB.entity)}"
-			stream="false" id="pnResponsivo" style="width: 100%;height: auto;" />
+		<p:graphicImage value="#{exameMB.entity.anexo}" stream="false"
+			id="pnResponsivo" style="width: 100%;height: auto;" />
 	</p:dialog>
-	<p:dialog widgetVar="viewDialog" header="Visualizar imagem"
-		appendTo=":lume" modal="true" responsive="true"
-		onHide="PF('viewDialog').toggleMaximize();">
-		<p:graphicImage value="#{exameMB.getArquivoEditado(exameMB.entity)}"
-			stream="false" id="pnResponsivoEditar"
-			style="width: 100%;height: auto;" />
-	</p:dialog>
+	<ui:remove>
+		<p:dialog widgetVar="viewDialog" header="Visualizar imagem"
+			appendTo=":lume" modal="true" responsive="true"
+			onHide="PF('viewDialog').toggleMaximize();">
+			<p:graphicImage value="#{exameMB.getArquivoEditado(exameMB.entity)}"
+				stream="false" id="pnResponsivoEditar"
+				style="width: 100%;height: auto;" />
+		</p:dialog>
+	</ui:remove>
 	<p:dialog widgetVar="editDialog" header="Editar imagem" id="pnEditar"
 		appendTo=":lume" modal="true" responsive="true"
 		onHide="$('div#_wPaint_menu').hide();">
@@ -254,8 +261,8 @@
 		</div>
 		<p:commandButton id="persistNewFile" icon="White fa fa-save"
 			value="Salvar" actionListener="#{exameMB.actionPersistNewFile}"
-			process="@this,:lume:tabViewPaciente:arquivoBase64" onclick="saveImage()"
-			update=":lume:tabViewPaciente:dtExame"
+			process="@this,:lume:tabViewPaciente:arquivoBase64"
+			onclick="saveImage()" update=":lume:tabViewPaciente:dtExame"
 			oncomplete="PF('editDialog').hide();$('div#_wPaint_menu').hide();"
 			styleClass="GreenButton" />
 	</p:dialog>
