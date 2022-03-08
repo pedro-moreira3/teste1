@@ -137,6 +137,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private OrcamentoPlanejamento planejamentoAtual;
     private boolean showProcedimentosCancelados;
     private Orcamento orcamentoCancelamento;
+    private List<Orcamento> orcamentosPendentes;
+    private List<Orcamento> orcamentosParaReprovar;
 
     // Alteracao Data Aprovacao
     private Orcamento orcamentoDataAprovacao;
@@ -1748,19 +1750,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaOrcamentos() {
         orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
-        List<Orcamento> removeList = new ArrayList<>();
-        for(int i = 0; i<orcamentos.size(); i++) {
-            if(orcamentos.get(i).getStatus().equals("Cancelado") || orcamentos.get(i).getStatus().equals("Reprovado")) {
-                removeList.add(orcamentos.get(i));
-            }
-        }
-        if(removeList.size() > 0 ) {
-            orcamentos.removeAll(removeList);
-        }
         try {
-            //carregarPlanoTratamentoProcedimentos();
+            carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Erro no carregaTela", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -1839,6 +1831,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
+    public void actionCarregarOrcamentosReprovar() {
+        orcamentosPendentes =  new ArrayList<Orcamento>();
+        for(Orcamento o : orcamentos) {
+            if(o.getStatus().equals("Pendente Aprovação") && o.getId() != orcamentoSelecionado.getId()) {
+                orcamentosPendentes.add(o);
+            }
+        }
+    }
+    
     public void actionSimulaLancamento() {
         try {
 
@@ -1891,49 +1892,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
 
-            //atualizar os status para "Reprovado" dos orçamentos do plano tratamento que possuem os mesmos itens
-            List<Orcamento> orcamentosParaAtualizar = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(this.getEntity());
+//          Reprova os orçamentos selecionados na tabela antes de aprovar o orçamento
+            if(orcamentosParaReprovar != null && orcamentosParaReprovar.size() > 0) {
+                for(Orcamento o : orcamentosParaReprovar) {
+                    o.setStatus("Reprovado");
+                    OrcamentoSingleton.getInstance().getBo().persist(o);
+                }
+                orcamentosParaReprovar = new ArrayList<Orcamento>();
+            }
             
-            for(int i =0; i < orcamentosParaAtualizar.size();i++) {
-                if(!orcamentosParaAtualizar.get(i).getStatus().equals("Pendente Aprovação")) {
-                    orcamentosParaAtualizar.remove(i);
-                }
-            }
-
-            for (Orcamento o : orcamentosParaAtualizar) {
-                int count = 0;
-                int count2 = 0;
-                for(OrcamentoItem oi : o.getItens()) {
-                    if(oi.isIncluso()) {
-                        count++;
-                    }
-                }
-                for(OrcamentoItem oi : orcamentoSelecionado.getItens()) {
-                    if(oi.isIncluso()) {
-                        count2++;
-                    }
-                }
-                    if (count == count2) {
-                        List<Orcamento> orcamentoCompare = new ArrayList<Orcamento>();
-                        
-                        for (OrcamentoItem oi : o.getItens()) {
-                            if(oi.isIncluso()) {
-                                for (OrcamentoItem oi2 : orcamentoSelecionado.getItens()) {
-                                    if (oi.getDescricao().equals(oi2.getDescricao())) {
-                                        orcamentoCompare.add(o);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (orcamentoCompare.size() == orcamentoSelecionado.getItens().size()) {
-                            o.setStatus("Reprovado");
-                            OrcamentoSingleton.getInstance().getBo().persist(o);
-                            orcamentoCompare = new ArrayList<Orcamento>();
-                        }
-                    }
-            }
-
             carregaOrcamentos();
 
             orcamentoSelecionado.setQuantidadeParcelas(1);
@@ -1944,7 +1911,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 //recalculaRepasseAsync(orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento(),UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
                 recalculaRepasseAsync(itemsJaAprovados, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }
-
+            
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
@@ -3757,5 +3724,27 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setJustificativaCancelamento(String justificativaCancelamento) {
         this.justificativaCancelamento = justificativaCancelamento;
+    }
+
+    
+
+    
+    public List<Orcamento> getOrcamentosParaReprovar() {
+        return orcamentosParaReprovar;
+    }
+
+    
+    public void setOrcamentosParaReprovar(List<Orcamento> orcamentosParaReprovar) {
+        this.orcamentosParaReprovar = orcamentosParaReprovar;
+    }
+
+    
+    public List<Orcamento> getOrcamentosPendentes() {
+        return orcamentosPendentes;
+    }
+
+    
+    public void setOrcamentosPendentes(List<Orcamento> orcamentosPendentes) {
+        this.orcamentosPendentes = orcamentosPendentes;
     }
 }

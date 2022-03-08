@@ -1762,6 +1762,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							sortBy="#{orcamento.observacoes}">
 							<h:outputText value="#{orcamento.observacoes}" />
 						</p:column>
+						<p:column headerText="Status" filterBy="#{orcamento.status}"
+							filterMatchMode="contains" sortBy="#{orcamento.status}">
+							<h:outputText value="#{orcamento.status}" />
+						</p:column>
 					</p:dataTable>
 				</p:outputPanel>
 				<br />
@@ -2090,10 +2094,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="NavyButton">
 			</p:commandButton>
 			<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
-				actionListener="#{planoTratamentoMB.actionSimulaLancamento}"
+				actionListener="#{planoTratamentoMB.actionCarregarOrcamentosReprovar()}"
 				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
-				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable"
+				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
 				styleClass="OrangeButton"
+				oncomplete="PF('reprovarOrcamento').show()"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -2882,7 +2887,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton icon="fa fa-save" process="@this,pnlJustificativa, justificar"
+					<p:commandButton icon="fa fa-save"
+						process="@this,pnlJustificativa, justificar"
 						actionListener="#{planoTratamentoMB.actionRemoverOrcamento()}"
 						update=":lume:tabViewPaciente:tbViewOrcamento,pnlJustificativa, justificar"
 						value="Salvar" styleClass="NavyButton">
@@ -2890,6 +2896,97 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" styleClass="NavyButton"
 						oncomplete="PF('justificativaCancelamento').hide();" />
+				</p:panelGrid>
+
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog id="reprovarOrcamento" global="true" appendTo=":lume"
+		widgetVar="reprovarOrcamento" modal="true" responsive="true"
+		header="Reprovar Orçamentos">
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<h:panelGroup id="pnlReprovarOrcamento">
+					<p:outputLabel for="tbViewOrcamentoReprovar"
+						value="Selecione na tabela abaixo os orçamentos para serem reprovados automaticamente após a aprovação do orçamento:" />
+					<br />
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true"
+						emptyMessage="Nenhum orçamento pendente de aprovação"
+						id="tbViewOrcamentoReprovar" widgetVar="tbViewOrcamentoReprovar"
+						var="orcamento"
+						selection="#{planoTratamentoMB.orcamentosParaReprovar}"
+						value="#{planoTratamentoMB.orcamentosPendentes}" rows="10"
+						paginator="true" paginatorPosition="bottom" rowKey="#{orcamento}">
+						<f:facet name="header">
+							<h:outputText
+								value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
+						</f:facet>
+						<p:column selectionMode="multiple"
+							style="width:16px;text-align:center">
+						</p:column>
+						<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
+							filterMatchMode="contains" sortBy="#{orcamento.descricao}">
+							<h:outputText value="#{orcamento.descricao}" />
+						</p:column>
+						<p:column headerText="Data de Criação"
+							filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
+							sortBy="#{orcamento.dataCriacao}">
+							<h:outputText value="#{orcamento.dataCriacao}">
+								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Criador"
+							filterBy="#{orcamento.profissionalCriacao.dadosBasico.nome}"
+							filterMatchMode="contains"
+							sortBy="#{orcamento.profissionalCriacao.dadosBasico.nome}">
+							<h:outputText
+								value="#{orcamento.profissionalCriacao.dadosBasico.nome}" />
+						</p:column>
+						<p:column headerText="Valor do Desconto"
+							filterBy="#{orcamento.descontoValor}" filterMatchMode="contains"
+							sortBy="#{orcamento.descontoValor}">
+							<h:outputText value="#{orcamento.descontoValor}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									maxFractionDigits="2" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Valor Total"
+							filterBy="#{orcamento.valorTotal}" filterMatchMode="contains"
+							sortBy="#{orcamento.valorTotal}">
+							<h:outputText value="#{orcamento.valorTotal}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									maxFractionDigits="2" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Observações"
+							filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
+							sortBy="#{orcamento.observacoes}">
+							<h:outputText value="#{orcamento.observacoes}" />
+						</p:column>
+						<p:column headerText="Status" filterBy="#{orcamento.status}"
+							filterMatchMode="contains" sortBy="#{orcamento.status}">
+							<h:outputText value="#{orcamento.status}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
+						actionListener="#{planoTratamentoMB.actionSimulaLancamento()}"
+						process="@this, :lume:tabViewPaciente:pnViewOrcamento, tbViewOrcamentoReprovar"
+						update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
+						styleClass="OrangeButton"
+						oncomplete="PF('reprovarOrcamento').hide()"	 />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" styleClass="NavyButton"
+						oncomplete="PF('reprovarOrcamento').hide();" />
 				</p:panelGrid>
 
 			</div>
