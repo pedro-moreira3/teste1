@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.imgscalr.Scalr;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -29,6 +31,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Storage;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
@@ -50,6 +53,8 @@ public class ExameMB extends LumeManagedBean<Exame> {
 
     private List<Exame> exames;
 
+    private InputStream in;
+
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
@@ -61,10 +66,10 @@ public class ExameMB extends LumeManagedBean<Exame> {
         super(ExameSingleton.getInstance().getBo());
         this.setClazz(Exame.class);
     }
-    
+
     public void setVideos() {
-        getListaVideosTutorial().clear();     
-        getListaVideosTutorial().put("Como incluir exames do paciente", "https://www.youtube.com/v/KAVfeQtVuD0?autoplay=1");                
+        getListaVideosTutorial().clear();
+        getListaVideosTutorial().put("Como incluir exames do paciente", "https://www.youtube.com/v/KAVfeQtVuD0?autoplay=1");
     }
 
     public StreamedContent getArquivoGenerico(byte[] file, String nome) {
@@ -72,9 +77,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
         if (file != null) {
             try {
                 ByteArrayInputStream bis = new ByteArrayInputStream(file);
-                arquivo = DefaultStreamedContent.builder()
-                        .name(nome)
-                        .stream(() -> { return bis; }).build();
+                arquivo = DefaultStreamedContent.builder().name(nome).stream(() -> {
+                    return bis;
+                }).build();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -82,19 +87,56 @@ public class ExameMB extends LumeManagedBean<Exame> {
         return arquivo;
     }
 
-    public StreamedContent getArquivoEditado(Exame exame) {
-        return getArquivoGenerico(exame.getAnexoAlterado(), exame.getNomeAnexo());
-    }
-
+//    public StreamedContent getArquivoEditado(Exame exame) {
+//        return getArquivoGenerico(exame.getAnexoAlterado(), exame.getNomeAnexo());
+//    }
+//
     public StreamedContent getArquivo(Exame exame) {
-        return getArquivoGenerico(exame.getAnexo(), exame.getNomeAnexo());
+        ByteArrayOutputStream out = null;
+        try {
+            if (exame != null && exame.getNomeAnexo() != null) {
+                out = new ByteArrayOutputStream();
+                
+                Storage.getInstance().download(Storage.AZURE_PATH_RAIZ, exame.getPaciente().getIdEmpresa() + Storage.AZURE_PATH_PACIENTE
+                        + exame.getPaciente().getId() + Storage.AZURE_PATH_EXAME + exame.getNomeAnexo(), out);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray());
+                
+                String nameImage = exame.getNomeAnexo();
+                
+                DefaultStreamedContent defaultStreamedContent = DefaultStreamedContent.builder()
+                        .name(nameImage)
+                        .contentType("image/" + exame.getNomeAnexo().split("\\.")[1])
+                        .stream(() -> {
+                            return byteArrayInputStream;
+                        }).build();
+                
+                byteArrayInputStream.close();
+                
+                return defaultStreamedContent;
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível baixar o arquivo.");
+        } finally {
+            try {
+                if(out != null) {
+                    out.flush();
+                    out.close();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível baixar o arquivo");
+            }
+        }
+        return null;
     }
 
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            if (this.getEntity().getAnexo() != null) {
+            if (this.getEntity().getNomeAnexo() != null) {
                 this.getEntity().setPaciente(this.pacienteMB.getEntity());
+                salvarStorage(in);
                 ExameSingleton.getInstance().getBo().persist(this.getEntity());
                 this.setEntity(null);
                 this.addInfo("Sucesso", "Exame salvo com sucesso!");
@@ -132,24 +174,25 @@ public class ExameMB extends LumeManagedBean<Exame> {
     public void uploadArquivo(FileUploadEvent event) {
         try {
             this.arquivo = event.getFile();
+            this.in = event.getFile().getInputStream();
             long size = 0;
             String extensao = Utils.getExtensao(this.arquivo.getFileName());
             if (extensao.equalsIgnoreCase("jpg") || extensao.equalsIgnoreCase("jpeg") || extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("png") || extensao.equalsIgnoreCase("bmp")) {
-                try {
-                    BufferedImage img = ImageIO.read(event.getFile().getInputStream()); // load image
-                    //BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(img, extensao, baos);
-                    this.setFile(this.arquivo.getFileName(), baos.toByteArray());
-                    size = baos.size();
-                } catch (IOException e) {
-                    this.log.error("Erro ao redimensionar imagem", e);
-                    e.printStackTrace();
-                }
-            } else if (extensao.equalsIgnoreCase("pdf")) {
-                ByteArrayOutputStream baos = this.zip();
-                this.setFile(this.arquivo.getFileName() + ".zip", baos.toByteArray());
+//                try {
+                BufferedImage img = ImageIO.read(event.getFile().getInputStream()); // load image
+                BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(img, extensao, baos);
+                this.setFile(this.arquivo.getFileName(), null);
                 size = baos.size();
+//                } catch (IOException e) {
+//                    this.log.error("Erro ao redimensionar imagem", e);
+//                    e.printStackTrace();
+//                }
+            } else if (extensao.equalsIgnoreCase("pdf")) {
+//                ByteArrayOutputStream baos = this.zip();
+                this.setFile(this.arquivo.getFileName(), null);
+//                size = baos.size();
             } else {
                 this.addError(OdontoMensagens.getMensagem("exame.extensao.invalida"), "");
             }
@@ -160,6 +203,17 @@ public class ExameMB extends LumeManagedBean<Exame> {
             this.addError("Erro ao fazer upload do exame", "");
             this.log.error("Erro ao fazer upload do exame", e);
         }
+    }
+
+    public void salvarStorage(InputStream in) {
+        try {
+            Storage.getInstance().gravar(in, Storage.AZURE_PATH_RAIZ,
+                    this.getEntity().getPaciente().getIdEmpresa() + Storage.AZURE_PATH_PACIENTE + this.getEntity().getPaciente().getId() + Storage.AZURE_PATH_EXAME + this.getEntity().getNomeAnexo());
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public ByteArrayOutputStream zip() {
@@ -176,7 +230,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
             this.log.error("Erro ao compactar arquivo!!", e);
             e.printStackTrace();
         }
+
         return baos;
+
     }
 
     public ByteArrayOutputStream unzip(byte[] b) {
@@ -203,7 +259,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
 
     public void setFile(String nome, byte[] anexo) {
         this.getEntity().setNomeAnexo(nome);
-        this.getEntity().setAnexo(anexo);
+//        this.getEntity().setAnexo(anexo);
     }
 
     public void cancelaAlteracao() {
@@ -217,25 +273,37 @@ public class ExameMB extends LumeManagedBean<Exame> {
     }
 
     public void actionEditFile() {
-        if (this.validaPdf(this.getEntity())) {
-            JSFHelper.getSession().setAttribute("reportBytes", this.unzip(this.getEntity().getAnexo()).toByteArray());
-            this.habilitaPDF = true;
-            this.habilitaImage = false;
-        } else {
-            try {
+        try {
+            if (this.validaPdf(this.getEntity())) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Storage.getInstance().download(Storage.AZURE_PATH_RAIZ,
+                        this.getEntity().getPaciente().getIdEmpresa() + Storage.AZURE_PATH_PACIENTE + this.getEntity().getPaciente().getId() + Storage.AZURE_PATH_EXAME + this.getEntity().getNomeAnexo(),
+                        out);
+                boolean isZipped = new ZipInputStream(new ByteArrayInputStream(out.toByteArray())).getNextEntry() != null;
+                if(isZipped) {
+                    JSFHelper.getSession().setAttribute("reportBytes", unzip(out.toByteArray()).toByteArray());
+                }else {
+                    JSFHelper.getSession().setAttribute("reportBytes", out.toByteArray());
+                }
+                    
+                
+
+                this.habilitaPDF = true;
+                this.habilitaImage = false;
+            } else {
                 this.habilitaImage = true;
                 this.habilitaPDF = false;
-                this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexo()));
-            } catch (Exception e) {
-                this.addError("Erro ao editar exame", "");
-                this.log.error("Erro ao editar exame", e);
+//                this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(out.toByteArray()));
             }
+        } catch (Exception e) {
+            this.addError("Erro ao editar exame", "");
+            this.log.error("Erro ao editar exame", e);
         }
     }
 
     public void actionEditFile2() {
         try {
-            this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexoAlterado()));
+//            this.setArquivoBase64("data:image/" + this.getEntity().getNomeAnexo().split("\\.")[1] + ";base64," + Base64.encodeBase64String(this.getEntity().getAnexoAlterado()));
         } catch (Exception e) {
             this.addError("Erro ao editar exame", "");
             this.log.error("Erro ao editar exame", e);
@@ -251,7 +319,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
     public void actionPersistNewFile(ActionEvent event) {
         byte fileContent[] = Base64.decodeBase64(this.getArquivoBase64().split(",")[1]);
         try {
-            this.getEntity().setAnexoAlterado(fileContent);
+//            this.getEntity().setAnexoAlterado(fileContent);
             ExameSingleton.getInstance().getBo().persist(this.getEntity());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
