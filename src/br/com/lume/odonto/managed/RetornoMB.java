@@ -22,9 +22,11 @@ import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
 @Named
@@ -42,6 +44,8 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     private StatusRetorno retornar;
 
     private Paciente paciente;
+    
+    private List<PlanoTratamento> planosPaciente;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRetorno;
@@ -127,6 +131,14 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         super.actionPersist(event);
         this.geraLista();
     }
+    
+    public void handleSelectPaciente() {
+        try {
+            planosPaciente = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(this.getEntity().getPaciente());
+        } catch (Exception e) {
+            log.error("Erro no handleselectPaciente", e);
+        }
+    }
 
     public List<StatusRetorno> getStatusPossiveis() {
         return Arrays.asList(StatusRetorno.values());
@@ -199,6 +211,16 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    
+    public List<PlanoTratamento> getPlanosPaciente() {
+        return planosPaciente;
+    }
+
+    
+    public void setPlanosPaciente(List<PlanoTratamento> planosPaciente) {
+        this.planosPaciente = planosPaciente;
     }
 
 }

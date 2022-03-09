@@ -121,7 +121,7 @@
 
 						<p:separator styleClass="SeparatorFull" />
 
-						<p:outputPanel styleClass="BordNone">
+						<p:outputPanel styleClass="BordNone" id="pnlRetorno">
 							<p:panelGrid columns="4" layout="grid" id="botoesRetornos"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 								<p:commandButton icon="White fa fa-file-o" value="Novo Retorno"
@@ -135,7 +135,7 @@
 									disabled="#{retornoMB.entity.id == 0}" />
 								<p:commandButton icon="White fa fa-trash-o" value="Excluir"
 									actionListener="#{retornoMB.actionRemove}"
-									update=":lume:pnRetorno" process="@this"
+									update=":lume:pnlRetorno" process="@this"
 									disabled="#{retornoMB.entity.id == 0}" styleClass="RedButton" />
 
 								<h:panelGroup>
@@ -168,7 +168,7 @@
 
 							</p:panelGrid>
 							<div class="EmptyBox20"></div>
-						</p:outputPanel>
+						
 
 						<p:dataTable filterDelay="1500" reflow="true"
 							emptyMessage="Nenhum registro encontrado" id="dtRetorno"
@@ -282,6 +282,7 @@
 							</p:column>
 
 						</p:dataTable>
+						</p:outputPanel>
 					</p:outputPanel>
 				</div>
 			</div>

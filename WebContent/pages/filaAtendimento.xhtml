@@ -43,26 +43,27 @@ div.ui-selectoneradio label {
                                         }).resize();
                                     }
                                 </script>
-                                
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					
-						<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-2"
-									styleClass="ui-panelgrid-blank ui-fluid form-group">
-									<h:panelGroup>
-										<h1>Fila de Atendimento	</h1>									
-									</h:panelGroup>
-									<h:panelGroup>
-									<p:commandButton value="Video tutorial"
-											icon="White fa fa-youtube-play White"
-											oncomplete="PF('dlgVideo').show()"
-											actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/xKxtp5rSKWc?autoplay=1')}"
-											process="@this,painelVideo" update="painelVideo"/>
-									</h:panelGroup>
-	
-						</p:panelGrid>	
-					
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-10,ui-grid-col-2"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<h:panelGroup>
+							<h1>Fila de Atendimento</h1>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:commandButton value="Video tutorial"
+								icon="White fa fa-youtube-play White"
+								oncomplete="PF('dlgVideo').show()"
+								actionListener="#{filaAtendimentoMB.setVideoLink('https://www.youtube.com/v/xKxtp5rSKWc?autoplay=1')}"
+								process="@this,painelVideo" update="painelVideo" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+
 					<p:separator styleClass="SeparatorFull" />
 
 					<p:fieldset toggleable="false" collapsed="false">
@@ -118,29 +119,23 @@ div.ui-selectoneradio label {
 								</h:panelGroup>
 
 								<h:panelGroup>
-									<p:splitButton icon="White fa fa fa-file-excel-o"
-										value="Exportar tabela para Excel"
-										styleClass="GreenSplitButton"
-										actionListener="#{filaAtendimentoMB.exportarTabela('xls')}"
-										ajax="false" process="dtAtendimento,@this" update="@this"
-										immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-										<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+									<p:splitButton id="exportar" icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton" process="@this" update="@this">
+
+										<p:dataExporter type="xls" target="dtAtendimento"
+											fileName="Agendamentos" encoding="ISO-8859-1" />
 
 										<p:menuitem value="Exportar tabela para PDF"
-											icon="fa fa fa-file-pdf-o"
-											actionListener="#{filaAtendimentoMB.exportarTabela('pdf')}"
-											ajax="false" process="dtAtendimento,@this" immediate="true"
-											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+											icon="fa fa fa-file-pdf-o" process="@this">
+											<p:dataExporter type="pdf" target="dtAtendimento"
+												fileName="Agendamentos" encoding="ISO-8859-1" />
 										</p:menuitem>
 										<p:menuitem value="Exportar tabela para CSV"
-											icon="fa fa fa-file-pdf-o"
-											actionListener="#{filaAtendimentoMB.exportarTabela('csv')}"
-											ajax="false" process="dtAtendimento,@this" immediate="true"
-											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+											icon="fa fa fa-file-pdf-o" process="@this">
+											<p:dataExporter type="csv" target="dtAtendimento"
+												fileName="Agendamentos" encoding="ISO-8859-1" />
 										</p:menuitem>
 									</p:splitButton>
 								</h:panelGroup>
@@ -251,14 +246,14 @@ div.ui-selectoneradio label {
 									process="@this" event="close" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
-						<p:column filterBy="#{a.iniciouAsStr}"
-							sortBy="#{a.iniciouAsStr}" filterMatchMode="contains"
-							headerText="Ini. Atend. às" width="8%">
+						<p:column filterBy="#{a.iniciouAsStr}" sortBy="#{a.iniciouAsStr}"
+							filterMatchMode="contains" headerText="Ini. Atend. às" width="8%">
 							<p:calendar value="#{a.iniciouAs}" pattern="HH:mm" mask="true"
 								showButtonPanel="true"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
-								<p:ajax event="close" listener="#{filaAtendimentoMB.persistAgendamento(a)}"
+								<p:ajax event="close"
+									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
@@ -269,7 +264,8 @@ div.ui-selectoneradio label {
 								showButtonPanel="true"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
-								<p:ajax event="close" listener="#{filaAtendimentoMB.persistAgendamento(a)}"
+								<p:ajax event="close"
+									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
@@ -372,14 +368,14 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
 										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
 											<p:commandButton id="persist" icon="White fa fa-save"
-									process=":lume:pnAgendamento, @this" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
-									actionListener="#{agendamentoMB.actionPersist}"
-									update=":lume:pnAgendamento"
-									oncomplete="handleDialogRequest(xhr, status, args);PF('dtAtendimento').filter()"
-									styleClass="GreenButton" />	
-												
-												
+												process=":lume:pnAgendamento, @this" value="Salvar"
+												rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+												actionListener="#{agendamentoMB.actionPersist}"
+												update=":lume:pnAgendamento"
+												oncomplete="handleDialogRequest(xhr, status, args);PF('dtAtendimento').filter()"
+												styleClass="GreenButton" />
+
+
 										</h:panelGroup>
 										<p:commandButton icon="White fa fa-close" value="Fechar"
 											process="@this" onclick="PF('eventDialog').hide()" />

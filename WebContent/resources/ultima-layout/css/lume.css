@@ -285,7 +285,7 @@ span.lumeField label {
 .agendamentoNaoConfirmado {
 	border-color: #F00 !important;
 	background-color: #F00 !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 
@@ -296,17 +296,21 @@ span.lumeField label {
 	height:100% !important;
 }
 
+.clienteNaClinica .fc-event-main{
+	color: #000 !important;
+}
+
 .agendamentoConfirmado {
 	border-color: blue !important;
 	background-color: blue !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 
 .agendamentoAtendido {
 	border-color: #49826C !important;
 	background-color: #49826C !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 
@@ -320,7 +324,7 @@ span.lumeField label {
 .agendamentoCancelado {
 	border-color: #800080 !important;
 	background-color: #800080 !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 
@@ -341,7 +345,7 @@ span.lumeField label {
 .agendamentoEncaixe {
 	border-color: #00BFFF !important;
 	background-color: #00BFFF !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 
@@ -355,7 +359,7 @@ span.lumeField label {
 .agendamentoRemarcado {
 	border-color: #D050D0 !important;
 	background-color: #D050D0 !important;
-	color: #fff !important;
+	color: #000 !important;
 	height:100% !important;
 }
 

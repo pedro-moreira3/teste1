@@ -97,7 +97,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             fornecedor.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
             FornecedorSingleton.getInstance().getBo().persist(fornecedor);
             this.carregaLista();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro ativado.");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Registro inativado.");
         } catch (Exception e) {
             e.printStackTrace();
             this.addError("Erro", "Erro ao ativar registro");

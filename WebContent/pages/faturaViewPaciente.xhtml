@@ -74,7 +74,7 @@ body .height31 input {
 
 	<!-- Telas que ainda usam FaturaView.xhtml antigo: movimentacoes.xhmtl, pagamentoRecebimentoFatura.xhtml, relatorioFatura.xhtml -->
 
-	<p:dialog widgetVar="dlgNewLancamento" header="Novo Lançamento"
+	<p:dialog widgetVar="dlgNewLancamento" header="Novo Lançamento" id="dlgNewLancamento"
 		responsive="true" modal="true" appendTo=":lume">
 		<p:ajax event="close" resetValues="true" update="pnlNewLancamento" />
 		<div class="ui-g ui-fluid">
@@ -249,7 +249,7 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
-	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
+	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento" id="dlgNovoLancamento"
 		responsive="true" modal="true" appendTo=":lume" width="70%"
 		height="80%">
 		<div class="ui-g ui-fluid">
@@ -1740,7 +1740,7 @@ body .height31 input {
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this"
-				update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable,pnlNovoLancamento"
+				update="@parent:pnlNovoLancamento,novoLancamentoParcelasTable,@parent:pnlNewLancamento, dlgNewLancamento, dlgNovoLancamento,"
 				styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0)}"
