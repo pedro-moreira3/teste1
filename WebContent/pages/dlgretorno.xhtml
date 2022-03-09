@@ -59,7 +59,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						completeMethod="#{retornoMB.geraSugestoesPaciente}" var="p"
 						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 						converter="paciente" required="true" size="46" scrollHeight="400"
-						disabled="#{retornoMB.entity.paciente != null}">
+						disabled="#{retornoMB.entity.paciente.id != null}">
 						<p:column headerText="Código" style="text-align: center;">
 							<h:outputText value="#{p.codigo}" />
 						</p:column>
@@ -72,9 +72,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:column headerText="Nome da Mãe">
 							<h:outputText value="#{p.nomeMae}" />
 						</p:column>
-						<p:ajax event="itemSelect" process="@this" />
+						<p:ajax event="itemSelect" process="@this" update="viewRetorno" listener="#{retornoMB.handleSelectPaciente()}" />
 					</p:autoComplete>
-					
+
 					<h:outputLabel value="Status: " />
 					<p:selectOneMenu value="#{retornoMB.entity.retornar}"
 						converter="enumStatusRetorno">
@@ -93,16 +93,23 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					<p:inputTextarea id="observacoesretornocadastro" rows="3" cols="33"
 						value="#{retornoMB.entity.observacoes}" maxlength="200" />
 					<h:outputLabel value="Plano de Tratamento: " />
-					<h:outputText value="#{retornoMB.entity.planoTratamento.descricao}" />
+					<p:selectOneMenu id="planoPaciente" 
+						value="#{retornoMB.entity.planoTratamento}" converter="planoTratamento">
+						<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
+						<f:selectItems value="#{retornoMB.planosPaciente}" var="pt"
+							itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+							<p:ajax event="itemSelect" process="@this" update="dataFinalizacao" />
+					</p:selectOneMenu>
+					
 					<h:outputLabel value="Data Finalização Plano de Tratamento: " />
-					<h:outputText
+					<h:outputText id="dataFinalizacao"
 						value="#{retornoMB.entity.planoTratamento.dataFinalizadoStr}" />
 
 					<p:outputLabel for="detalhesRetorno" value="Detalhes do contato: " />
 					<p:inputTextarea id="detalhesRetorno" rows="3" cols="33"
 						value="#{retornoMB.entity.detalhesContato}" maxlength="200" />
 				</p:panelGrid>
-				
+
 			</div>
 		</div>
 	</p:outputPanel>
