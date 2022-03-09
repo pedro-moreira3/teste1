@@ -1813,9 +1813,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                                 orcamentoCancelamento.getValorTotal()));
                 PlanoTratamentoSingleton.getInstance().getBo().persist(orcamentoCancelamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
             }
-            
+
             List<Fatura> faturasOrcamento = FaturaSingleton.getInstance().getBo().findFaturaByOrcamento(orcamentoCancelamento);
-            for(Fatura f : faturasOrcamento) {
+            for (Fatura f : faturasOrcamento) {
                 FaturaSingleton.getInstance().cancelarFatura(f, UtilsFrontEnd.getProfissionalLogado());
             }
 
@@ -1831,18 +1831,23 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public void actionCarregarOrcamentosReprovar() {
-        orcamentosPendentes =  new ArrayList<Orcamento>();
-        for(Orcamento o : orcamentos) {
-            if(o.getStatus().equals("Pendente Aprovação") && o.getId() != orcamentoSelecionado.getId()) {
-                orcamentosPendentes.add(o);
+    public void actionReprovarOrcamentos() {
+        try {
+//      Reprova os orçamentos selecionados na tabela antes de aprovar o orçamento
+            if (orcamentosParaReprovar != null && orcamentosParaReprovar.size() > 0) {
+                for (Orcamento o : orcamentosParaReprovar) {
+                    o.setStatus("Reprovado");
+                    OrcamentoSingleton.getInstance().getBo().persist(o);
+                }
+                orcamentosParaReprovar = new ArrayList<Orcamento>();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    
+
     public void actionSimulaLancamento() {
         try {
-
             List<OrcamentoItem> itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
 
             if (validaOrcamentoMaiorPermitido()) {
@@ -1892,15 +1897,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
 
-//          Reprova os orçamentos selecionados na tabela antes de aprovar o orçamento
-            if(orcamentosParaReprovar != null && orcamentosParaReprovar.size() > 0) {
-                for(Orcamento o : orcamentosParaReprovar) {
-                    o.setStatus("Reprovado");
-                    OrcamentoSingleton.getInstance().getBo().persist(o);
-                }
-                orcamentosParaReprovar = new ArrayList<Orcamento>();
-            }
-            
             carregaOrcamentos();
 
             orcamentoSelecionado.setQuantidadeParcelas(1);
@@ -1912,6 +1908,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 recalculaRepasseAsync(itemsJaAprovados, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }
             
+            orcamentosPendentes = new ArrayList<Orcamento>();
+            for (Orcamento o : orcamentos) {
+                if (o.getStatus().equals("Pendente Aprovação") && o.getId() != orcamentoSelecionado.getId()) {
+                    orcamentosPendentes.add(o);
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
@@ -3726,24 +3729,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.justificativaCancelamento = justificativaCancelamento;
     }
 
-    
-
-    
     public List<Orcamento> getOrcamentosParaReprovar() {
         return orcamentosParaReprovar;
     }
 
-    
     public void setOrcamentosParaReprovar(List<Orcamento> orcamentosParaReprovar) {
         this.orcamentosParaReprovar = orcamentosParaReprovar;
     }
 
-    
     public List<Orcamento> getOrcamentosPendentes() {
         return orcamentosPendentes;
     }
 
-    
     public void setOrcamentosPendentes(List<Orcamento> orcamentosPendentes) {
         this.orcamentosPendentes = orcamentosPendentes;
     }

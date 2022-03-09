@@ -1752,7 +1752,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									maxFractionDigits="2" />
 							</h:outputText>
 						</p:column>
-						<p:column headerText="Data de Aprovação"
+						<p:column headerText="Validação"
 							filterBy="#{orcamento.dataAprovacaoStr}"
 							filterMatchMode="contains" sortBy="#{orcamento.dataAprovacaoStr}">
 							<h:outputText value="#{orcamento.dataAprovacaoStr}" />
@@ -2094,11 +2094,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="NavyButton">
 			</p:commandButton>
 			<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
-				actionListener="#{planoTratamentoMB.actionCarregarOrcamentosReprovar()}"
+				actionListener="#{planoTratamentoMB.actionSimulaLancamento()}"
 				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
 				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
 				styleClass="OrangeButton"
-				oncomplete="PF('reprovarOrcamento').show()"
+				oncomplete="PF('reprovarOrcamento').show();PF('dlgViewOrcamento').hide();"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -2927,9 +2927,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center">
 						</p:column>
-						<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
-							filterMatchMode="contains" sortBy="#{orcamento.descricao}">
-							<h:outputText value="#{orcamento.descricao}" />
+						<p:column headerText="Ações" >
+							<p:commandButton process="@this" title="Visualizar"
+								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
+								update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:orcamentoViewTable, :lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView"
+								oncomplete="PF('dlgViewOrcamento').show();"
+								styleClass="NavyButton" icon="fa fa-eye" />
 						</p:column>
 						<p:column headerText="Data de Criação"
 							filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
@@ -2978,11 +2981,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
-						actionListener="#{planoTratamentoMB.actionSimulaLancamento()}"
+					<p:commandButton icon="White fa fa-gear" value="Reprovar Orçamentos"
+						actionListener="#{planoTratamentoMB.actionReprovarOrcamentos()}"
 						process="@this, :lume:tabViewPaciente:pnViewOrcamento, tbViewOrcamentoReprovar"
 						update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
-						styleClass="OrangeButton"
+						styleClass="RedButton"
 						oncomplete="PF('reprovarOrcamento').hide()"	 />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" styleClass="NavyButton"
