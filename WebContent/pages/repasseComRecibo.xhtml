@@ -825,7 +825,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<h:outputText value="Repasses de Profissionais" />
 							</f:facet>
 
-							<p:column rendered="#{reciboLancamento.dados == null}" 
+							<p:column rendered="#{reciboLancamento.dados == null}"
 								exportable="false" filterMatchMode="contains"
 								headerText="Procedimento" width="15%"
 								filterBy="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}"
@@ -1569,6 +1569,14 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<p:column selectionMode="multiple" style="width:16px;" />
 												<p:column width="12%" headerText="Ações" exportable="false">
 
+													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
+														title="Detalhes do repasse"
+														oncomplete="PF('dlgFaturaView').show();"
+														actionListener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
+														process="@this"
+														disabled="#{ptp.fatura eq null  or 
+													ptp.fatura.ativo eq 'N' }"
+														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"/>
 													<p:commandButton icon="fa fa-calculator"
 														styleClass="NavyButton" title="Visualizar Cálculo Repasse"
 														actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
@@ -1576,122 +1584,124 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }"
 														update=":lume:pnCalculoRepasse" />
+												
+														<p:commandButton icon="fa fa-repeat"
+															styleClass="NavyButton" title="Recalcular Repasse"
+															rendered="#{repasseProfissionalComReciboMB.admin}"
+															actionListener="#{repasseProfissionalComReciboMB.recalcularRepasse(ptp)}"
+															process="@this,dtPrincipalRepasse"
+															oncomplete="PF('dtPrincipalRepasse').filter();"
+															update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse">
+															<p:confirm header="Confirmação" icon="ui-icon-alert"
+																escape="false"
+																message="Cofirma o recálculo de repasse de profissional?">
+															</p:confirm>
+														</p:commandButton>
 
-													<p:commandButton icon="fa fa-repeat"
-														styleClass="NavyButton" title="Recalcular Repasse"
-														rendered="#{repasseProfissionalComReciboMB.admin}"
-														actionListener="#{repasseProfissionalComReciboMB.recalcularRepasse(ptp)}"
-														process="@this,dtPrincipalRepasse"
-														oncomplete="PF('dtPrincipalRepasse').filter();"
-														update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse">
-														<p:confirm header="Confirmação" icon="ui-icon-alert"
-															escape="false"
-															message="Cofirma o recálculo de repasse de profissional?">
-														</p:confirm>
-													</p:commandButton>
-
-													<p:commandButton icon="fa fa-dollar"
-														styleClass="NavyButton" title="Ajuste Manual"
-														rendered="#{repasseProfissionalComReciboMB.admin}"
-														actionListener="#{repasseProfissionalComReciboMB.mostraAjusteManual(ptp)}"
-														process="@this"
-														oncomplete="PF('dtPrincipalRepasse').filter();"
-														update=":lume:pnAjuste,:lume:painelJustificativa">
-													</p:commandButton>
+														<p:commandButton icon="fa fa-dollar"
+															styleClass="NavyButton" title="Ajuste Manual"
+															rendered="#{repasseProfissionalComReciboMB.admin}"
+															actionListener="#{repasseProfissionalComReciboMB.mostraAjusteManual(ptp)}"
+															process="@this"
+															oncomplete="PF('dtPrincipalRepasse').filter();"
+															update=":lume:pnAjuste,:lume:painelJustificativa">
+														</p:commandButton>
 
 
 
-												</p:column>
-												<p:column
-													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
-													sortBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
-													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Dentista Executor" />
-													</f:facet>
-													<h:outputText
-														value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
-												</p:column>
-												<p:column
-													filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
-													sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
-													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Paciente" />
-													</f:facet>
+													</p:column>
+													<p:column
+														filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
+														sortBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
+														filterMatchMode="contains"
+														filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+														<f:facet name="header">
+															<h:outputText value="Dentista Executor" />
+														</f:facet>
+														<h:outputText
+															value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
+													</p:column>
+													<p:column
+														filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+														sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+														filterMatchMode="contains"
+														filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+														<f:facet name="header">
+															<h:outputText value="Paciente" />
+														</f:facet>
 
-													<p:commandLink
-														value="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
-														process="@this" title="#{ptp.planoTratamento.paciente.id}"
-														actionListener="#{tabPacienteMB.loadPaciente(ptp.planoTratamento.paciente)}"
-														oncomplete="PF('dlgFichaPaciente').show()"
-														update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
-														<f:param name="paciente_selecionado"
-															value="#{ptp.planoTratamento.paciente.id}"></f:param>
-													</p:commandLink>
+														<p:commandLink
+															value="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+															process="@this"
+															title="#{ptp.planoTratamento.paciente.id}"
+															actionListener="#{tabPacienteMB.loadPaciente(ptp.planoTratamento.paciente)}"
+															oncomplete="PF('dlgFichaPaciente').show()"
+															update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+															<f:param name="paciente_selecionado"
+																value="#{ptp.planoTratamento.paciente.id}"></f:param>
+														</p:commandLink>
 
-												</p:column>
-												<p:column filterBy="#{ptp.planoTratamento.descricao}"
-													sortBy="#{ptp.planoTratamento.descricao}"
-													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Plano de tratamento" />
-													</f:facet>
-													<h:outputText title="#{ptp.id}"
-														value="#{ptp.planoTratamento.descricao}" />
-												</p:column>
-												<p:column filterBy="#{ptp.descricaoCompletaComFace}"
-													sortBy="#{ptp.descricaoCompletaComFace}"
-													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Procedimento" />
-													</f:facet>
-													<h:outputText value="#{ptp.descricaoCompletaComFace}" />
-												</p:column>
-												<p:column filterBy="#{ptp.dataFinalizadoStr}"
-													headerText="Data de Execução" filterMatchMode="contains"
-													sortBy="#{ptp.dataFinalizado}">
-													<h:outputText value="#{ptp.dataFinalizadoStr}" />
-												</p:column>
+													</p:column>
+													<p:column filterBy="#{ptp.planoTratamento.descricao}"
+														sortBy="#{ptp.planoTratamento.descricao}"
+														filterMatchMode="contains"
+														filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+														<f:facet name="header">
+															<h:outputText value="Plano de tratamento" />
+														</f:facet>
+														<h:outputText title="#{ptp.id}"
+															value="#{ptp.planoTratamento.descricao}" />
+													</p:column>
+													<p:column filterBy="#{ptp.descricaoCompletaComFace}"
+														sortBy="#{ptp.descricaoCompletaComFace}"
+														filterMatchMode="contains"
+														filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+														<f:facet name="header">
+															<h:outputText value="Procedimento" />
+														</f:facet>
+														<h:outputText value="#{ptp.descricaoCompletaComFace}" />
+													</p:column>
+													<p:column filterBy="#{ptp.dataFinalizadoStr}"
+														headerText="Data de Execução" filterMatchMode="contains"
+														sortBy="#{ptp.dataFinalizado}">
+														<h:outputText value="#{ptp.dataFinalizadoStr}" />
+													</p:column>
 
-												<p:column filterBy="#{ptp.valorTotal}"
-													headerText="Valor total de repasse"
-													filterMatchMode="contains" sortBy="#{ptp.valorTotal}">
-													<p:commandLink process="@this"
-														title="verificar custos diretos"
-														actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"
-														update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader,:lume:buttonsPTPCustoDireto">
-														<h:outputText value="#{ptp.valorTotal}">
+													<p:column filterBy="#{ptp.valorTotal}"
+														headerText="Valor total de repasse"
+														filterMatchMode="contains" sortBy="#{ptp.valorTotal}">
+														<p:commandLink process="@this"
+															title="verificar custos diretos"
+															actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"
+															update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader,:lume:buttonsPTPCustoDireto">
+															<h:outputText value="#{ptp.valorTotal}">
+																<f:convertNumber currencySymbol="R$ " type="currency" />
+															</h:outputText>
+														</p:commandLink>
+													</p:column>
+
+													<p:column filterBy="#{ptp.valorPago}"
+														headerText="Valor repassado" filterMatchMode="contains"
+														sortBy="#{ptp.valorPago}">
+														<h:outputText value="#{ptp.valorPago}">
 															<f:convertNumber currencySymbol="R$ " type="currency" />
 														</h:outputText>
-													</p:commandLink>
-												</p:column>
+													</p:column>
 
-												<p:column filterBy="#{ptp.valorPago}"
-													headerText="Valor repassado" filterMatchMode="contains"
-													sortBy="#{ptp.valorPago}">
-													<h:outputText value="#{ptp.valorPago}">
-														<f:convertNumber currencySymbol="R$ " type="currency" />
-													</h:outputText>
-												</p:column>
-
-												<p:column filterBy="#{ptp.valorDisponivel}"
-													headerText="Valor disponível para repasse"
-													filterMatchMode="contains" sortBy="#{ptp.valorDisponivel}">
-													<p:commandLink process="@this" title="verificar pendências"
-														actionListener="#{repasseProfissionalComReciboMB.verificaPendencias(ptp)}"
-														oncomplete="PF('dlgPendencias').show()"
-														update=":lume:dlgPendencias">
-														<h:outputText value="#{ptp.valorDisponivel}"
-															style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
-															<f:convertNumber currencySymbol="R$ " type="currency" />
-														</h:outputText>
-													</p:commandLink>
-												</p:column>
+													<p:column filterBy="#{ptp.valorDisponivel}"
+														headerText="Valor disponível para repasse"
+														filterMatchMode="contains" sortBy="#{ptp.valorDisponivel}">
+														<p:commandLink process="@this"
+															title="verificar pendências"
+															actionListener="#{repasseProfissionalComReciboMB.verificaPendencias(ptp)}"
+															oncomplete="PF('dlgPendencias').show()"
+															update=":lume:dlgPendencias">
+															<h:outputText value="#{ptp.valorDisponivel}"
+																style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
+																<f:convertNumber currencySymbol="R$ " type="currency" />
+															</h:outputText>
+														</p:commandLink>
+													</p:column>
 											</p:dataTable>
 										</p:fieldset>
 									</div>
@@ -1774,28 +1784,27 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 													<h:panelGroup>
 
-															
+
 														<p:splitButton icon="White fa fa fa-file-excel-o"
 															value="Exportar tabela para Excel"
-															styleClass="GreenSplitButton"
-															process="@this"
+															styleClass="GreenSplitButton" process="@this"
 															update="@this">
 
 															<p:dataExporter type="xls"
-																target="dtPrincipalRepasseDiaria"
-																fileName="Diárias" encoding="ISO-8859-1" />
+																target="dtPrincipalRepasseDiaria" fileName="Diárias"
+																encoding="ISO-8859-1" />
 
 															<p:menuitem value="Exportar tabela para PDF"
 																icon="fa fa fa-file-pdf-o" process="@this">
 																<p:dataExporter type="pdf"
-																	target="dtPrincipalRepasseDiaria"
-																	fileName="Diárias" encoding="ISO-8859-1" />
+																	target="dtPrincipalRepasseDiaria" fileName="Diárias"
+																	encoding="ISO-8859-1" />
 															</p:menuitem>
 															<p:menuitem value="Exportar tabela para CSV"
 																icon="fa fa fa-file-pdf-o" process="@this">
 																<p:dataExporter type="csv"
-																	target="dtPrincipalRepasseDiaria"
-																	fileName="Diárias" encoding="ISO-8859-1" />
+																	target="dtPrincipalRepasseDiaria" fileName="Diárias"
+																	encoding="ISO-8859-1" />
 															</p:menuitem>
 														</p:splitButton>
 													</h:panelGroup>
