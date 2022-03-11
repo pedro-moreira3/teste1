@@ -1572,12 +1572,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Detalhes do repasse"
 														process="@this"
-														oncomplete="PF('dlgFaturaView').show();"
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }">
 														<p:ajax process="@this"
 															listener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
-															oncomplete="PF('dlgFaturaViewProfissional').show();"
+															oncomplete="PF('dlgFaturaViewProfissional').show();PF('loading').hide();"
 															update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
 													</p:commandButton>
 													<p:commandButton icon="fa fa-calculator"
