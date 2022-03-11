@@ -1577,7 +1577,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													ptp.fatura.ativo eq 'N' }">
 														<p:ajax process="@this"
 															listener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
-															oncomplete="PF('dlgFaturaView').show();"
+															oncomplete="PF('dlgFaturaViewProfissional').show();"
 															update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
 													</p:commandButton>
 													<p:commandButton icon="fa fa-calculator"
