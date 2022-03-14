@@ -1569,6 +1569,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<p:column selectionMode="multiple" style="width:16px;" />
 												<p:column width="12%" headerText="Ações" exportable="false">
 
+													<ui:remove>
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Detalhes do repasse"
 														process="@this"
@@ -1579,6 +1580,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															oncomplete="PF('dlgFaturaViewProfissional').show();PF('loading').hide();"
 															update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
 													</p:commandButton>
+													</ui:remove>
 													<p:commandButton icon="fa fa-calculator"
 														styleClass="NavyButton" title="Visualizar Cálculo Repasse"
 														actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
