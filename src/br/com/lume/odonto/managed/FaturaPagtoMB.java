@@ -572,9 +572,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         Fatura aux = null;
         try {
-            String idFatura = (String) FacesContext.getCurrentInstance()
-                    .getExternalContext().getRequestParameterMap().get("fatura_selecionada");
-            aux = FaturaSingleton.getInstance().getBo().find(Long.valueOf(idFatura));
+//            String idFatura = (String) FacesContext.getCurrentInstance()
+//                    .getExternalContext().getRequestParameterMap().get("fatura_selecionada");
+            aux = FaturaSingleton.getInstance().getBo().find(Long.valueOf(fatura.getId()));
             
             if(aux != null)
                 fatura = aux;
