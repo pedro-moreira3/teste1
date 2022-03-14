@@ -164,6 +164,11 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
         this.setFim(null);
         this.setDominioSelecionado(null);
     }
+    
+    public void closeDlg() {
+        this.inicio = null;
+        this.fim = null;
+    }
 
     public Profissional getProfissional() {
         return agendamentoMB.getProfissional();
