@@ -34,6 +34,7 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
+import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamentoDadosImutaveis;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -276,10 +277,23 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                           
                         }
                         
-                        repasseRecibo.getDados().setLancamentoPago(repasseRecibo.getLancamento().getValidadoStr());
-                        repasseRecibo.getDados().setValorTotal(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
-                        repasseRecibo.getDados().setValorJaPago(FaturaSingleton.getInstance().getTotalPago(repasseRecibo.getLancamento().getFatura()));
-                        repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
+                        //TODO - Corrige situações em que não existe dados na tabela ReciboRepasseProfissionalLancamentoDadosImutaveis
+                        if (repasseRecibo.getDados().getValorTotal() == null && repasseRecibo.getDados().getValorJaPago() == null) {
+                            repasseRecibo.getDados().setLancamentoPago(repasseRecibo.getLancamento().getValidadoStr());
+                            repasseRecibo.getDados().setValorTotal(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
+                            
+                            List<Lancamento> lancamentosAnteriores = findLancamentosImutaveis(repasseRecibo.getDados());
+                            BigDecimal valorPago = BigDecimal.ZERO;
+                            
+                            if(!lancamentosAnteriores.isEmpty())
+                                for(Lancamento l : lancamentosAnteriores)
+                                    valorPago = valorPago.add(l.getValor());
+                            
+                            repasseRecibo.getDados().setValorJaPago(valorPago);
+                            repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
+                            ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().persist(repasseRecibo);
+                        }
+                        
                         if (repasseRecibo.getLancamento().getValorComDesconto() == null
                                 || repasseRecibo.getLancamento().getValorComDesconto().compareTo(BigDecimal.ZERO) == 0)
                             repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValor());
@@ -313,6 +327,18 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         else if(showIfDiaria(recibo))
             PrimeFaces.current().executeScript("PF('dtReciboRepasseDiarias').filter();");
         PrimeFaces.current().executeScript("PF('dlgVisualizarRecibo').show()");
+    }
+    
+    public List<Lancamento> findLancamentosImutaveis(ReciboRepasseProfissionalLancamentoDadosImutaveis lancamentoImutavel){
+        List<Lancamento> lancamentosAnteriores = new ArrayList<Lancamento>();
+        
+        lancamentoImutavel.getReciboLancamento().getLancamento().getFatura().getLancamentos().forEach(l -> {
+            if(l.getId() < lancamentoImutavel.getReciboLancamento().getLancamento().getId()
+                    && l.getDataConferido() != null && l.getDataValidado() != null)
+                lancamentosAnteriores.add(l);
+        });
+        
+        return lancamentosAnteriores;
     }
 
     public void prepararRecibo() {

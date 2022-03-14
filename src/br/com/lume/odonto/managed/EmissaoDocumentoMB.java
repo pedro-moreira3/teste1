@@ -112,19 +112,24 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     public void pesquisar() {
         Date dataInicial = null, dataFinal = null;
 
-//        actionTrocaDatasCriacao(false);
-//        if (getDataInicio() != null && getDataFim() != null) {
-//            Calendar c = Calendar.getInstance();
-//            c.setTime(getDataInicio());
-//            c.add(Calendar.DAY_OF_MONTH, -1);
-//            dataInicial = c.getTime();
-//
-//            c.setTime(getDataFim());
-//            c.add(Calendar.DAY_OF_MONTH, +1);
-//            dataFinal = c.getTime();
-//        }
+        actionTrocaDatasCriacao();
+        if (getDataInicio() != null && getDataFim() != null) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(getDataInicio());
+            c.add(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            dataInicial = c.getTime();
+
+            c.setTime(getDataFim());
+            c.add(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+            c.set(Calendar.SECOND, 59);
+            dataFinal = c.getTime();
+        }
+
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
-            this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(getDataInicio(), getDataFim(), filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
+            this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByFiltros(dataInicial, dataFinal, filtroProfissionalEmissao, getEmitidoPara(), filtroTipoDocumento,
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList().size() > 0) {
                 for (DocumentoEmitido doc : getEntityList()) {

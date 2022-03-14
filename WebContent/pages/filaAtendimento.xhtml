@@ -170,19 +170,19 @@ div.ui-selectoneradio label {
 								<f:param name="paciente_selecionado" value="#{a.paciente.id}"></f:param>
 							</p:commandLink>
 						</p:column>
-						<p:column headerText="Agendar c/ mesmo Dentista">
+						<p:column headerText="Agendar c/ mesmo Dentista" exportable="false">
 							<p:commandButton icon="fa fa fa-calendar"
 								oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 								process="@this" action="#{agendamentoMB.filaAtendimento(a)}"
 								update="lume:pnAgendamento" style="width: 33px !important" />
 						</p:column>
-						<p:column headerText="Whats">
+						<p:column headerText="Whats" exportable="false">
 							<p:button id="whats" icon="White fa fa-whatsapp"
 								disabled="#{agendamentoMB.getUrlWpp(a) == null}"
 								onclick="window.open('#{agendamentoMB.getUrlWpp(a)}'); return false;"
 								styleClass="GreenButton" style="width: 33px !important" />
 						</p:column>
-						<p:column headerText="Pagamento">
+						<p:column headerText="Pagamento" exportable="false">
 							<p:button id="pagamento" icon="White fa fa-money"
 								styleClass="OrangeButton"
 								onclick="window.open('faturaPagto.jsf?id=#{a.paciente.id}');return false;"

@@ -48,11 +48,11 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     private List<ConvenioProcedimento> relatorioConvenioProcedimentos;
 
     private Integer mes, ano;
-
-    private DataTable tabelaProcedimentos;
     
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorioConvenio;
+    private DataTable tabelaProcedimentosFora;
+    private DataTable tabelaProcedimentos;
 
     public ConvenioProcedimentoMB() {
         super(ConvenioProcedimentoSingleton.getInstance().getBo());
@@ -236,6 +236,14 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     public void exportarTabela(String type) {
         exportarTabela("Relatório procedimentos por convênio", tabelaRelatorioConvenio, type);
     }
+    
+    public void exportarTabelaProcedimentosFora(String type) {
+        exportarTabela("Procedimentos não vinculados ao convênio", tabelaProcedimentosFora, type);
+    }
+    
+    public void exportarTabelaProcedimentos(String type) {
+        exportarTabela("Procedimentos vinculados ao convênio", tabelaProcedimentos, type);
+    }
 
     public List<ConvenioProcedimento> getConvenioProcedimentos() {
         return convenioProcedimentos;
@@ -315,6 +323,14 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void setTabelaProcedimentos(DataTable tabelaProcedimentos) {
         this.tabelaProcedimentos = tabelaProcedimentos;
+    }
+
+    public DataTable getTabelaProcedimentosFora() {
+        return tabelaProcedimentosFora;
+    }
+
+    public void setTabelaProcedimentosFora(DataTable tabelaProcedimentosFora) {
+        this.tabelaProcedimentosFora = tabelaProcedimentosFora;
     }
 
 }
