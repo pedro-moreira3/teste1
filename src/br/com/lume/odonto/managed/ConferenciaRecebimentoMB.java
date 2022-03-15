@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.util.SystemOutLogger;
@@ -80,6 +81,8 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void carregarLancamentosConferencia() {
         this.setEntityList(null);
+        DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tv:dtLancamentoValidar");
+        table.reset();
         try {
             Calendar c = Calendar.getInstance();
             c.setTime(this.dataCreditoFinal);
