@@ -98,13 +98,13 @@ body .sideChkBox .ui-chkbox-label {
 							<p:panelGrid columns="5" layout="grid"
 								columnClasses="ui-g-2, ui-g-2, ui-g-2, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
-								<p:panel id="valorPago">
+								<p:panel id="valorPagoProf">
 									<f:facet name="header">
 										<h:outputText value="Valor Recebido" />
 										<h:outputLabel class="fa fa-question"
-											id="tooltipValorRecebido"
+											id="tooltipValorRecebidoProf"
 											style="font-size:16px; margin-left:10px;" />
-										<p:tooltip for="tooltipValorRecebido" style="max-width: 300px"
+										<p:tooltip for="tooltipValorRecebidoProf" style="max-width: 300px"
 											escape="false"
 											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorRecebido')}"
 											position="bottom" />
@@ -114,13 +114,13 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorNaoPago">
+								<p:panel id="valorNaoPagoProf">
 									<f:facet name="header">
 										<h:outputText value="Valor a Receber" />
 										<h:outputLabel class="fa fa-question"
-											id="tooltipValorAReceber"
+											id="tooltipValorAReceberProf"
 											style="font-size:16px; margin-left:10px;" />
-										<p:tooltip for="tooltipValorAReceber" style="max-width: 300px"
+										<p:tooltip for="tooltipValorAReceberProf" style="max-width: 300px"
 											escape="false"
 											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorAReceber')}"
 											position="bottom" />
@@ -130,13 +130,13 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorDesconto">
+								<p:panel id="valorDescontoProf">
 									<f:facet name="header">
 										<h:outputText value="Valor do Desconto" />
 										<h:outputLabel class="fa fa-question"
-											id="tooltipValorDesconto"
+											id="tooltipValorDescontoProf"
 											style="font-size:16px; margin-left:10px;" />
-										<p:tooltip for="tooltipValorDesconto" style="max-width: 300px"
+										<p:tooltip for="tooltipValorDescontoProf" style="max-width: 300px"
 											escape="false"
 											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorDesconto')}"
 											position="bottom" />
@@ -144,12 +144,12 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaTotalDesconto}" />
 								</p:panel>
-								<p:panel id="valorTotal">
+								<p:panel id="valorTotalProf">
 									<f:facet name="header">
 										<h:outputText value="Valor Total" />
-										<h:outputLabel class="fa fa-question" id="tooltipValorTotal"
+										<h:outputLabel class="fa fa-question" id="tooltipValorTotalProf"
 											style="font-size:16px; margin-left:10px;" />
-										<p:tooltip for="tooltipValorTotal" style="max-width: 300px"
+										<p:tooltip for="tooltipValorTotalProf" style="max-width: 300px"
 											escape="false"
 											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorTotal')}"
 											position="bottom" />
@@ -159,13 +159,13 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorNaoPlanejado">
+								<p:panel id="valorNaoPlanejadoProf">
 									<f:facet name="header">
 										<h:outputText value="Sem Planejamento" />
 										<h:outputLabel class="fa fa-question"
-											id="tooltipValorNaoPlanejado"
+											id="tooltipValorNaoPlanejadoProf"
 											style="font-size:16px; margin-left:10px;" />
-										<p:tooltip for="tooltipValorNaoPlanejado"
+										<p:tooltip for="tooltipValorNaoPlanejadoProf"
 											style="max-width: 300px" escape="false"
 											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorNaoPlanejado')}"
 											position="bottom" />
