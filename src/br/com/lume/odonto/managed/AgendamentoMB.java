@@ -1305,12 +1305,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.setFim(Utils.convertToDateViaInstant(date));
 
             c.setTime(this.inicio);
-            c.add(Calendar.HOUR_OF_DAY, -1);
-            this.inicio = c.getTime();
-
             c.setTime(this.fim);
-            c.add(Calendar.HOUR_OF_DAY, -1);
-            this.fim = c.getTime();
         }
 
         this.setEntity(new Agendamento());

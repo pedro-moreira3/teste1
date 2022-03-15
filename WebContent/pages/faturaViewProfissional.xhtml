@@ -68,10 +68,6 @@ body .sideChkBox .ui-chkbox-label {
 								columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
 
-								<h:outputText for="profissionalDonoFatura" value="Profissional:" />
-								<p:inputText id="profissionalDonoFatura"
-									value="#{faturaPagtoMB.entity.profissional.dadosBasico.nome}"
-									readonly="true" />
 
 								<h:outputText for="planoTratamentoFatura"
 									value="Plano de Tratamento da fatura de origem:" />
@@ -99,27 +95,81 @@ body .sideChkBox .ui-chkbox-label {
 
 							</p:panelGrid>
 
-							<p:panelGrid columns="4" layout="grid"
+							<p:panelGrid columns="5" layout="grid"
+								columnClasses="ui-g-2, ui-g-2, ui-g-2, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
-								<p:panel id="valorTotalProf" header="Valor Total">
+								<p:panel id="valorPagoProf">
+									<f:facet name="header">
+										<h:outputText value="Valor Recebido" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorRecebidoProf"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorRecebidoProf" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorRecebido')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalPagoFromPaciente}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorNaoPagoProf">
+									<f:facet name="header">
+										<h:outputText value="Valor a Receber" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorAReceberProf"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorAReceberProf" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorAReceber')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalNaoPagoFromPaciente}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorDescontoProf">
+									<f:facet name="header">
+										<h:outputText value="Valor do Desconto" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorDescontoProf"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorDescontoProf" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorDesconto')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalDesconto}" />
+								</p:panel>
+								<p:panel id="valorTotalProf">
+									<f:facet name="header">
+										<h:outputText value="Valor Total" />
+										<h:outputLabel class="fa fa-question" id="tooltipValorTotalProf"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorTotalProf" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorTotal')}"
+											position="bottom" />
+									</f:facet>
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalFatura}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorPagoProf" header="Valor Pago">
-									<h:outputText
-										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalPago}">
-										<f:convertNumber currencySymbol="R$ " type="currency" />
-									</h:outputText>
-								</p:panel>
-								<p:panel id="valorNaoPagoProf" header="Valor Não Pago">
-									<h:outputText
-										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPago}">
-										<f:convertNumber currencySymbol="R$ " type="currency" />
-									</h:outputText>
-								</p:panel>
-								<p:panel id="valorNaoPlanejadoProf" header="Valor Não Planejado">
+								<p:panel id="valorNaoPlanejadoProf">
+									<f:facet name="header">
+										<h:outputText value="Sem Planejamento" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorNaoPlanejadoProf"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorNaoPlanejadoProf"
+											style="max-width: 300px" escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorNaoPlanejado')}"
+											position="bottom" />
+									</f:facet>
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />

@@ -221,6 +221,8 @@ div.ui-selectoneradio label {
 			<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
 				header="Bloqueio de Agenda" responsive="true" modal="true"
 				appendToBody="true">
+				<p:ajax event="close" resetValues="true" update="@this, :lume:pnAfastamento, :lume:dtAfastamento"
+				listener="#{afastamentoMB.actionNew(null)}" />
 				<ui:include src="afastamento.xhtml" />
 			</p:dialog>
 		</h:panelGroup>
@@ -714,8 +716,8 @@ div.ui-selectoneradio label {
 														itemLabel="#{profissional.dadosBasico.prefixoNome}"
 														itemValue="#{profissional}" />
 
-													<p:ajax process="@this"
-														update="btBloqueioAgenda,btnVisualizarDisponibilidadeAgenda" />
+													<p:ajax process="@this" 
+														update="btBloqueioAgenda,btnVisualizarDisponibilidadeAgenda, horasUteisPrincipal" />
 
 												</p:selectOneMenu>
 

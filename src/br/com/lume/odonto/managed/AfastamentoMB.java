@@ -6,10 +6,12 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -159,11 +161,14 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
     @Override
     public void actionNew(ActionEvent event) {
         dominioSelecionado = null;
-        this.setEntity(new Afastamento());
+        this.setEntity(null);
         this.setInicio(null);
         this.setFim(null);
         this.setDominioSelecionado(null);
+        DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:dtAfastamento");
+        table.reset();
     }
+    
 
     public Profissional getProfissional() {
         return agendamentoMB.getProfissional();
