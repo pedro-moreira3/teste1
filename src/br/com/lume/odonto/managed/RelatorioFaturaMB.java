@@ -550,7 +550,14 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     }
 
     public List<SubStatusFatura> getListaSubStatusFatura() {
-        return Arrays.asList(SubStatusFatura.values());
+        List<SubStatusFatura> listAll = Arrays.asList(SubStatusFatura.values());
+        List<SubStatusFatura> list = new ArrayList<Fatura.SubStatusFatura>();
+        for(SubStatusFatura s : listAll) {
+            if(!s.getDescricao().equals("Estornado") && !s.getDescricao().equals("Cancelado")) {
+                list.add(s);
+            }
+        }
+        return list;
     }
 
     public List<DadosBasico> getDadosBasico() {
