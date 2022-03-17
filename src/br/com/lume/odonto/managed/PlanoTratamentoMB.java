@@ -1915,6 +1915,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
             }
 
+            if(orcamentosPendentes.size() > 0) {
+                PrimeFaces.current().executeScript("PF('reprovarOrcamento').show();");
+                PrimeFaces.current().executeScript("PF('dlgViewOrcamento').hide();");
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
@@ -2772,6 +2777,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void removeFilters() {
+        carregarPlanosTratamento();
         DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
         table.reset();
     }
