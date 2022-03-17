@@ -1024,7 +1024,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:column />
 			<p:column />
 			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this" update=":lume:tabViewPaciente:dtPlanoTratamento"
 				actionListener="#{planoTratamentoMB.removeFilters}"
 				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
 		</p:panelGrid>
@@ -2098,7 +2098,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabViewPaciente:pnViewOrcamento"
 				update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
 				styleClass="OrangeButton"
-				oncomplete="PF('reprovarOrcamento').show();PF('dlgViewOrcamento').hide();"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
