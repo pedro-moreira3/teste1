@@ -81,6 +81,8 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
     private DadosBasico origemFiltro;
 
     private BigDecimal somaValor = new BigDecimal(0);
+    
+    private List<Lancamento> listaFiltrada;
 
     //EXPORTAÃ‡ÃƒO TABELA
     private DataTable tabelaRelatorio;
@@ -216,6 +218,21 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
             }
         } catch (Exception e) {
             this.log.error(e);
+        }
+    }
+    
+    public void updateSomatorio() {
+        this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
+        this.setSomatorioValorConferirConferencia(new BigDecimal(0));
+        this.setSomatorioValorTotalConferencia(new BigDecimal(0));
+        
+        if (listaFiltrada != null) {
+            for (Lancamento l : listaFiltrada) {
+                this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferir(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(this.valorTotal(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+            }
+            
         }
     }
 
@@ -474,6 +491,16 @@ public class RelatorioPagamentoMB extends LumeManagedBean<RelatorioPagamento> {
 
     public void setFimPagamento(Date fimPagamento) {
         this.fimPagamento = fimPagamento;
+    }
+
+    
+    public List<Lancamento> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<Lancamento> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
 }

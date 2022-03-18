@@ -268,13 +268,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 
 						<div class="EmptyBox20"></div>
-
+						<p:remoteCommand name="refreshFooter" update="dtPrincipal" />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal" value="#{relatorioRecebimentoMB.lancamentos}"
 							var="lancamento" rows="10" paginator="true"
+							filteredValue="#{relatorioRecebimentoMB.listaFiltrada}"
 							rowKey="#{lancamento}" paginatorPosition="bottom"
 							binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
-
+							<p:ajax event="filter" process="@this"
+								oncomplete="refreshFooter()"
+								listener="#{relatorioRecebimentoMB.updateSomatorio()}" />
 							<f:facet name="header">Lançamentos</f:facet>
 
 							<p:column filterBy="#{lancamento.dataPagamentoStr}"

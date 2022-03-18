@@ -113,14 +113,15 @@
 							</p:autoComplete>
 						</h:panelGroup>
 						<ui:remove>
-						<h:panelGroup>
-							<p:outputLabel for="status" value="Status da Fatura: " />
-							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
-								converter="enumStatusFatura">
-								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
-									itemLabel="#{status.descricao}" itemValue="#{status}" />
-							</p:selectOneMenu>
-						</h:panelGroup>
+							<h:panelGroup>
+								<p:outputLabel for="status" value="Status da Fatura: " />
+								<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
+									converter="enumStatusFatura">
+									<f:selectItems value="#{faturaPagtoMB.listaStatus}"
+										var="status" itemLabel="#{status.descricao}"
+										itemValue="#{status}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
 						</ui:remove>
 						<h:panelGroup>
 							<p:outputLabel for="subStatus" value="Status da Fatura: " />
@@ -171,10 +172,16 @@
 					</p:panelGrid>
 					<div class="SeparatorFull"></div>
 					<br />
+					<p:remoteCommand name="refreshFooter"
+						update="dtPrincipalFaturaRP" />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipalFaturaRP" value="#{faturaPagtoMB.entityList}"
 						var="f" rows="20" paginator="true" rowKey="#{f}"
+						filteredValue="#{faturaPagtoMB.listaFiltrada}"
 						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
+						<p:ajax event="filter" process="@this"
+							oncomplete="refreshFooter()"
+							listener="#{faturaPagtoMB.updateSomatorio()}" />
 						<f:facet name="header">Faturas</f:facet>
 
 						<p:column width="120" headerText="Ações" exportable="false">
@@ -193,7 +200,8 @@
 							filterFunction="#{faturaPagtoMB.filtroSemAcento}">
 
 							<p:commandLink value="#{f.paciente.dadosBasico.nome}"
-								process="@this,:lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples" title="#{f.paciente.id}"
+								process="@this,:lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples"
+								title="#{f.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPacienteSemFinanceiro()}"
 								oncomplete="PF('dlgFichaPaciente').show()"
 								update=":lume:tabViewPaciente:viewFatura,:lume:tabViewPaciente:viewFaturaSimples,:lume:tabViewPaciente:pnDadosPaciente, 

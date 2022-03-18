@@ -87,18 +87,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:panelGroup styleClass="md-inputfield taller">
 								<h:outputText for="inicio" value="Data de débito inicio: " />
 								<p:calendar id="inicio" value="#{relatorioPagamentoMB.inicio}"
-									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									 />
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
 								<h:outputText for="fim" value="Data de débito fim: " />
 								<p:calendar id="fim" value="#{relatorioPagamentoMB.fim}"
-									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									 />
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true" />
 							</h:panelGroup>
-							
-							
+
+
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceberPagamento"
 									value="Período da data de pagamento:" />
@@ -114,65 +112,64 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicioPagamento" value="Data de pagamento inicio: " />
-								<p:calendar id="inicioPagamento" value="#{relatorioPagamentoMB.inicioPagamento}"
+								<h:outputText for="inicioPagamento"
+									value="Data de pagamento inicio: " />
+								<p:calendar id="inicioPagamento"
+									value="#{relatorioPagamentoMB.inicioPagamento}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="false" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
 								<h:outputText for="fimPagamento" value="Data de pagamento fim: " />
-								<p:calendar id="fimPagamento" value="#{relatorioPagamentoMB.fimPagamento}"
-									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									required="false" />
+								<p:calendar id="fimPagamento"
+									value="#{relatorioPagamentoMB.fimPagamento}" autocomplete="off"
+									pattern="dd/MM/yyyy" mask="true" required="false" />
 							</h:panelGroup>
-							
-							
+
+
 
 							<h:panelGroup>
-											<p:outputLabel for="faturaOrigemDestino"
-												value="Destino (Fornecedor, Profissional, Paciente):" />
+								<p:outputLabel for="faturaOrigemDestino"
+									value="Destino (Fornecedor, Profissional, Paciente):" />
 
-											<p:selectOneMenu id="faturaOrigemDestino"
-												converter="dadosBasico" value="#{relatorioPagamentoMB.origemFiltro}"
-												style="min-width:0px;"
-												filter="true" filterMatchMode="contains">
+								<p:selectOneMenu id="faturaOrigemDestino"
+									converter="dadosBasico"
+									value="#{relatorioPagamentoMB.origemFiltro}"
+									style="min-width:0px;" filter="true" filterMatchMode="contains">
 
-												<p:ajax event="itemSelect" process="@this" immediate="true" />
+									<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-												<f:selectItem
-													itemLabel="Selecione a Origem/Destino"
-													itemValue="#{null}" />
-												<f:selectItems value="#{relatorioPagamentoMB.origens}" var="m"
-													itemLabel="#{m.nome}" itemValue="#{m}" />
+									<f:selectItem itemLabel="Selecione a Origem/Destino"
+										itemValue="#{null}" />
+									<f:selectItems value="#{relatorioPagamentoMB.origens}" var="m"
+										itemLabel="#{m.nome}" itemValue="#{m}" />
 
-											</p:selectOneMenu>
-										</h:panelGroup>
-<ui:remove>
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<ui:remove>
+								<h:panelGroup>
+									<p:outputLabel for="status" value="Status do Pagamento: " />
+									<p:selectOneMenu id="status"
+										value="#{relatorioPagamentoMB.status}"
+										converter="enumStatusLancamento"
+										style="display:inline-block;width:90%;">
+										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+										<f:selectItems value="#{relatorioPagamentoMB.statuss}"
+											var="status" itemLabel="#{status.descricao}"
+											itemValue="#{status}" />
+									</p:selectOneMenu>
+									<h:outputLabel class="fa fa-question" id="tooltipStatus"
+										style="font-size:24px; margin-left:10px;" />
+									<p:tooltip for="tooltipStatus"
+										value="#{relatorioPagamentoMB.getTooltipValue('relatorioPagamento','statuspagamento')}"
+										position="bottom" style="width:30%;" />
+								</h:panelGroup>
+							</ui:remove>
 							<h:panelGroup>
 								<p:outputLabel for="status" value="Status do Pagamento: " />
-								<p:selectOneMenu id="status"
-									value="#{relatorioPagamentoMB.status}"
-									converter="enumStatusLancamento"
-									style="display:inline-block;width:90%;">
-									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-									<f:selectItems value="#{relatorioPagamentoMB.statuss}"
-										var="status" itemLabel="#{status.descricao}"
-										itemValue="#{status}" />									
-								</p:selectOneMenu>
-								<h:outputLabel class="fa fa-question" id="tooltipStatus"
-									style="font-size:24px; margin-left:10px;" />
-								<p:tooltip for="tooltipStatus"
-									value="#{relatorioPagamentoMB.getTooltipValue('relatorioPagamento','statuspagamento')}"
-									position="bottom" style="width:30%;" />
-							</h:panelGroup>							
-</ui:remove>
-								<h:panelGroup>
-								<p:outputLabel for="status"
-									value="Status do Pagamento: " />
-								<p:selectCheckboxMenu id="status"
-									label="Sub Status" multiple="true"
-									style="top:7px;display:inline-block;width:90%;"
+								<p:selectCheckboxMenu id="status" label="Sub Status"
+									multiple="true" style="top:7px;display:inline-block;width:90%;"
 									value="#{relatorioPagamentoMB.subStatus}"
 									converter="enumSubStatusLancamento">
 									<f:selectItems value="#{relatorioPagamentoMB.listaSubStatus}"
@@ -236,8 +233,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{relatorioPagamentoMB.arquivoDownload}" />
+									<p:fileDownload value="#{relatorioPagamentoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
@@ -262,12 +258,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 
 						<div class="EmptyBox20"></div>
-
+						<p:remoteCommand name="refreshFooter"
+							update="dtPrincipal" />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal" value="#{relatorioPagamentoMB.lancamentos}"
 							var="lancamento" rows="10" paginator="true"
+							filteredValue="#{relatorioPagamentoMB.listaFiltrada}"
 							rowKey="#{lancamento}" paginatorPosition="bottom"
 							binding="#{relatorioPagamentoMB.tabelaRelatorio}">
+							<p:ajax event="filter" process="@this"
+											oncomplete="refreshFooter()" 
+											listener="#{relatorioPagamentoMB.updateSomatorio()}" />
 
 							<f:facet name="header">Lançamentos</f:facet>
 
@@ -293,12 +294,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column
 								filterBy="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}"
 								sortBy="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}"
-								filterMatchMode="contains" headerText="Destino" filterFunction="#{relatorioPagamentoMB.filtroSemAcento}">
+								filterMatchMode="contains" headerText="Destino"
+								filterFunction="#{relatorioPagamentoMB.filtroSemAcento}">
 								<h:outputText
 									value="#{relatorioPagamentoMB.dadosBasicosFromLancamento(lancamento)}" />
-							</p:column>							
+							</p:column>
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
-								sortBy="#{lancamento.formaPagamentoStr}" filterFunction="#{relatorioPagamentoMB.filtroSemAcento}"
+								sortBy="#{lancamento.formaPagamentoStr}"
+								filterFunction="#{relatorioPagamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Forma de pagamento">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
@@ -349,7 +352,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								sortBy="#{relatorioPagamentoMB.valorTotal(lancamento)}"
 								filterBy="#{relatorioPagamentoMB.valorTotal(lancamento)}"
 								filterMatchMode="contains">
-								<h:outputText value="#{relatorioPagamentoMB.valorTotal(lancamento)}">
+								<h:outputText
+									value="#{relatorioPagamentoMB.valorTotal(lancamento)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
@@ -363,8 +367,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</f:facet>
 							</p:column>
 							<p:column filterBy="#{lancamento.subStatusString}"
-								sortBy="#{lancamento.subStatusString}" filterMatchMode="contains"
-								headerText="Status">
+								sortBy="#{lancamento.subStatusString}"
+								filterMatchMode="contains" headerText="Status">
 								<h:outputText value="#{lancamento.subStatusString}" />
 							</p:column>
 						</p:dataTable>

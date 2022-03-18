@@ -83,6 +83,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
+    private List<Lancamento> listaFiltrada;
 
     public RelatorioRecebimentoMB() {
         super(RelatorioRecebimentoSingleton.getInstance().getBo());
@@ -200,6 +201,21 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
             }
         } catch (Exception e) {
             this.log.error(e);
+        }
+    }
+    
+    public void updateSomatorio() {
+        this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
+        this.setSomatorioValorConferirConferencia(new BigDecimal(0));
+        this.setSomatorioValorTotalConferencia(new BigDecimal(0));
+        
+        if (listaFiltrada != null) {
+            for (Lancamento l : listaFiltrada) {
+                this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferir(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(this.valorTotal(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+            }
+            
         }
     }
 
@@ -493,6 +509,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     public void setOrigemFiltro(DadosBasico origemFiltro) {
         this.origemFiltro = origemFiltro;
+    }
+
+    
+    public List<Lancamento> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<Lancamento> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
 }

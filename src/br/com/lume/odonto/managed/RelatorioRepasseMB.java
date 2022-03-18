@@ -67,6 +67,8 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     
     private List<String> statusLancamentos = new ArrayList<String>();
     private List<String> justificativas = new ArrayList<String>();
+    
+    private List<RepasseFaturasLancamento> listaFiltrada;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -276,16 +278,30 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
 
         List<PlanoTratamentoProcedimento> procedimentosContabilizados = new ArrayList<PlanoTratamentoProcedimento>();
         
-        for (RepasseFaturasLancamento rfl : this.getEntityList()) {
-            this.somatorioValorTotalLancamentos = this.somatorioValorTotalLancamentos.add(this.valorTotal(rfl.getLancamentoRepasse()));
-            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
-            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
-            
-            if(!procedimentosContabilizados.contains(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento()))
-                this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
-            
-            procedimentosContabilizados.add(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento());
+        if(listaFiltrada != null) {
+            for (RepasseFaturasLancamento rfl : this.listaFiltrada) {
+                this.somatorioValorTotalLancamentos = this.somatorioValorTotalLancamentos.add(this.valorTotal(rfl.getLancamentoRepasse()));
+                this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
+                this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+                
+                if(!procedimentosContabilizados.contains(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento()))
+                    this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+                
+                procedimentosContabilizados.add(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento());
+            }
+        }else {
+            for (RepasseFaturasLancamento rfl : this.getEntityList()) {
+                this.somatorioValorTotalLancamentos = this.somatorioValorTotalLancamentos.add(this.valorTotal(rfl.getLancamentoRepasse()));
+                this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
+                this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+                
+                if(!procedimentosContabilizados.contains(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento()))
+                    this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+                
+                procedimentosContabilizados.add(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento());
+            }
         }
+        
     }
     
     public BigDecimal valorDisponivelRepasse(RepasseFaturasLancamento rfl) {
@@ -584,5 +600,15 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
 
     public void setSomatorioValorTotalLancamentos(BigDecimal somatorioValorTotalLancamentos) {
         this.somatorioValorTotalLancamentos = somatorioValorTotalLancamentos;
+    }
+
+    
+    public List<RepasseFaturasLancamento> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<RepasseFaturasLancamento> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 }
