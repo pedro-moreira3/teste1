@@ -1,12 +1,8 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -16,7 +12,6 @@ import javax.faces.push.PushContext;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.util.SystemOutLogger;
 import org.primefaces.PrimeFaces;
 
 import br.com.lume.avisos.AvisosSingleton;
@@ -29,31 +24,31 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.common.util.Utils.ValidacaoLancamento;
-import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Avisos;
 import br.com.lume.odonto.entity.Avisos.TIPO_AVISO;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
-import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
 import br.com.lume.odonto.entity.RepasseFaturas;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
-import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Empresa;
+import co.elastic.apm.opentracing.ElasticApmTracer;
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 
 @ManagedBean
 @ViewScoped
@@ -67,6 +62,8 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
     private PushContext atualizarAvisos;
 
     private String idEmpresaParaSocket;
+    
+    final static Tracer tracer = new ElasticApmTracer();
 
     public AvisosMB() {
         super(AvisosSingleton.getInstance().getBo());
@@ -74,8 +71,16 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
             idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
         }
-        carregarAvisos();
-        //scriptRepasse();
+        
+        
+        Span span = tracer.buildSpan("TESTE SPAN").start();
+        try(Scope scope = tracer.scopeManager().activate(span)){
+            carregarAvisos();
+            System.out.println("Teste print profissional: "
+                    + UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome());
+        }finally {
+            span.finish();
+        }
     }
 
     public void testeEmail() {
