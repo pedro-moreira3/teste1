@@ -45,10 +45,6 @@ import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Empresa;
-import co.elastic.apm.opentracing.ElasticApmTracer;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
 
 @ManagedBean
 @ViewScoped
@@ -62,8 +58,6 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
     private PushContext atualizarAvisos;
 
     private String idEmpresaParaSocket;
-    
-    final static Tracer tracer = new ElasticApmTracer();
 
     public AvisosMB() {
         super(AvisosSingleton.getInstance().getBo());
@@ -71,16 +65,7 @@ public class AvisosMB extends LumeManagedBean<Avisos> {
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
             idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
         }
-        
-        
-        Span span = tracer.buildSpan("TESTE SPAN").start();
-        try(Scope scope = tracer.scopeManager().activate(span)){
-            carregarAvisos();
-            System.out.println("Teste print profissional: "
-                    + UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome());
-        }finally {
-            span.finish();
-        }
+        carregarAvisos();
     }
 
     public void testeEmail() {
