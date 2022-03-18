@@ -1907,7 +1907,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 //recalculaRepasseAsync(orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento(),UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
                 recalculaRepasseAsync(itemsJaAprovados, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
             }
-            
+
             orcamentosPendentes = new ArrayList<Orcamento>();
             for (Orcamento o : orcamentos) {
                 if (o.getStatus().equals("Pendente Aprovação") && o.getId() != orcamentoSelecionado.getId()) {
@@ -1915,11 +1915,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
             }
 
-            if(orcamentosPendentes.size() > 0) {
+            if (orcamentosPendentes.size() > 0) {
                 PrimeFaces.current().executeScript("PF('reprovarOrcamento').show();");
                 PrimeFaces.current().executeScript("PF('dlgViewOrcamento').hide();");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
@@ -2776,6 +2776,36 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
+    public void validaFecharTela() {
+        try {
+            List<PlanoTratamentoProcedimento> procedimentos = new ArrayList<PlanoTratamentoProcedimento>();
+            for (PlanoTratamentoProcedimento ptp : this.getEntity().getPlanoTratamentoProcedimentos()) {
+                if(ptp.getStatus() != null ) {
+                    if("F".equals(ptp.getStatus())) {
+                        PlanoTratamentoProcedimento ptpBanco;
+                        ptpBanco = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(ptp.getId());
+                        if(ptpBanco.getStatus() != null) {
+                            if(!ptp.getStatus().equals(ptpBanco.getStatus())) {
+                                procedimentos.add(ptp);
+                            }
+                        }else {
+                            procedimentos.add(ptp);
+                        }
+                    }
+                }
+            }
+            if(procedimentos.size() > 0) {
+                PrimeFaces.current().executeScript("PF('confirmDialog').show();");
+            }else {
+                PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').hide();");
+                removeFilters();
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     public void removeFilters() {
         carregarPlanosTratamento();
         DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");

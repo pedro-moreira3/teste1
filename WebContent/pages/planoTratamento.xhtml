@@ -985,7 +985,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									styleClass="RedButton"
 									disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}"
 									style="float: right;"
-									rendered="#{planoTratamentoMB.admin and plano.finalizado}">
+									rendered="#{planoTratamentoMB.admin and plano.finalizado and plano.dataFinalizado != null}">
 								</p:commandButton>
 							</p:column>
 							<p:column headerText="Dta. de Execução"
@@ -1024,9 +1024,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:column />
 			<p:column />
 			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this" update=":lume:tabViewPaciente:dtPlanoTratamento"
-				actionListener="#{planoTratamentoMB.removeFilters}"
-				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				update=":lume:tabViewPaciente:dtPlanoTratamento, :lume:tabViewPaciente:confirmDialog"
+				actionListener="#{planoTratamentoMB.validaFecharTela}" />
 		</p:panelGrid>
 	</p:dialog>
 
@@ -2926,7 +2926,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center">
 						</p:column>
-						<p:column headerText="Ações" >
+						<p:column headerText="Ações">
 							<p:commandButton process="@this" title="Visualizar"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:orcamentoViewTable, :lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView"
@@ -2980,12 +2980,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-					<p:commandButton icon="White fa fa-gear" value="Reprovar Orçamentos"
+					<p:commandButton icon="White fa fa-gear"
+						value="Reprovar Orçamentos"
 						actionListener="#{planoTratamentoMB.actionReprovarOrcamentos()}"
 						process="@this, :lume:tabViewPaciente:pnViewOrcamento, tbViewOrcamentoReprovar"
 						update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:buttonsDlgOrcamentoView, :lume:tabViewPaciente:orcamentoViewTable, pnlReprovarOrcamento"
-						styleClass="RedButton"
-						oncomplete="PF('reprovarOrcamento').hide()"	 />
+						styleClass="RedButton" oncomplete="PF('reprovarOrcamento').hide()" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						process="@this" styleClass="NavyButton"
 						oncomplete="PF('reprovarOrcamento').hide();" />
@@ -3002,6 +3002,25 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</ui:include>
 	</p:outputPanel>
 
+	<p:dialog id="confirmDialog" header="Atenção!" global="true"
+		modal="true" widgetVar="confirmDialog" appendTo=":lume">
+		<br />
+		<p:outputLabel for="tbViewOrcamentoReprovar"
+			value="Você está saindo da tela sem salvar os procedimentos executados. Deseja Continuar?" />
+		<br />
+		<br />
+		<p:separator styleClass="SeparatorFull" />
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="confirm" value="Sim"
+				update="lume:tabViewPaciente:pnViewPlanoTratamento"
+				oncomplete="PF('dlgViewPlanoTratamento').hide();"
+				onclick="PF('confirmDialog').hide();PF('dlgViewPlanoTratamento').hide();"
+				actionListener="#{planoTratamentoMB.removeFilters}" process="@this" />
+			<p:commandButton id="decline" value="Não" styleClass="RedButton"
+				onclick="PF('confirmDialog').hide()" type="button" />
+		</p:panelGrid>
+	</p:dialog>
 	<script>
 		function handleDialogRequest(xhr, status, args) {
 			console.log(args);
