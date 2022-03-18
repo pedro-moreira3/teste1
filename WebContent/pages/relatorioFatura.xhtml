@@ -310,7 +310,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<f:selectItem itemValue="PF"
 													itemLabel="Pagamento de fornecedor" />
 
-												
+
 
 											</p:selectOneRadio>
 										</h:panelGroup>
@@ -383,12 +383,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 
 						<div class="EmptyBox20"></div>
-
+						<p:remoteCommand name="refreshFooter" update="dtPrincipal" />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal" value="#{relatorioFaturaMB.entityList}" var="m"
 							rows="20" paginator="true" rowKey="#{m}"
-							paginatorPosition="bottom"
+							paginatorPosition="bottom" filteredValue="#{relatorioFaturaMB.listaFiltrada}"
 							binding="#{relatorioFaturaMB.tabelaFatura}">
+							<p:ajax event="filter" process="@this"
+								oncomplete="refreshFooter()"
+								listener="#{relatorioFaturaMB.updateSomatorio()}" />
 
 							<f:facet name="header">Faturas</f:facet>
 
@@ -422,7 +425,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									actionListener="#{tabPacienteMB.loadPaciente(m.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
 									update=":lume:pnPrincipalFicha, @parent(:lume:pnPrincipalFichaHeader), @parent(:lume:tabViewOutPanel), @parent(:lume:buttonsFichaPaciente)"
-									rendered="#{m.paciente != null}" >
+									rendered="#{m.paciente != null}">
 									<f:param name="paciente_selecionado" value="#{m.paciente.id}"></f:param>
 								</p:commandLink>
 

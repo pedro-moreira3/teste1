@@ -139,6 +139,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private boolean editando = false;
 
     private Date dataRecorrente;
+    
+    private List<LancamentoContabil> listaFiltrada;
 
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
@@ -645,12 +647,20 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void updateSomatorio() {
         this.setSomatorioValorLancamento(new BigDecimal(0));
-        if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
-            this.lancamentoContabeis.forEach((lc) -> {
+        if (listaFiltrada != null) {
+            this.listaFiltrada.forEach((lc) -> {
                 BigDecimal valor = lc.getValor();
                 this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
             });
+        }else {
+            if (this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
+                this.lancamentoContabeis.forEach((lc) -> {
+                    BigDecimal valor = lc.getValor();
+                    this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
+                });
+            }
         }
+        PrimeFaces.current().ajax().update(":lume:tv:dtLancamentoContabil");
     }
 
 //    public String valorLancamento(LancamentoContabil lancamento) {
@@ -1038,6 +1048,16 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setDataRecorrente(Date dataRecorrente) {
         this.dataRecorrente = dataRecorrente;
+    }
+
+    
+    public List<LancamentoContabil> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<LancamentoContabil> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
 }

@@ -60,6 +60,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     private BigDecimal somatorioValorTotalConferencia = new BigDecimal(0);
     private List<Lancamento> lancamentosValidar;
     private List<Tarifa> tarifas = new ArrayList<>();
+    private List<Lancamento> listaFiltrada;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentoConferencia;
@@ -92,10 +93,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
             c.setTime(this.dataCreditoInicial);
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
-            
+
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), dadosBasico, getFormaPagamento(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false));
-            
+
             if (getEntityList() != null) {
 
                 getEntityList().forEach(lancamento -> {
@@ -240,12 +241,22 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         this.setSomatorioValorConferirConferencia(new BigDecimal(0));
         this.setSomatorioValorTotalConferencia(new BigDecimal(0));
 
-        for (Lancamento l : this.getEntityList()) {
-            this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
-            this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
-            this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(this.valorTotal(l)));
+        if (listaFiltrada != null) {
+            for (Lancamento l : listaFiltrada) {
+                this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
+                this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
+                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(this.valorTotal(l)));
 
+            }
+        } else {
+            for (Lancamento l : this.getEntityList()) {
+                this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
+                this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
+                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(this.valorTotal(l)));
+
+            }
         }
+
     }
 
     public void actionTrocaDatasConferencia() {
@@ -445,6 +456,14 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     public void setDadosBasico(DadosBasico dadosBasico) {
         this.dadosBasico = dadosBasico;
+    }
+
+    public List<Lancamento> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    public void setListaFiltrada(List<Lancamento> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
 }

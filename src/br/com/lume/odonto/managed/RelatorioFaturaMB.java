@@ -75,6 +75,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     private BigDecimal somatorioValorConferido;
     private BigDecimal somatorioValorTotalFatura;
     private BigDecimal somatorioValorPendente;
+    private List<Fatura> listaFiltrada;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -100,15 +101,29 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         this.setSomatorioValorTotalFatura(new BigDecimal(0));
         this.setSomatorioValorPendente(new BigDecimal(0));
 
-        for (Fatura fatura : this.getEntityList()) {
-            this.somatorioValorAConferir = this.somatorioValorAConferir.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO));
-            this.somatorioValorConferido = this.somatorioValorConferido.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO));
-            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(fatura.getDadosTabelaRepasseTotalFatura());
-            this.somatorioValorPendente = this.somatorioValorPendente.add(
-                    fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).add(
-                            LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO))));
+        if (listaFiltrada != null) {
+            for (Fatura fatura : this.listaFiltrada) {
+                this.somatorioValorAConferir = this.somatorioValorAConferir.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO));
+                this.somatorioValorConferido = this.somatorioValorConferido.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO));
+                this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(fatura.getDadosTabelaRepasseTotalFatura());
+                this.somatorioValorPendente = this.somatorioValorPendente.add(
+                        fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).add(
+                                LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO))));
 
+            }
+        }else {
+            for (Fatura fatura : this.getEntityList()) {
+                this.somatorioValorAConferir = this.somatorioValorAConferir.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO));
+                this.somatorioValorConferido = this.somatorioValorConferido.add(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO));
+                this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(fatura.getDadosTabelaRepasseTotalFatura());
+                this.somatorioValorPendente = this.somatorioValorPendente.add(
+                        fatura.getDadosTabelaRepasseTotalFatura().subtract(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).add(
+                                LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO))));
+
+            }
         }
+        
+       
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -598,6 +613,16 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public void setSomatorioValorPendente(BigDecimal somatorioValorPendente) {
         this.somatorioValorPendente = somatorioValorPendente;
+    }
+
+    
+    public List<Fatura> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<Fatura> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
 }

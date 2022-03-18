@@ -28,8 +28,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 }
 </style>
 
-<p:remoteCommand name="onHidePacienteFicha" process="@this"
-			 />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -220,12 +219,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 					</p:outputPanel>
 					<div class="EmptyBox20"></div>
-
+					<p:remoteCommand name="refreshFooter" update=":lume:dtRelatorio" />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						widgetVar="dtRelatorio" id="dtRelatorio"
+						filteredValue="#{relatorioRepasseMB.listaFiltrada}"
 						value="#{relatorioRepasseMB.entityList}" var="rfl" rows="10"
 						paginator="true" paginatorPosition="bottom"
 						binding="#{relatorioRepasseMB.tabelaRelatorio}">
+						<p:ajax event="filter" process="@this"
+							oncomplete="refreshFooter()"
+							listener="#{relatorioRepasseMB.updateSomatorio()}" />
 						<f:facet name="header">
 							Lançamentos
 
@@ -266,8 +269,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								process="@this" title="#{atendimento.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" >
-								<f:param name="paciente_selecionado" value="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
+								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+								<f:param name="paciente_selecionado"
+									value="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.id}"></f:param>
 							</p:commandLink>
 
 						</p:column>
@@ -308,20 +312,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:column
 							sortBy="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}"
 							headerText="Valor total da fatura de repasse">
-							<h:outputText title="#{rfl.repasseFaturas.faturaRepasse.id}"  
+							<h:outputText title="#{rfl.repasseFaturas.faturaRepasse.id}"
 								value="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<ui:remove>
-							<f:facet name="footer">
-								<h:outputText value="Total " />
-								<h:outputText
-									value="#{relatorioRepasseMB.somatorioValorTotalFatura}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										minFractionDigits="2" />
-								</h:outputText>
-							</f:facet>
+								<f:facet name="footer">
+									<h:outputText value="Total " />
+									<h:outputText
+										value="#{relatorioRepasseMB.somatorioValorTotalFatura}">
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</ui:remove>
 						</p:column>
 
@@ -393,8 +397,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Data de pagamento">
-							<h:outputText rendered="#{rfl.lancamentoRepasse.statusSemSubStatus eq 'Validado'}" value="#{rfl.lancamentoRepasse.dataPagamentoStr}"
-								/>
+							<h:outputText
+								rendered="#{rfl.lancamentoRepasse.statusSemSubStatus eq 'Validado'}"
+								value="#{rfl.lancamentoRepasse.dataPagamentoStr}" />
 						</p:column>
 
 						<p:column sortBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
@@ -420,12 +425,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText value="Forma de pagamento (paciente)"
 												style="font-weight:bold;" />
 										</p:column>
-										
+
 										<p:column>
 											<h:outputText value="Data de crédito"
 												style="font-weight:bold;" />
 										</p:column>
-										
+
 										<p:column>
 											<h:outputText value="Valor parcela de pagamento (paciente)"
 												style="font-weight:bold;" />
@@ -434,9 +439,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column colspan="4">
 											<h:outputText value="Deduções" style="font-weight:bold;" />
 										</p:column>
-										
-										<p:column >
-											<h:outputText value="Valor com deduções" style="font-weight:bold;" />
+
+										<p:column>
+											<h:outputText value="Valor com deduções"
+												style="font-weight:bold;" />
 										</p:column>
 
 									</p:row>
@@ -459,7 +465,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												style="font-weight:bold;" />
 										</p:column>
 										<p:column></p:column>
-										
+
 									</p:row>
 								</f:facet>
 
@@ -476,15 +482,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<h:outputText
 											value="#{rfl.lancamentoOrigem.formaPagamentoStr}" />
 									</p:column>
-									
+
 									<p:column>
-										<h:outputText
-											value="#{rfl.lancamentoOrigem.dataCreditoStr}" />
+										<h:outputText value="#{rfl.lancamentoOrigem.dataCreditoStr}" />
 									</p:column>
 
 									<p:column>
-										<h:outputText
-											value="#{rfl.lancamentoOrigem.valor}">
+										<h:outputText value="#{rfl.lancamentoOrigem.valor}">
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
 										</h:outputText>
@@ -526,7 +530,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												type="currency" />
 										</h:outputText>
 									</p:column>
-									
+
 								</p:row>
 
 							</p:panelGrid>
@@ -538,7 +542,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText value="Percentual de repasse "
 												style="font-weight:bold;" />
 										</p:column>
-									
+
 										<p:column>
 											<h:outputText value="Valor para repasse por parcela"
 												style="font-weight:bold;" />
@@ -561,9 +565,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<f:convertNumber maxFractionDigits="2" type="percent" />
 										</h:outputText>
 									</p:column>
-								
+
 									<p:column>
-										<h:outputText value="#{rfl.lancamentoRepasse.valor}" >
+										<h:outputText value="#{rfl.lancamentoRepasse.valor}">
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
 										</h:outputText>
@@ -574,7 +578,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:column>
 
 									<p:column>
-										<h:outputText value="#{relatorioRepasseMB.valorDisponivelRepasse(rfl)}">
+										<h:outputText
+											value="#{relatorioRepasseMB.valorDisponivelRepasse(rfl)}">
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
 										</h:outputText>

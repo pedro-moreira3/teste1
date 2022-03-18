@@ -191,6 +191,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private DadosBasico origem;
 
     private LancamentoContabil lancamentoContabilEditarItem;
+    
+    private List<Fatura> listaFiltrada;
 
     private String tipo = "Débito";
     private TipoCategoria tipoCategoria;
@@ -755,6 +757,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
             this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
         }
+    }
+    
+    public void updateSomatorio(){
+        somaTotal = new BigDecimal(0);
+        somaTotalPago = new BigDecimal(0);
+        somaTotalNaoPago = new BigDecimal(0);
+        somaTotalNaoPlanejado = new BigDecimal(0);
+        for (Fatura fatura : listaFiltrada) {
+            this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
+            this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
+            this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
+            this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
+        }
+        
+        System.out.println(somaTotal);
+        System.out.println(somaTotalPago);
+        System.out.println(somaTotalNaoPago);
+        System.out.println(somaTotalNaoPlanejado);
     }
 
     public void changePaciente() {
@@ -2993,6 +3013,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setShowItensCancelados(boolean showItensCancelados) {
         this.showItensCancelados = showItensCancelados;
+    }
+
+    
+    public List<Fatura> getListaFiltrada() {
+        return listaFiltrada;
+    }
+
+    
+    public void setListaFiltrada(List<Fatura> listaFiltrada) {
+        this.listaFiltrada = listaFiltrada;
     }
 
     //--------------------------------- IMPRIMIR RECIBO ---------------------------------

@@ -270,15 +270,21 @@ body .ui-confirm-dialog {
 
 
 									<div class="EmptyBox20"></div>
+									<p:remoteCommand name="refreshFooter"
+										update=":lume:tv:dtLancamentoContabil" />
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoContabil" widgetVar="dtLancamentoContabil"
 										value="#{lancamentoContabilMB.lancamentoContabeis}" var="lc"
 										rows="15" paginator="true"
+										filteredValue="#{lancamentoContabilMB.listaFiltrada}"
 										selection="#{lancamentoContabilMB.entity}"
 										selectionMode="single" rowKey="#{lc}"
 										paginatorPosition="bottom"
 										binding="#{lancamentoContabilMB.tabelaLancamento}">
-
+										<p:ajax event="filter" process="@this"
+											oncomplete="refreshFooter()"
+											listener="#{lancamentoContabilMB.updateSomatorio()}" />
+											
 										<f:facet name="header">Contas a Pagar/Receber</f:facet>
 
 										<p:tooltip for="@parent" rendered="#{lc.validado == 'S'}"
@@ -371,7 +377,7 @@ body .ui-confirm-dialog {
 
 											<f:facet name="footer" style="text-align:center;">
 												<h:outputText value="Total " />
-												<h:outputText
+												<h:outputText id="footerTotal"
 													value="#{lancamentoContabilMB.somatorioValorLancamento}">
 													<f:convertNumber currencySymbol="R$" type="currency"
 														minFractionDigits="2" />
@@ -568,14 +574,19 @@ body .ui-confirm-dialog {
 												process="@this,dtLancamentoValidar" />
 										</h:panelGroup>
 									</p:panelGrid>
-
+									<p:remoteCommand name="refreshFooter"
+										update=":lume:tv:dtLancamentoValidar" />
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoValidar"
+										filteredValue="#{conferenciaRecebimentoMB.listaFiltrada}"
 										value="#{conferenciaRecebimentoMB.entityList}" var="lc"
 										rows="15" paginator="true" paginatorPosition="bottom"
 										widgetVar="dtLancamentoValidar" rowKey="#{lc}"
 										selection="#{conferenciaRecebimentoMB.lancamentosSelecionadosConferencia}"
 										binding="#{conferenciaRecebimentoMB.tabelaLancamentoConferencia}">
+										<p:ajax event="filter" process="@this"
+											oncomplete="refreshFooter()"
+											listener="#{conferenciaRecebimentoMB.updateSomatorioConferencia()}" />
 
 										<f:facet name="header">Lançamentos</f:facet>
 
@@ -631,7 +642,8 @@ body .ui-confirm-dialog {
 											headerText="PlanoTratamento">
 											<h:outputText value="#{lc.pt.descricao}" title="#{lc.pt.id}" />
 										</p:column>
-										<p:column filterBy="#{lc.formaPagamentoStr}" exportValue="#{lc.formaPagamentoStr}"
+										<p:column filterBy="#{lc.formaPagamentoStr}"
+											exportValue="#{lc.formaPagamentoStr}"
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
 											headerText="Produto">
@@ -655,7 +667,8 @@ body .ui-confirm-dialog {
 											sortBy="#{lc.dataPagamento}" filterMatchMode="contains">
 											<h:outputText value="#{lc.dataPagamentoStr}" />
 										</p:column>
-										<p:column headerText="Data Crédito" exportValue="#{lc.dataCreditoStr}"
+										<p:column headerText="Data Crédito"
+											exportValue="#{lc.dataCreditoStr}"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
 											<p:calendar value="#{lc.dataCredito}" autocomplete="false"
@@ -751,7 +764,6 @@ body .ui-confirm-dialog {
 												disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 										</p:column>
 									</p:dataTable>
-
 								</div>
 							</div>
 						</p:tab>
@@ -988,8 +1000,9 @@ body .ui-confirm-dialog {
 												process="@this" title="#{pt.paciente.id}"
 												actionListener="#{tabPacienteMB.loadPaciente(pt.paciente)}"
 												oncomplete="PF('dlgFichaPaciente').show()"
-												update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" >
-												<f:param name="paciente_selecionado" value="#{pt.paciente.id}"></f:param>
+												update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente">
+												<f:param name="paciente_selecionado"
+													value="#{pt.paciente.id}"></f:param>
 											</p:commandLink>
 
 										</p:column>
