@@ -124,6 +124,12 @@
 									styleClass="NavyButton" />
 							</h:panelGroup>
 						</p:column>
+						<p:column sortBy="#{paciente.idPacienteEmpresa}"
+							filterBy="#{paciente.idPacienteEmpresa}" width="100"
+							filterMatchMode="contains" headerText="Código Sequencial"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.idPacienteEmpresa}" />
+						</p:column>
 						<p:column sortBy="#{paciente.codigo}"
 							filterBy="#{paciente.codigo}" width="100"
 							filterMatchMode="contains" headerText="Código"
