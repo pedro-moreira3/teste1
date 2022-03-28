@@ -1283,6 +1283,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     salvaProcedimento(ptp);
 
                     try {
+                        System.out.println("PROCEDIMENTO EXECUTADO: " + ptp.getId());
+                        
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado(),
                                 UtilsFrontEnd.getEmpresaLogada());
                     } catch (RepasseNaoPossuiRecebimentoException e) {
