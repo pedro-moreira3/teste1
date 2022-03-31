@@ -86,6 +86,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.MotivoInativacaoPacienteSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.paciente.bo.PacienteBO;
 import br.com.lume.pergunta.PerguntaSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.UsuarioSingleton;
@@ -174,7 +175,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Paciente paciente2Inativar;
 
     public PacienteMB() {
-        super(PacienteSingleton.getInstance().getBo());
+        super(new PacienteBO());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
 
@@ -767,7 +768,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
 
             boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;
-            PacienteSingleton.getInstance().persist(this.getEntity());
+            PacienteSingleton.getInstance().getBo().persistir(this.getEntity());
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
@@ -892,11 +893,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void geraLista() {
         try {
+            PacienteBO bo = new PacienteBO();
             if (UtilsFrontEnd.getProfissionalLogado() != null) {
                 if (!filtroStatus.equals("T")) {
-                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
+                    setEntityList(bo.listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
                 } else {
-                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    setEntityList(bo.listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 }
             }
 
@@ -1078,7 +1080,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionPersistAnotacoes(ActionEvent event) {
         try {
-            PacienteSingleton.getInstance().persist(this.getEntity());
+            PacienteSingleton.getInstance().getBo().persistir(this.getEntity());
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {

@@ -19,6 +19,7 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.paciente.bo.PacienteBO;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 /**
@@ -219,11 +220,12 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPaciente(Paciente paciente) {
         try {
+            PacienteBO bo = new PacienteBO();
             Paciente aux = null;
             String idPaciente = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("paciente_selecionado");
             
             if(idPaciente != null && !idPaciente.isEmpty())
-                aux = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
+                aux = bo.find(Long.valueOf(idPaciente));
 
             if(aux != null)
                 paciente = aux;
@@ -253,8 +255,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     
     public void loadPacienteSemFinanceiro() {
         try {
+            PacienteBO bo = new PacienteBO();
             String idPaciente = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("paciente_selecionado");
-            Paciente paciente = PacienteSingleton.getInstance().getBo().find(Long.valueOf(idPaciente));
+            Paciente paciente = bo.find(Long.valueOf(idPaciente));
             
             this.pacienteFinanceiroMB.setDisableFinanceiro(true);
             this.pacienteMB.setEntity(paciente);

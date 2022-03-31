@@ -1496,7 +1496,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             boolean novoPaciente = paciente.getId() == null || paciente.getId().longValue() == 0;
 
-            PacienteSingleton.getInstance().persist(paciente);
+            PacienteSingleton.getInstance().getBo().persistir(paciente);
             PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
 
             if (novoPaciente) {
