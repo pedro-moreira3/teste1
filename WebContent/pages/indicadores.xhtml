@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Indicadores</h1>
+
+					<p:fieldset toggleable="true">
+						<p:panelGrid columns="3" layout="grid" id="filtroDatas"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo" value="Período de criação:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{indicadorMB.filtroPeriodo}">
+									<p:ajax process="@this" update=":lume:pnFiltros"
+										listener="#{indicadorMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:outputLabel for="inicioLancamento" value="Inicio: " />
+								<p:calendar id="inicioLancamento" value="#{indicadorMB.inicio}"
+									pattern="dd/MM/yyyy" mask="true" required="false" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:outputLabel for="fimLancamento" value="Fim: " />
+								<p:calendar id="fimLancamento" value="#{indicadorMB.fim}"
+									pattern="dd/MM/yyyy" mask="true" required="false" />
+							</h:panelGroup>
+						</p:panelGrid>
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="pesquisarCustos" icon="fa fa-search White"
+								value="Pesquisar" update="indicadores"
+								process="@this,filtroDatas" styleClass="OrangeButton" />
+						</p:panelGrid>
+					</p:fieldset>
+					
+					<p:fieldset collapsed="true" toggleable="true">
+						<p:dataTable id="dtIndicadoresAgendamento" paginator="true" paginatorPosition="bottom"
+							rows="10"
+							emptyMessage="Nenhum lançamento a receber para o mês corrente."
+							value="#{indicadorMB.indicadoresAgendamento}" var="indicadorAgendamento" rowKey="#{indicadorAgendamento}">
+							<f:facet name="header">Agendamentos</f:facet>
+							<p:column headerText="Descrição"
+								filterBy="#{indicadorAgendamento.descricao}"
+								sortBy="#{indicadorAgendamento.descricao}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadorAgendamento.descricao}" />
+							</p:column>
+							<p:column headerText="Valor"
+								filterBy="#{indicadorAgendamento.valor}"
+								sortBy="#{indicadorAgendamento.valor}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadorAgendamento.valor}" />
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+					
+					<p:fieldset collapsed="true" toggleable="true">
+						<p:dataTable id="dtIndicadoresFinanceiro" paginator="true" paginatorPosition="bottom"
+							rows="10"
+							emptyMessage="Nenhum lançamento a receber para o mês corrente."
+							value="#{indicadorMB.indicadoresFinanceiro}" var="indicadorFinanceiro" rowKey="#{indicadorFinanceiro}">
+							<f:facet name="header">Agendamentos</f:facet>
+							<p:column headerText="Descrição"
+								filterBy="#{indicadorFinanceiro.descricao}"
+								sortBy="#{indicadorFinanceiro.descricao}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadorFinanceiro.descricao}" />
+							</p:column>
+							<p:column headerText="Valor"
+								filterBy="#{indicadorFinanceiro.valor}"
+								sortBy="#{indicadorFinanceiro.valor}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadorFinanceiro.valor}" />
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+					
+					<p:fieldset collapsed="true" toggleable="true">
+						<p:dataTable id="dtIndicadoresOrcamentos" paginator="true" paginatorPosition="bottom"
+							rows="10"
+							emptyMessage="Nenhum lançamento a receber para o mês corrente."
+							value="#{indicadorMB.indicadoresOrcamentos}" var="indicadoresOrcamentos" rowKey="#{indicadoresOrcamentos}">
+							<f:facet name="header">Agendamentos</f:facet>
+							<p:column headerText="Descrição"
+								filterBy="#{indicadoresOrcamentos.descricao}"
+								sortBy="#{indicadoresOrcamentos.descricao}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadoresOrcamentos.descricao}" />
+							</p:column>
+							<p:column headerText="Valor"
+								filterBy="#{indicadoresOrcamentos.valor}"
+								sortBy="#{indicadoresOrcamentos.valor}"
+								filterMatchMode="contains" width="15%">
+								<h:outputText value="#{indicadoresOrcamentos.valor}" />
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+
+					
+
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
