@@ -455,32 +455,25 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void actionPersistContinuar(ActionEvent event) {
+        if(!validarEntradasNovoPagamento())
+            return;
+        
         actionPersist(event);
 
         actionNew(event);
-
-        //    setEntity(new LancamentoContabil());
-        // lancamentoContabilMB.entity.dadosBasic
-        //   lancamentoContabilMB.entity.motivo
-        //lancamentoContabilMB.entity.data
-        //lancamentoContabilMB.entity.valor
-        //lancamentoContabilMB.entity.descricao
-//this.tipoCategoria
-//this.categoria  
-//this.formaPagamentoDigitacao
-//        this.recorrente
-//this.diasRecorrente
-//this.quantidadeVezesRecorrencia
     }
 
     public void actionPersistFechar(ActionEvent event) {
+        if(!validarEntradasNovoPagamento())
+            return;
+        
         actionPersist(event);
         PrimeFaces.current().executeScript("PF('dlgNovoPagamentoRecebimento').hide()");
     }
 
     @Override
     public void actionPersist(ActionEvent event) {
-
+        
         if (!editando) {
             criarFaturaGenerica(this.getEntity());
             getEntity().setValor(null);
@@ -511,11 +504,41 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         }
         actionNew(null);
         geraLista();
-        updateSomatorio();
+        //updateSomatorio();
 
         this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
     }
 
+    public boolean validarEntradasNovoPagamento() {
+        if(this.getEntity().getDadosBasico() == null) {
+            addError("Erro ao salvar registro !", "É necessário informar a origem/destino.");
+            return false;
+        }
+        if(this.getEntity().getMotivo() == null) {
+            addError("Erro ao salvar registro !", "É necessário informar o motivo.");
+            return false;
+        }
+        if(formaPagamentoDigitacao == null) {
+            addError("Erro ao salvar registro !", "É necessário informar a forma de pagamento.");
+            return false;
+        }
+        if(this.getEntity().getData() == null) {
+            addError("Erro ao salvar registro !", "É necessário informar a data.");
+            return false;
+        }
+        if(this.getEntity().getValor() == null) {
+            addError("Erro ao salvar registro !", "É necessário informar o valor.");
+            return false;
+        }
+        if(recorrente.equals("S")) {
+            if(dataRecorrente == null) {
+                addError("Erro ao salvar registro !", "É necessário informar a data recorrente.");
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public String descricaoFatura(LancamentoContabil lc) {
         String descricaoDigitada = "";
         if (lc.getDescricao() != null && !lc.getDescricao().equals("")) {
