@@ -240,8 +240,6 @@ body .ui-confirm-dialog {
 											oncomplete="PF('dlgNovoPagamentoRecebimento').show();"
 											actionListener="#{lancamentoContabilMB.actionNew}"
 											update=":lume:dlgNovoPagamentoRecebimento" process="@this" />
-
-
 										<h:panelGroup>
 
 
@@ -1292,6 +1290,8 @@ body .ui-confirm-dialog {
 						widgetVar="dlgNovoPagamentoRecebimento" resizable="false"
 						modal="true" responsive="true" appendTo=":lume" width="50%"
 						header="Novo Pagamento/Recebimento">
+						
+						<p:ajax event="close" update="dlgNovoPagamentoRecebimento" resetValues="true" />
 
 						<p:outputPanel id="pnNovoPagamentoRecebimento"
 							style="position: relative; max-height: calc(80vh - 9px); height: calc(80vh - 9px);">
@@ -1311,7 +1311,7 @@ body .ui-confirm-dialog {
 										<f:selectItem itemLabel="Recebimento" itemValue="Crédito" />
 									</p:selectOneRadio>
 
-									<p:outputLabel for="dadosBasicos" value="Origem/Destino : " />
+									<p:outputLabel for="dadosBasicos" value="Origem/Destino:* " />
 									<h:panelGroup id="pnBtorigem">
 										<h:panelGroup styleClass="lumeField" style="display: flex">
 											<p:autoComplete queryDelay="1000"
@@ -1319,7 +1319,7 @@ body .ui-confirm-dialog {
 												id="dadosBasicos"
 												completeMethod="#{lancamentoContabilMB.geraSugestoes}"
 												var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}"
-												converter="dadosBasico" required="true" size="46"
+												converter="dadosBasico" required="false" size="46"
 												minQueryLength="3" dropdown="true">
 												<p:ajax event="itemSelect"
 													listener="#{lancamentoContabilMB.handleSelect}"
@@ -1389,7 +1389,7 @@ body .ui-confirm-dialog {
 										</p:panel>
 									</h:panelGroup>
 
-									<p:outputLabel for="tipocategoria" value="Grupo : " />
+									<p:outputLabel for="tipocategoria" value="Grupo: " />
 									<h:panelGroup styleClass="lumeField">
 										<p:selectOneMenu id="tipocategoria" converter="tipocategoria"
 											required="false"
@@ -1404,7 +1404,7 @@ body .ui-confirm-dialog {
 										</p:selectOneMenu>
 									</h:panelGroup>
 
-									<p:outputLabel for="categoria" value="Categoria : " />
+									<p:outputLabel for="categoria" value="Categoria: " />
 									<h:panelGroup styleClass="lumeField">
 										<p:selectOneMenu id="categoria" converter="categoriamotivo"
 											required="false" value="#{lancamentoContabilMB.categoria}"
@@ -1418,10 +1418,10 @@ body .ui-confirm-dialog {
 										</p:selectOneMenu>
 									</h:panelGroup>
 
-									<p:outputLabel for="motivo" value="Motivo : " />
+									<p:outputLabel for="motivo" value="Motivo:* " />
 									<h:panelGroup styleClass="lumeField">
 										<p:selectOneMenu id="motivo" converter="motivo"
-											required="true" value="#{lancamentoContabilMB.entity.motivo}"
+											required="false" value="#{lancamentoContabilMB.entity.motivo}"
 											filter="true" filterMatchMode="contains">
 											<p:ajax process="@this" update="tipocategoria,categoria"
 												listener="#{lancamentoContabilMB.carregarTipoECategoria}" />
@@ -1432,9 +1432,9 @@ body .ui-confirm-dialog {
 										</p:selectOneMenu>
 									</h:panelGroup>
 									<p:outputLabel for="formaDigitacao"
-										value="Forma de pagamento : " />
+										value="Forma de pagamento:* " />
 									<h:panelGroup styleClass="lumeField">
-										<p:selectOneMenu id="formaDigitacao" required="true"
+										<p:selectOneMenu id="formaDigitacao" required="false"
 											value="#{lancamentoContabilMB.formaPagamentoDigitacao}"
 											converter="tarifa">
 
@@ -1447,9 +1447,9 @@ body .ui-confirm-dialog {
 												itemValue="#{tarifa}" />
 										</p:selectOneMenu>
 									</h:panelGroup>
-									<p:outputLabel for="data" value="Data : " />
+									<p:outputLabel for="data" value="Data:* " />
 									<h:panelGroup styleClass="lumeField">
-										<p:calendar id="data" required="true"
+										<p:calendar id="data" required="false"
 											value="#{lancamentoContabilMB.entity.data}"
 											pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 											locale="#{lumeSecurity.locale}"
@@ -1458,22 +1458,22 @@ body .ui-confirm-dialog {
 										</p:calendar>
 									</h:panelGroup>
 
-									<p:outputLabel for="valor" value="Valor : " />
+									<p:outputLabel for="valor" value="Valor:* " />
 									<h:panelGroup styleClass="lumeField">
 										<p:inputNumber id="valor"
-											value="#{lancamentoContabilMB.entity.valor}" required="true"
+											value="#{lancamentoContabilMB.entity.valor}" required="false"
 											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 											symbol="R$ " thousandSeparator="." />
 									</h:panelGroup>
 
-									<p:outputLabel for="descricao" value="Descrição : " />
+									<p:outputLabel for="descricao" value="Descrição: " />
 									<h:panelGroup styleClass="lumeField">
 										<p:inputText id="descricao"
 											value="#{lancamentoContabilMB.entity.descricao}"
 											required="false" maxlength="100" />
 									</h:panelGroup>
 									<ui:remove>
-										<p:outputLabel for="observacoes" value="Observações : " />
+										<p:outputLabel for="observacoes" value="Observações: " />
 										<h:panelGroup styleClass="lumeField">
 											<p:inputText id="observacoes"
 												value="#{lancamentoContabilMB.entity.observacao}"
@@ -1514,11 +1514,11 @@ body .ui-confirm-dialog {
 										</p:selectOneMenu>
 									</h:panelGroup>
 									<h:panelGroup id="dataRecorrenteLabel">
-										<p:outputLabel for="dataRecorrente" value="Data : "
+										<p:outputLabel for="dataRecorrente" value="Data:* "
 											rendered="#{lancamentoContabilMB.diasRecorrente == 0 and lancamentoContabilMB.recorrente eq 'S'}" />
 									</h:panelGroup>
 									<h:panelGroup styleClass="lumeField" id="dataRecorrentePnl">
-										<p:calendar id="dataRecorrente" required="true"
+										<p:calendar id="dataRecorrente" required="false"
 											value="#{lancamentoContabilMB.dataRecorrente}"
 											pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 											locale="#{lumeSecurity.locale}"
@@ -1549,8 +1549,7 @@ body .ui-confirm-dialog {
 										process="@this,pnRecorrente,gridDados"
 										value="Salvar e Continuar"
 										actionListener="#{lancamentoContabilMB.actionPersistContinuar}"
-										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples"
-										oncomplete="PF('dtLancamentoContabil').filter()">
+										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples">
 										<p:confirm header="Atenção" style="width:50% !important;"
 											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes. Para evitar erros, é necessário aguardar o sistema terminar o processo. Deseja continuar agora?"
 											icon="ui-icon-alert" />
@@ -1561,7 +1560,6 @@ body .ui-confirm-dialog {
 										actionListener="#{lancamentoContabilMB.actionPersistFechar}"
 										update="pnRecorrente,gridDados,:lume:tv:dtLancamentoContabil,pnlfaturaViewSimples,pnlNewLancamentoSimples "
 										process="@this,pnRecorrente,gridDados"
-										oncomplete="PF('dtLancamentoContabil').filter();"
 										styleClass="GreenButton">
 										<p:confirm header="Atenção"
 											message="O sistema poderá demorar alguns minutos para gerar as faturas, dependendo da quantidade de lançamentos recorrentes. Para evitar erros, é necessário aguardar o sistema terminar o processo. Deseja continuar agora?"
