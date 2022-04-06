@@ -478,8 +478,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public List<Paciente> geraSugestoes(String query) {
         try {
-            //return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false);
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+           // return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             e.printStackTrace();
@@ -1497,7 +1497,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             boolean novoPaciente = paciente.getId() == null || paciente.getId().longValue() == 0;
 
-            PacienteSingleton.getInstance().getBo().persist(paciente);
+            PacienteSingleton.getInstance().persist(paciente);
             PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
 
             if (novoPaciente) {
