@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -14,6 +15,7 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.apache.poi.util.SystemOutLogger;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.exception.business.PTPSemDentistaExecutorException;
@@ -119,6 +121,15 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public void onCellEdit(CellEditEvent event) {
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+            
         }
     }
 
