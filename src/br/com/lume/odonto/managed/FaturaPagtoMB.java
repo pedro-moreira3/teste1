@@ -1780,7 +1780,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
         if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(
                 desconto) > 0)) {
-            negociacaoValorDesconto = null;
+            negociacaoValorDesconto = new BigDecimal(0);
+            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDescPorcentagem");
+            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDesc");
             this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
             return;
         }

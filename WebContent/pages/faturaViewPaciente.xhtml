@@ -602,7 +602,7 @@ body .height31 input {
 
 											<p:ajax process="@this"
 												listener="#{faturaPagtoMB.atualizaQuantidadeDeParcelas}"
-												update="painelEntrada,tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+												update="painelEntrada,tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento, negociacaoValorDescPorcentagem, negociacaoValorDescValor" />
 										</p:selectOneMenu>
 										<p:outputPanel id="tooltipNovaNegociacaoTarifasDisponiveisObj">
 											<h:outputLabel class="fa fa-question"
@@ -625,7 +625,7 @@ body .height31 input {
 
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.atualizaTipoDesconto}"
-											update="negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento"
+											update="negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento, negociacaoValorDescPorcentagem, negociacaoValorDescValor"
 											oncomplete="refazCalculos()" />
 									</p:selectOneMenu>
 								</h:panelGroup>
@@ -638,7 +638,7 @@ body .height31 input {
 											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 											symbol="R$ " thousandSeparator="."
 											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}">
-											<p:ajax process="@this" oncomplete="alteraDesconto()" />
+											<p:ajax process="@this" update="@this" oncomplete="alteraDesconto()" />
 										</p:inputNumber>
 										<p:outputLabel for="negociacaoValorDescValor"
 											value="Valor do Desconto:"
@@ -649,7 +649,7 @@ body .height31 input {
 											decimalSeparator="," symbol="%" thousandSeparator="."
 											symbolPosition="s"
 											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}">
-											<p:ajax process="@this" oncomplete="alteraDesconto()" />
+											<p:ajax process="@this" update="@this" oncomplete="alteraDesconto()" />
 										</p:inputNumber>
 										<p:outputLabel for="negociacaoValorDescPorcentagem"
 											value="Percentual de Desconto:"
