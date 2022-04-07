@@ -1768,7 +1768,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoValorTotal = null;
     }
 
-    public void refazCalculos() {
+    public void refazCalculos() { 
         negociacaoValorTotal = FaturaSingleton.getInstance().getTotal(getEntity());
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
