@@ -387,7 +387,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>wildfly-remote-romulo</id>
+			<id>wildfly-remote-trm</id>
 			<properties>
 				<wildfly-hostname>ltdeapp07.lume.intra</wildfly-hostname>
 				<wildfly-port>9991</wildfly-port>

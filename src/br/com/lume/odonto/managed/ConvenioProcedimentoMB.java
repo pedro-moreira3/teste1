@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 
@@ -49,6 +50,9 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     private Integer mes, ano;
     
+    private ConvenioProcedimento convenioProcedimento;
+    private ConvenioProcedimento convenioProcedimentoFora;
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorioConvenio;
     private DataTable tabelaProcedimentosFora;
@@ -75,12 +79,48 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         }
         this.setClazz(ConvenioProcedimento.class);
     }
+    
+    public void carregarEntidade(String metodo) {
+        if("adicionar".equals(metodo)) {
+            this.getEntity().setId(convenioProcedimentoFora.getId());
+            this.getEntity().setAlteradoPor(convenioProcedimentoFora.getAlteradoPor());
+            this.getEntity().setCodigoConvenio(convenioProcedimentoFora.getCodigoConvenio());
+            this.getEntity().setConvenio(convenioProcedimentoFora.getConvenio());
+            this.getEntity().setDataExclusao(convenioProcedimentoFora.getDataExclusao());
+            this.getEntity().setDataUltimaAlteracao(convenioProcedimentoFora.getDataUltimaAlteracao());
+            this.getEntity().setExcluido(convenioProcedimentoFora.getExcluido());
+            this.getEntity().setExcluidoPorProfissional(convenioProcedimentoFora.getExcluidoPorProfissional());
+            this.getEntity().setIdEmpresa(convenioProcedimentoFora.getIdEmpresa());
+            this.getEntity().setPorcentagem(convenioProcedimentoFora.getPorcentagem());
+            this.getEntity().setProcedimento(convenioProcedimentoFora.getProcedimento());
+            this.getEntity().setStatus(convenioProcedimentoFora.getStatus());
+            this.getEntity().setValor(convenioProcedimentoFora.getValor());
+            this.getEntity().setValorRepasse(convenioProcedimentoFora.getValorRepasse());
+        }else {
+            this.getEntity().setId(convenioProcedimento.getId());
+            this.getEntity().setZeraId(convenioProcedimento.isZeraId());
+            this.getEntity().setAlteradoPor(convenioProcedimento.getAlteradoPor());
+            this.getEntity().setCodigoConvenio(convenioProcedimento.getCodigoConvenio());
+            this.getEntity().setConvenio(convenioProcedimento.getConvenio());
+            this.getEntity().setDataExclusao(convenioProcedimento.getDataExclusao());
+            this.getEntity().setDataUltimaAlteracao(convenioProcedimento.getDataUltimaAlteracao());
+            this.getEntity().setExcluido(convenioProcedimento.getExcluido());
+            this.getEntity().setExcluidoPorProfissional(convenioProcedimento.getExcluidoPorProfissional());
+            this.getEntity().setIdEmpresa(convenioProcedimento.getIdEmpresa());
+            this.getEntity().setPorcentagem(convenioProcedimento.getPorcentagem());
+            this.getEntity().setProcedimento(convenioProcedimento.getProcedimento());
+            this.getEntity().setStatus(convenioProcedimento.getStatus());
+            this.getEntity().setValor(convenioProcedimento.getValor());
+            this.getEntity().setValorRepasse(convenioProcedimento.getValorRepasse());
+        }
+    }
 
     @Override
     public void actionRemove(ActionEvent event) {
         try {
             this.getbO().remove(this.getEntity());
             this.limpar();
+            setConvenioProcedimento(null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
         } catch (Exception e) {
             log.error("Erro no actionRemove", e);
@@ -128,6 +168,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
                 this.limpar();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.carregarListaConveioProcedimento();
+                setConvenioProcedimentoFora(null);
             } else {
                 log.error("Erro no actionPersist " + OdontoMensagens.getMensagem("erro.convenioprocedimento.selecao"));
                 this.addError(OdontoMensagens.getMensagem("erro.convenioprocedimento.selecao"), "");
@@ -160,6 +201,9 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         this.getEntity().setZeraId(true);
         this.carregarListaConveioProcedimento();
         this.tabelaProcedimentos.setSelection(null);
+        this.tabelaProcedimentosFora.setSelection(null);
+        PrimeFaces.current().ajax().update(":lume:tabview:dtConvenioProcedimentoFora");
+        
     }
 
     public boolean verificaCp() {
@@ -331,6 +375,26 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void setTabelaProcedimentosFora(DataTable tabelaProcedimentosFora) {
         this.tabelaProcedimentosFora = tabelaProcedimentosFora;
+    }
+
+    
+    public ConvenioProcedimento getConvenioProcedimento() {
+        return convenioProcedimento;
+    }
+
+    
+    public void setConvenioProcedimento(ConvenioProcedimento convenioProcedimento) {
+        this.convenioProcedimento = convenioProcedimento;
+    }
+
+    
+    public ConvenioProcedimento getConvenioProcedimentoFora() {
+        return convenioProcedimentoFora;
+    }
+
+    
+    public void setConvenioProcedimentoFora(ConvenioProcedimento convenioProcedimentoFora) {
+        this.convenioProcedimentoFora = convenioProcedimentoFora;
     }
 
 }

@@ -1772,12 +1772,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoValorTotal = FaturaSingleton.getInstance().getTotal(getEntity());
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
-        if(negociacaoTipoDesconto.equals("V")) {
-            descontoCadQtdeParcelas.setDesconto(negociacaoValorTotal.multiply(descontoCadQtdeParcelas.getDesconto()).divide(new BigDecimal(100)));
+        BigDecimal desconto;
+        if(negociacaoTipoDesconto.equals("V") ) {
+            desconto = negociacaoValorTotal.multiply(descontoCadQtdeParcelas.getDesconto()).divide(new BigDecimal(100));
+        }else {
+            desconto = descontoCadQtdeParcelas.getDesconto();
         }
         if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(
-                descontoCadQtdeParcelas.getDesconto()) > 0)) {
-            negociacaoValorDesconto = null;
+                desconto) > 0)) {
+            negociacaoValorDesconto = new BigDecimal(0);
+            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDescPorcentagem");
+            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDesc");
             this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
             return;
         }

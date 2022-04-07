@@ -77,7 +77,8 @@
                                         immediate="true" />
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio"
                                     	actionListener="#{convenioProcedimentoMB.actionPersist}"
-                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this"
+                                    	oncomplete="PF('dtConvenioProcedimentoFora').filter();"
+                                        update=":lume:tabView:pnDados, :lume:tabView:dtConvenioProcedimentoFora, :lume:tabView:dtConvenioProcedimento " process=":lume:tabView:pnDados,@this"
                                         styleClass="GreenButton"/>
                                         
                                     <ui:remove>
@@ -177,12 +178,13 @@
                                 	emptyMessage="" id="dtConvenioProcedimentoFora"
                                 	value="#{convenioProcedimentoMB.convenioProcedimentosFora}" 
                                 	var="cp" rowKey="#{cp}" paginatorPosition="bottom" 
-                                	selection="#{convenioProcedimentoMB.entity}"
+                                	selection="#{convenioProcedimentoMB.convenioProcedimentoFora}"
                                 	selectionMode="single" rows="7" paginator="true"
                                     widgetVar="dtConvenioProcedimentoFora"
                                     binding="#{convenioProcedimentoMB.tabelaProcedimentosFora}">
                                     
-                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" 
+                                    listener="#{convenioProcedimentoMB.carregarEntidade('adicionar')}" />
                                     
                                     <f:facet name="header">Procedimentos ainda não vinculados ao Convênio</f:facet>
                                     
@@ -223,12 +225,13 @@
                                 	emptyMessage="" id="dtConvenioProcedimento"
                                 	value="#{convenioProcedimentoMB.convenioProcedimentos}" var="cp"
                                     rowKey="#{cp}" paginatorPosition="bottom"
-                                    selection="#{convenioProcedimentoMB.entity}"
+                                    selection="#{convenioProcedimentoMB.convenioProcedimento}"
                                     selectionMode="single" rows="7" paginator="true"
                                     widgetVar="dtConvenioProcedimento"
                                     binding="#{convenioProcedimentoMB.tabelaProcedimentos}">
                                     
-                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" 
+                                    listener="#{convenioProcedimentoMB.carregarEntidade('remover')}" />
                                     
                                     <f:facet name="header">Procedimentos já vinculados ao Convênio</f:facet>
                                     
