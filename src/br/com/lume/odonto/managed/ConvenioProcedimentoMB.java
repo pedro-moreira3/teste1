@@ -163,6 +163,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         this.tabelaProcedimentos.setSelection(null);
         this.tabelaProcedimentosFora.setSelection(null);
         PrimeFaces.current().ajax().update(":lume:tabview:dtConvenioProcedimentoFora");
+        
     }
 
     public boolean verificaCp() {
