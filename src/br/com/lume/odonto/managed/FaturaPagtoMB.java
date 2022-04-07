@@ -1782,7 +1782,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 desconto) > 0)) {
             negociacaoValorDesconto = new BigDecimal(0);
             PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDescPorcentagem");
-            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDesc");
+            PrimeFaces.current().ajax().update("lume:tabViewPaciente:negociacaoValorDescValor");
             this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
             return;
         }
