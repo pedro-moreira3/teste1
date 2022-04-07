@@ -70,18 +70,16 @@
 
 
                                 </p:panelGrid>
-                                
 
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Convênio-Procedimento" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
                                         immediate="true" />
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio"
-                                        process="@this" 
-                                        styleClass="GreenButton">
-                                        <p:ajax listener="#{convenioProcedimentoMB.actionPersist(null)}" oncomplete="PF('dtConvenioProcedimentoFora').filter();"
-                                        	process=":lume:tabView:pnDados,@this" update=":lume:tabView:pnConvenio" />
-                                        </p:commandButton>
+                                    	actionListener="#{convenioProcedimentoMB.actionPersist}"
+                                    	oncomplete="PF('dtConvenioProcedimentoFora').filter();"
+                                        update=":lume:tabView:pnDados, :lume:tabView:dtConvenioProcedimentoFora, :lume:tabView:dtConvenioProcedimento " process=":lume:tabView:pnDados,@this"
+                                        styleClass="GreenButton"/>
                                         
                                     <ui:remove>
                                     <p:commandButton value="Exportar Não Vinculados" ajax="false"
@@ -180,12 +178,13 @@
                                 	emptyMessage="" id="dtConvenioProcedimentoFora"
                                 	value="#{convenioProcedimentoMB.convenioProcedimentosFora}" 
                                 	var="cp" rowKey="#{cp}" paginatorPosition="bottom" 
-                                	selection="#{convenioProcedimentoMB.entity}"
+                                	selection="#{convenioProcedimentoMB.convenioProcedimentoFora}"
                                 	selectionMode="single" rows="7" paginator="true"
                                     widgetVar="dtConvenioProcedimentoFora"
                                     binding="#{convenioProcedimentoMB.tabelaProcedimentosFora}">
                                     
-                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" 
+                                    listener="#{convenioProcedimentoMB.carregarEntidade('adicionar')}" />
                                     
                                     <f:facet name="header">Procedimentos ainda não vinculados ao Convênio</f:facet>
                                     
@@ -226,12 +225,13 @@
                                 	emptyMessage="" id="dtConvenioProcedimento"
                                 	value="#{convenioProcedimentoMB.convenioProcedimentos}" var="cp"
                                     rowKey="#{cp}" paginatorPosition="bottom"
-                                    selection="#{convenioProcedimentoMB.entity}"
+                                    selection="#{convenioProcedimentoMB.convenioProcedimento}"
                                     selectionMode="single" rows="7" paginator="true"
                                     widgetVar="dtConvenioProcedimento"
                                     binding="#{convenioProcedimentoMB.tabelaProcedimentos}">
                                     
-                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" />
+                                    <p:ajax event="rowSelect" update=":lume:tabView:pnDados, :lume:tabView:delete" 
+                                    listener="#{convenioProcedimentoMB.carregarEntidade('remover')}" />
                                     
                                     <f:facet name="header">Procedimentos já vinculados ao Convênio</f:facet>
                                     
