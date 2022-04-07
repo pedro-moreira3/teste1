@@ -572,19 +572,25 @@ body .ui-confirm-dialog {
 												process="@this,dtLancamentoValidar" />
 										</h:panelGroup>
 									</p:panelGrid>
+									
 									<p:remoteCommand name="refreshFooter"
 										update=":lume:tv:dtLancamentoValidar" />
+									
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoValidar"
 										filteredValue="#{conferenciaRecebimentoMB.listaFiltrada}"
 										value="#{conferenciaRecebimentoMB.entityList}" var="lc"
 										rows="15" paginator="true" paginatorPosition="bottom"
-										widgetVar="dtLancamentoValidar" rowKey="#{lc}"
+										widgetVar="dtLancamentoValidar" rowKey="#{lc}" editable="true" editMode="cell"
 										selection="#{conferenciaRecebimentoMB.lancamentosSelecionadosConferencia}"
 										binding="#{conferenciaRecebimentoMB.tabelaLancamentoConferencia}">
+										
 										<p:ajax event="filter" process="@this"
 											oncomplete="refreshFooter()"
 											listener="#{conferenciaRecebimentoMB.updateSomatorioConferencia()}" />
+											
+										<p:ajax event="cellEdit" listener="#{conferenciaRecebimentoMB.onCellEdit}"
+											update=":lume:tv:dtLancamentoValidar" />
 
 										<f:facet name="header">Lançamentos</f:facet>
 
@@ -600,7 +606,6 @@ body .ui-confirm-dialog {
 												styleClass="NavyButton" title="Visualizar Fatura"
 												rendered="#{lc.fatura.tipoFatura ne 'FATURA_GENERICA_PAGAMENTO' and lc.fatura.tipoFatura ne 'FATURA_GENERICA_RECEBIMENTO'}" />
 
-
 											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
@@ -609,7 +614,6 @@ body .ui-confirm-dialog {
 												rendered="#{lc.fatura.tipoFatura eq 'FATURA_GENERICA_PAGAMENTO' || 
 												lc.fatura.tipoFatura eq 'FATURA_GENERICA_RECEBIMENTO'
 												}" />
-
 
 											<ui:remove>
 												<p:commandButton icon="White fa fa-money"
@@ -658,7 +662,6 @@ body .ui-confirm-dialog {
 													itemValue="#{tarifa}" />
 											</p:selectOneMenu>
 
-
 										</p:column>
 										<p:column headerText="Data Pagamento"
 											filterBy="#{lc.dataPagamentoStr}"
@@ -669,11 +672,17 @@ body .ui-confirm-dialog {
 											exportValue="#{lc.dataCreditoStr}"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<p:calendar value="#{lc.dataCredito}" autocomplete="false"
-												id="alteracaoDataCredito" locale="#{lumeSecurity.locale}"
-												mask="true"
-												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
-											</p:calendar>
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{lc.dataCreditoStr}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:calendar value="#{lc.dataCredito}" autocomplete="false"
+														id="alteracaoDataCredito" locale="#{lumeSecurity.locale}"
+														mask="true"
+														disabled="#{lc.validado == 'S' or lc.validado == 'C'}"/>
+												</f:facet>
+											</p:cellEditor>
 										</p:column>
 										<p:column
 											exportFooterValue="R$ #{conferenciaRecebimentoMB.somatorioValorConferirConferencia}"
@@ -685,7 +694,7 @@ body .ui-confirm-dialog {
 												value="#{conferenciaRecebimentoMB.valorConferir(lc)}">
 												<f:convertNumber currencySymbol="R$" type="currency"
 													minFractionDigits="2" />
-											</h:outputText>
+											</h:outputText>											
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText
@@ -721,19 +730,29 @@ body .ui-confirm-dialog {
 											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterMatchMode="contains">
-											<h:outputText
-												rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
+											<p:cellEditor rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}">
+												<f:facet name="output">
+													<h:outputText
+														value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
+														<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+													</h:outputText>
+												</f:facet>												
+												<f:facet name="input">
+													<h:panelGroup>
+														<p:inputNumber id="valor"
+															value="#{lc.valor}"
+															disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
+															required="true" maxlength="13" maxValue="9999999999.99"
+															decimalSeparator="," symbol="R$ " thousandSeparator=".">
+														</p:inputNumber>
+													</h:panelGroup>
+												</f:facet>
+											</p:cellEditor>
+											<h:outputText rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
 												value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
 												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
 											</h:outputText>
-											<p:inputNumber id="valor"
-												rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}"
-												value="#{lc.valor}"
-												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
-												required="true" maxlength="13" maxValue="9999999999.99"
-												decimalSeparator="," symbol="R$ " thousandSeparator=".">
-											</p:inputNumber>
-
+											
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText

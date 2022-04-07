@@ -161,11 +161,12 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
                 }
                 
                 carregaListaCusto();
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Valor do custo é maior que o valor do procedimento");
             }
         } catch (Exception e) {
+            System.out.println("PROCEDIMENTO EXECUTADO: " + e.getCause());
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
