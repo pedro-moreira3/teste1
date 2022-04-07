@@ -115,7 +115,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Date retorno;
     private String observacoesRetorno;
 
-    private Dominio justificativa;
+    private Dominio justificativa; 
     private List<Dominio> justificativasCancelamento;
     private String justificativaCancelamento;
 
