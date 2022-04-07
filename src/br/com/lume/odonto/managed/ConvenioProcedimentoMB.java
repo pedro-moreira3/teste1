@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 
@@ -160,6 +161,8 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
         this.getEntity().setZeraId(true);
         this.carregarListaConveioProcedimento();
         this.tabelaProcedimentos.setSelection(null);
+        this.tabelaProcedimentosFora.setSelection(null);
+        PrimeFaces.current().ajax().update(":lume:tabview:dtConvenioProcedimentoFora");
     }
 
     public boolean verificaCp() {
