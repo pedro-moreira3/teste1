@@ -23,8 +23,8 @@ before_script:
   - branch=$CI_COMMIT_REF_NAME
   - paramsDeploy='-DintelidenteBuild='$CI_PIPELINE_ID' -DintelidenteMaster='$CI_PIPELINE_IID' -DintelidenteHotFix='
   - 'if [ $branch == "master" ]; then profile=wildfly-remote-prod; fi'
-  - 'if [ $branch == "desenv" ] || [ $branch == "backend" ]; then profile=wildfly-remote-dev; fi'
-  - 'if [ $branch == "romulo" ]; then profile=wildfly-remote-romulo; fi'
+  - 'if [ $branch == "backend" ]; then profile=wildfly-remote-dev; fi'
+  - 'if [ $branch == "desenv" ]; then profile=wildfly-remote-trm; fi'
   - 'echo "========================================================================================"'
   - 'echo "=   BRANCH.......................: $branch"'
   - 'echo "=   PROFILE......................: $profile"'
