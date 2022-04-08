@@ -133,8 +133,7 @@ body .ui-confirm-dialog {
 											<h:panelGroup>
 												<p:outputLabel for="listaPeriodoInicial" value="Período:" />
 												<p:selectOneMenu id="listaPeriodoInicial"
-													value="#{lancamentoContabilMB.periodo}"
-													update="inicioLancamento,fimLancamento">
+													value="#{lancamentoContabilMB.periodo}">
 
 													<p:ajax process="@this"
 														update="inicioLancamento,fimLancamento"
@@ -223,7 +222,6 @@ body .ui-confirm-dialog {
 												actionListener="#{lancamentoContabilMB.geraLista}"
 												update="filtroPrincipalDatas,dtLancamentoContabil"
 												process="@this,filtroPrincipalDatas"
-												oncomplete="PF('dtLancamentoContabil').filter()"
 												styleClass="OrangeButton" />
 										</p:panelGrid>
 									</p:fieldset>

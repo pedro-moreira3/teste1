@@ -317,7 +317,7 @@ body .ui-selectoneradio td label {
 					<p:selectOneRadio id="tipoRemuneracao" required="false"
 						value="#{profissionalMB.entity.tipoRemuneracao}"
 						layout="responsive" columns="1">
-						<p:ajax process="@this" update="pgRemuneracao" />
+						<p:ajax listener="#{profissionalMB.handle}" process="@this" update="pgRemuneracao" />
 						<f:selectItem
 							itemLabel="&lt;div class=&quot;option&quot;&gt;   Procedimento   &lt;div class=&quot;helper&quot;&gt;?&lt;/div&gt;"
 							itemValue="PRO" itemEscaped="false"

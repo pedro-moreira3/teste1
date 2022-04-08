@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
@@ -310,6 +311,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void geraLista() {
         try {
+            DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tv:dtLancamentoContabil");
+            table.reset();
+            
             lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno,
                     formaPagamento, origemFiltro);
             updateSomatorio();
