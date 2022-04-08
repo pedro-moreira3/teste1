@@ -237,8 +237,7 @@
 								value="#{pacienteMB.entity.dadosBasico.dataNascimento}"
 								pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 								locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
+								timeZone="#{lumeSecurity.timeZone}" navigator="true">
 								<p:ajax event="dateSelect"
 									update="lblResponsavel,lblDocumento,idade"
 									listener="#{pacienteMB.validaIdade}" process="@this,idade" />
