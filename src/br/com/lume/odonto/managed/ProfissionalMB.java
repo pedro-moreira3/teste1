@@ -116,6 +116,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private String filtroStatus = "A";
 
     private byte[] data;
+    
+    private String tipoRemuneracao;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaProfissional;
@@ -213,6 +215,11 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
     }
 
+    public void handle() {
+        System.out.println("ALTERAÇÃO CADASTRO PROFISSIONAL: " + UtilsFrontEnd.getProfissionalLogado().getId());
+        System.out.println("profissional alterado: " + (this.getEntity() != null && this.getEntity().getId() != null ? this.getEntity().getId() : 0));
+    }
+    
     public void carregarObjetosPerfisProfissional(String perfil) {
         List<Objeto> perfis = ObjetoSingleton.getInstance().getBo().listByPerfil(perfil);
         objetosPerfilSelecionados = new ArrayList<>();
@@ -811,6 +818,14 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void setFiltroStatus(String filtroStatus) {
         this.filtroStatus = filtroStatus;
+    }
+
+    public String getTipoRemuneracao() {
+        return tipoRemuneracao;
+    }
+
+    public void setTipoRemuneracao(String tipoRemuneracao) {
+        this.tipoRemuneracao = tipoRemuneracao;
     }
 
 }
