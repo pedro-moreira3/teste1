@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script type="text/javascript">
+			google.charts.load('current', {
+				'packages' : [ 'corechart' ]
+			});
+			google.charts.setOnLoadCallback(drawPacientesAtivosInativos);
+			google.charts.setOnLoadCallback(drawPacientesParticularConvenio);
+
+			function drawPacientesAtivosInativos() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Month', 'Inativos', 'Ativos', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Pacientes | Ativos x Inativos',
+					colors: ['#aa0000', '#00aa00', '#0000aa'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('pacientes_ativos_inativos'));
+				chart.draw(data, options);
+			}
+			
+			function drawPacientesParticularConvenio() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Month', 'Particular', 'Convênio', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Pacientes | Particulares x Convênio',
+					colors: ['#4444ff', '#000044', '#0000aa'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('pacientes_particular_convenio'));
+				chart.draw(data, options);
+			}
+		</script>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<div id="pacientes_ativos_inativos" style="width: 800px; height: 500px;"></div>
+					<div id="pacientes_particular_convenio" style="width: 800px; height: 500px;"></div>
+				</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>
