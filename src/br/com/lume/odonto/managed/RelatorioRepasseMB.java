@@ -112,10 +112,12 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                     this.getEntityList().removeIf((rfl) -> !rfl.getLancamentoRepasse().getStatusCompleto().contains(statusPagamento) || !rfl.getLancamentoRepasse().getFatura().isAtivo());
                 }
                 
+                Lancamento l = null;
+                
                 for(RepasseFaturasLancamento rfl : this.getEntityList()) {
                     //Preenche os valores das deduções e afins para mostrar na tela
                     if(rfl.getLancamentoOrigem() != null) {
-                        Lancamento l = rfl.getLancamentoOrigem();
+                        l = rfl.getLancamentoOrigem();
                         
                         l.setDadosCalculoPercTaxa((l.getTarifa() != null && l.getTarifa().getTaxa() != null ? l.getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
                         l.setDadosCalculoValorTaxa(l.getDadosCalculoPercTaxa().multiply(l.getValor()));
@@ -127,17 +129,17 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                         l.setDadosCalculoValorTributo(
                                 l.getTributoPerc().multiply(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        l.setDadosTabelaValorTotalCustosDiretos(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
-                        if (l.getDadosTabelaValorTotalCustosDiretos() != null && l.getDadosTabelaValorTotalCustosDiretos().compareTo(
+                        rfl.setDadosTabelaValorTotalCustosDiretos(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getCustos().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        if (rfl.getDadosTabelaValorTotalCustosDiretos() != null && rfl.getDadosTabelaValorTotalCustosDiretos().compareTo(
                                 new BigDecimal(0)) != 0) {
-                            l.setDadosCalculoPercCustoDireto(
-                                    l.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP));
-                            l.setDadosCalculoValorCustoDiretoRateado(
-                                    l.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP).multiply(
+                            rfl.setDadosCalculoPercCustoDireto(
+                                    rfl.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP));
+                            rfl.setDadosCalculoValorCustoDiretoRateado(
+                                    rfl.getDadosTabelaValorTotalCustosDiretos().divide(FaturaSingleton.getInstance().getValorTotal(l.getFatura()), 4, BigDecimal.ROUND_HALF_UP).multiply(
                                             l.getValor()));
                         } else {
-                            l.setDadosCalculoPercCustoDireto(new BigDecimal(0));
-                            l.setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
+                            rfl.setDadosCalculoPercCustoDireto(new BigDecimal(0));
+                            rfl.setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
                         }
                         
                         if(l.getDadosCalculoValorTaxa() == null)
@@ -146,12 +148,13 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                             l.setDadosCalculoValorTarifa(BigDecimal.ZERO);
                         if(l.getDadosCalculoValorTributo() == null)
                             l.setDadosCalculoValorTributo(BigDecimal.ZERO);
-                        if(l.getDadosCalculoValorCustoDiretoRateado() == null)
-                            l.setDadosCalculoValorCustoDiretoRateado(BigDecimal.ZERO);
+                        if(rfl.getDadosCalculoValorCustoDiretoRateado() == null) {
+                            rfl.setDadosCalculoValorCustoDiretoRateado(BigDecimal.ZERO);
+                        }
                         
                         l.setDadosCalculoTotalReducao(
                                 l.getDadosCalculoValorTaxa().add(l.getDadosCalculoValorTarifa()).add(
-                                        l.getDadosCalculoValorTributo()).add(l.getDadosCalculoValorCustoDiretoRateado()));
+                                        l.getDadosCalculoValorTributo()).add(rfl.getDadosCalculoValorCustoDiretoRateado()));
 
                         l.setDadosCalculoRecebidoMenosReducao(
                                 l.getValor().subtract(l.getDadosCalculoTotalReducao()));
@@ -193,8 +196,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
                     }
                  
-                    if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) < 0
-                           ) {
+                    if(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante().compareTo(new BigDecimal(0)) < 0) {
                         map.put(rfl.getRepasseFaturas().getPlanoTratamentoProcedimento().getId(), valorTotal(rfl.getLancamentoRepasse()));
                     }
                     

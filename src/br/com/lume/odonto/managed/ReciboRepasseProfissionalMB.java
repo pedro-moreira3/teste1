@@ -291,6 +291,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                             
                             repasseRecibo.getDados().setValorJaPago(valorPago);
                             repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
+                            
                             ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().persist(repasseRecibo);
                         }
                         
