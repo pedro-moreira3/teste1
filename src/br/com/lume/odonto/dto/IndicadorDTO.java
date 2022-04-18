@@ -1,6 +1,7 @@
 package br.com.lume.odonto.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,21 +12,32 @@ public class IndicadorDTO implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
+    private Long id;
     private String descricao;
     private String mes;
-    private String valor;
+    private BigDecimal valor;
     private String metrica;
     private String media;
+    private String tipoDado;
     private List<IndicadorDTO> indicadores;
     
     public IndicadorDTO(Indicador indicador) {
         if(indicador != null) {
+            id = indicador.getId();
             descricao = indicador.getDescricao();
-            valor = indicador.getValor();
+            valor = new BigDecimal(indicador.getValor());
             mes = (indicador.getInicio() != null ? Utils.getMesTexto(indicador.getInicio()) : "");
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     public String getDescricao() {
         return descricao;
     }
@@ -42,11 +54,11 @@ public class IndicadorDTO implements Serializable {
         this.mes = mes;
     }
 
-    public String getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(String valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -72,6 +84,14 @@ public class IndicadorDTO implements Serializable {
 
     public void setMedia(String media) {
         this.media = media;
+    }
+    
+    public String getTipoDado() {
+        return tipoDado;
+    }
+
+    public void setTipoDado(String tipoDado) {
+        this.tipoDado = tipoDado;
     }
     
     public static List<IndicadorDTO> converter(List<Indicador> indicadores) {
