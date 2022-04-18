@@ -12,7 +12,7 @@
 					<h1>Indicadores</h1>
 
 					<p:fieldset toggleable="true">
-						<p:panelGrid columns="3" layout="grid" id="filtroDatas"
+						<p:panelGrid columns="3" layout="grid" id="pnFiltros"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 							<h:panelGroup styleClass="md-combo">
@@ -30,14 +30,14 @@
 							</h:panelGroup>
 
 							<h:panelGroup>
-								<p:outputLabel for="inicioLancamento" value="Inicio: " />
-								<p:calendar id="inicioLancamento" value="#{indicadorMB.inicio}"
+								<p:outputLabel for="inicio" value="Inicio: " />
+								<p:calendar id="inicio" value="#{indicadorMB.inicio}"
 									pattern="dd/MM/yyyy" mask="true" required="false" />
 							</h:panelGroup>
 
 							<h:panelGroup>
-								<p:outputLabel for="fimLancamento" value="Fim: " />
-								<p:calendar id="fimLancamento" value="#{indicadorMB.fim}"
+								<p:outputLabel for="fim" value="Fim: " />
+								<p:calendar id="fim" value="#{indicadorMB.fim}"
 									pattern="dd/MM/yyyy" mask="true" required="false" />
 							</h:panelGroup>
 						</p:panelGrid>
@@ -45,14 +45,14 @@
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="pesquisarCustos" icon="fa fa-search White"
-								value="Pesquisar" update="indicadores"
-								process="@this,filtroDatas" styleClass="OrangeButton" />
+								value="Pesquisar" update=":lume:dtIndicadoresAgendamento"
+								process="@this,pnFiltros" styleClass="OrangeButton" />
 						</p:panelGrid>
 					</p:fieldset>
 					
-					<p:fieldset collapsed="true" toggleable="true">
-						<p:dataTable id="dtIndicadoresAgendamento" paginator="true" paginatorPosition="bottom"
-							rows="10"
+					<p:fieldset toggleable="true">
+						<p:dataTable id="dtIndicadoresAgendamento"
+							rows="10" paginator="true" paginatorPosition="bottom"
 							emptyMessage="Nenhum lançamento a receber para o mês corrente."
 							value="#{indicadorMB.indicadoresAgendamento}" var="indicadorAgendamento" rowKey="#{indicadorAgendamento}">
 							<f:facet name="header">Agendamentos</f:facet>
@@ -62,42 +62,44 @@
 								filterMatchMode="contains" width="15%">
 								<h:outputText value="#{indicadorAgendamento.descricao}" />
 							</p:column>
-							<p:column headerText="Valor"
-								filterBy="#{indicadorAgendamento.valor}"
-								sortBy="#{indicadorAgendamento.valor}"
-								filterMatchMode="contains" width="15%">
-								<h:outputText value="#{indicadorAgendamento.valor}" />
-							</p:column>
+							<ui:repeat value="#{indicadorAgendamento.indicadores}" var="indicador">
+								<p:column headerText="#{indicador.mes}"
+									sortBy="#{indicador.valor}"
+									filterMatchMode="contains" width="15%">
+									<h:outputText value="#{'(' + indicador.metrica + ')' + indicador.valor}" />
+								</p:column>
+							</ui:repeat>
 						</p:dataTable>
 					</p:fieldset>
 					
-					<p:fieldset collapsed="true" toggleable="true">
-						<p:dataTable id="dtIndicadoresFinanceiro" paginator="true" paginatorPosition="bottom"
-							rows="10"
+					<p:fieldset toggleable="true">
+						<p:dataTable id="dtIndicadoresFinanceiro"
+							rows="10" paginator="true" paginatorPosition="bottom"
 							emptyMessage="Nenhum lançamento a receber para o mês corrente."
-							value="#{indicadorMB.indicadoresFinanceiro}" var="indicadorFinanceiro" rowKey="#{indicadorFinanceiro}">
-							<f:facet name="header">Agendamentos</f:facet>
-							<p:column headerText="Descrição"
-								filterBy="#{indicadorFinanceiro.descricao}"
+							value="#{indicadorMB.indicadoresFinanceiro}" var="indicadorFinanceiro"
+							rowKey="#{indicadorFinanceiro}">
+							<f:facet name="header">Financeiro</f:facet>
+							<p:column headerText="Indicador"
 								sortBy="#{indicadorFinanceiro.descricao}"
 								filterMatchMode="contains" width="15%">
 								<h:outputText value="#{indicadorFinanceiro.descricao}" />
 							</p:column>
-							<p:column headerText="Valor"
-								filterBy="#{indicadorFinanceiro.valor}"
-								sortBy="#{indicadorFinanceiro.valor}"
+							<p:columns value="#{indicadorMB.indicadoresFinanceiro[indicadorMB.rowIndexByKey(indicadorFinanceiro)].indicadores}"
+								var="indicador" headerText="#{indicador.mes}"
+								sortBy="#{indicador.valor}"
 								filterMatchMode="contains" width="15%">
-								<h:outputText value="#{indicadorFinanceiro.valor}" />
-							</p:column>
+								<h:outputText value="#{indicador.metrica.concat(' ').concat(indicador.valor)}" />
+							</p:columns>
 						</p:dataTable>
 					</p:fieldset>
 					
+					<ui:remove>
 					<p:fieldset collapsed="true" toggleable="true">
-						<p:dataTable id="dtIndicadoresOrcamentos" paginator="true" paginatorPosition="bottom"
-							rows="10"
+						<p:dataTable id="dtIndicadoresOrcamentos"
+							rows="10" paginator="true" paginatorPosition="bottom"
 							emptyMessage="Nenhum lançamento a receber para o mês corrente."
 							value="#{indicadorMB.indicadoresOrcamentos}" var="indicadoresOrcamentos" rowKey="#{indicadoresOrcamentos}">
-							<f:facet name="header">Agendamentos</f:facet>
+							<f:facet name="header">Orçamentos</f:facet>
 							<p:column headerText="Descrição"
 								filterBy="#{indicadoresOrcamentos.descricao}"
 								sortBy="#{indicadoresOrcamentos.descricao}"
@@ -112,9 +114,7 @@
 							</p:column>
 						</p:dataTable>
 					</p:fieldset>
-
-					
-
+					</ui:remove>
 
 				</div>
 			</div>
