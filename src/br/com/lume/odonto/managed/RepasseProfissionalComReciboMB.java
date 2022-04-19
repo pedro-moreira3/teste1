@@ -279,29 +279,29 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private void gerarReciboLancamento() {
         try {
             List<Lancamento> lancamentosParaGerarRecibo = new ArrayList<Lancamento>();
-            String mensagem = "sem lancamentos válidos para repasse";
-            // for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            // Fatura fatura = getFaturaFromPtp(ptp);
-            // List<Lancamento> lancamentos = fatura.getLancamentos();
+            String mensagem = "";
+            
             for (Lancamento l : lancamentoParaRecibo) {
                 if (ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboValidoForLancamento(l) != null) {
                     mensagem = "Existem lançamentos na lista de repasse que já estão em outros recibos!";
-                    //addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
-                    //return;
                 } else {
                     lancamentosParaGerarRecibo.add(l);
                 }
             }
-            // }
+
             if (lancamentosParaGerarRecibo == null || lancamentosParaGerarRecibo.size() == 0) {
                 addError("Erro", mensagem);
                 return;
             } else {
                 if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(lancamentosParaGerarRecibo, this.descricao, this.observacao, UtilsFrontEnd.getProfissionalLogado()))
                     throw new Exception();
-                // pesquisar();
+
                 setPtpsSelecionados(null);
                 PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
+                
+                if(mensagem != null && !mensagem.isEmpty())
+                    addWarn("Atenção !", mensagem);
+                
                 addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             }
         } catch (Exception e) {
