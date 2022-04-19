@@ -1430,8 +1430,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void atualizaObjetoLista(PlanoTratamentoProcedimento planoTratamentoProcedimento) {
-        planoTratamentoProcedimentos.remove(planoTratamentoProcedimento);
-        planoTratamentoProcedimentos.add(planoTratamentoProcedimento);
+        for(int i = 0; i < planoTratamentoProcedimentos.size(); i++) {
+            if(planoTratamentoProcedimentos.get(i).getId() == planoTratamentoProcedimento.getId() && planoTratamentoProcedimentos.get(i).getStatus() != planoTratamentoProcedimento.getStatus()) {
+                planoTratamentoProcedimentos.remove(i);
+                planoTratamentoProcedimentos.add(planoTratamentoProcedimento);
+                break;
+            }
+        }
     }
 
     public String getDescontoFromParcela(Integer parcela) {
