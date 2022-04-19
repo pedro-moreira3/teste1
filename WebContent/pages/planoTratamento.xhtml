@@ -973,8 +973,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
 
-									<p:ajax process="@this" update="@this"
-										listener="#{planoTratamentoMB.fazNada()}" />
+									<p:ajax process="@this, dtProcedimentosSelecionadospt" update="@this"
+										listener="#{planoTratamentoMB.atualizaObjetoLista(plano)}" />
 
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
@@ -3016,7 +3016,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update="lume:tabViewPaciente:pnViewPlanoTratamento"
 				oncomplete="PF('dlgViewPlanoTratamento').hide();"
 				onclick="PF('confirmDialog').hide();PF('dlgViewPlanoTratamento').hide();"
-				actionListener="#{planoTratamentoMB.removeFilters}" process="@this" />
+				actionListener="#{planoTratamentoMB.resetProcedimentos}" process="@this" />
 			<p:commandButton id="decline" value="Não" styleClass="RedButton"
 				onclick="PF('confirmDialog').hide()" type="button" />
 		</p:panelGrid>

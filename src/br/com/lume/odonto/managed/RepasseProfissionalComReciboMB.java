@@ -210,17 +210,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         this.profissionaisReciboLancamentos = new HashMap<>();
         this.profissionaisReciboValores = new HashMap<>();
         this.profissionaisRecibo = new ArrayList<>();
-//
+
         if (ptpsSelecionados == null || ptpsSelecionados.size() == 0) {
             addError("Erro", "É necessário escolher ao menos um repasse.");
             return;
         }
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            if (!existemPendencias(ptp) || ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL) {
-                //   Fatura fatura = ptp.getFatura();
-                //  if (fatura != null) {
-                //  List<Lancamento> lancamentos = fatura.getLancamentos();
+            
+            if (!existemPendencias(ptp) || (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() != null 
+                    && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL)) {
+
                 Profissional dentistaExecutor = ptp.getDentistaExecutor();
                 for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
                     if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
@@ -237,7 +237,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoParaRecibo.add(lancamento);
                     }
                 }
-                //   }
             }
         }
 

@@ -14,6 +14,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -304,6 +305,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
             }
         }
         
+        PrimeFaces.current().ajax().update(":lume:dtRelatorio");
     }
     
     public BigDecimal valorDisponivelRepasse(RepasseFaturasLancamento rfl) {

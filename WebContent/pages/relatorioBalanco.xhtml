@@ -219,16 +219,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:fieldset>
 					</p:outputPanel>
 					<div class="EmptyBox20"></div>
+					
 					<p:remoteCommand name="refreshFooter" update=":lume:dtRelatorio" />
+					
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						widgetVar="dtRelatorio" id="dtRelatorio"
 						filteredValue="#{relatorioRepasseMB.listaFiltrada}"
 						value="#{relatorioRepasseMB.entityList}" var="rfl" rows="10"
 						paginator="true" paginatorPosition="bottom"
 						binding="#{relatorioRepasseMB.tabelaRelatorio}">
+						
 						<p:ajax event="filter" process="@this"
-							oncomplete="refreshFooter()"
 							listener="#{relatorioRepasseMB.updateSomatorio()}" />
+							
 						<f:facet name="header">
 							Lançamentos
 
