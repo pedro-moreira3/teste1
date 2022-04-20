@@ -38,7 +38,7 @@
 										<tr>
 											<td style="width: 60px;"><h:outputText value="Código: " /></td>
 											<td style="text-align: right"><p:inputText
-													value="#{pacienteMB.entity.codigo}" ><p:ajax process="@this"/></p:inputText></td>
+													value="#{pacienteMB.entity.codigo}" /></td>
 										</tr>
 									</table>
 								</div>
@@ -54,6 +54,7 @@
 
 							<p:outputPanel
 								rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+								<p:ajax process="@this" />
 								<div style="border: 1px solid #cccccc; padding: 10px;">
 									<table style="width: 100%;">
 										<tr>
@@ -121,14 +122,13 @@
 
 							<p:outputLabel for="nome" value="Nome: " />
 							<p:inputText id="nome"
-								value="#{pacienteMB.entity.dadosBasico.nome}" maxlength="100" >
-								<p:ajax process="@this"/></p:inputText>
+								value="#{pacienteMB.entity.dadosBasico.nome}" maxlength="100" />
 
 							<p:outputLabel for="nomePreferencial" value="Nome Preferencial: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="nomePreferencial"
 								value="#{pacienteMB.entity.dadosBasico.nomePreferencial}"
-								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="telCelular" value="Celular: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
@@ -136,7 +136,7 @@
 								rendered="#{pacienteMB.visivelDadosPaciente}">
 								<p:inputText id="telCelular" maxlength="20"
 									value="#{pacienteMB.entity.dadosBasico.celular}"
-									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" ><p:ajax process="@this"/></p:inputText>
+									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
 								<p:button icon="White fa fa-whatsapp"
 									disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
 									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
@@ -147,19 +147,18 @@
 							<p:inputText id="telResidencia" maxlength="20"
 								value="#{pacienteMB.entity.dadosBasico.telefone}"
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-								rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="nomeMae" value="Nome da Mãe: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="nomeMae" value="#{pacienteMB.entity.nomeMae}"
-								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="email" value="E-Mail: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="email"
 								value="#{pacienteMB.entity.dadosBasico.email}" maxlength="100"
 								rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
-								<p:ajax process="@this"/>
 							</p:inputText>
 
 							<p:outputLabel id="lblDocumento" for="documento" value="CPF: "
@@ -169,14 +168,13 @@
 								value="#{pacienteMB.entity.dadosBasico.documento}"
 								mask="999.999.999-99"
 								rendered="#{pacienteMB.visivelDadosPaciente}">
-								<p:ajax process="@this"/>
 								<f:validator validatorId="documentoValidator" />
 							</p:inputMask>
 
 							<p:outputLabel for="rg" value="RG: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="rg" value="#{pacienteMB.entity.dadosBasico.rg}"
-								maxlength="12" rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								maxlength="12" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="cep" value="CEP: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
@@ -186,7 +184,6 @@
 									value="#{pacienteMB.entity.dadosBasico.cep}"
 									mask="99999-999">
 									<f:validator validatorId="cepValidator" />
-									<p:ajax process="@this"/>
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White"
 									actionListener="#{pacienteMB.actionBuscaCep}"
@@ -198,31 +195,31 @@
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="endereco"
 								value="#{pacienteMB.entity.dadosBasico.endereco}"
-								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="numero" value="Número: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="numero"
 								value="#{pacienteMB.entity.dadosBasico.numero}" maxlength="20"
-								rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="bairro" value="Bairro: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="bairro"
 								value="#{pacienteMB.entity.dadosBasico.bairro}" maxlength="100"
-								rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="complemento" value="Complemento: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="complemento"
 								value="#{pacienteMB.entity.dadosBasico.complemento}"
-								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="cidade" value="Cidade:"
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="cidade"
 								value="#{pacienteMB.entity.dadosBasico.cidade}" maxlength="100"
-								rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="estado" value="Estado:"
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
@@ -233,7 +230,6 @@
 									itemLabel="Selecione um Estado" />
 								<f:selectItems value="#{pacienteMB.listUF}" var="uf"
 									itemValue="#{uf}" itemLabel="#{uf.nome}" />
-									<p:ajax process="@this"/>
 							</p:selectOneMenu>
 
 
@@ -255,23 +251,22 @@
 								value="#{pacienteMB.entity.dadosBasico.sexo}">
 								<f:selectItem itemLabel="Masculino" itemValue="M" />
 								<f:selectItem itemLabel="Feminino" itemValue="F" />
-								<p:ajax process="@this"/>
 							</p:selectOneRadio>
 
 							<p:outputLabel for="particularidades" value="Particularidades: " />
 							<p:inputTextarea id="particularidades" rows="3" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.particularidades}"
-								maxlength="500" ><p:ajax process="@this"/></p:inputTextarea>
+								maxlength="500" />
 
 							<p:outputLabel for="profissao" value="Profissão:" />
 							<p:inputText id="profissao"
-								value="#{pacienteMB.entity.dadosBasico.profissao}" ><p:ajax process="@this"/></p:inputText>
+								value="#{pacienteMB.entity.dadosBasico.profissao}" />
 
 							<p:outputLabel for="empresaOndeTrabalha"
 								value="Empresa onde trabalha:" />
 							<p:inputTextarea id="empresaOndeTrabalha" rows="2" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.empresaOndeTrabalha}"
-								maxlength="500" ><p:ajax process="@this"/></p:inputTextarea>
+								maxlength="500" />
 							<p:outputLabel for="estadoCivil" value="Estado Civil: "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:selectOneMenu id="estadoCivil"
@@ -313,7 +308,6 @@
 								<f:selectItems value="#{pacienteMB.convenios}" var="convenio"
 									itemValue="#{convenio}"
 									itemLabel="#{convenio.dadosBasico.nome}" />
-									<p:ajax process="@this"/>
 							</p:selectOneMenu>
 
 							<p:outputLabel id="lblnumeroPlano" for="numeroPlano"
@@ -321,7 +315,7 @@
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="numeroPlano"
 								value="#{pacienteMB.entity.numeroPlano}" maxlength="50"
-								rendered="#{pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 
 							<p:outputLabel for="titular" value="Titular : "
@@ -333,13 +327,12 @@
 								converter="paciente" size="46" forceSelection="true"
 								scrollHeight="400" maxlength="200" minQueryLength="3"
 								rendered="#{pacienteMB.visivelDadosPaciente}">
-								<p:ajax process="@this"/>
 							</p:autoComplete>
 
 							<p:outputLabel for="carteiraTitularConvenio"
 								value="Carteira do titular do convênio:" />
 							<p:inputText id="carteiraTitularConvenio"
-								value="#{pacienteMB.entity.carteiraConvenioTitular}" ><p:ajax process="@this"/></p:inputText>
+								value="#{pacienteMB.entity.carteiraConvenioTitular}" />
 						</p:panelGrid>
 					</p:fieldset>
 				</p:panelGrid>
@@ -360,7 +353,7 @@
 								value="Nome do Responsável: " />
 							<p:inputText id="responsavel"
 								value="#{pacienteMB.entity.dadosBasico.responsavel}"
-								maxlength="100" ><p:ajax process="@this"/></p:inputText>
+								maxlength="100" />
 							<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
 								value="CPF do Responsável:" />
 							<p:inputMask id="cpfresponsavel" required="false"
@@ -369,20 +362,19 @@
 								mask="999.999.999-99">
 								<f:validator validatorId="documentoValidator"
 									disabled="#{!pacienteMB.responsavel}" />
-									<p:ajax process="@this"/>
 							</p:inputMask>
 							<p:outputLabel id="lblRgResponsavel" for="rgResponsavel"
 								value="RG do Responsável: " />
 							<p:inputText id="rgResponsavel"
 								value="#{pacienteMB.entity.dadosBasico.rgResponsavel}"
-								maxlength="100" ><p:ajax process="@this"/></p:inputText>
+								maxlength="100" />
 
 
 							<p:outputLabel for="telefoneResponsavel"
 								value="Telefone do Responsável: " />
 							<p:inputText id="telefoneResponsavel" maxlength="15"
 								value="#{pacienteMB.entity.dadosBasico.telefoneResponsavel}"
-								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" ><p:ajax process="@this"/></p:inputText>
+								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
 
 						</p:panelGrid>
 					</p:fieldset>
@@ -425,7 +417,7 @@
 								rendered="#{pacienteMB.showOutros()}" />
 							<p:inputText id="outros" rendered="#{pacienteMB.showOutros()}"
 								value="#{pacienteMB.entity.indicacao}" required="false"
-								maxlength="200" ><p:ajax process="@this"/></p:inputText>
+								maxlength="200" />
 							<p:outputLabel for="pacienteIndicacao"
 								value="Selecione o Paciente que indicou: "
 								rendered="#{pacienteMB.showPaciente()}" />
@@ -449,7 +441,6 @@
 								<p:column headerText="Nome da Mãe">
 									<h:outputText value="#{p.nomeMae}" />
 								</p:column>
-								<p:ajax process="@this"/>
 							</p:autoComplete>
 
 							<p:outputLabel for="profissionalIndicacao" value="Profissional"
@@ -466,7 +457,6 @@
 									var="profissional"
 									itemLabel="#{profissional.dadosBasico.prefixoNome}"
 									itemValue="#{profissional}" />
-									<p:ajax process="@this"/>
 							</p:selectOneMenu>
 
 							<p:outputLabel for="profissionalIndicacao"
@@ -475,7 +465,7 @@
 							<p:inputText id="perfilInstagram"
 								rendered="#{pacienteMB.showPerfilInstagram()}"
 								value="#{pacienteMB.entity.dominioaux.descricao}"
-								required="false" maxlength="200" ><p:ajax process="@this"/></p:inputText>
+								required="false" maxlength="200" />
 
 						</p:panelGrid>
 						<p:panelGrid columns="4"
@@ -485,13 +475,13 @@
 							<p:outputLabel for="legado" value="Paciente antigo? : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:selectBooleanCheckbox id="legado"
-								value="#{pacienteMB.entity.legado}" ><p:ajax process="@this"/></p:selectBooleanCheckbox>
+								value="#{pacienteMB.entity.legado}" />
 
 							<p:outputLabel for="dataCriacaoPaciente" value="Data Registro : "
 								rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="dataCriacaoPaciente"
 								value="#{pacienteMB.entity.dataCriacaoStr}" readonly="true"
-								rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" ><p:ajax process="@this"/></p:inputText>
+								rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="foto" value="Foto : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
