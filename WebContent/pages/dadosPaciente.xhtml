@@ -54,6 +54,7 @@
 
 							<p:outputPanel
 								rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+								<p:ajax process="@this" />
 								<div style="border: 1px solid #cccccc; padding: 10px;">
 									<table style="width: 100%;">
 										<tr>
