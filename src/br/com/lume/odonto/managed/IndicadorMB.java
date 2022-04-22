@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,12 +13,23 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.line.LineChartDataSet;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.indicador.bo.IndicadorBO;
 import br.com.lume.indicador.bo.IndicadoresAgendamentoBO;
+import br.com.lume.indicador.bo.IndicadoresBO;
 import br.com.lume.indicador.bo.IndicadoresFinanceiroBO;
 import br.com.lume.indicador.bo.IndicadoresOrcamentoBO;
 import br.com.lume.odonto.dto.IndicadorDTO;
@@ -37,15 +47,19 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
     private String tabela;
     private List<IndicadorDTO> indicadoresAgendamento, indicadoresFinanceiro, indicadoresOrcamento;
     
+    private BarChartModel chart;
+    
     public IndicadorMB() {
         super(new IndicadorBO());
         this.setClazz(Indicador.class);
+        
+        construirGrafico();
     }
 
     public void listDashboard() {
-        construirIndicadoresFinanceiro();
-        construirIndicadoresAgendamento();
-        construirIndicadoresOrcamento();
+        indicadoresAgendamento = construirMetricaVariacao(inicio, fim, new IndicadoresAgendamentoBO());
+        indicadoresFinanceiro = construirMetricaVariacao(inicio, fim, new IndicadoresFinanceiroBO());
+        indicadoresOrcamento = construirMetricaVariacao(inicio, fim, new IndicadoresOrcamentoBO());
     }
     
     public void actionTrocaDatasCriacao() {
@@ -102,13 +116,106 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
             return null;
         }
     }
-
-    public void construirIndicadoresFinanceiro() {
-        IndicadoresFinanceiroBO indBO = new IndicadoresFinanceiroBO();
-        List<Indicador> indicadores = indBO.listIndicadores(inicio, fim, 41l);
-        List<IndicadorDTO> indicadoresDTO = IndicadorDTO.converter(indicadores);
+    
+    public void construirGrafico() {
+        setChart(new BarChartModel());
+        ChartData data = new ChartData();
         
-        indicadoresFinanceiro = new ArrayList<>();
+        BarChartDataSet barDataSet = new BarChartDataSet();
+        barDataSet.setLabel("Dataset 1");
+        barDataSet.setBackgroundColor("rgb(255, 99, 132)");
+        List<Number> dataVal = new ArrayList<>();
+        dataVal.add(62);
+        dataVal.add(-58);
+        dataVal.add(-49);
+        dataVal.add(25);
+        dataVal.add(4);
+        dataVal.add(77);
+        dataVal.add(-41);
+        barDataSet.setData(dataVal);
+
+        BarChartDataSet barDataSet2 = new BarChartDataSet();
+        barDataSet2.setLabel("Dataset 2");
+        barDataSet2.setBackgroundColor("rgb(54, 162, 235)");
+        List<Number> dataVal2 = new ArrayList<>();
+        dataVal2.add(-1);
+        dataVal2.add(32);
+        dataVal2.add(-52);
+        dataVal2.add(11);
+        dataVal2.add(97);
+        dataVal2.add(76);
+        dataVal2.add(-78);
+        barDataSet2.setData(dataVal2);
+
+        BarChartDataSet barDataSet3 = new BarChartDataSet();
+        barDataSet3.setLabel("Dataset 3");
+        barDataSet3.setBackgroundColor("rgb(75, 192, 192)");
+        List<Number> dataVal3 = new ArrayList<>();
+        dataVal3.add(-44);
+        dataVal3.add(25);
+        dataVal3.add(15);
+        dataVal3.add(92);
+        dataVal3.add(80);
+        dataVal3.add(-25);
+        dataVal3.add(-11);
+        barDataSet3.setData(dataVal3);
+
+        LineChartDataSet line = new LineChartDataSet();
+        line.setLabel("teste");
+        line.setBorderColor("rgb(255, 100, 100)");
+        List<Object> dataVal4 = new ArrayList<>();
+        
+        for(int i = 0 ; i<6; i++)
+            dataVal4.add(dataVal.get(i).intValue()
+                    + dataVal2.get(i).intValue()
+                    +dataVal3.get(i).intValue());
+        
+        line.setData(dataVal4);
+        line.setFill(false);
+        
+        data.addChartDataSet(barDataSet);
+        data.addChartDataSet(barDataSet2);
+        data.addChartDataSet(barDataSet3);
+        data.addChartDataSet(line);
+
+        List<String> labels = new ArrayList<>();
+        labels.add("January");
+        labels.add("February");
+        labels.add("March");
+        labels.add("April");
+        labels.add("May");
+        labels.add("June");
+        labels.add("July");
+        data.setLabels(labels);
+        getChart().setData(data);
+        
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setStacked(true);
+        linearAxes.setOffset(true);
+        cScales.addXAxesData(linearAxes);
+        cScales.addYAxesData(linearAxes);
+        options.setScales(cScales);
+        
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Bar Chart - Stacked");
+        options.setTitle(title);
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setMode("index");
+        tooltip.setIntersect(false);
+        options.setTooltip(tooltip);
+
+        getChart().setOptions(options);
+    }
+    
+    public List<IndicadorDTO> construirMetricaVariacao(Date inicio, Date fim, IndicadoresBO indicadorBO) {
+        List<Indicador> indicadores = indicadorBO.listIndicadores(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        List<IndicadorDTO> indicadoresDTO = IndicadorDTO.converter(indicadores);
+        List<IndicadorDTO> listaResultado = new ArrayList<>();
         
         Map<String, List<IndicadorDTO>> mapIndicadores = indicadoresDTO.stream()
                 .collect(Collectors.groupingBy(IndicadorDTO::getDescricao));
@@ -117,16 +224,19 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
         IndicadorDTO indicadorPai = null;
         
         for(List<IndicadorDTO> values : mapIndicadores.values()) {
-            indicadoresFinanceiro.add(new IndicadorDTO(null));
+            listaResultado.add(new IndicadorDTO(null));
             
             for(IndicadorDTO indicador : values) {
                 indicador.setMetrica("(0%)");
                 
-                if(indicador.getDescricao().equals("Saldo") || indicador.getDescricao().equals("Gastos") || indicador.getDescricao().equals("Ganhos"))
+                if(indicador.getDescricao().equals("Saldo") || indicador.getDescricao().equals("Gastos") 
+                        || indicador.getDescricao().equals("Ganhos")
+                        ||indicador.getDescricao().equals("Orçamentos aprovados") 
+                        || indicador.getDescricao().equals("Orçamentos não aprovados"))
                     indicador.setTipoDado("moeda");
                 
                 if(indicadorAnterior == null) {
-                    indicadorPai = indicadoresFinanceiro.get(indicadoresFinanceiro.size()-1);
+                    indicadorPai = listaResultado.get(listaResultado.size()-1);
                     indicadorPai.setId(indicador.getId());
                     indicadorPai.setDescricao(indicador.getDescricao());
                     indicadorPai.setMes(indicador.getMes());
@@ -150,104 +260,9 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
             indicadorAnterior = null;
         }
         
-        indicadoresFinanceiro.sort((i1,i2) -> i1.getId().compareTo(i2.getId()));
-    }
-    
-    public void construirIndicadoresOrcamento() {
-        IndicadoresOrcamentoBO indBO = new IndicadoresOrcamentoBO();
-        List<Indicador> indicadores = indBO.listIndicadores(inicio, fim, 41l);
-        List<IndicadorDTO> indicadoresDTO = IndicadorDTO.converter(indicadores);
+        listaResultado.sort((i1,i2) -> i1.getId().compareTo(i2.getId()));
         
-        setIndicadoresOrcamento(new ArrayList<>());
-        
-        Map<String, List<IndicadorDTO>> mapIndicadores = indicadoresDTO.stream()
-                .collect(Collectors.groupingBy(IndicadorDTO::getDescricao));
-        
-        IndicadorDTO indicadorAnterior = null;
-        IndicadorDTO indicadorPai = null;
-        
-        for(List<IndicadorDTO> values : mapIndicadores.values()) {
-            indicadoresOrcamento.add(new IndicadorDTO(null));
-            
-            for(IndicadorDTO indicador : values) {
-                indicador.setMetrica("(0%)");
-                
-                if(indicador.getDescricao().equals("Orçamentos aprovados") || indicador.getDescricao().equals("Orçamentos não aprovados"))
-                    indicador.setTipoDado("moeda");
-                
-                if(indicadorAnterior == null) {
-                    indicadorPai = indicadoresOrcamento.get(indicadoresOrcamento.size()-1);
-                    indicadorPai.setId(indicador.getId());
-                    indicadorPai.setDescricao(indicador.getDescricao());
-                    indicadorPai.setMes(indicador.getMes());
-                    indicadorPai.setIndicadores(new ArrayList<IndicadorDTO>());
-                }
-                
-                if(indicadorAnterior != null) {
-                    BigDecimal valorAtual = indicador.getValor().abs();
-                    BigDecimal valorAnterior = indicadorAnterior.getValor().abs();
-
-                    if(valorAnterior.compareTo(BigDecimal.ZERO) != 0) {
-                        BigDecimal metrica = ((valorAtual.subtract(valorAnterior))
-                                .divide(valorAnterior,2,BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
-                        indicador.setMetrica("(" + String.valueOf(metrica) + "%" + ")");
-                    }
-                }
-                
-                indicadorAnterior = indicador;
-                indicadorPai.getIndicadores().add(indicador);
-            }
-            indicadorAnterior = null;
-        }
-        
-        indicadoresOrcamento.sort((i1,i2) -> i1.getId().compareTo(i2.getId()));
-    }
-    
-    public void construirIndicadoresAgendamento() {
-        IndicadoresAgendamentoBO indBO = new IndicadoresAgendamentoBO();
-        List<Indicador> indicadores = indBO.listIndicadores(inicio, fim, 41l);
-        List<IndicadorDTO> indicadoresDTO = IndicadorDTO.converter(indicadores);
-        
-        indicadoresAgendamento = new ArrayList<>();
-        
-        Map<String, List<IndicadorDTO>> mapIndicadores = indicadoresDTO.stream()
-                .collect(Collectors.groupingBy(IndicadorDTO::getDescricao));
-        
-        IndicadorDTO indicadorAnterior = null;
-        IndicadorDTO indicadorPai = null;
-        
-        for(List<IndicadorDTO> values : mapIndicadores.values()) {
-            indicadoresAgendamento.add(new IndicadorDTO(null));
-            
-            for(IndicadorDTO indicador : values) {
-                indicador.setMetrica("(0%)");
-                
-                if(indicadorAnterior == null) {
-                    indicadorPai = indicadoresAgendamento.get(indicadoresAgendamento.size()-1);
-                    indicadorPai.setId(indicador.getId());
-                    indicadorPai.setDescricao(indicador.getDescricao());
-                    indicadorPai.setMes(indicador.getMes());
-                    indicadorPai.setIndicadores(new ArrayList<IndicadorDTO>());
-                }
-                
-                if(indicadorAnterior != null) {
-                    BigDecimal valorAtual = indicador.getValor().abs();
-                    BigDecimal valorAnterior = indicadorAnterior.getValor().abs();
-
-                    if(valorAnterior.compareTo(BigDecimal.ZERO) != 0) {
-                        BigDecimal metrica = ((valorAtual.subtract(valorAnterior))
-                                .divide(valorAnterior,2,BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
-                        indicador.setMetrica("(" + String.valueOf(metrica) + "%" + ")");
-                    }
-                }
-                
-                indicadorAnterior = indicador;
-                indicadorPai.getIndicadores().add(indicador);
-            }
-            indicadorAnterior = null;
-        }
-        
-        indicadoresAgendamento.sort((i1,i2) -> i1.getId().compareTo(i2.getId()));
+        return listaResultado;
     }
     
     public int rowIndexByKeyFinanceiro(IndicadorDTO key) {
@@ -349,5 +364,13 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
 
     public void setIndicadoresOrcamento(List<IndicadorDTO> indicadoresOrcamento) {
         this.indicadoresOrcamento = indicadoresOrcamento;
+    }
+
+    public BarChartModel getChart() {
+        return chart;
+    }
+
+    public void setChart(BarChartModel chart) {
+        this.chart = chart;
     }
 }

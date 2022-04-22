@@ -83,6 +83,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					
 					<p:fieldset style="margin-top:10px;" toggleable="true"
 						toggleSpeed="500" legend="Agendamentos">
+
+						<div class="card">
+    						<h5>Stacked</h5>
+    						<p:barChart model="#{indicadorMB.chart}" style="width: 100%; height: 500px;"/>
+						</div>
+						
 						<p:dataTable id="dtIndicadoresAgendamento"
 							rows="10" paginator="true" paginatorPosition="bottom"
 							value="#{indicadorMB.indicadoresAgendamento}"
