@@ -51,9 +51,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:ajax process="@this" update=":lume:pnFiltros"
 										listener="#{indicadorMB.actionTrocaDatasCriacao}" />
 									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="S" itemLabel="Mês anterior" />
 									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 3 meses" />
 									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
 								</p:selectOneMenu>
 							</h:panelGroup>

@@ -26,7 +26,7 @@ public class IndicadorDTO implements Serializable {
             id = indicador.getId();
             descricao = indicador.getDescricao();
             valor = new BigDecimal(indicador.getValor());
-            mes = (indicador.getInicio() != null ? Utils.getMesTexto(indicador.getInicio()) : "");
+            mes = (indicador.getInicio() != null ? Utils.getMesAnoTexto(indicador.getInicio()) : "");
         }
     }
 

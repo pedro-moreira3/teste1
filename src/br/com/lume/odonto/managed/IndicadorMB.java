@@ -125,16 +125,16 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
         Date dataInicio = null;
         try {
             Calendar c = Calendar.getInstance();
-            if ("S".equals(filtro)) { //Últimos 7 dias              
-                c.add(Calendar.DAY_OF_MONTH, -7);
+            if ("S".equals(filtro)) { //Mês anterior
+                c.add(Calendar.MONTH, -1);
                 dataInicio = c.getTime();
-            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
-                c.add(Calendar.DAY_OF_MONTH, -15);
-                dataInicio = c.getTime();
-            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+            } else if ("T".equals(filtro)) { //Últimos 30 dias
                 c.add(Calendar.DAY_OF_MONTH, -30);
                 dataInicio = c.getTime();
-            } else if ("I".equals(filtro)) { //Mês Atual             
+            } else if ("Q".equals(filtro)) { //Últimos 3 meses
+                c.add(Calendar.MONTH, -3);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Últimos 6 meses
                 c.add(Calendar.MONTH, -6);
                 dataInicio = c.getTime();
             }

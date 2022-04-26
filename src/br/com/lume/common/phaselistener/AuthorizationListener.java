@@ -33,7 +33,7 @@ public class AuthorizationListener implements PhaseListener {
     
     //TODO por enquanto coloquei as clincias dos parceiros aqui, tem que colocar nos objetos e tratar direito
     public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", 
-            "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail.","clinicas." };
+            "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "indicadores.", "tutorial.","validaremail.","clinicas." };
     
     //TODO por enquanto coloquei as clincias dos parceiros aqui
     public static final String[] PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO = new String[] { "cadastroempresa." ,"mensal.","mensal_testeiugu."};
