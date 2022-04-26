@@ -109,7 +109,7 @@ hr.hrSaldo {
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						title="Visualizar Fatura">
-						<f:param name="fatura_selecionada" value="#{lc.fatura.id}" />
+						<f:param name="fatura_selecionada" value="#{lc.fatura.id}"></f:param>
 					</p:commandButton>
 				</p:column>
 				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
@@ -186,7 +186,9 @@ hr.hrSaldo {
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						rendered="#{lc.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
-						title="Visualizar Fatura" />
+						title="Visualizar Fatura">
+						<f:param name="fatura_selecionada" value="#{lc.fatura.id}"></f:param>
+					</p:commandButton>
 
 
 					<p:commandButton icon="fa fa-eye" process="@this"
@@ -285,7 +287,9 @@ hr.hrSaldo {
 						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
 						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 						rendered="#{fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
-						title="Visualizar Fatura" />
+						title="Visualizar Fatura">
+						<f:param name="fatura_selecionada" value="#{fatura.id}"></f:param>
+					</p:commandButton>
 
 					<p:commandButton icon="fa fa-eye" process="@this"
 						actionListener="#{faturaPagtoMB.visualizaFaturaSimples(fatura)}"

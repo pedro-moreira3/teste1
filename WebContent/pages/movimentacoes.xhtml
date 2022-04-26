@@ -161,7 +161,9 @@
 										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
 										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" >
+										<f:param name="fatura_selecionada" value="#{l.fatura.id}"></f:param>
+											</p:commandButton>
 								</p:column>
 								</ui:remove>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"
@@ -338,7 +340,9 @@
 										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
 										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" >
+										<f:param name="fatura_selecionada" value="#{l.fatura.id}"></f:param>
+											</p:commandButton>
 								</p:column>
 								</ui:remove>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"

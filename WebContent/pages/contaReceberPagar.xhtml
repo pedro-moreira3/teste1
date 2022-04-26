@@ -280,7 +280,7 @@ body .ui-confirm-dialog {
 										<p:ajax event="filter" process="@this"
 											oncomplete="refreshFooter()"
 											listener="#{lancamentoContabilMB.updateSomatorio()}" />
-											
+
 										<f:facet name="header">Contas a Pagar/Receber</f:facet>
 
 										<p:tooltip for="@parent" rendered="#{lc.validado == 'S'}"
@@ -292,7 +292,10 @@ body .ui-confirm-dialog {
 												oncomplete="PF('dlgFaturaView').show();"
 												styleClass="NavyButton" title="Visualizar Fatura"
 												rendered="#{lc.lancamento.fatura.tipoFatura eq 'RECEBIMENTO_PACIENTE'}"
-												disabled="#{lc.lancamento == null}" />
+												disabled="#{lc.lancamento == null}">
+												<f:param name="fatura_selecionada"
+													value="#{lc.lancamento.fatura.id}"></f:param>
+											</p:commandButton>
 
 											<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 												title="Visualizar Fatura"
@@ -300,7 +303,10 @@ body .ui-confirm-dialog {
 												oncomplete="PF('dlgFaturaViewProfissional').show();"
 												actionListener="#{faturaPagtoMB.visualizaFatura(lc.lancamento.fatura)}"
 												process="@this"
-												update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
+												update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf">
+												<f:param name="fatura_selecionada"
+													value="#{lc.lancamento.fatura.id}"></f:param>
+											</p:commandButton>
 
 											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.lancamento.fatura)}"
@@ -570,24 +576,26 @@ body .ui-confirm-dialog {
 												process="@this,dtLancamentoValidar" />
 										</h:panelGroup>
 									</p:panelGrid>
-									
+
 									<p:remoteCommand name="refreshFooter"
 										update=":lume:tv:dtLancamentoValidar" />
-									
+
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoValidar"
 										filteredValue="#{conferenciaRecebimentoMB.listaFiltrada}"
 										value="#{conferenciaRecebimentoMB.entityList}" var="lc"
 										rows="15" paginator="true" paginatorPosition="bottom"
-										widgetVar="dtLancamentoValidar" rowKey="#{lc}" editable="true" editMode="cell"
+										widgetVar="dtLancamentoValidar" rowKey="#{lc}" editable="true"
+										editMode="cell"
 										selection="#{conferenciaRecebimentoMB.lancamentosSelecionadosConferencia}"
 										binding="#{conferenciaRecebimentoMB.tabelaLancamentoConferencia}">
-										
+
 										<p:ajax event="filter" process="@this"
 											oncomplete="refreshFooter()"
 											listener="#{conferenciaRecebimentoMB.updateSomatorioConferencia()}" />
-											
-										<p:ajax event="cellEdit" listener="#{conferenciaRecebimentoMB.onCellEdit}"
+
+										<p:ajax event="cellEdit"
+											listener="#{conferenciaRecebimentoMB.onCellEdit}"
 											update=":lume:tv:dtLancamentoValidar" />
 
 										<f:facet name="header">Lançamentos</f:facet>
@@ -602,8 +610,10 @@ body .ui-confirm-dialog {
 												update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
 												oncomplete="PF('dlgFaturaView').show();"
 												styleClass="NavyButton" title="Visualizar Fatura"
-												rendered="#{lc.fatura.tipoFatura ne 'FATURA_GENERICA_PAGAMENTO' and lc.fatura.tipoFatura ne 'FATURA_GENERICA_RECEBIMENTO'}" />
-
+												rendered="#{lc.fatura.tipoFatura ne 'FATURA_GENERICA_PAGAMENTO' and lc.fatura.tipoFatura ne 'FATURA_GENERICA_RECEBIMENTO'}">
+												<f:param name="fatura_selecionada"
+													value="#{lc.fatura.id}"></f:param>
+											</p:commandButton>
 											<p:commandButton icon="fa fa-eye" process="@this"
 												actionListener="#{faturaPagtoMB.visualizaFaturaSimples(lc.fatura)}"
 												update=":lume:pnlfaturaViewSimples, :lume:pnlfaturaViewHeaderSimples, :lume:buttonViewFaturaSimples"
@@ -678,7 +688,7 @@ body .ui-confirm-dialog {
 													<p:calendar value="#{lc.dataCredito}" autocomplete="false"
 														id="alteracaoDataCredito" locale="#{lumeSecurity.locale}"
 														mask="true"
-														disabled="#{lc.validado == 'S' or lc.validado == 'C'}"/>
+														disabled="#{lc.validado == 'S' or lc.validado == 'C'}" />
 												</f:facet>
 											</p:cellEditor>
 										</p:column>
@@ -692,7 +702,7 @@ body .ui-confirm-dialog {
 												value="#{conferenciaRecebimentoMB.valorConferir(lc)}">
 												<f:convertNumber currencySymbol="R$" type="currency"
 													minFractionDigits="2" />
-											</h:outputText>											
+											</h:outputText>
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText
@@ -728,17 +738,18 @@ body .ui-confirm-dialog {
 											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
 											filterMatchMode="contains">
-											<p:cellEditor rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}">
+											<p:cellEditor
+												rendered="#{conferenciaRecebimentoMB.faturaEditavel(lc)}">
 												<f:facet name="output">
 													<h:outputText
 														value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
-														<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+														<f:convertNumber pattern="R$ #,##0.00"
+															minFractionDigits="2" />
 													</h:outputText>
-												</f:facet>												
+												</f:facet>
 												<f:facet name="input">
 													<h:panelGroup>
-														<p:inputNumber id="valor"
-															value="#{lc.valor}"
+														<p:inputNumber id="valor" value="#{lc.valor}"
 															disabled="#{lc.validado == 'S' or lc.validado == 'C'}"
 															required="true" maxlength="13" maxValue="9999999999.99"
 															decimalSeparator="," symbol="R$ " thousandSeparator=".">
@@ -746,11 +757,12 @@ body .ui-confirm-dialog {
 													</h:panelGroup>
 												</f:facet>
 											</p:cellEditor>
-											<h:outputText rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
+											<h:outputText
+												rendered="#{!conferenciaRecebimentoMB.faturaEditavel(lc)}"
 												value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
 												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
 											</h:outputText>
-											
+
 											<f:facet name="footer">
 												<h:outputText value="Total " />
 												<h:outputText
@@ -1307,8 +1319,9 @@ body .ui-confirm-dialog {
 						widgetVar="dlgNovoPagamentoRecebimento" resizable="false"
 						modal="true" responsive="true" appendTo=":lume" width="50%"
 						header="Novo Pagamento/Recebimento">
-						
-						<p:ajax event="close" update="dlgNovoPagamentoRecebimento" resetValues="true" />
+
+						<p:ajax event="close" update="dlgNovoPagamentoRecebimento"
+							resetValues="true" />
 
 						<p:outputPanel id="pnNovoPagamentoRecebimento"
 							style="position: relative; max-height: calc(80vh - 9px); height: calc(80vh - 9px);">
@@ -1438,8 +1451,9 @@ body .ui-confirm-dialog {
 									<p:outputLabel for="motivo" value="Motivo:* " />
 									<h:panelGroup styleClass="lumeField">
 										<p:selectOneMenu id="motivo" converter="motivo"
-											required="false" value="#{lancamentoContabilMB.entity.motivo}"
-											filter="true" filterMatchMode="contains">
+											required="false"
+											value="#{lancamentoContabilMB.entity.motivo}" filter="true"
+											filterMatchMode="contains">
 											<p:ajax process="@this" update="tipocategoria,categoria"
 												listener="#{lancamentoContabilMB.carregarTipoECategoria}" />
 											<f:selectItem itemValue="#{null}"
