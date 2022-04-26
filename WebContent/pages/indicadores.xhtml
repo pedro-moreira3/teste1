@@ -38,7 +38,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Indicadores</h1>
+					<h1>Dashboard indicadores</h1>
 
 					<p:fieldset toggleable="true">
 						<p:panelGrid columns="3" layout="grid" id="pnFiltros"
@@ -69,6 +69,23 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:calendar id="fim" value="#{indicadorMB.fim}" autocomplete="false"
 									pattern="dd/MM/yyyy" mask="true" required="false" />
 							</h:panelGroup>
+							
+							<h:panelGroup>
+								<p:outputLabel value="Tipo de análise: " />
+								<p:selectOneMenu value="#{indicadorMB.tipoIntervalo}">
+									<f:selectItem itemLabel="Intervalo aberto" itemValue="aberto"/>
+									<f:selectItem itemLabel="Intervalo fechado" itemValue="fechado"/>
+								</p:selectOneMenu>
+							</h:panelGroup>
+							
+							<h:panelGroup>
+								<p:outputLabel value="Tipo de dado: " />
+								<p:selectOneMenu value="#{indicadorMB.tipoDado}">
+									<f:selectItem itemLabel="Variação (%) e valor" itemValue="C"/>
+									<f:selectItem itemLabel="Variação (%)" itemValue="A"/>
+									<f:selectItem itemLabel="Valor" itemValue="B"/>
+								</p:selectOneMenu>
+							</h:panelGroup>
 						</p:panelGrid>
 
 						<p:panelGrid columns="4" layout="grid"
@@ -76,18 +93,30 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
 								actionListener="#{indicadorMB.listDashboard}"
 								value="Pesquisar"
-								update=":lume:dtIndicadoresFinanceiro, :lume:dtIndicadoresAgendamento, :lume:dtIndicadoresOrcamento"
+								update=":lume:pnFinanceiro, :lume:pnAgendamento, :lume:pnOrcamentos"
 								process="@this,pnFiltros" styleClass="OrangeButton" />
 						</p:panelGrid>
 					</p:fieldset>
 					
-					<p:fieldset style="margin-top:10px;" toggleable="true"
+					<p:fieldset id="pnAgendamento" style="margin-top:10px;" toggleable="true"
 						toggleSpeed="500" legend="Agendamentos">
-
-						<div class="card">
-    						<h5>Stacked</h5>
-    						<p:barChart model="#{indicadorMB.chart}" style="width: 100%; height: 500px;"/>
-						</div>
+						
+						<p:panel rendered="#{indicadorMB.chartAgendamentosRealizados != null}">
+							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
+								<p:barChart model="#{indicadorMB.chartAgendamentosNaoRealizados}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;">
+								<p:barChart model="#{indicadorMB.chartAgendamentosRealizados}"/>
+							</h:panelGroup>
+							<ui:remove>
+							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
+								<p:lineChart model="#{indicadorMB.chartPlanejamentoPendente}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;">
+								<p:barChart model="#{indicadorMB.chartGastosPorTipo}"/>
+							</h:panelGroup>
+							</ui:remove>
+						</p:panel>
 						
 						<p:dataTable id="dtIndicadoresAgendamento"
 							rows="10" paginator="true" paginatorPosition="bottom"
@@ -105,15 +134,30 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								sortBy="#{indicador.valor}"
 								filterMatchMode="contains" width="15%">
 								<h:panelGroup>
-									<h:outputText styleClass="columns" value="#{indicador.metrica}"/>
-									<h:outputText styleClass="columns" value="#{indicador.valor}" />
+									<h:outputText rendered="#{indicadorMB.tipoDado eq 'A' or indicadorMB.tipoDado eq 'C'}" 
+										styleClass="columns" value="#{indicador.metrica}"/>
+									<h:outputText rendered="#{indicadorMB.tipoDado eq 'B' or indicadorMB.tipoDado eq 'C'}"
+										styleClass="columns" value="#{indicador.valor}" />
 								</h:panelGroup>
 							</p:columns>
 						</p:dataTable>
 					</p:fieldset>
 					
-					<p:fieldset style="margin-top:10px;" toggleable="true"
+					<p:fieldset id="pnFinanceiro" style="margin-top:10px;" toggleable="true"
 						toggleSpeed="500" legend="Financeiro" collapsed="true">
+						
+						<p:panel rendered="#{indicadorMB.chartFluxoCaixa != null}">
+							<h:panelGroup>
+								<p:lineChart model="#{indicadorMB.chartFluxoCaixa}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
+								<p:lineChart model="#{indicadorMB.chartPlanejamentoPendente}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;">
+								<p:barChart model="#{indicadorMB.chartGastosPorTipo}"/>
+							</h:panelGroup>
+						</p:panel>
+						
 						<p:dataTable id="dtIndicadoresFinanceiro"
 							rows="10" paginator="true" paginatorPosition="bottom"
 							value="#{indicadorMB.indicadoresFinanceiro}" var="indicadorFinanceiro"
@@ -129,12 +173,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								sortBy="#{indicador.valor}"
 								filterMatchMode="contains" width="15%">
 								<h:panelGroup>
-									<h:outputText styleClass="columns" value="#{indicador.metrica}"/>
+									<h:outputText rendered="#{indicadorMB.tipoDado eq 'A' or indicadorMB.tipoDado eq 'C'}"
+										styleClass="columns" value="#{indicador.metrica}"/>
 									
-									<h:outputText rendered="#{indicador.tipoDado != 'moeda'}"
+									<h:outputText rendered="#{(indicadorMB.tipoDado eq 'B' or indicadorMB.tipoDado eq 'C')
+											and indicador.tipoDado != 'moeda'}"
 										styleClass="columns" value="#{indicador.valor}" />
 
-									<h:outputText rendered="#{indicador.tipoDado == 'moeda'}"
+									<h:outputText rendered="#{(indicadorMB.tipoDado eq 'B' or indicadorMB.tipoDado eq 'C') 
+											and indicador.tipoDado == 'moeda'}"
 										styleClass="columns" value="#{indicador.valor}">
 										<f:convertNumber currencySymbol="R$" type="currency"
 											minFractionDigits="2" />
@@ -144,8 +191,24 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:dataTable>
 					</p:fieldset>
 					
-					<p:fieldset style="margin-top:10px;" toggleable="true"
+					<p:fieldset id="pnOrcamentos" style="margin-top:10px;" toggleable="true"
 						toggleSpeed="500" legend="Orçamentos" collapsed="true">
+						
+						<p:panel rendered="#{indicadorMB.chartOrcamentos != null}">
+							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
+								<p:barChart model="#{indicadorMB.chartOrcamentos}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;">
+								<p:barChart model="#{indicadorMB.chartOrcamentosQtde}"/>
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
+								<p:lineChart model="#{indicadorMB.chartTicketMedio}" />
+							</h:panelGroup>
+							<h:panelGroup style="display:inline-block;width:49%;">
+								<p:lineChart model="#{indicadorMB.chartIndiceAprovacao}" />
+							</h:panelGroup>
+						</p:panel>
+						
 						<p:dataTable id="dtIndicadoresOrcamento"
 							rows="10" paginator="true" paginatorPosition="bottom"
 							value="#{indicadorMB.indicadoresOrcamento}" var="indicadorOrcamento"
@@ -156,17 +219,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" width="15%">
 								<h:outputText value="#{indicadorOrcamento.descricao}" />
 							</p:column>
+							
 							<p:columns value="#{indicadorMB.indicadoresOrcamento[indicadorMB.rowIndexByKeyOrcamento(indicadorOrcamento)].indicadores}"
 								var="indicador" headerText="#{indicador.mes}"
 								sortBy="#{indicador.valor}"
 								filterMatchMode="contains" width="15%">
 								<h:panelGroup>
-									<h:outputText styleClass="columns" value="#{indicador.metrica}"/>
+									<h:outputText rendered="#{indicadorMB.tipoDado eq 'A' or indicadorMB.tipoDado eq 'C'}"
+										styleClass="columns" value="#{indicador.metrica}"/>
 									
-									<h:outputText rendered="#{indicador.tipoDado != 'moeda'}"
+									<h:outputText rendered="#{(indicadorMB.tipoDado eq 'B' or indicadorMB.tipoDado eq 'C')
+											and indicador.tipoDado != 'moeda'}"
 										styleClass="columns" value="#{indicador.valor}" />
 
-									<h:outputText rendered="#{indicador.tipoDado == 'moeda'}"
+									<h:outputText rendered="#{(indicadorMB.tipoDado eq 'B' or indicadorMB.tipoDado eq 'C') 
+											and indicador.tipoDado == 'moeda'}"
 										styleClass="columns" value="#{indicador.valor}">
 										<f:convertNumber currencySymbol="R$" type="currency"
 											minFractionDigits="2" />
