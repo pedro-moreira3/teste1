@@ -164,7 +164,9 @@
 														oncomplete="PF('dlgFaturaViewProfissional').show();"
 														actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 														process="@this"
-														update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
+														update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" >
+														<f:param name="fatura_selecionada" value="#{f.id}"></f:param>
+											</p:commandButton>
 												</p:column>
 												<p:column
 													filterBy="#{f.profissional.dadosBasico.prefixoNome}"

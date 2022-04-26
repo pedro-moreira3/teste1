@@ -550,7 +550,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 														oncomplete="PF('dlgFaturaView').show();"
 														update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
-												</p:commandButton>
+												<f:param name="fatura_selecionada" value="#{f.fatura.id}"></f:param>
+											</p:commandButton>
 												<p:tooltip for="btnView" value="Visualizar fatura" />
 											</h:panelGroup>
 
@@ -775,7 +776,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 														oncomplete="PF('dlgFaturaView').show();"
 														update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
-												</p:commandButton>
+												<f:param name="fatura_selecionada" value="#{f.fatura.id}"></f:param>
+											</p:commandButton>
 												<p:tooltip for="btnView" />
 											</h:panelGroup>
 

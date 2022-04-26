@@ -1579,7 +1579,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															listener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
 															oncomplete="PF('dlgFaturaViewProfissional').show();PF('loading').hide();"
 															update=":lume:pnlfaturaViewProf, :lume:pnlfaturaViewProfHeader, :lume:buttonViewFaturaProf" />
-													</p:commandButton>
+													<f:param name="fatura_selecionada" value="#{ptp.fatura.id}"></f:param>
+											</p:commandButton>
 													<p:commandButton icon="fa fa-calculator"
 														styleClass="NavyButton" title="Visualizar Cálculo Repasse"
 														actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
