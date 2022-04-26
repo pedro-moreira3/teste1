@@ -69,7 +69,7 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
     private LineChartModel chartIndiceAprovacao;
     
     public IndicadorMB() {
-        super(new IndicadorBO());
+        super(new IndicadoresAgendamentoBO());
         this.setClazz(Indicador.class);
     }
 
@@ -746,7 +746,7 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
     }
     
     public List<IndicadorDTO> construirMetricaVariacao(Date inicio, Date fim, IndicadoresBO indicadorBO) {
-        List<Indicador> indicadores = indicadorBO.listIndicadores(inicio, fim, tipoIntervalo,
+        List<Indicador> indicadores = indicadorBO.listIndicadores(inicio, fim, (tipoIntervalo.equals("aberto")),
                 UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         List<IndicadorDTO> indicadoresDTO = IndicadorDTO.converter(indicadores);
         List<IndicadorDTO> listaResultado = new ArrayList<>();

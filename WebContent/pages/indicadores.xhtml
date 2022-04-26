@@ -103,19 +103,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						
 						<p:panel rendered="#{indicadorMB.chartAgendamentosRealizados != null}">
 							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
-								<p:barChart model="#{indicadorMB.chartAgendamentosNaoRealizados}"/>
-							</h:panelGroup>
-							<h:panelGroup style="display:inline-block;width:49%;">
 								<p:barChart model="#{indicadorMB.chartAgendamentosRealizados}"/>
 							</h:panelGroup>
-							<ui:remove>
-							<h:panelGroup style="display:inline-block;width:49%;margin-right:2%;">
-								<p:lineChart model="#{indicadorMB.chartPlanejamentoPendente}"/>
-							</h:panelGroup>
 							<h:panelGroup style="display:inline-block;width:49%;">
-								<p:barChart model="#{indicadorMB.chartGastosPorTipo}"/>
+								<p:barChart model="#{indicadorMB.chartAgendamentosNaoRealizados}"/>
 							</h:panelGroup>
-							</ui:remove>
 						</p:panel>
 						
 						<p:dataTable id="dtIndicadoresAgendamento"
