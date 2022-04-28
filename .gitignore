@@ -1,1 +1,15 @@
+# Configurações geradas pelo eclipse
+/.settings/
+/.metadata/
+.project
+.classpath
+.externalToolBuilders/
+
+# Gerado ao builder projeto utilizando maven
 /target/
+
+# Gerado ao executar sass
+*.css.map
+*.scss.map
+
+/bin/
