@@ -27,7 +27,7 @@ if /I [%DEPLOY_LOCAL%]==[n] (
 	set MVN_WILDFLY_ACCESS=
 )
 
-if not defined SERVER_GROUP (
+if defined SERVER_GROUP (
 	set MVN_WILDFLY_ACCESS=%MVN_WILDFLY_ACCESS% "-Dwildfly.serverGroups=%SERVER_GROUP%"
 )
 

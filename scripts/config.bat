@@ -8,11 +8,11 @@ rem Nome do artefato gerado por esse projeto (mesmo definido em pom.xml)
 set PROJECT_NAME=intelidente
 
 rem Host do servidor wildfly
-set SERVER_HOST=
+set SERVER_HOST=192.168.102.70
 rem Usuario de acesso ao servidor wildfly
-set SERVER_USERN=
+set SERVER_USERN=desenv
 rem Senha de acesso ao servidor wildfly
-set SERVER_PASSW=
+set SERVER_PASSW=linux123
 rem Server group do wildfly em modo cluster, vazio se em modo standalone
 set SERVER_GROUP=
 rem Url de acesso automatizado pelos scripts

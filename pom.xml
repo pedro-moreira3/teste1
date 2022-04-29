@@ -47,12 +47,12 @@
 		</dependency>
 		
 		<dependency>
-            <groupId>org.primefaces.ultima</groupId>
-            <artifactId>ultima-theme</artifactId>
-            <version>2.0.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/WebContent/WEB-INF/lib/ultima-theme-2.0.0.jar</systemPath>
-        </dependency>
+			<groupId>org.primefaces.ultima</groupId>
+			<artifactId>ultima-theme</artifactId>
+			<version>2.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/ultima-theme-2.0.0.jar</systemPath>
+		</dependency>
 
 		<dependency>
 			<groupId>com.twilio.sdk</groupId>
@@ -113,17 +113,24 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.7.10</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>javax.persistence</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.7.10</version>
+            <scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+			<version>2.28</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javax.el/javax.el-api -->
 		<dependency>
@@ -183,16 +190,16 @@
 		</dependency>
 		
 		<dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.4</version>
-        </dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
 		<dependency>
@@ -209,16 +216,16 @@
 		
 		<!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
 		<dependency>
-    		<groupId>org.primefaces</groupId>
-    		<artifactId>primefaces</artifactId>
-    		<version>10.0.0-RC1</version>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>10.0.0-RC1</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
 		<dependency>
-    		<groupId>org.primefaces.extensions</groupId>
-    		<artifactId>primefaces-extensions</artifactId>
-    		<version>10.0.0-RC1</version>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>primefaces-extensions</artifactId>
+			<version>10.0.0-RC1</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/resources-ckeditor -->
@@ -253,21 +260,21 @@
 			<version>1.14.3</version>
 		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.0.0-rc-1</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.0.0-rc-1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -295,38 +302,38 @@
 				</configuration>
 			</plugin>
 
-            <plugin>
-                <groupId>io.github.git-commit-id</groupId>
-                <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>4.9.9</version>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-                    <commitIdGenerationMode>full</commitIdGenerationMode>
-                    <injectAllReactorProjects>true</injectAllReactorProjects>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>4.9.9</version>
+				<executions>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<commitIdGenerationMode>full</commitIdGenerationMode>
+					<injectAllReactorProjects>true</injectAllReactorProjects>
+				</configuration>
+			</plugin>
 
-            <!-- Variável JBOSS_HOME deve estar declarada para plugin funcionar corretamente local -->
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.1.0.Final</version>
-                <configuration>
-                    <filename>${project.build.finalName}.${project.packaging}</filename>
-                    <ignoreMissingDeployment>true</ignoreMissingDeployment>
-                    <match-pattern>intelidente.*</match-pattern>
-                    <match-pattern-strategy>all</match-pattern-strategy>
-                </configuration>
-            </plugin>
+			<!-- Variável JBOSS_HOME deve estar declarada para plugin funcionar corretamente local -->
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>2.1.0.Final</version>
+				<configuration>
+					<filename>${project.build.finalName}.${project.packaging}</filename>
+					<ignoreMissingDeployment>true</ignoreMissingDeployment>
+					<match-pattern>intelidente.*</match-pattern>
+					<match-pattern-strategy>all</match-pattern-strategy>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
