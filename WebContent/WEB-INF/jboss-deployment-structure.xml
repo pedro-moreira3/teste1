@@ -7,13 +7,6 @@
  			<module name="org.postgres" />
  			<module name="org.eclipse.persistence"  />	
  			<module name="javax.faces.api"  />
-
- 			<module name="org.primefaces" slot="main" export="true" meta-inf="export">
- 				<imports>
- 					<include path="META-INF" />
- 				</imports>
- 			</module>
-
  		</dependencies> 
  	</deployment>
  </jboss-deployment-structure>
