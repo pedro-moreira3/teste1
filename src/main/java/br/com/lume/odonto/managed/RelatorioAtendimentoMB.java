@@ -110,6 +110,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void popularLista() {
         try {
+        	removeFilters();
+        	
             PrimeFaces.current().executeScript("PF('loading').show();");
             this.setArquivoDownload(null);
             if (getDataInicio() == null && getDataFim() == null && filtroPorPaciente == null && filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals(
@@ -213,6 +215,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         PrimeFaces.current().executeScript("PF('loading').hide();");
+    }
+    
+    public void removeFilters() {
+        DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:dtRelAtendimento");
+        table.reset();
     }
 
     public String verificaSeTemAgendamentoInicial(Agendamento agendamento) {
