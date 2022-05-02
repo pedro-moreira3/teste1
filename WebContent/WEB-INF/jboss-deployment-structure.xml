@@ -1,0 +1,12 @@
+ <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xsi:schemaLocation="http://www.jboss.org/schema/jbossas
+ 	http://www.jboss.org/schema/jbossas/jboss-deployment-structure-1_2.xsd">
+ 	<deployment>
+ 		<dependencies>
+ 			<module name="org.postgres" />
+ 			<module name="org.eclipse.persistence"  />	
+ 			<module name="javax.faces.api"  />
+ 		</dependencies> 
+ 	</deployment>
+ </jboss-deployment-structure>

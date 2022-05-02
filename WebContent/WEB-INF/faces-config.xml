@@ -13,10 +13,10 @@
 		</locale-config>
 
 		<resource-bundle>
-			<base-name>br.com.lume.resources.frontend</base-name>
+			<base-name>frontend</base-name>
 			<var>msg</var>
 		</resource-bundle>
-		<message-bundle>br.com.lume.resources.frontend</message-bundle>
+		<message-bundle>frontend</message-bundle>
 	</application>
 
 	<managed-bean>
@@ -31,10 +31,10 @@
 		</locale-config>
 
 		<resource-bundle>
-			<base-name>br.com.lume.odonto.resources.odonto</base-name>
+			<base-name>odonto</base-name>
 			<var>odonto</var>
 		</resource-bundle>
-		<message-bundle>br.com.lume.odonto.resources.odonto</message-bundle>
+		<message-bundle>odonto</message-bundle>
 	</application>
 
 

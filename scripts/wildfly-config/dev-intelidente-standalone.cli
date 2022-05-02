@@ -1,0 +1,65 @@
+# CLI script para criação do ambiente DEV-INTELIDENTE
+# Eduardo Tremarin
+# 27-04-2022
+connect
+batch
+
+# remove listner https
+/subsystem=undertow/server=default-server/https-listener=https:remove
+
+# configura o driver postgres
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+	driver-name=postgresql, \
+	driver-module-name=org.postgres, \
+	driver-class-name=org.postgresql.Driver \
+)
+
+# cria o datasource intelidente-DEV
+/subsystem=datasources/data-source=intelidente-DEV:add( \
+	initial-pool-size=2, \
+	min-pool-size=2, \
+	max-pool-size=100, \
+	check-valid-connection-sql="select 1", \
+	valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker, \
+	stale-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.StaleConnectionChecker, \
+	background-validation=True, \
+	background-validation-millis=30000, \
+	exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter, \
+	driver-class=org.postgresql.Driver, \
+	driver-name=postgresql, \
+	connection-url=jdbc:postgresql://ltdepg01.lume.intra:5432/intelidentev, \
+	jndi-name=java:/OdontoDBV, \
+	user-name=intelidentev, \
+	password=8HtMVhWB \
+)
+
+# habilita o datasource
+/subsystem=datasources/data-source=intelidente-DEV:enable()
+
+# habilita estatisticas do datasource - runtime -> hosts -> host -> server -> datasources -> <datasource>
+/subsystem=datasources/data-source=intelidente-DEV:write-attribute(name=statistics-enabled,value=true)
+
+# remove datasource padrão
+/subsystem=ee/service=default-bindings:write-attribute(name=datasource, value=undefined)
+
+# remove o ExampleDS
+/subsystem=datasources/data-source=ExampleDS:remove()
+
+# Comando abaixo está causando erro e precisa de revisão para modo standalone, sua execução não é necessária
+# remove o driver H2
+# /subsystem=datasources/jdbc-driver=h2:remove()
+
+# ajusta http-listener
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=max-parameters, value=5000)
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=max-post-size, value=31457280)
+
+# habilita statisticas web(undertow) - runtime -> hosts -> host -> server -> web(undertow) -> Deployment -> <sistema.war>
+/subsystem=undertow:write-attribute(name=statistics-enabled,value=true)
+
+#  habilita estatisticas default server - runtime -> hosts -> host -> server -> web(undertow) -> server -> default-server -> default
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=record-request-start-time,value=true)
+
+# log padrão (can be one of ALL, FINEST, FINER, TRACE, DEBUG, FINE, CONFIG, INFO, WARN, WARNING, ERROR, SEVERE, FATAL, OFF)
+/subsystem=logging/root-logger=ROOT:write-attribute(name="level", value="INFO")
+
+run-batch
