@@ -1,4 +1,4 @@
-package br.com.lume.is.tests;
+package br.com.lume.tests;
 
 import org.junit.Before;
 import org.junit.After;
@@ -14,14 +14,13 @@ import java.time.Duration;
 
 public class SeleniumTest {
 
-
-	private final String TEST_URL_LOCAL = "http://localhost/intelligentsales";			//"http://localhost/intelligentsales";
+	private final String TEST_URL_LOCAL = "http://localhost:8080/intelidente";
 	private final String PATH_DRIVER_CHROME = "";										//"C:\\web-drivers\\chromedriver.exe"
 
-	private static final String SYS_PARAM_HEADLESS = "headless";						// Par‚metro para tivar e desativar uso de UI pelo teste
-	private static final String SYS_PARAM_TEST_URL = "urlteste";						// Par‚metro para definir url de teste
-	private static final String SYS_PARAM_FINALIZAR = "finalizar";						// Par‚metro para definir se navegar ira ser finalizado no fim do teste
-	private static final String SYS_PARAM_CHROME_DRIVER = "webdriver.chrome.driver";	// Par‚metro para definir 
+	private static final String SYS_PARAM_HEADLESS = "headless";						// Par?etro para tivar e desativar uso de UI pelo teste
+	private static final String SYS_PARAM_TEST_URL = "urlteste";						// Par?etro para definir url de teste
+	private static final String SYS_PARAM_FINALIZAR = "finalizar";						// Par?etro para definir se navegar ira ser finalizado no fim do teste
+	private static final String SYS_PARAM_CHROME_DRIVER = "webdriver.chrome.driver";	// Par?etro para definir 
 	
 	private static boolean setupFinalizado = false;
 	private static boolean modoHeadless = false;
@@ -38,7 +37,7 @@ public class SeleniumTest {
 		// Controle para executar setup apenas uma vez
 		if (setupFinalizado) return;
 
-		/* Captura de par‚metros */
+		/* Captura de par√¢metros */
 
 		modoHeadless = "true".equals(System.getProperty(SYS_PARAM_HEADLESS));
 		if (modoHeadless) System.out.println("Utilizando modo headless");
@@ -47,7 +46,7 @@ public class SeleniumTest {
 		urlTeste = urlTesteParam != null ? urlTesteParam : TEST_URL_LOCAL;
 		System.out.println("Url de testes sendo utilizada: " + getTestURL());
 
-		// Caso n„o especificado utilizar driver no caminho padr„o
+		// Caso n√£o especificado utilizar driver no caminho padr√£o
 		String caminhoDriverChrome = System.getProperty(SYS_PARAM_CHROME_DRIVER);
 		if (caminhoDriverChrome == null)
 			System.setProperty("SYS_PARAM_CHROME_DRIVER", PATH_DRIVER_CHROME);
@@ -57,22 +56,22 @@ public class SeleniumTest {
 			System.getProperties().remove(SYS_PARAM_CHROME_DRIVER);
 		
 		caminhoDriverChrome = System.getProperty(SYS_PARAM_CHROME_DRIVER);
-		if (caminhoDriverChrome == null) System.out.println("Nenhuma localizaÁ„o especificada para driver do chrome");
+		if (caminhoDriverChrome == null) System.out.println("Nenhuma localiza√ß√£o especificada para driver do chrome");
 		else System.out.println("Utilizando driver chrome localizado em" + caminhoDriverChrome);
 
 		
 		finalizarNavegador = !"false".equals(System.getProperty(SYS_PARAM_FINALIZAR));
 		if (!finalizarNavegador) System.out.println("Finalizar navegador ao fim do teste desabilitado");
 
-		/* InicializaÁıes para ambientes de testes */
+		/* Inicializa√ß√µes para ambientes de testes */
 		ChromeOptions options = new ChromeOptions();
 		if (modoHeadless)
-			options.addArguments("--headless");				// Desabilita interface gr·fica 
+			options.addArguments("--headless");				// Desabilita interface gr√°ica 
 		options.addArguments("--disable-infobars");			// Desabilita barras de alerta
 		options.addArguments("--disable-extensions"); 		// Desabilita extens√µes
 		options.addArguments("--disable-notifications");	// Desabilita alertas no navegador
 		options.addArguments("--disable-dev-shm-usage"); 	// Desabilita limite de uso de recursos
-		options.addArguments("--no-sandbox"); 				// Necess·rio para executar chrome como usu·rio root em linux
+		options.addArguments("--no-sandbox"); 				// Necess√°io para executar chrome como usu√°io root em linux
 		driver = new ChromeDriver(options);
 
 		js = (JavascriptExecutor) driver;

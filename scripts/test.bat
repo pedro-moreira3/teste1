@@ -4,7 +4,7 @@ rem Script para executar testes automatizados no projeto
 
 rem Use a propriedade 'webdriver.chrome.driver' para especificar a localização do webdriver chrome. e.g. -Dwebdriver.chrome.driver=C:\\web-drivers\\chromedriver.exe 
 rem Use a propriedade 'webdriver.gecko.driver' para especificar a localização do webdriver firefox. e.g. -Dwebdriver.gecko.driver=C:\\web-drivers\\geckodriver.exe 
-rem Use a propriedade 'urlteste' para mudar o endereço de teste, o padrão é localhost. e.g. -Durlteste=http://xxx.xxx.xxx.xxx/intelligentsales
+rem Use a propriedade 'urlteste' para mudar o endereço de teste, o padrão é localhost. e.g. -Durlteste=http://xxx.xxx.xxx.xxx/intelidente
 rem Use a propriedade 'headless' para executar chrome sem interface gráfica, por padrão está desativado. e.g. -Dheadless=true
 rem Use a propriedade 'finalizar' para especificar se o navegador deve ou não finalizar após o teste, o padrão é true. e.g. -Dfinalizar=false
 
@@ -35,7 +35,6 @@ if [%DEPLOY_LOCAL%]==[n] (
 cd %PROJECT_HOME%
 call mvn test "-Dwebdriver.chrome.driver=%SELENIUM_CHROME_DRIVER%" "-Dfinalizar=false" "-Dmaven.main.skip=true" %TEST_URL%
 if [%ERRORLEVEL%]==[0] (
-
 	exit /b
 )
 
