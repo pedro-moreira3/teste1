@@ -1,48 +1,227 @@
-image: java:latest
+workflow:
+  rules:
+    - if: '($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"))'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "pipeline"'
+      when: always
 
-
-variables:
-  noFailure: "Failures: 0, Skips: 0"
-  outPath: "./build-out"
-  targetPath: "./target"
-  warFile: "intelidente.war"
-  warLatest: "intelidente.latest"
-  warErro: "intelidente.error"
-  warOld: "intelidente.old"
-  urlProd: "https://sistema.intelidente.com/intelidente"
-  urlDesenv: "http://ltdeapp07.lume.intra:8080/intelidente"
-  urlLocal: "http://localhost:8080/intelidente"
-  MAVEN_CLI_OPTS: "-s ~/.m2/settings.xml --batch-mode"
-  MAVEN_OPTS: "-Dmaven.repo.local=~/.m2_ramdisk/repository/ -Dfile.encoding=ISO-8859-1"
- 
+# https://gitlab.com/gitlab-org/gitlab-foss/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
 cache:
   paths:
-   - ~/.m2_ramdisk/repository/
+    - .m2/repository
 
-before_script:
-  - branch=$CI_COMMIT_REF_NAME
-  - paramsDeploy='-DintelidenteBuild='$CI_PIPELINE_ID' -DintelidenteMaster='$CI_PIPELINE_IID' -DintelidenteHotFix='
-  - 'if [ $branch == "master" ]; then profile=wildfly-remote-prod; fi'
-  - 'if [ $branch == "backend" ]; then profile=wildfly-remote-dev; fi'
-  - 'if [ $branch == "desenv" ]; then profile=wildfly-remote-trm; fi'
-  - 'echo "========================================================================================"'
-  - 'echo "=   BRANCH.......................: $branch"'
-  - 'echo "=   PROFILE......................: $profile"'
-  - 'echo "=   N COMMIT.....................: $CI_PIPELINE_IID ($branch)"'
-  - 'echo "=   N COMMIT.....................: $CI_PIPELINE_ID (Todos os branches)"'
-  - 'echo "========================================================================================"'
+variables:
+  # WILDFLY_USERNAME, credencial de acesso em wildfly para deploy, pode ser especificada manualmente ou previamente na sessão de variáveis de gitlab
+  # WILDFLY_PASSWORD, credencial de acesso em wildfly para deploy, pode ser especificada manualmente ou previamente na sessão de variáveis de gitlab
+  # SERVER_GROUPS, Especifica grupos de deploy para wildfly em modo dominio, se não aplicável deixar vazio. e.g: "grupo-deploy-dev", separar por vírgula caso mais de um se aplique.
+
+  # Prefixo sempre presente no artefato gerado
+  ARTIFACT_PREFIX_NAME: 'intelidente-'
+
+  # Apontamento padrão para deploy
+  DEPLOY_HOST: '192.168.102.70'
+
+  # Caminho para acessar driver de testes selenium
+  CHECK_DEPLOY_VERSION: 'true'
+
+  # Caminho para acessar driver de testes selenium
+  CHROMEDRIVER_PATH: ''
+
+  # Local de repositório do maven, deve ser estar dentro da pasta do projeto para runner do gitlab manter dependencias maven em cache
+  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository'
+
+  # Variavel utilitária para plugin maven realizar acesso a instância wildfly
+  MAVEN_WILDFLY_ACCESS: '"-Dwildfly.username=$WILDFLY_USERNAME" "-Dwildfly.password=$WILDFLY_PASSWORD" "-Dwildfly.hostname=$DEPLOY_HOST"'
+
+default:
+  before_script:
+    # Apenas para depuração
+    - 'echo "DEPLOY_HOST: $DEPLOY_HOST"'
+    - 'echo "SERVER_GROUPS: $SERVER_GROUPS"'
+    - 'echo "CHECK_DEPLOY_VERSION: $CHECK_DEPLOY_VERSION"'
+    - 'echo "MAVEN_OPTS: $MAVEN_OPTS"'
+    - 'echo "MAVEN_WILDFLY_ACCESS: $MAVEN_WILDFLY_ACCESS"'
+    - 'echo "CI_COMMIT_SHA: $CI_COMMIT_SHA"'
+    - 'echo "CI_COMMIT_BRANCH: $CI_COMMIT_BRANCH"'
+    - 'echo "CI_PIPELINE_SOURCE: $CI_PIPELINE_SOURCE"'
+    - 'echo "CI_PROJECT_DIR: $CI_PROJECT_DIR"'
+    - 'echo "CI_ENVIRONMENT_NAME: $CI_ENVIRONMENT_NAME"'
+    - 'echo "CI_ENVIRONMENT_URL: $CI_ENVIRONMENT_URL"'
 
 stages:
-  - build
+  - compile
+  - deploy
+  - deploy-test
 
-build:
-  stage: build
-  script:  
-   - 'if [ $branch != "master" ] && [ $branch != "desenv" ] && [ $branch != "backend" ] && [ $branch != "romulo" ]; then echo "Branch sem finalidade de deploy"; mvn compile; mvn package; exit 0; fi'  
-   - echo 'Clean no projeto e package do WAR'
-   - mvn $MAVEN_OPTS clean package $paramsDeploy
-   - echo 'Realizar deploy do arquivo gerado.'
-   - mvn $MAVEN_OPTS wildfly:deploy-only -P $profile
-   - 'if [ -f "$targetPath/$warFile" ]; then mv $targetPath/$warFile $outPath/$warLatest; fi'
-   - echo 'Aguardando reinicio do servidor'
-   - sleep 30
+compile:
+  stage: compile
+  script:    
+    # Geração de war limpo
+    - 'mvn dependency:go-offline clean compile war:war'
+  interruptible: true
+  artifacts:
+    paths:
+        - target/*.war
+    expire_in: 1h
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+
+
+config:
+  stage: deploy
+  script:
+
+    - 'NO_UNDEPLOY="false"'
+
+    # Verifica se já existe algum deploy na mesma versão
+    - |
+      if [[ -n $CHECK_DEPLOY_VERSION ]];
+      then
+        DEPLOYMENTS="$(mvn wildfly:execute-commands $MAVEN_WILDFLY_ACCESS "-Dwildfly.commands=deployment list --l"; echo '')";
+        echo "${DEPLOYMENTS}";
+        DEPLOYMENTS=$(grep -i "$ARTIFACT_PREFIX_NAME" <<<$DEPLOYMENTS; echo '');
+        if [[ -n ${DEPLOYMENTS} ]];
+        then
+          DEPLOYMENTS_REGEX="([a-zA-Z0-9\.]+-){2}([a-zA-Z0-9\.]+)\.war";
+          if [[ ${DEPLOYMENTS} =~ ${DEPLOYMENTS_REGEX} ]];
+          then
+            echo "Hash SHA encontrado em deploy: ${BASH_REMATCH[2]}";
+            match="^${BASH_REMATCH[2]}";
+            if [[ $CI_COMMIT_SHA =~ ${match} ]];
+            then
+              echo "Identificado deploy da mesma versão, cancelando deploy.";
+              STOP_DEPLOY="true";
+            else
+              echo "Identificado deploy de versão diferente, continuando deploy.";
+              STOP_DEPLOY="false";
+            fi
+          else
+            echo "Não foi possível extrair o hash SHA utilizando o regex: ${DEPLOYMENTS_REGX}. Cancelando deploy";
+            echo "${DEPLOYMENTS}";
+            STOP_DEPLOY="true";
+          fi
+        else
+          echo "Nenhum artefato contendo $ARTIFACT_PREFIX_NAME foi encontrado na lista, continuando deploy";
+          echo "${DEPLOYMENTS}";
+          STOP_DEPLOY="false";
+          NO_UNDEPLOY="true";
+        fi
+      else
+        STOP_DEPLOY="false";
+      fi
+
+    - 'echo "STOP_DEPLOY=${STOP_DEPLOY}" >> deploy.env'
+    - 'echo "NO_UNDEPLOY=${NO_UNDEPLOY}" >> deploy.env'
+
+    # Inicialização de variáveis de deploy em cluster
+    - |
+      if [ -z $SERVER_GROUPS ];
+      then echo "MVN_SERVER_GROUPS=" >> deploy.env;
+      else echo "MVN_SERVER_GROUPS=\"-Dwildfly.serverGroups=$SERVER_GROUPS\"" >> deploy.env; fi
+
+    # Apenas pare depuração
+    - 'cat deploy.env'
+
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+
+undeploy:
+  stage: deploy
+  script:
+    - &verify-stop-deploy |
+      echo "STOP_DEPLOY: $STOP_DEPLOY"
+      echo "MVN_SERVER_GROUPS: ${MVN_SERVER_GROUPS}"
+      if [ "X$STOP_DEPLOY" == "Xtrue" ]; then
+        echo "Deploy não será realizado, cancelando operação";
+        exit 2;
+      fi
+
+    - &verify-no-undeploy |
+      if [ "X${NO_UNDEPLOY}" == "Xtrue" ]; then
+        echo "Undeploy não será realizado";
+        exit 2;
+      fi
+
+    # Undeploy de war antigo
+    - 'mvn wildfly:undeploy $MAVEN_WILDFLY_ACCESS ${MVN_SERVER_GROUPS}'
+  needs: 
+    - job: config
+  rules:
+    - if: '$WILDFLY_USERNAME != null && $WILDFLY_PASSWORD != null'
+      when: on_success
+    - when: manual
+  allow_failure:
+      exit_codes: 2
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+
+restart:
+  stage: deploy
+  script:
+    - *verify-stop-deploy
+    - *verify-no-undeploy
+
+    # Reinicialização de servidor
+    - |
+      if [ -z $SERVER_GROUPS ];
+      then mvn wildfly:execute-commands $MAVEN_WILDFLY_ACCESS "-Dwildfly.commands=:shutdown(restart=true)";
+      else
+        for GROUP in ${SERVER_GROUPS//,/ }
+        do
+            echo "$GROUP"
+            mvn wildfly:execute-commands $MAVEN_WILDFLY_ACCESS "-Dwildfly.commands=/server-group=$GROUP:reload-servers";
+        done
+      fi
+  needs: 
+    - job: config
+    - job: undeploy
+  rules:
+    - if: '$WILDFLY_USERNAME != null && $WILDFLY_PASSWORD != null'
+      when: on_success
+    - when: manual
+  allow_failure:
+      exit_codes: 2
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+
+deploy:
+  stage: deploy
+  script:
+    - *verify-stop-deploy
+
+    # Deploy de war novo
+    - 'mvn git-commit-id:revision wildfly:deploy-only $MAVEN_WILDFLY_ACCESS ${MVN_SERVER_GROUPS}'
+  needs: 
+    - job: config
+    - job: restart
+    - job: compile
+  rules:
+    - if: '$WILDFLY_USERNAME != null && $WILDFLY_PASSWORD != null'
+      when: delayed
+      start_in: '30 seconds'
+    - when: manual
+  allow_failure:
+      exit_codes: 2
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+
+
+selenium-test:
+  stage: deploy-test
+  script:
+    # Execução de testes selenium
+    - 'mvn test "-Durlteste=$CI_ENVIRONMENT_URL" "-Dheadless=true" "-Dmaven.main.skip=true"'
+  environment:
+    name: $CI_COMMIT_BRANCH
+    action: prepare
+  rules:
+    - when: always
+  retry: 1

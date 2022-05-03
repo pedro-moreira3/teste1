@@ -1,3 +1,0 @@
-<Context path="/imagens" reloadable="true" docBase="/app/odonto/imagens/">
-<Logger className="org.apache.catalina.logger.SystemOutLogger" verbosity="4" timestamp="true"/>
-</Context>

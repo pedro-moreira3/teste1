@@ -1,3 +1,0 @@
-<Context path="/imagesRss" reloadable="true" docBase="c:\imagesRss"  >
-<Logger className="org.apache.catalina.logger.SystemOutLogger" verbosity="4" timestamp="true"/>
-</Context>

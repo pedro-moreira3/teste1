@@ -1,0 +1,583 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script type="text/javascript">
+			google.charts.load('current', {
+				'packages' : [ 'corechart' ]
+			});
+			google.charts.setOnLoadCallback(drawPacientesAtivosInativos);
+			google.charts.setOnLoadCallback(drawPacientesParticularConvenio);
+			google.charts.setOnLoadCallback(drawPacientesConvenioPorTipo);
+			google.charts.setOnLoadCallback(drawAgendamentosRetornos);
+			google.charts.setOnLoadCallback(drawAgendamentosRealizados);
+			google.charts.setOnLoadCallback(drawAgendamentosNovosPacientesConfirmadosNaoConfirmados);
+			google.charts.setOnLoadCallback(drawAgendamentosConfirmadosNaoConfirmados);
+			google.charts.setOnLoadCallback(drawAgendamentosNaoConfirmados);
+			google.charts.setOnLoadCallback(drawOrcamentosValorStatus);
+			google.charts.setOnLoadCallback(drawOrcamentosQtdeStatus);
+			google.charts.setOnLoadCallback(drawOrcamentosTicketMedio);
+			google.charts.setOnLoadCallback(drawOrcamentosIndiceAprovacao);
+			google.charts.setOnLoadCallback(drawFinanceiroGastos);
+			google.charts.setOnLoadCallback(drawFinanceiroPlanejamentoPendente);
+			google.charts.setOnLoadCallback(drawFinanceiroInadimplente);
+
+			function drawPacientesAtivosInativos() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Inativos', 'Ativos', 'TOTAL',   ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+				
+
+				var options = {
+					isStacked : true,
+					title : 'Pacientes | Ativos x Inativos 2022',
+					colors: ['#ff0000', '#92d050', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('pacientes_ativos_inativos'));
+				chart.draw(data, options);
+			}
+			
+			function drawPacientesParticularConvenio() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Particular', 'Convênio', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Pacientes | Particulares x Convênio',
+					colors: ['#00b0f0', '#0070c0', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('pacientes_particular_convenio'));
+				chart.draw(data, options);
+			}
+			
+			function drawPacientesConvenioPorTipo() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Amil', 'OdontoPrev', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Pacientes | Convênio por Tipo ',
+					colors: ['#558ed5', '#8eb4e3', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('pacientes_convenio_por_tipo'));
+				chart.draw(data, options);
+			}
+			
+			function drawAgendamentosRetornos() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Sem Agendamento', 'Com Retorno','Sem Retorno', 'Agendamento/Retorno' ],
+						[ 'JAN', 30, 50, 80, 160 ],
+						[ 'FEV', 35, 55, 90, 180 ],
+						[ 'MAR', 35, 57, 92, 184 ],	
+						[ 'ABR', 40, 65, 105, 210 ],
+						[ 'MAI', 40, 70, 110, 220 ],
+						[ 'JUN', 40, 72, 112, 224 ],
+						[ 'JUL', 50, 76, 126, 252 ],
+						[ 'AGO', 50, 80, 130, 260 ],
+						[ 'SET', 52, 82, 134, 268 ],
+						[ 'OUT', 53, 85, 138, 276 ],
+						[ 'NOV', 54, 89, 143, 286 ],
+						[ 'DEZ', 55, 100, 155, 310] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Gestão Agendamentos e Retornos ',
+					colors: ['#f79646', '#ff0000', '#92d050','#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						3 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('agendamentos_retornos'));
+				chart.draw(data, options);
+			}
+			
+			function drawAgendamentosRealizados() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Novos Pacientes', 'Pacientes Base', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Agendamentos Realizados | 2022',
+					colors: ['#92d050', '#8eb4e3', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('agendamentos_realizados'));
+				chart.draw(data, options);
+			}
+			
+			function drawAgendamentosNovosPacientesConfirmadosNaoConfirmados() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Confirmados/Realizados', 'Não Confirmados', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Agendamento Novos Pacientes | Confirmados X Não Confirmados - 2022',
+					colors: ['#92d050', '#ff0000', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('agendamentos_novos_pacientes_confirmados_nao_confirmados'));
+				chart.draw(data, options);
+			}
+			
+			
+			function drawAgendamentosConfirmadosNaoConfirmados() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Confirmados/Realizados', 'Não Confirmados', 'TOTAL' ],
+						[ 'JAN', 30, 50, 80 ],
+						[ 'FEV', 35, 55, 90 ],
+						[ 'MAR', 35, 57, 92 ],
+						[ 'ABR', 40, 65, 105 ],
+						[ 'MAI', 40, 70, 110 ],
+						[ 'JUN', 40, 72, 112 ],
+						[ 'JUL', 50, 76, 126 ],
+						[ 'AGO', 50, 80, 130 ],
+						[ 'SET', 52, 82, 134 ],
+						[ 'OUT', 53, 85, 138 ],
+						[ 'NOV', 54, 89, 143 ],
+						[ 'DEZ', 55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Agendamento | Confirmados X Não Confirmados - 2022',
+					colors: ['#92d050', '#ff0000', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						2 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('agendamentos_confirmados_nao_confirmados'));
+				chart.draw(data, options);
+			}
+			
+			function drawAgendamentosNaoConfirmados() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+						[ 'Mês', 'Remarcado', 'Cancelado', 'Falta',  'Erro Agendamento', 'Não Confirmados' ],
+						[ 'JAN', 30, 50, 30, 50, 80 ],
+						[ 'FEV', 35, 55, 35, 55, 90 ],
+						[ 'MAR', 35, 57, 35, 57, 92 ],
+						[ 'ABR', 40, 65, 40, 65, 105 ],
+						[ 'MAI', 40, 70, 40, 70, 110 ],
+						[ 'JUN', 40, 72, 40, 72, 112 ],
+						[ 'JUL', 50, 76, 50, 76, 126 ],
+						[ 'AGO', 50, 80, 50, 80, 130 ],
+						[ 'SET', 52, 82, 52, 82, 134 ],
+						[ 'OUT', 53, 85, 53, 85, 138 ],
+						[ 'NOV', 54, 89, 54, 89, 143 ],
+						[ 'DEZ', 55, 100,55, 100, 155] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Agendamento | Confirmados X Não Confirmados - 2022',
+					colors: ['#4bacc6', '#d99694', '#ff0000','#f79646', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						4 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('agendamentos_nao_confirmados'));
+				chart.draw(data, options);
+			}
+			
+			
+			function drawOrcamentosValorStatus() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Aprovado', 'Não Aprovado','Pendente Aprovação', 'TOTAL' ],
+					[ 'JAN', 30, 50, 80, 160 ],
+					[ 'FEV', 35, 55, 90, 180 ],
+					[ 'MAR', 35, 57, 92, 184 ],
+					[ 'ABR', 40, 65, 105, 210 ],
+					[ 'MAI', 40, 70, 110, 220 ],
+					[ 'JUN', 40, 72, 112, 224 ],
+					[ 'JUL', 50, 76, 126, 252 ],
+					[ 'AGO', 50, 80, 130, 260 ],
+					[ 'SET', 52, 82, 134, 268 ],
+					[ 'OUT', 53, 85, 138, 276 ],
+					[ 'NOV', 54, 89, 143, 286 ],
+					[ 'DEZ', 55, 100, 155, 310] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Orçamentos (R$) | Status - 2022',
+					colors: ['#92d050', '#ff0000', '#f79646', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						3 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('orcamentos_valor_status'));
+				chart.draw(data, options);
+			}
+			
+			function drawOrcamentosQtdeStatus() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Aprovado', 'Não Aprovado','Pendente Aprovação', 'TOTAL' ],
+					[ 'JAN', 30, 50, 80, 160 ],
+					[ 'FEV', 35, 55, 90, 180 ],
+					[ 'MAR', 35, 57, 92, 184 ],
+					[ 'ABR', 40, 65, 105, 210 ],
+					[ 'MAI', 40, 70, 110, 220 ],
+					[ 'JUN', 40, 72, 112, 224 ],
+					[ 'JUL', 50, 76, 126, 252 ],
+					[ 'AGO', 50, 80, 130, 260 ],
+					[ 'SET', 52, 82, 134, 268 ],
+					[ 'OUT', 53, 85, 138, 276 ],
+					[ 'NOV', 54, 89, 143, 286 ],
+					[ 'DEZ', 55, 100, 155, 310] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Orçamentos (QTDE) | Status - 2022',
+					colors: ['#92d050', '#ff0000', '#f79646', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						3 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('orcamentos_qtde_status'));
+				chart.draw(data, options);
+			}
+			
+			function drawOrcamentosTicketMedio() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Ticket Médio'],
+					[ 'JAN', 30],
+					[ 'FEV', 35],
+					[ 'MAR', 35],
+					[ 'ABR', 40],
+					[ 'MAI', 40],
+					[ 'JUN', 40],
+					[ 'JUL', 50],
+					[ 'AGO', 50],
+					[ 'SET', 52],
+					[ 'OUT', 53],
+					[ 'NOV', 54],
+					[ 'DEZ', 55] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Ticket Médio | Valor Orçamento x Quantidade de Orçamento',
+					colors: ['#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						0 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('orcamentos_ticket_medio'));
+				chart.draw(data, options);
+			}
+			
+			function drawOrcamentosIndiceAprovacao() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Índice de Aprovação'],
+					[ 'JAN', 30],
+					[ 'FEV', 35],
+					[ 'MAR', 35],
+					[ 'ABR', 40],
+					[ 'MAI', 40],
+					[ 'JUN', 40],
+					[ 'JUL', 50],
+					[ 'AGO', 50],
+					[ 'SET', 52],
+					[ 'OUT', 53],
+					[ 'NOV', 54],
+					[ 'DEZ', 55] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Índice de Aprovação| Orçamento Criado x Orçamento Aprovado',
+					colors: ['#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						0 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('orcamentos_indice_aprovacao'));
+				chart.draw(data, options);
+			}
+			
+			
+			function drawFinanceiroGastos() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Odontológicos', 'Gerais','Operacionais', 'Gastos' ],
+					[ 'JAN', 30, 50, 80, 160 ],
+					[ 'FEV', 35, 55, 90, 180 ],
+					[ 'MAR', 35, 57, 92, 184 ],
+					[ 'ABR', 40, 65, 105, 210 ],
+					[ 'MAI', 40, 70, 110, 220 ],
+					[ 'JUN', 40, 72, 112, 224 ],
+					[ 'JUL', 50, 76, 126, 252 ],
+					[ 'AGO', 50, 80, 130, 260 ],
+					[ 'SET', 52, 82, 134, 268 ],
+					[ 'OUT', 53, 85, 138, 276 ],
+					[ 'NOV', 54, 89, 143, 286 ],
+					[ 'DEZ', 55, 100, 155, 310] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Gastos (R$) | Por Tipo - 2022',
+					colors: ['#ff0000', '#fac090', '#e6b9b8', '#86a8d1'],
+					seriesType : 'bars',
+					series : {
+						3 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('financeiro_gastos'));
+				chart.draw(data, options);
+			}
+			
+			
+			
+			function drawFinanceiroPlanejamentoPendente() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Planejamento Pendente'],
+					[ 'JAN', 30],
+					[ 'FEV', 35],
+					[ 'MAR', 35],
+					[ 'ABR', 40],
+					[ 'MAI', 40],
+					[ 'JUN', 40],
+					[ 'JUL', 50],
+					[ 'AGO', 50],
+					[ 'SET', 52],
+					[ 'OUT', 53],
+					[ 'NOV', 54],
+					[ 'DEZ', 55] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Planejamento Pendente (R$)| Orçamento Aprovados Sem Registro de Recebimento - 2022',
+					colors: ['#ff0000'],
+					seriesType : 'bars',
+					series : {
+						0 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('financeiro_planejamento_pendente'));
+				chart.draw(data, options);
+			}
+			
+			
+			
+			
+			function drawFinanceiroInadimplente() {
+				// Some raw data (not necessarily accurate)
+				var data = google.visualization.arrayToDataTable([
+					[ 'Mês', 'Inadimplente'],
+					[ 'JAN', 30],
+					[ 'FEV', 35],
+					[ 'MAR', 35],
+					[ 'ABR', 40],
+					[ 'MAI', 40],
+					[ 'JUN', 40],
+					[ 'JUL', 50],
+					[ 'AGO', 50],
+					[ 'SET', 52],
+					[ 'OUT', 53],
+					[ 'NOV', 54],
+					[ 'DEZ', 55] ]);
+
+				var options = {
+					isStacked : true,
+					title : 'Inadimplente (R$) - 2022',
+					colors: ['#ff0000'],
+					seriesType : 'bars',
+					series : {
+						0 : {
+							type : 'line'
+						}
+					}
+				};
+
+				var chart = new google.visualization.ComboChart(document
+						.getElementById('financeiro_inadimplente'));
+				chart.draw(data, options);
+			}
+		</script>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+				
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-12" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
+					<div id="pacientes_ativos_inativos" style="width: 800px; height: 500px;"></div>
+					<div id="pacientes_particular_convenio" style="width: 800px; height: 500px;"></div>
+				</p:panelGrid>
+				
+				
+					<div id="pacientes_convenio_por_tipo" style="width: 800px; height: 500px;"></div>
+					<div id="agendamentos_retornos" style="width: 800px; height: 500px;"></div>
+					<div id="agendamentos_realizados" style="width: 800px; height: 500px;"></div>
+					<div id="agendamentos_novos_pacientes_confirmados_nao_confirmados" style="width: 800px; height: 500px;"></div>
+					<div id="agendamentos_confirmados_nao_confirmados" style="width: 800px; height: 500px;"></div>
+					<div id="agendamentos_nao_confirmados" style="width: 800px; height: 500px;"></div>
+					<div id="orcamentos_valor_status" style="width: 800px; height: 500px;"></div>
+					<div id="orcamentos_qtde_status" style="width: 800px; height: 500px;"></div>
+					<div id="orcamentos_ticket_medio" style="width: 800px; height: 500px;"></div>
+					<div id="orcamentos_indice_aprovacao" style="width: 800px; height: 500px;"></div>
+					<div id="financeiro_gastos" style="width: 800px; height: 500px;"></div>
+					<div id="financeiro_planejamento_pendente" style="width: 800px; height: 500px;"></div>
+					<div id="financeiro_inadimplente" style="width: 800px; height: 500px;"></div>
+				</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>
