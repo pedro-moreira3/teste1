@@ -459,7 +459,7 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
         
         listaLinhas.add(total);
 
-        grafico = construirGraficoBarra("Status de orçamento (Quantidade) (R$)", listaBarras, listaLinhas, labels);
+        grafico = construirGraficoBarra("Status de orçamento (Quantidade)", listaBarras, listaLinhas, labels);
         
         return grafico;
     }
@@ -526,7 +526,7 @@ public class IndicadorMB extends LumeManagedBean<Indicador> implements Serializa
         LineChartDataSet l1 = new LineChartDataSet();
         List<Object> list1 = new ArrayList<Object>();
         
-        l1.setLabel("Índice de aprovação");
+        l1.setLabel("Índice de aprovação (%)");
         l1.setBorderColor("rgb(50,205,50)");
         l1.setFill(false);
         
