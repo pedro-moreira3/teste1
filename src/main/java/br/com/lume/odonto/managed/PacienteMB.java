@@ -767,7 +767,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
 
             boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;
-            PacienteSingleton.getInstance().getBo().persist(this.getEntity());
+            PacienteSingleton.getInstance().getBo().persistir(this.getEntity());
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
