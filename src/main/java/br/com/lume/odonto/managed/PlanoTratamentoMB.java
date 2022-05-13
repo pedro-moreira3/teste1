@@ -214,6 +214,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<StatusDente> diagnosticosSelecionados;
     private List<PlanoTratamentoProcedimentoRegiao> diagnosticos;
     private PlanoTratamentoProcedimentoRegiao ptprSelecionado;
+    private List<PlanoTratamentoProcedimento> procedimentosDiferentes;
 
     //Personalizar
     private List<StatusDente> statusDente;
@@ -1239,9 +1240,21 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 observacoesAdicionarProcedimento = "Observação: Esse convênio está sem procedimentos vinculados! Acesse o menu Configuraçoes -> " + "Convênio procedimento para vincular os procedimentos nesse convênio.";
             }
         }
+        
+        try {
+        	resetTable();
+            carregarPlanoTratamentoProcedimentos();
+        }catch (Exception e) {
+        	addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+		}
 
     }
 
+    public void atualizaObjetoLista(PlanoTratamentoProcedimento planoTratamentoProcedimento) {
+        //planoTratamentoProcedimentos.remove(planoTratamentoProcedimento);
+        //planoTratamentoProcedimentos.add(planoTratamentoProcedimento);
+    }
+    
     public boolean isDisableFaces() {
         return planoTratamentoProcedimentoSelecionado == null || this.procedimentoSelecionado == null || this.procedimentoSelecionado.getQuantidadeFaces() == null || this.procedimentoSelecionado.getQuantidadeFaces() <= 0 || this.denteRegiaoEscolhida == null || this.denteRegiaoEscolhida.isEmpty() || !this.denteRegiaoEscolhida.startsWith(
                 "Dente ");
@@ -1753,6 +1766,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void carregaOrcamentos() {
         orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
         try {
+        	resetTable();
             carregarPlanoTratamentoProcedimentos();
         } catch (Exception e) {
             log.error("Erro no carregaTela", e);
@@ -2780,27 +2794,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void validaFecharTela() {
         try {
-            List<PlanoTratamentoProcedimento> procedimentos = new ArrayList<PlanoTratamentoProcedimento>();
+            setProcedimentosDiferentes(new ArrayList<PlanoTratamentoProcedimento>());
             for (PlanoTratamentoProcedimento ptp : this.getEntity().getPlanoTratamentoProcedimentos()) {
-                if(ptp.getStatus() != null ) {
-                    if("F".equals(ptp.getStatus())) {
+                if (ptp.getStatus() != null) {
+                    if ("F".equals(ptp.getStatus())) {
                         PlanoTratamentoProcedimento ptpBanco;
                         ptpBanco = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(ptp.getId());
-                        if(ptpBanco.getStatus() != null) {
-                            if(!ptp.getStatus().equals(ptpBanco.getStatus())) {
-                                procedimentos.add(ptp);
+                        if (ptpBanco.getStatus() != null) {
+                            if (!(ptp.getStatus().equals(ptpBanco.getStatus()) && ptpBanco.getDentistaExecutor() != null)) {
+                                getProcedimentosDiferentes().add(ptp);
                             }
-                        }else {
-                            procedimentos.add(ptp);
+                        } else {
+                            getProcedimentosDiferentes().add(ptp);
                         }
                     }
                 }
             }
-            if(procedimentos.size() > 0) {
+            if (getProcedimentosDiferentes().size() > 0) {
                 PrimeFaces.current().executeScript("PF('confirmDialog').show();");
-            }else {
+            } else {
                 PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').hide();");
-                removeFilters();
+                carregarPlanosTratamento();
+                resetTable();
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -2808,10 +2823,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
     
-    public void removeFilters() {
-        carregarPlanosTratamento();
-        DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
+    public void resetTable() {
+    	DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(":lume:tabViewPaciente:dtProcedimentosSelecionadospt");
         table.reset();
+    }
+
+    public void resetProcedimentos() {
+        try {
+            for (PlanoTratamentoProcedimento ptp : this.getProcedimentosDiferentes()) {
+                ptp.setStatus(null);
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
+            }
+            this.setProcedimentosDiferentes(new ArrayList<PlanoTratamentoProcedimento>());
+            carregarPlanosTratamento();
+            resetTable();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void enableRegioes(boolean enable) {
@@ -3782,4 +3811,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void setOrcamentosPendentes(List<Orcamento> orcamentosPendentes) {
         this.orcamentosPendentes = orcamentosPendentes;
     }
+
+	public List<PlanoTratamentoProcedimento> getProcedimentosDiferentes() {
+		return procedimentosDiferentes;
+	}
+
+	public void setProcedimentosDiferentes(List<PlanoTratamentoProcedimento> procedimentosDiferentes) {
+		this.procedimentosDiferentes = procedimentosDiferentes;
+	}
 }
