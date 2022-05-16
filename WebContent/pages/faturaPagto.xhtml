@@ -179,9 +179,7 @@
 						var="f" rows="20" paginator="true" rowKey="#{f}"
 						filteredValue="#{faturaPagtoMB.listaFiltrada}"
 						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
-						<p:ajax event="filter" process="@this"
-							oncomplete="refreshFooter()"
-							listener="#{faturaPagtoMB.updateSomatorio()}" />
+
 						<f:facet name="header">Faturas</f:facet>
 
 						<p:column width="120" headerText="Ações" exportable="false">
@@ -217,7 +215,9 @@
 							<h:outputText value="#{f.dataCriacaoStr}" title="#{f.id}" />
 						</p:column>
 						<p:column filterBy="#{f.dadosTabelaPT.descricao}"
-							sortBy="#{f.dadosTabelaPT.descricao}" filterMatchMode="contains"
+							filterFunction="#{faturaPagtoMB.filtroSemAcento}"
+							sortBy="#{f.dadosTabelaPT.descricao}"
+							filterMatchMode="contains"
 							headerText="Plano de Tratamento">
 							<h:outputText value="#{f.dadosTabelaPT.descricao}" />
 						</p:column>
